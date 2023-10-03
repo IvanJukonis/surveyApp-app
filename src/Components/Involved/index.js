@@ -37,11 +37,11 @@ function Involved() {
   ];
 
   const handleEditClick = (item) => {
-    history.push(`/involved/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    history.push(`/involucrados/form/${item._id}`, { params: { ...item, mode: 'edit' } });
   };
 
   const createMode = () => {
-    history.push('/involved/form/', { params: { mode: 'create' } });
+    history.push('/involucrados/form/', { params: { mode: 'create' } });
   };
 
   useEffect(() => {

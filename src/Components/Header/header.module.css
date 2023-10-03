@@ -18,6 +18,28 @@
   filter: invert();
 }
 
+.homeButtons{
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  align-items: center;
+}
+
+.textList{
+  color: white;
+  text-decoration: none;
+}
+
+.header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: #373867;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  height: 40px;
+}
+
 @media screen and (min-width: 750px) {
   .container {
     padding: 0 20%;

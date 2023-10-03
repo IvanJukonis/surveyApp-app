@@ -4,22 +4,28 @@ import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
 function Header() {
   return (
     <header>
-      <nav className={styles.navbar}>
-        <ul className={styles.rutes}>
-          <li className={styles.homeButtons}>
-            <NavLink to="/home">Home</NavLink>
-          </li>
-          <li className={styles.homeButtons}>
-            <NavLink to="/Vehicles">Vehicles</NavLink>
-          </li>
-          <li className={styles.homeButtons}>
-            <NavLink to="/OcurrenceLocation">Ocurrence Location</NavLink>
-          </li>
-          <li className={styles.homeButtons}>
-            <NavLink to="/Involved">Involved</NavLink>
-          </li>
-        </ul>
-      </nav>
+      <div className={styles.header}>
+        <div className={styles.homeButtons}>
+          <NavLink className={styles.textList} to="/home">
+            Home
+          </NavLink>
+        </div>
+        <div className={styles.homeButtons}>
+          <NavLink className={styles.textList} to="/Vehiculo">
+            Vehicles
+          </NavLink>
+        </div>
+        <div className={styles.homeButtons}>
+          <NavLink className={styles.textList} to="/Lugardeocurrencia">
+            Ocurrence Location
+          </NavLink>
+        </div>
+        <div className={styles.homeButtons}>
+          <NavLink className={styles.textList} to="/Involucrados">
+            Involved
+          </NavLink>
+        </div>
+      </div>
     </header>
   );
 }
