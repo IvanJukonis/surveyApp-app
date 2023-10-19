@@ -7,17 +7,19 @@
 .mainContainer {
   display: flex;
   flex-direction: column; 
-  align-items: center; 
-  flex: 1; 
+  align-items: center;
   background-image: url('../../../public/assets/images/menuimg.jpg'); 
   background-size: cover; 
   background-position: center; 
-  background-repeat: no-repeat; 
+  background-repeat: no-repeat;
+  height: 79.5vh;
 }
 
 .switchContainer {
   display: flex;
   justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .footer {

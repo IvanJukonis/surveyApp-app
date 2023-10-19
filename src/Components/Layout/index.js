@@ -13,6 +13,7 @@ const OcurrenceLocationForm = React.lazy(() =>
 );
 const Vehicle = React.lazy(() => import('../Vehicles/index'));
 const VehicleForm = React.lazy(() => import('../Vehicles/Form/VehicleForm'));
+const RelevadorMenu = React.lazy(() => import('../RelevadorMenu/index'));
 
 function Layout() {
   return (
@@ -29,6 +30,7 @@ function Layout() {
                 <Route path="/lugardeocurrencia/form/:id?" component={OcurrenceLocationForm} />
                 <Route exact path="/vehiculo" component={Vehicle} />
                 <Route path="/vehiculo/form/:id?" component={VehicleForm} />
+                <Route exact path="/relevador" component={RelevadorMenu} />
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/">
                   <Redirect to="/home" />

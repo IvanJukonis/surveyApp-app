@@ -40,6 +40,18 @@
   height: 40px;
 }
 
+.buttonBack {
+  display: flex;
+  cursor:pointer;
+  align-items: center;
+  color: white;
+  background-color: #373867;
+  border: 0px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  height: 40px;
+}
+
 @media screen and (min-width: 750px) {
   .container {
     padding: 0 20%;
