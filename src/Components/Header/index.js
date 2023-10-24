@@ -19,7 +19,7 @@ function Header() {
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/menu">
+            <NavLink className={styles.textList} to="/relevador">
               Menu
             </NavLink>
           </div>
@@ -64,6 +64,11 @@ function Header() {
           <div className={styles.homeButtons}>
             <NavLink className={styles.textList} to="/vehiculos">
               Vehiculos
+            </NavLink>
+          </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="/lugardeocurrencia">
+              Lugar
             </NavLink>
           </div>
           <div className={styles.homeButtons}>

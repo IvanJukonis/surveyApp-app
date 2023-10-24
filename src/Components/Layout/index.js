@@ -13,7 +13,7 @@ const OcurrenceLocationForm = React.lazy(() =>
 );
 const Vehicle = React.lazy(() => import('../Vehicles/index'));
 const VehicleForm = React.lazy(() => import('../Vehicles/Form/VehicleForm'));
-const RelevadorMenu = React.lazy(() => import('../RelevadorMenu/index'));
+const RelevadorMenu = React.lazy(() => import('../Relevador/Menu/index'));
 
 function Layout() {
   return (
@@ -28,8 +28,8 @@ function Layout() {
                 <Route path="/involucrados/form/:id?" component={InvolvedForm} />
                 <Route exact path="/lugardeocurrencia" component={OcurrenceLocation} />
                 <Route path="/lugardeocurrencia/form/:id?" component={OcurrenceLocationForm} />
-                <Route exact path="/vehiculo" component={Vehicle} />
-                <Route path="/vehiculo/form/:id?" component={VehicleForm} />
+                <Route exact path="/vehiculos" component={Vehicle} />
+                <Route path="/vehiculos/form/:id?" component={VehicleForm} />
                 <Route exact path="/relevador" component={RelevadorMenu} />
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/">
