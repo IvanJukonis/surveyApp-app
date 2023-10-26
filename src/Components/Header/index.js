@@ -19,22 +19,22 @@ function Header() {
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/relevador">
+            <NavLink className={styles.textList} to="relevador/menu">
               Menu
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/siniestros">
+            <NavLink className={styles.textList} to="relevador/siniestros">
               Siniestros
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/manual">
+            <NavLink className={styles.textList} to="relevador/manual">
               Manual
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/perfil">
+            <NavLink className={styles.textList} to="relevador/perfil">
               Perfil
             </NavLink>
           </div>
@@ -47,37 +47,37 @@ function Header() {
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/relevamientos">
+            <NavLink className={styles.textList} to="controlador/relevamientos">
               Relevamientos
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/fraudes">
+            <NavLink className={styles.textList} to="controlador/fraudes">
               Fraudes
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/involucrados">
+            <NavLink className={styles.textList} to="controlador/involucrados">
               Involucrados
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/vehiculos">
+            <NavLink className={styles.textList} to="controlador/vehiculos">
               Vehiculos
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/lugardeocurrencia">
+            <NavLink className={styles.textList} to="controlador/lugardeocurrencia">
               Lugar
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/relevadores">
+            <NavLink className={styles.textList} to="controlador/relevadores">
               Relevadores
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/siniestros">
+            <NavLink className={styles.textList} to="controlador/siniestros">
               Siniestros
             </NavLink>
           </div>
@@ -90,37 +90,37 @@ function Header() {
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/facturacion">
+            <NavLink className={styles.textList} to="administrativo/facturacion">
               Facturacion
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/avisos">
+            <NavLink className={styles.textList} to="administrativo/avisos">
               Avisos
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/variables">
+            <NavLink className={styles.textList} to="administrativo/variables">
               Variables
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/recursoshumanos">
+            <NavLink className={styles.textList} to="administrativo/recursoshumanos">
               Recursos Humanos
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/contabilidad">
+            <NavLink className={styles.textList} to="administrativo/contabilidad">
               Contabilidad
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/manuales">
+            <NavLink className={styles.textList} to="administrativo/manuales">
               Manuales
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="/siniestros">
+            <NavLink className={styles.textList} to="administrativo/siniestros">
               Siniestros
             </NavLink>
           </div>

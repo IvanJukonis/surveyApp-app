@@ -5,15 +5,17 @@ import Header from '../Header/index';
 import Footer from '../Footer/index';
 
 const Home = React.lazy(() => import('../Home/index'));
-const Involved = React.lazy(() => import('../Involved/index'));
-const InvolvedForm = React.lazy(() => import('../Involved/Form/InvolvedForm'));
-const OcurrenceLocation = React.lazy(() => import('../OcurrenceLocation/index'));
-const OcurrenceLocationForm = React.lazy(() =>
-  import('../OcurrenceLocation/Form/OcurrenceLocationForm')
-);
-const Vehicle = React.lazy(() => import('../Vehicles/index'));
-const VehicleForm = React.lazy(() => import('../Vehicles/Form/VehicleForm'));
-const RelevadorMenu = React.lazy(() => import('../Relevador/Menu/index'));
+
+//Controller
+const InvestigatorController = React.lazy(() => import('../Users/Controller/Investigators'));
+const VehicleController = React.lazy(() => import('../Users/Controller/Vehicles'));
+const LocationController = React.lazy(() => import('../Users/Controller/Locations'));
+const InvolvedController = React.lazy(() => import('../Users/Controller/Involved'));
+
+const InvestigatorControllerForm = React.lazy(() => import('../Investigator/Form/VehicleForm'));
+const VehicleControllerForm = React.lazy(() => import('../Vehicle/Form/VehicleForm'));
+const LocationControllerForm = React.lazy(() => import('../Location/Form/LocationForm'));
+const InvolvedControllerForm = React.lazy(() => import('../Involved/Form/InvolvedForm'));
 
 function Layout() {
   return (
@@ -24,13 +26,28 @@ function Layout() {
           <div className={styles.switchContainer}>
             <React.Suspense>
               <Switch>
-                <Route exact path="/involucrados" component={Involved} />
-                <Route path="/involucrados/form/:id?" component={InvolvedForm} />
-                <Route exact path="/lugardeocurrencia" component={OcurrenceLocation} />
-                <Route path="/lugardeocurrencia/form/:id?" component={OcurrenceLocationForm} />
-                <Route exact path="/vehiculos" component={Vehicle} />
-                <Route path="/vehiculos/form/:id?" component={VehicleForm} />
-                <Route exact path="/relevador" component={RelevadorMenu} />
+                <Route exact path="/controlador/siniestros" component={InvolvedController} />
+                <Route exact path="/controlador/relevadores" component={InvestigatorController} />
+                <Route exact path="/controlador/vehiculos" component={VehicleController} />
+                <Route exact path="/controlador/lugardeocurrencia" component={LocationController} />
+                <Route exact path="/controlador/involucrados" component={InvolvedController} />
+                <Route exact path="/controlador/fraudes" component={InvolvedController} />
+                <Route exact path="/controlador/relevamientos" component={InvolvedController} />
+
+                <Route
+                  path="controlador/relevadores/form/:id?"
+                  component={InvestigatorControllerForm}
+                />
+                <Route path="controlador/vehiculos/form/:id?" component={VehicleControllerForm} />
+                <Route
+                  path="controlador/involucrados/form/:id?"
+                  component={InvolvedControllerForm}
+                />
+                <Route
+                  path="controlador/lugardeocurrencia/form/:id?"
+                  component={LocationControllerForm}
+                />
+
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/">
                   <Redirect to="/home" />
