@@ -8,9 +8,9 @@ import {
   addVehiclePending,
   addVehicleSuccess,
   addVehicleError,
-  editVehiclePending,
-  editVehicleSuccess,
-  editVehicleError
+  updateVehiclePending,
+  updateVehicleSuccess,
+  updateVehicleError
 } from './actions';
 
 export const getAllVehicles = async (dispatch) => {
@@ -28,7 +28,7 @@ export const getAllVehicles = async (dispatch) => {
   }
 };
 
-export const vehicleDelete = (vehicleID) => {
+export const deleteVehicle = (vehicleID) => {
   return async (dispatch) => {
     try {
       dispatch(deleteVehiclePending(true));
@@ -69,7 +69,7 @@ export const createVehicle = async (dispatch, vehicleData) => {
 
 export const updateVehicle = async (dispatch, id, vehicleData) => {
   try {
-    dispatch(editVehiclePending(true));
+    dispatch(updateVehiclePending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehicle/${id}`, {
       method: 'PUT',
       headers: {
@@ -79,13 +79,13 @@ export const updateVehicle = async (dispatch, id, vehicleData) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      dispatch(editVehiclePending(false));
+      dispatch(updateVehiclePending(false));
       throw new Error(data.message);
     }
 
-    dispatch(editVehicleSuccess(data));
+    dispatch(updateVehicleSuccess(data));
   } catch (error) {
-    dispatch(editVehiclePending(false));
-    dispatch(editVehicleError(error.message));
+    dispatch(updateVehiclePending(false));
+    dispatch(updateVehicleError(error.message));
   }
 };

@@ -5,9 +5,9 @@ import {
   ADD_LOCATION_PENDING,
   ADD_LOCATION_SUCCESS,
   ADD_LOCATION_ERROR,
-  EDIT_LOCATION_PENDING,
-  EDIT_LOCATION_SUCCESS,
-  EDIT_LOCATION_ERROR,
+  UPDATE_LOCATION_PENDING,
+  UPDATE_LOCATION_SUCCESS,
+  UPDATE_LOCATION_ERROR,
   DELETE_LOCATION_PENDING,
   DELETE_LOCATION_SUCCESS,
   DELETE_LOCATION_ERROR
@@ -61,25 +61,25 @@ const locationReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case EDIT_LOCATION_PENDING: {
+    case UPDATE_LOCATION_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case EDIT_LOCATION_SUCCESS: {
+    case UPDATE_LOCATION_SUCCESS: {
       // const locationUpdated = action.payload;
-      const editedLocation = state.list.map((location) => {
+      const updatedLocation = state.list.map((location) => {
         return location._id === action.payload._id ? { ...location, ...action.payload } : location;
       });
       return {
         ...state,
-        list: [...editedLocation]
+        list: [...updatedLocation]
       };
     }
 
-    case EDIT_LOCATION_ERROR: {
+    case UPDATE_LOCATION_ERROR: {
       return {
         ...state,
         error: action.payload

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllLocations, locationDelete } from 'redux/location/thunks';
+import { getAllLocations, deleteLocation } from 'redux/location/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
@@ -65,7 +65,7 @@ function location() {
           data={location}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={locationDelete}
+          deleteButton={deleteLocation}
         />
       )}
       {toastErroOpen && (

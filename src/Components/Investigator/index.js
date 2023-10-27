@@ -1,63 +1,66 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllVehicles, vehicleDelete } from 'redux/vehicle/thunks';
+import { getAllInvestigators, investigatorDelete } from 'redux/investigator/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
-function Vehicle() {
+function Investigator() {
   const dispatch = useDispatch();
-  const vehicle = useSelector((state) => state.vehicle.list);
-  const isPending = useSelector((state) => state.vehicle.pending);
-  const isError = useSelector((state) => state.vehicle.error);
   const history = useHistory();
+
+  const investigator = useSelector((state) => state.investigator.list);
+  const isPending = useSelector((state) => state.investigator.pending);
+  const isError = useSelector((state) => state.investigator.error);
+
   const [toastErroOpen, setToastErroOpen] = useState(isError);
+
   const columnTitleArray = [
-    'involucrado',
-    'dominio',
-    'marca',
-    'modelo',
-    'color',
-    'uso',
-    'año',
-    'descripcionDaños'
+    'nombre',
+    'apellido',
+    'correoElectronico',
+    'DNI',
+    'telefono',
+    'direccion',
+    'activo',
+    'localidad'
   ];
   const columns = [
-    'involucrado',
-    'dominio',
-    'marca',
-    'modelo',
-    'color',
-    'uso',
-    'año',
-    'descripcionDaños'
+    'nombre',
+    'apellido',
+    'correoElectronico',
+    'DNI',
+    'telefono',
+    'direccion',
+    'activo',
+    'localidad'
   ];
 
   const handleEditClick = (item) => {
-    history.push(`/vehicle/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    history.push(`/investigator/form/${item._id}`, { params: { ...item, mode: 'edit' } });
   };
 
   const createMode = () => {
-    history.push('/vehicle/form/', { params: { mode: 'create' } });
+    history.push('/investigator/form/', { params: { mode: 'create' } });
   };
 
   useEffect(() => {
-    getAllVehicles(dispatch);
+    getAllInvestigators(dispatch);
   }, []);
 
   return (
     <section>
       <div>
-        <AddButton entity="Vehicle" createMode={createMode} />
+        <AddButton entity="Investigator" createMode={createMode} />
       </div>
       {isPending ? (
         <Loader />
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={vehicle}
+          data={investigator}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={vehicleDelete}
+          deleteButton={investigatorDelete}
         />
       )}
       {toastErroOpen && (
@@ -67,4 +70,4 @@ function Vehicle() {
   );
 }
 
-export default Vehicle;
+export default Investigator;

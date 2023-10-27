@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllInvolveds, involvedDelete } from 'redux/involved/thunks';
+import { getAllInvolveds, deleteInvolved } from 'redux/involved/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
@@ -61,7 +61,7 @@ function Involved() {
           data={involved}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={involvedDelete}
+          deleteButton={deleteInvolved}
         />
       )}
       {toastErroOpen && (

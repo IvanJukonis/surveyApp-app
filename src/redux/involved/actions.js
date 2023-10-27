@@ -8,9 +8,9 @@ import {
   ADD_INVOLVED_PENDING,
   ADD_INVOLVED_SUCCESS,
   ADD_INVOLVED_ERROR,
-  EDIT_INVOLVED_PENDING,
-  EDIT_INVOLVED_SUCCESS,
-  EDIT_INVOLVED_ERROR
+  UPDATE_INVOLVED_PENDING,
+  UPDATE_INVOLVED_SUCCESS,
+  UPDATE_INVOLVED_ERROR
 } from './constants';
 
 export const getInvolvedsPending = (pending) => {
@@ -76,23 +76,23 @@ export const addInvolvedError = (error) => {
   };
 };
 
-export const editInvolvedPending = (pending) => {
+export const updateInvolvedPending = (pending) => {
   return {
-    type: EDIT_INVOLVED_PENDING,
+    type: UPDATE_INVOLVED_PENDING,
     payload: pending
   };
 };
 
-export const editInvolvedSuccess = (involved) => {
+export const updateInvolvedSuccess = (involved) => {
   return {
-    type: EDIT_INVOLVED_SUCCESS,
+    type: UPDATE_INVOLVED_SUCCESS,
     payload: involved
   };
 };
 
-export const editInvolvedError = (error) => {
+export const updateInvolvedError = (error) => {
   return {
-    type: EDIT_INVOLVED_ERROR,
+    type: UPDATE_INVOLVED_ERROR,
     payload: error
   };
 };

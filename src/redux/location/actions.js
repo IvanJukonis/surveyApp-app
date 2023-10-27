@@ -8,9 +8,9 @@ import {
   ADD_LOCATION_PENDING,
   ADD_LOCATION_SUCCESS,
   ADD_LOCATION_ERROR,
-  EDIT_LOCATION_PENDING,
-  EDIT_LOCATION_SUCCESS,
-  EDIT_LOCATION_ERROR
+  UPDATE_LOCATION_PENDING,
+  UPDATE_LOCATION_SUCCESS,
+  UPDATE_LOCATION_ERROR
 } from './constants';
 
 export const getLocationsPending = (pending) => {
@@ -76,23 +76,23 @@ export const addLocationError = (error) => {
   };
 };
 
-export const editLocationPending = (pending) => {
+export const updateLocationPending = (pending) => {
   return {
-    type: EDIT_LOCATION_PENDING,
+    type: UPDATE_LOCATION_PENDING,
     payload: pending
   };
 };
 
-export const editLocationSuccess = (location) => {
+export const updateLocationSuccess = (location) => {
   return {
-    type: EDIT_LOCATION_SUCCESS,
+    type: UPDATE_LOCATION_SUCCESS,
     payload: location
   };
 };
 
-export const editLocationError = (error) => {
+export const updateLocationError = (error) => {
   return {
-    type: EDIT_LOCATION_ERROR,
+    type: UPDATE_LOCATION_ERROR,
     payload: error
   };
 };

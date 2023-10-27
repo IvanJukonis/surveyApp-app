@@ -8,9 +8,9 @@ import {
   addInvestigatorPending,
   addInvestigatorSuccess,
   addInvestigatorError,
-  editInvestigatorPending,
-  editInvestigatorSuccess,
-  editInvestigatorError
+  updateInvestigatorPending,
+  updateInvestigatorSuccess,
+  updateInvestigatorError
 } from './actions';
 
 export const getAllInvestigators = async (dispatch) => {
@@ -28,7 +28,7 @@ export const getAllInvestigators = async (dispatch) => {
   }
 };
 
-export const investigatorDelete = (investigatorID) => {
+export const deleteInvestigator = (investigatorID) => {
   return async (dispatch) => {
     dispatch(deleteInvestigatorPending(true));
 
@@ -77,7 +77,7 @@ export const createInvestigator = async (dispatch, investigatorData) => {
 
 export const updateInvestigator = async (dispatch, id, investigatorData) => {
   try {
-    dispatch(editInvestigatorPending(true));
+    dispatch(updateInvestigatorPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/investigator/${id}`, {
       method: 'PUT',
       headers: {
@@ -87,13 +87,13 @@ export const updateInvestigator = async (dispatch, id, investigatorData) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      dispatch(editInvestigatorPending(false));
+      dispatch(updateInvestigatorPending(false));
       throw new Error(data.message);
     }
 
-    dispatch(editInvestigatorSuccess(data));
+    dispatch(updateInvestigatorSuccess(data));
   } catch (error) {
-    dispatch(editInvestigatorPending(false));
-    dispatch(editInvestigatorError(error.message));
+    dispatch(updateInvestigatorPending(false));
+    dispatch(updateInvestigatorError(error.message));
   }
 };

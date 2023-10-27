@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllVehicles, vehicleDelete } from 'redux/vehicle/thunks';
+import { getAllVehicles, deleteVehicle } from 'redux/vehicle/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
@@ -57,7 +57,7 @@ function Vehicle() {
           data={vehicle}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={vehicleDelete}
+          deleteButton={deleteVehicle}
         />
       )}
       {toastErroOpen && (

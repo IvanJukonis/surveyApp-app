@@ -8,9 +8,9 @@ import {
   ADD_INVESTIGATOR_PENDING,
   ADD_INVESTIGATOR_SUCCESS,
   ADD_INVESTIGATOR_ERROR,
-  EDIT_INVESTIGATOR_PENDING,
-  EDIT_INVESTIGATOR_SUCCESS,
-  EDIT_INVESTIGATOR_ERROR
+  UPDATE_INVESTIGATOR_PENDING,
+  UPDATE_INVESTIGATOR_SUCCESS,
+  UPDATE_INVESTIGATOR_ERROR
 } from './constants';
 
 export const getInvestigatorsPending = (pending) => {
@@ -78,21 +78,21 @@ export const addInvestigatorError = (error) => {
 
 export const editInvestigatorPending = (pending) => {
   return {
-    type: EDIT_INVESTIGATOR_PENDING,
+    type: UPDATE_INVESTIGATOR_PENDING,
     payload: pending
   };
 };
 
 export const editInvestigatorSuccess = (investigator) => {
   return {
-    type: EDIT_INVESTIGATOR_SUCCESS,
+    type: UPDATE_INVESTIGATOR_SUCCESS,
     payload: investigator
   };
 };
 
 export const editInvestigatorError = (error) => {
   return {
-    type: EDIT_INVESTIGATOR_ERROR,
+    type: UPDATE_INVESTIGATOR_ERROR,
     payload: error
   };
 };

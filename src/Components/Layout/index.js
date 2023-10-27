@@ -12,7 +12,9 @@ const VehicleController = React.lazy(() => import('../Users/Controller/Vehicles'
 const LocationController = React.lazy(() => import('../Users/Controller/Locations'));
 const InvolvedController = React.lazy(() => import('../Users/Controller/Involved'));
 
-const InvestigatorControllerForm = React.lazy(() => import('../Investigator/Form/VehicleForm'));
+const InvestigatorControllerForm = React.lazy(() =>
+  import('../Investigator/Form/InvestigatorForm')
+);
 const VehicleControllerForm = React.lazy(() => import('../Vehicle/Form/VehicleForm'));
 const LocationControllerForm = React.lazy(() => import('../Location/Form/LocationForm'));
 const InvolvedControllerForm = React.lazy(() => import('../Involved/Form/InvolvedForm'));

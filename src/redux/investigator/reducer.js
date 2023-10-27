@@ -5,9 +5,9 @@ import {
   ADD_INVESTIGATOR_PENDING,
   ADD_INVESTIGATOR_SUCCESS,
   ADD_INVESTIGATOR_ERROR,
-  EDIT_INVESTIGATOR_PENDING,
-  EDIT_INVESTIGATOR_SUCCESS,
-  EDIT_INVESTIGATOR_ERROR,
+  UPDATE_INVESTIGATOR_PENDING,
+  UPDATE_INVESTIGATOR_SUCCESS,
+  UPDATE_INVESTIGATOR_ERROR,
   DELETE_INVESTIGATOR_PENDING,
   DELETE_INVESTIGATOR_SUCCESS,
   DELETE_INVESTIGATOR_ERROR
@@ -61,14 +61,14 @@ const investigatorReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case EDIT_INVESTIGATOR_PENDING: {
+    case UPDATE_INVESTIGATOR_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case EDIT_INVESTIGATOR_SUCCESS: {
+    case UPDATE_INVESTIGATOR_SUCCESS: {
       const editedInvestigator = state.list.map((investigator) => {
         return investigator._id === action.payload._id
           ? { ...investigator, ...action.payload }
@@ -80,7 +80,7 @@ const investigatorReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case EDIT_INVESTIGATOR_ERROR: {
+    case UPDATE_INVESTIGATOR_ERROR: {
       return {
         ...state,
         error: action.payload

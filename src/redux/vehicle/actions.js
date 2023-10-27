@@ -8,9 +8,9 @@ import {
   ADD_VEHICLE_PENDING,
   ADD_VEHICLE_SUCCESS,
   ADD_VEHICLE_ERROR,
-  EDIT_VEHICLE_PENDING,
-  EDIT_VEHICLE_SUCCESS,
-  EDIT_VEHICLE_ERROR
+  UPDATE_VEHICLE_PENDING,
+  UPDATE_VEHICLE_SUCCESS,
+  UPDATE_VEHICLE_ERROR
 } from './constants';
 
 export const getVehiclesPending = (pending) => {
@@ -76,23 +76,23 @@ export const addVehicleError = (error) => {
   };
 };
 
-export const editVehiclePending = (pending) => {
+export const updateVehiclePending = (pending) => {
   return {
-    type: EDIT_VEHICLE_PENDING,
+    type: UPDATE_VEHICLE_PENDING,
     payload: pending
   };
 };
 
-export const editVehicleSuccess = (vehicle) => {
+export const updateVehicleSuccess = (vehicle) => {
   return {
-    type: EDIT_VEHICLE_SUCCESS,
+    type: UPDATE_VEHICLE_SUCCESS,
     payload: vehicle
   };
 };
 
-export const editVehicleError = (error) => {
+export const updateVehicleError = (error) => {
   return {
-    type: EDIT_VEHICLE_ERROR,
+    type: UPDATE_VEHICLE_ERROR,
     payload: error
   };
 };

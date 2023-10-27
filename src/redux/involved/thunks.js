@@ -8,9 +8,9 @@ import {
   addInvolvedPending,
   addInvolvedSuccess,
   addInvolvedError,
-  editInvolvedPending,
-  editInvolvedSuccess,
-  editInvolvedError
+  updateInvolvedPending,
+  updateInvolvedSuccess,
+  updateInvolvedError
 } from './actions';
 
 export const getAllInvolveds = async (dispatch) => {
@@ -28,7 +28,7 @@ export const getAllInvolveds = async (dispatch) => {
   }
 };
 
-export const involvedDelete = (involvedID) => {
+export const deleteInvolved = (involvedID) => {
   return async (dispatch) => {
     try {
       dispatch(deleteInvolvedPending(true));
@@ -69,7 +69,7 @@ export const createInvolved = async (dispatch, involvedData) => {
 
 export const updateInvolved = async (dispatch, id, involvedData) => {
   try {
-    dispatch(editInvolvedPending(true));
+    dispatch(updateInvolvedPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involved/${id}`, {
       method: 'PUT',
       headers: {
@@ -79,13 +79,13 @@ export const updateInvolved = async (dispatch, id, involvedData) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      dispatch(editInvolvedPending(false));
+      dispatch(updateInvolvedPending(false));
       throw new Error(data.message);
     }
 
-    dispatch(editInvolvedSuccess(data));
+    dispatch(updateInvolvedSuccess(data));
   } catch (error) {
-    dispatch(editInvolvedPending(false));
-    dispatch(editInvolvedError(error.message));
+    dispatch(updateInvolvedPending(false));
+    dispatch(updateInvolvedError(error.message));
   }
 };

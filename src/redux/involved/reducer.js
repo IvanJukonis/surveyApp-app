@@ -5,9 +5,9 @@ import {
   ADD_INVOLVED_PENDING,
   ADD_INVOLVED_SUCCESS,
   ADD_INVOLVED_ERROR,
-  EDIT_INVOLVED_PENDING,
-  EDIT_INVOLVED_SUCCESS,
-  EDIT_INVOLVED_ERROR,
+  UPDATE_INVOLVED_PENDING,
+  UPDATE_INVOLVED_SUCCESS,
+  UPDATE_INVOLVED_ERROR,
   DELETE_INVOLVED_PENDING,
   DELETE_INVOLVED_SUCCESS,
   DELETE_INVOLVED_ERROR
@@ -61,25 +61,25 @@ const involvedReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case EDIT_INVOLVED_PENDING: {
+    case UPDATE_INVOLVED_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case EDIT_INVOLVED_SUCCESS: {
+    case UPDATE_INVOLVED_SUCCESS: {
       // const involvedUpdated = action.payload;
-      const editedInvolved = state.list.map((involved) => {
+      const updatedInvolved = state.list.map((involved) => {
         return involved._id === action.payload._id ? { ...involved, ...action.payload } : involved;
       });
       return {
         ...state,
-        list: [...editedInvolved]
+        list: [...updatedInvolved]
       };
     }
 
-    case EDIT_INVOLVED_ERROR: {
+    case UPDATE_INVOLVED_ERROR: {
       return {
         ...state,
         error: action.payload

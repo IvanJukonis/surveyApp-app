@@ -5,9 +5,9 @@ import {
   ADD_VEHICLE_PENDING,
   ADD_VEHICLE_SUCCESS,
   ADD_VEHICLE_ERROR,
-  EDIT_VEHICLE_PENDING,
-  EDIT_VEHICLE_SUCCESS,
-  EDIT_VEHICLE_ERROR,
+  UPDATE_VEHICLE_PENDING,
+  UPDATE_VEHICLE_SUCCESS,
+  UPDATE_VEHICLE_ERROR,
   DELETE_VEHICLE_PENDING,
   DELETE_VEHICLE_SUCCESS,
   DELETE_VEHICLE_ERROR
@@ -61,25 +61,25 @@ const vehicleReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case EDIT_VEHICLE_PENDING: {
+    case UPDATE_VEHICLE_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case EDIT_VEHICLE_SUCCESS: {
+    case UPDATE_VEHICLE_SUCCESS: {
       // const vehicleUpdated = action.payload;
-      const editedVehicle = state.list.map((vehicle) => {
+      const updatedVehicle = state.list.map((vehicle) => {
         return vehicle._id === action.payload._id ? { ...vehicle, ...action.payload } : vehicle;
       });
       return {
         ...state,
-        list: [...editedVehicle]
+        list: [...updatedVehicle]
       };
     }
 
-    case EDIT_VEHICLE_ERROR: {
+    case UPDATE_VEHICLE_ERROR: {
       return {
         ...state,
         error: action.payload
