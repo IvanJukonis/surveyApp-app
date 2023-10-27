@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 import involvedReducer from './involved/reducer';
-import ocurrenceLocationReducer from './ocurrenceLocation/reducer';
+import locationReducer from './location/reducer';
 import vehicleReducer from './vehicle/reducer';
 
 const rootReducer = combineReducers({
   involved: involvedReducer,
-  ocurrenceLocation: ocurrenceLocationReducer,
+  location: locationReducer,
   vehicle: vehicleReducer
 });
 

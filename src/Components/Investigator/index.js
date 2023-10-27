@@ -66,4 +66,5 @@ function Vehicle() {
     </section>
   );
 }
+
 export default Vehicle;

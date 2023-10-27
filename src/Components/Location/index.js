@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllOcurrenceLocations, ocurrenceLocationDelete } from 'redux/ocurrenceLocation/thunks';
+import { getAllLocations, locationDelete } from 'redux/location/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
-function OcurrenceLocation() {
+function location() {
   const dispatch = useDispatch();
-  const ocurrenceLocation = useSelector((state) => state.ocurrenceLocation.list);
-  const isPending = useSelector((state) => state.ocurrenceLocation.pending);
-  const isError = useSelector((state) => state.ocurrenceLocation.error);
+  const location = useSelector((state) => state.location.list);
+  const isPending = useSelector((state) => state.location.pending);
+  const isError = useSelector((state) => state.location.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const columnTitleArray = [
@@ -41,31 +41,31 @@ function OcurrenceLocation() {
   ];
 
   const handleEditClick = (item) => {
-    history.push(`/ocurrenceLocation/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    history.push(`/location/form/${item._id}`, { params: { ...item, mode: 'edit' } });
   };
 
   const createMode = () => {
-    history.push('/ocurrenceLocation/form/', { params: { mode: 'create' } });
+    history.push('/location/form/', { params: { mode: 'create' } });
   };
 
   useEffect(() => {
-    getAllOcurrenceLocations(dispatch);
+    getAllLocations(dispatch);
   }, []);
 
   return (
     <section>
       <div>
-        <AddButton entity="OcurrenceLocation" createMode={createMode} />
+        <AddButton entity="location" createMode={createMode} />
       </div>
       {isPending ? (
         <Loader />
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={ocurrenceLocation}
+          data={location}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={ocurrenceLocationDelete}
+          deleteButton={locationDelete}
         />
       )}
       {toastErroOpen && (
@@ -74,4 +74,4 @@ function OcurrenceLocation() {
     </section>
   );
 }
-export default OcurrenceLocation;
+export default location;
