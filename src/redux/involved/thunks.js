@@ -16,7 +16,7 @@ import {
 export const getAllInvolveds = async (dispatch) => {
   try {
     dispatch(getInvolvedsPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/involved`);
+    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
     const data = await reponse.json();
     const involvedsList = data.data;
     dispatch(getInvolvedsPending(false));
@@ -32,9 +32,12 @@ export const deleteInvolved = (involvedID) => {
   return async (dispatch) => {
     try {
       dispatch(deleteInvolvedPending(true));
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involved/${involvedID}`, {
-        method: 'DELETE'
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/involucrado/${involvedID}`,
+        {
+          method: 'DELETE'
+        }
+      );
       if (response.ok) {
         dispatch(deleteInvolvedPending(false));
         dispatch(deleteInvolvedSuccess(involvedID));
@@ -48,7 +51,7 @@ export const deleteInvolved = (involvedID) => {
 export const createInvolved = async (dispatch, involvedData) => {
   try {
     dispatch(addInvolvedPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involved`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -70,7 +73,7 @@ export const createInvolved = async (dispatch, involvedData) => {
 export const updateInvolved = async (dispatch, id, involvedData) => {
   try {
     dispatch(updateInvolvedPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involved/${id}`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

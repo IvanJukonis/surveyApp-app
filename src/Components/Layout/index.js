@@ -11,6 +11,7 @@ const InvestigatorController = React.lazy(() => import('../Users/Controller/Inve
 const VehicleController = React.lazy(() => import('../Users/Controller/Vehicles'));
 const LocationController = React.lazy(() => import('../Users/Controller/Locations'));
 const InvolvedController = React.lazy(() => import('../Users/Controller/Involved'));
+const SiniestroController = React.lazy(() => import('../Users/Investigator/Siniestros'));
 
 const InvestigatorControllerForm = React.lazy(() =>
   import('../Investigator/Form/InvestigatorForm')
@@ -35,7 +36,8 @@ function Layout() {
                 <Route exact path="/controlador/involucrados" component={InvolvedController} />
                 <Route exact path="/controlador/fraudes" component={InvolvedController} />
                 <Route exact path="/controlador/relevamientos" component={InvolvedController} />
-
+                <Route exact path="/controlador/siniestros" component={SiniestroController} />
+                <Route exact path="/relevador/siniestros" component={SiniestroController} />
                 <Route
                   path="controlador/relevadores/form/:id?"
                   component={InvestigatorControllerForm}

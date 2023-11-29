@@ -268,6 +268,7 @@ const FormVehicles = () => {
                 error={errors.slots?.message}
               />
             </div>
+
             <div className={formStyles.buttons}>
               <span className={formStyles.cancelButton}>
                 <Button clickAction={() => history.push('/admin/vehicles')} text="Cancel" />
