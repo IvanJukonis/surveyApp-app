@@ -13,34 +13,22 @@ function Siniestro() {
   const [toastErroOpen, setToastErroOpen] = useState(isError);
 
   const columnTitleArray = [
-    'numSiniestro',
-    'numPoliza',
-    'numInforme',
-    'fechaSiniestro',
-    'fechaDenuncia',
-    'fechaVencimiento',
-    'fechaAsignacion',
-    'hrSiniestro',
-    'cia',
-    'tipo',
-    'presencial',
-    'instrucciones',
-    'denuncia'
+    'N°Siniestro',
+    'N°Informe',
+    'Fecha',
+    'Vencimiento',
+    'Asignacion',
+    'CIA',
+    'Tipo'
   ];
   const columns = [
     'numSiniestro',
-    'numPoliza',
     'numInforme',
     'fechaSiniestro',
-    'fechaDenuncia',
     'fechaVencimiento',
     'fechaAsignacion',
-    'hrSiniestro',
     'cia',
-    'tipo',
-    'presencial',
-    'instrucciones',
-    'denuncia'
+    'tipo'
   ];
 
   const handleEditClick = (item) => {

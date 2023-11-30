@@ -75,6 +75,14 @@ const TableComponent = ({
     }
   };
 
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <section className={styles.container}>
       {data?.length === 0 ? (
@@ -100,10 +108,16 @@ const TableComponent = ({
                 <tr className={rowClass} key={index}>
                   {columns.map((column, columnIndex) => (
                     <td key={columnIndex}>
-                      {ifArray(row[column])}
-                      {ifObject(row[column])}
-                      {ifNotArrayNotObject(row, column)}
-                      {ifNotExist(row[column])}
+                      {column.startsWith('fecha') ? (
+                        formatDate(row[column])
+                      ) : (
+                        <>
+                          {ifArray(row[column])}
+                          {ifObject(row[column])}
+                          {ifNotArrayNotObject(row, column)}
+                          {ifNotExist(row[column])}
+                        </>
+                      )}
                     </td>
                   ))}
                   <td>
