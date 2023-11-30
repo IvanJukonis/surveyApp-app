@@ -63,7 +63,6 @@ export const createSiniestro = async (dispatch, newSiniestro) => {
       const data = await response.json();
       const newData = data;
       dispatch(addSiniestroPending(false));
-      console.log(newData.data);
       return dispatch(addSiniestroSuccess(newData.data));
     } else {
       dispatch(addSiniestroPending(false));
@@ -85,15 +84,18 @@ export const updateSiniestro = async (dispatch, id, siniestroData) => {
       },
       body: JSON.stringify(siniestroData)
     });
-    const data = await response.json();
-    if (!response.ok) {
-      dispatch(updateSiniestroPending(false));
-      throw new Error(data.message);
-    }
 
-    dispatch(updateSiniestroSuccess(data));
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
+      dispatch(updateSiniestroPending(false));
+      return dispatch(updateSiniestroSuccess(newData.data));
+    } else {
+      dispatch(updateSiniestroPending(false));
+      return dispatch(updateSiniestroError(true));
+    }
   } catch (error) {
     dispatch(updateSiniestroPending(false));
-    dispatch(updateSiniestroError(error.message));
+    return dispatch(updateSiniestroError(error.message));
   }
 };

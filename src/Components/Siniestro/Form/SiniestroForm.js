@@ -10,14 +10,13 @@ import {
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { updateSiniestro, createSiniestro } from 'redux/siniestro/thunks';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
 const SiniestrosForm = () => {
   const dispatch = useDispatch();
-  const isError = useSelector((state) => state.siniestro.errorForm);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
@@ -179,14 +178,16 @@ const SiniestrosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editSiniestroResponse = await updateSiniestro(id, siniestro);
-      if (editSiniestroResponse.type === 'EDIT_SINIESTRO_SUCCESS') {
+      const editSiniestroResponse = await updateSiniestro(dispatch, id, siniestro);
+      console.log(editSiniestroResponse);
+      if (editSiniestroResponse.type === 'UPDATE_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
           history.goBack();
         }, 1000);
       }
+      console.log('aca');
       return setToastErroOpen(true);
     }
   };
@@ -365,7 +366,7 @@ const SiniestrosForm = () => {
         <Button clickAction={() => reset()} text="Reset" />
         <Button text="Cancel" clickAction={() => history.goBack()} />
       </form>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={isError.message} />}
+      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
     </div>
   );
 };
