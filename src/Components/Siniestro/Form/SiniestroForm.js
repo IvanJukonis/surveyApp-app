@@ -169,7 +169,7 @@ const SiniestrosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addSiniestroResponse = await dispatch(createSiniestro(siniestro));
+      const addSiniestroResponse = await createSiniestro(dispatch, siniestro);
       if (addSiniestroResponse.type === 'ADD_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -179,7 +179,7 @@ const SiniestrosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editSiniestroResponse = await dispatch(updateSiniestro(id, siniestro));
+      const editSiniestroResponse = await updateSiniestro(id, siniestro);
       if (editSiniestroResponse.type === 'EDIT_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -288,6 +288,8 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
+          </div>
+          <div className={styles.inputGroup}>
             <div className={styles.inputContainer}>
               <Inputs
                 error={errors.fechaAsignacion?.message}
@@ -317,6 +319,8 @@ const SiniestrosForm = () => {
                 error={errors.tipo?.message}
               />
             </div>
+          </div>
+          <div className={styles.inputGroup}>
             <div className={styles.inputContainer}>
               <OptionInput
                 data={ciaArray}
@@ -324,16 +328,6 @@ const SiniestrosForm = () => {
                 name="cia"
                 register={register}
                 error={errors.cia?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.presencial?.message}
-                register={register}
-                nameTitle="Presencial"
-                type="text"
-                nameInput="presencial"
-                required
               />
             </div>
             <div className={styles.inputContainer}>
@@ -360,7 +354,7 @@ const SiniestrosForm = () => {
               {...register('presencial', {
                 required: { value: true, message: 'This field is required' }
               })}
-              type="hidden"
+              type="checkbox"
               name="presencial"
               value={true}
             />

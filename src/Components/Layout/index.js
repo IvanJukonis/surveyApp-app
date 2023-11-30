@@ -19,6 +19,7 @@ const InvestigatorControllerForm = React.lazy(() =>
 const VehicleControllerForm = React.lazy(() => import('../Vehicle/Form/VehicleForm'));
 const LocationControllerForm = React.lazy(() => import('../Location/Form/LocationForm'));
 const InvolvedControllerForm = React.lazy(() => import('../Involved/Form/InvolvedForm'));
+const SiniestrosForm = React.lazy(() => import('../Siniestro/Form/SiniestroForm'));
 
 function Layout() {
   return (
@@ -42,6 +43,7 @@ function Layout() {
                   path="controlador/relevadores/form/:id?"
                   component={InvestigatorControllerForm}
                 />
+                <Route path="/relevador/siniestros/form/:id?" component={SiniestrosForm} />
                 <Route path="controlador/vehiculos/form/:id?" component={VehicleControllerForm} />
                 <Route
                   path="controlador/involucrados/form/:id?"

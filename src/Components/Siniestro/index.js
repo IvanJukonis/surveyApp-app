@@ -44,11 +44,11 @@ function Siniestro() {
   ];
 
   const handleEditClick = (item) => {
-    history.push(`/siniestro/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    history.push(`/relevador/siniestros/form/${item._id}`, { params: { ...item, mode: 'edit' } });
   };
 
   const createMode = () => {
-    history.push('/siniestro/form/', { params: { mode: 'create' } });
+    history.push('/relevador/siniestros/form/', { params: { mode: 'create' } });
   };
 
   useEffect(() => {

@@ -49,7 +49,7 @@ export const deleteSiniestro = (siniestroID) => {
   };
 };
 
-export const createSiniestro = async (dispatch, siniestroData) => {
+export const createSiniestro = async (dispatch, newSiniestro) => {
   try {
     dispatch(addSiniestroPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro`, {
@@ -57,17 +57,21 @@ export const createSiniestro = async (dispatch, siniestroData) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(siniestroData)
+      body: JSON.stringify(newSiniestro)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(addSiniestroPending(false));
-      throw new Error(data.message);
+      console.log(newData.data);
+      return dispatch(addSiniestroSuccess(newData.data));
+    } else {
+      dispatch(addSiniestroPending(false));
+      return dispatch(addSiniestroError(true));
     }
-    dispatch(addSiniestroSuccess(data.result));
   } catch (error) {
     dispatch(addSiniestroPending(false));
-    dispatch(addSiniestroError(error.message));
+    return dispatch(addSiniestroError(true));
   }
 };
 
