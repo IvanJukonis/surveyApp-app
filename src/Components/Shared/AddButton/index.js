@@ -10,7 +10,7 @@ const AddButton = ({ entity, createMode }) => {
           src={`${process.env.PUBLIC_URL}/assets/images/btn-add.png`}
           alt="add icon"
         />
-        <p className={styles.btn_text}>Add {entity}</p>
+        <p className={styles.btn_text}>crear {entity}</p>
       </button>
     </div>
   );

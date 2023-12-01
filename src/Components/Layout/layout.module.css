@@ -6,26 +6,27 @@
 
 .mainContainer {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   align-items: center;
-  background-image: url('../../../public/assets/images/menuimg.jpg'); 
-  background-size: cover; 
-  background-position: center; 
+  background-image: url('../../../public/assets/images/menuimg.jpg');
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  height: 79.5vh;
+  height: 100%;
 }
 
 .switchContainer {
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  min-height: 756px;
 }
 
-.footer {
-  background-color: #333;
-  color: white;
+footer {
+  display: flex;
+  align-self: flex-end;
+  color: rgb(255, 255, 255);
+  width: 100%;
   text-align: center;
-  padding: 10px;
 }
 

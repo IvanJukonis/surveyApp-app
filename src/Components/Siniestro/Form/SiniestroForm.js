@@ -226,145 +226,142 @@ const SiniestrosForm = () => {
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Siniestro' : 'Add Siniestro'}</h3>
+      <h3 className={styles.title}>{id ? 'Editar Siniestro' : 'Agregar Siniestro'}</h3>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.numSiniestro?.message}
-                register={register}
-                nameTitle="NumSiniestro"
-                type="number"
-                nameInput="numSiniestro"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.numPoliza?.message}
-                register={register}
-                nameTitle="NumPoliza"
-                type="number"
-                nameInput="numPoliza"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.numInforme?.message}
-                register={register}
-                nameTitle="NumInforme"
-                type="number"
-                nameInput="numInforme"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fechaSiniestro?.message}
-                register={register}
-                nameTitle="FechaSiniestro"
-                type="date"
-                nameInput="fechaSiniestro"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fechaDenuncia?.message}
-                register={register}
-                nameTitle="FechaDenuncia"
-                type="date"
-                nameInput="fechaDenuncia"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fechaVencimiento?.message}
-                register={register}
-                nameTitle="FechaVencimiento"
-                type="date"
-                nameInput="fechaVencimiento"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fechaAsignacion?.message}
-                register={register}
-                nameTitle="FechaAsignacion"
-                type="date"
-                nameInput="fechaAsignacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.hrSiniestro?.message}
-                register={register}
-                nameTitle="HrSiniestro"
-                type="date"
-                nameInput="hrSiniestro"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={tipoArray}
-                dataLabel="Tipo"
-                name="tipo"
-                register={register}
-                error={errors.tipo?.message}
-              />
-            </div>
-          </div>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={ciaArray}
-                dataLabel="Cia"
-                name="cia"
-                register={register}
-                error={errors.cia?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.instrucciones?.message}
-                register={register}
-                nameTitle="Instrucciones"
-                type="text"
-                nameInput="instrucciones"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.denuncia?.message}
-                register={register}
-                nameTitle="Denuncia"
-                type="text"
-                nameInput="denuncia"
-                required
-              />
-            </div>
-            <input
-              {...register('presencial', {
-                required: { value: true, message: 'This field is required' }
-              })}
-              type="checkbox"
-              name="presencial"
-              value={true}
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.numSiniestro?.message}
+              register={register}
+              nameTitle="NumSiniestro"
+              type="number"
+              nameInput="numSiniestro"
             />
           </div>
-        </section>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.numPoliza?.message}
+              register={register}
+              nameTitle="NumPoliza"
+              type="number"
+              nameInput="numPoliza"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.numInforme?.message}
+              register={register}
+              nameTitle="NumInforme"
+              type="number"
+              nameInput="numInforme"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.fechaSiniestro?.message}
+              register={register}
+              nameTitle="FechaSiniestro"
+              type="date"
+              nameInput="fechaSiniestro"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.fechaDenuncia?.message}
+              register={register}
+              nameTitle="FechaDenuncia"
+              type="date"
+              nameInput="fechaDenuncia"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.fechaVencimiento?.message}
+              register={register}
+              nameTitle="FechaVencimiento"
+              type="date"
+              nameInput="fechaVencimiento"
+              required
+            />
+          </div>
 
-        <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-        <Button clickAction={() => reset()} text="Reset" />
-        <Button text="Cancel" clickAction={() => history.goBack()} />
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.fechaAsignacion?.message}
+              register={register}
+              nameTitle="FechaAsignacion"
+              type="date"
+              nameInput="fechaAsignacion"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.hrSiniestro?.message}
+              register={register}
+              nameTitle="HrSiniestro"
+              type="date"
+              nameInput="hrSiniestro"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <OptionInput
+              data={tipoArray}
+              dataLabel="Tipo"
+              name="tipo"
+              register={register}
+              error={errors.tipo?.message}
+            />
+          </div>
+
+          <div className={styles.inputContainer}>
+            <OptionInput
+              data={ciaArray}
+              dataLabel="Cia"
+              name="cia"
+              register={register}
+              error={errors.cia?.message}
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.instrucciones?.message}
+              register={register}
+              nameTitle="Instrucciones"
+              type="text"
+              nameInput="instrucciones"
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <Inputs
+              error={errors.denuncia?.message}
+              register={register}
+              nameTitle="Denuncia"
+              type="text"
+              nameInput="denuncia"
+              required
+            />
+          </div>
+          <input
+            {...register('presencial', {
+              required: { value: true, message: 'This field is required' }
+            })}
+            type="checkbox"
+            name="presencial"
+            value={true}
+          />
+        </section>
+        <div className={styles.btnGroup}>
+          <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
+          <Button clickAction={() => reset()} text="Reset" />
+          <Button text="Cancel" clickAction={() => history.goBack()} />
+        </div>
       </form>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
     </div>

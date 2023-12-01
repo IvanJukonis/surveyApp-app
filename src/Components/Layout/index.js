@@ -62,7 +62,9 @@ function Layout() {
             </React.Suspense>
           </div>
         </div>
-        <Footer />
+        <footer>
+          <Footer />
+        </footer>
       </div>
     </Router>
   );

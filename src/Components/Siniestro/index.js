@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getAllSiniestros, deleteSiniestro } from 'redux/siniestro/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
+import styles from './Siniestro.module.css';
 
 function Siniestro() {
   const dispatch = useDispatch();
@@ -44,8 +45,8 @@ function Siniestro() {
   }, []);
 
   return (
-    <section>
-      <div>
+    <section className={styles.container}>
+      <div className={styles.btnAdd}>
         <AddButton entity="siniestro" createMode={createMode} />
       </div>
       {isPending ? (

@@ -1,9 +1,12 @@
 .container {
-  flex: 1;
   display: flex;
-  width: 50%;
-  margin: 0 auto;
+  width: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.btnAdd {
+  display: flex;
+  align-self: baseline;
 }

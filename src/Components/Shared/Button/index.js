@@ -3,7 +3,7 @@ import styles from './button.module.css';
 
 function Button({ clickAction, text, disabled = false }) {
   return (
-    <div>
+    <div className={styles.btnContainer}>
       <button
         type={text.toLowerCase() === 'reset' ? 'button' : 'submit'}
         className={text.toLowerCase() === 'cancel' ? styles.btnCancel : styles.btnAccept}

@@ -11,8 +11,8 @@
 }
 
 .container {
-  width: 80%;
-  position: relative;
+  width: 100%;
+  display: flex;
   margin: 0 auto;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .rowBackground1 {
-  background-color: #fafafae3;
+  background-color: #FAFAFA;
   color: #3C3C3C;
   font-weight: bold;
 }
