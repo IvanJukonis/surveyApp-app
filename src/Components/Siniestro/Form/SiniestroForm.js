@@ -14,6 +14,8 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
+import DateInput from 'Components/Shared/Inputs/DateInput';
 
 const SiniestrosForm = () => {
   const dispatch = useDispatch();
@@ -193,7 +195,6 @@ const SiniestrosForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     setSiniestro(data);
     setModalAddConfirmOpen(true);
   };
@@ -226,14 +227,16 @@ const SiniestrosForm = () => {
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Editar Siniestro' : 'Agregar Siniestro'}</h3>
+      <div className={styles.titleContainer}>
+        <h3 className={styles.title}>{id ? 'Editar Siniestro' : 'Agregar Siniestro'}</h3>
+      </div>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
           <div className={styles.inputContainer}>
             <Inputs
               error={errors.numSiniestro?.message}
               register={register}
-              nameTitle="NumSiniestro"
+              nameTitle="N° Siniestro"
               type="number"
               nameInput="numSiniestro"
             />
@@ -242,7 +245,7 @@ const SiniestrosForm = () => {
             <Inputs
               error={errors.numPoliza?.message}
               register={register}
-              nameTitle="NumPoliza"
+              nameTitle="N° Poliza"
               type="number"
               nameInput="numPoliza"
               required
@@ -252,37 +255,37 @@ const SiniestrosForm = () => {
             <Inputs
               error={errors.numInforme?.message}
               register={register}
-              nameTitle="NumInforme"
+              nameTitle="N° Informe"
               type="number"
               nameInput="numInforme"
               required
             />
           </div>
           <div className={styles.inputContainer}>
-            <Inputs
+            <DateInput
               error={errors.fechaSiniestro?.message}
               register={register}
-              nameTitle="FechaSiniestro"
+              nameTitle="Fecha Siniestro"
               type="date"
               nameInput="fechaSiniestro"
               required
             />
           </div>
           <div className={styles.inputContainer}>
-            <Inputs
+            <DateInput
               error={errors.fechaDenuncia?.message}
               register={register}
-              nameTitle="FechaDenuncia"
+              nameTitle="Fecha Denuncia"
               type="date"
               nameInput="fechaDenuncia"
               required
             />
           </div>
           <div className={styles.inputContainer}>
-            <Inputs
+            <DateInput
               error={errors.fechaVencimiento?.message}
               register={register}
-              nameTitle="FechaVencimiento"
+              nameTitle="Fecha Vencimiento"
               type="date"
               nameInput="fechaVencimiento"
               required
@@ -290,20 +293,20 @@ const SiniestrosForm = () => {
           </div>
 
           <div className={styles.inputContainer}>
-            <Inputs
+            <DateInput
               error={errors.fechaAsignacion?.message}
               register={register}
-              nameTitle="FechaAsignacion"
+              nameTitle="Fecha Asignacion"
               type="date"
               nameInput="fechaAsignacion"
               required
             />
           </div>
           <div className={styles.inputContainer}>
-            <Inputs
+            <DateInput
               error={errors.hrSiniestro?.message}
               register={register}
-              nameTitle="HrSiniestro"
+              nameTitle="Hora Siniestro"
               type="date"
               nameInput="hrSiniestro"
               required
@@ -322,7 +325,7 @@ const SiniestrosForm = () => {
           <div className={styles.inputContainer}>
             <OptionInput
               data={ciaArray}
-              dataLabel="Cia"
+              dataLabel="CIA"
               name="cia"
               register={register}
               error={errors.cia?.message}
@@ -348,14 +351,16 @@ const SiniestrosForm = () => {
               required
             />
           </div>
-          <input
-            {...register('presencial', {
-              required: { value: true, message: 'This field is required' }
-            })}
-            type="checkbox"
-            name="presencial"
-            value={true}
-          />
+          <div className={styles.inputContainer}>
+            <Checkbox
+              error={errors.presencial?.message}
+              register={register}
+              nameTitle="Presencial"
+              type="checkbox"
+              nameInput="presencial"
+              required
+            />
+          </div>
         </section>
         <div className={styles.btnGroup}>
           <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />

@@ -1,18 +1,20 @@
-.optionInput {
-  width: 150px;
-  height: 29px;
+.normalInput {
   border: 1px solid;
+  height: 25px;
   border-radius: 4px;
-  font-size: 15px;
 }
 
-.containerInput {
+.nameLabel {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   font-size: 15px;
-}
-.containerInput label {
+  margin-right: 20px;
   margin-bottom: 10px;
+}
+
+.normalInput {
+  width: 20px;
+  margin-left: 10px;
 }
 
 .error {
@@ -22,12 +24,6 @@
   font-size: 12px;
   width: 255px;
   height: 30px;
-  text-align: left;
-}
-
-.spaceErrorMsg {
-  margin-top: 0;
-  height: 30px;
 }
 
 .errorInput {
@@ -35,7 +31,7 @@
   margin-top: 0;
 }
 
-.btnGroup {
-  display: flex;
-  flex-direction: column;
+.spaceErrorMsg{
+  margin-top: 0;
+  height: 30px;
 }

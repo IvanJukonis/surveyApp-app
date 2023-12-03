@@ -15,14 +15,12 @@ import {
 
 export const getAllSiniestros = async (dispatch) => {
   try {
-    console.log('hola');
     dispatch(getSiniestrosPending(true));
     const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro`);
     const data = await reponse.json();
     const siniestrosList = data.data;
     dispatch(getSiniestrosPending(false));
     dispatch(getSiniestrosSuccess(siniestrosList));
-    console.log(data);
   } catch (error) {
     dispatch(getSiniestrosPending(false));
     dispatch(getSiniestrosError(true));
