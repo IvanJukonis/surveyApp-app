@@ -16,6 +16,7 @@ import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 
 const SiniestrosForm = () => {
   const dispatch = useDispatch();
@@ -116,7 +117,7 @@ const SiniestrosForm = () => {
 
     instrucciones: Joi.string()
       .min(3)
-      .max(50)
+      .max(500)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
         'string.base': 'El campo "Instrucciones" debe ser una cadena de texto',
@@ -129,7 +130,7 @@ const SiniestrosForm = () => {
 
     denuncia: Joi.string()
       .min(3)
-      .max(50)
+      .max(500)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
         'string.base': 'El campo "Denuncia" debe ser una cadena de texto',
@@ -341,17 +342,18 @@ const SiniestrosForm = () => {
             />
           </div>
           <div className={styles.inputContainer}>
-            <Inputs
+            <TextArea
               error={errors.instrucciones?.message}
               register={register}
               nameTitle="Instrucciones"
               type="text"
-              nameInput="medium"
+              nameInput="instrucciones"
+              styleInput="medium"
               required
             />
           </div>
           <div className={styles.inputContainer}>
-            <Inputs
+            <TextArea
               error={errors.denuncia?.message}
               register={register}
               nameTitle="Denuncia"

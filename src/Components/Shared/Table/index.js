@@ -94,7 +94,7 @@ const TableComponent = ({
           <thead>
             <tr className={styles.tableContent}>
               {columnTitleArray.map((column, index) => (
-                <th key={column[index]}>{column}</th>
+                <th key={index}>{column}</th>
               ))}
               <th>Edit</th>
               <th>Delete</th>
