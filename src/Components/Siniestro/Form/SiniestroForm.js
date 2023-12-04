@@ -141,15 +141,23 @@ const SiniestrosForm = () => {
       .required()
   });
 
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const siniestroUpdate = {
     numSiniestro: data.numSiniestro,
     numPoliza: data.numPoliza,
     numInforme: data.numInforme,
-    fechaSiniestro: data.fechaSiniestro,
-    fechaDenuncia: data.fechaDenuncia,
-    fechaVencimiento: data.fechaVencimiento,
-    fechaAsignacion: data.fechaAsignacion,
-    hrSiniestro: data.hrSiniestro,
+    fechaSiniestro: formatDate(data.fechaSiniestro),
+    fechaDenuncia: formatDate(data.fechaDenuncia),
+    fechaVencimiento: formatDate(data.fechaVencimiento),
+    fechaAsignacion: formatDate(data.fechaAsignacion),
+    hrSiniestro: formatDate(data.hrSiniestro),
     cia: data.cia,
     tipo: data.tipo,
     presencial: data.presencial,
@@ -181,7 +189,6 @@ const SiniestrosForm = () => {
       return setToastErroOpen(true);
     } else {
       const editSiniestroResponse = await updateSiniestro(dispatch, id, siniestro);
-      console.log(editSiniestroResponse);
       if (editSiniestroResponse.type === 'UPDATE_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -189,7 +196,6 @@ const SiniestrosForm = () => {
           history.goBack();
         }, 1000);
       }
-      console.log('aca');
       return setToastErroOpen(true);
     }
   };
