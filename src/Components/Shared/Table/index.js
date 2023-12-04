@@ -15,7 +15,7 @@ const TableComponent = ({
 }) => {
   const fieldValue = valueField;
   const [successModal, setModalSuccess] = useState(false);
-
+  const [filterValue, setFilterValue] = useState('');
   const [modalConfirm, setModalConfirm] = useState(false);
   const [idDelete, setIdDelete] = useState('');
 
@@ -85,6 +85,13 @@ const TableComponent = ({
 
   return (
     <section className={styles.container}>
+      <input
+        type="text"
+        className={styles.filter}
+        placeholder="Filter..."
+        value={filterValue}
+        onChange={(e) => setFilterValue(e.target.value)}
+      />
       {data?.length === 0 ? (
         <div className={styles.noneTrainer}>
           <h3>The list is empty</h3>
@@ -101,37 +108,43 @@ const TableComponent = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => {
-              const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+            {data
+              .filter((row) =>
+                columns.some((column) =>
+                  String(row[column]).toLowerCase().includes(filterValue.toLowerCase())
+                )
+              )
+              .map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
 
-              return (
-                <tr className={rowClass} key={index}>
-                  {columns.map((column, columnIndex) => (
-                    <td key={columnIndex}>
-                      {column.startsWith('fecha') ? (
-                        formatDate(row[column])
-                      ) : (
-                        <>
-                          {ifArray(row[column])}
-                          {ifObject(row[column])}
-                          {ifNotArrayNotObject(row, column)}
-                          {ifNotExist(row[column])}
-                        </>
-                      )}
+                return (
+                  <tr className={rowClass} key={index}>
+                    {columns.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column.startsWith('fecha') ? (
+                          formatDate(row[column])
+                        ) : (
+                          <>
+                            {ifArray(row[column])}
+                            {ifObject(row[column])}
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                    <td>
+                      <ButtonForm nameImg="pencil-edit.svg" onAction={() => handleClick(row)} />
                     </td>
-                  ))}
-                  <td>
-                    <ButtonForm nameImg="pencil-edit.svg" onAction={() => handleClick(row)} />
-                  </td>
-                  <td>
-                    <ButtonForm
-                      nameImg="trash-delete.svg"
-                      onAction={() => onConfirmOpen(row._id)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
+                    <td>
+                      <ButtonForm
+                        nameImg="trash-delete.svg"
+                        onAction={() => onConfirmOpen(row._id)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       )}
