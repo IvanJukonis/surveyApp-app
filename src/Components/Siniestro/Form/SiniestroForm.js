@@ -9,7 +9,7 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateSiniestro, createSiniestro } from 'redux/siniestro/thunks';
+import { updateSiniestro, postSiniestro } from 'redux/siniestro/thunks';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -179,8 +179,8 @@ const SiniestrosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addSiniestroResponse = await createSiniestro(dispatch, siniestro);
-      if (addSiniestroResponse.type === 'ADD_SINIESTRO_SUCCESS') {
+      const addSiniestroResponse = await postSiniestro(dispatch, siniestro);
+      if (addSiniestroResponse.type === 'POST_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {

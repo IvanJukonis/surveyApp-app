@@ -2,9 +2,9 @@ import {
   GET_SINIESTRO_PENDING,
   GET_SINIESTRO_SUCCESS,
   GET_SINIESTRO_ERROR,
-  ADD_SINIESTRO_PENDING,
-  ADD_SINIESTRO_SUCCESS,
-  ADD_SINIESTRO_ERROR,
+  POST_SINIESTRO_PENDING,
+  POST_SINIESTRO_SUCCESS,
+  POST_SINIESTRO_ERROR,
   UPDATE_SINIESTRO_PENDING,
   UPDATE_SINIESTRO_SUCCESS,
   UPDATE_SINIESTRO_ERROR,
@@ -40,21 +40,21 @@ const siniestroReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case ADD_SINIESTRO_PENDING: {
+    case POST_SINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case ADD_SINIESTRO_SUCCESS: {
+    case POST_SINIESTRO_SUCCESS: {
       return {
         ...state,
         list: [...state.list, action.payload]
       };
     }
 
-    case ADD_SINIESTRO_ERROR: {
+    case POST_SINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload

@@ -1,29 +1,29 @@
 import {
-  getSiniestrosPending,
-  getSiniestrosSuccess,
-  getSiniestrosError,
+  getSiniestroPending,
+  getSiniestroSuccess,
+  getSiniestroError,
   deleteSiniestroPending,
   deleteSiniestroSuccess,
   deleteSiniestroError,
-  addSiniestroPending,
-  addSiniestroSuccess,
-  addSiniestroError,
+  postSiniestroPending,
+  postSiniestroSuccess,
+  postSiniestroError,
   updateSiniestroPending,
   updateSiniestroSuccess,
   updateSiniestroError
 } from './actions';
 
-export const getAllSiniestros = async (dispatch) => {
+export const getSiniestro = async (dispatch) => {
   try {
-    dispatch(getSiniestrosPending(true));
+    dispatch(getSiniestroPending(true));
     const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro`);
     const data = await reponse.json();
     const siniestrosList = data.data;
-    dispatch(getSiniestrosPending(false));
-    dispatch(getSiniestrosSuccess(siniestrosList));
+    dispatch(getSiniestroPending(false));
+    dispatch(getSiniestroSuccess(siniestrosList));
   } catch (error) {
-    dispatch(getSiniestrosPending(false));
-    dispatch(getSiniestrosError(true));
+    dispatch(getSiniestroPending(false));
+    dispatch(getSiniestroError(true));
   }
 };
 
@@ -47,9 +47,9 @@ export const deleteSiniestro = (siniestroID) => {
   };
 };
 
-export const createSiniestro = async (dispatch, newSiniestro) => {
+export const postSiniestro = async (dispatch, newSiniestro) => {
   try {
-    dispatch(addSiniestroPending(true));
+    dispatch(postSiniestroPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro`, {
       method: 'POST',
       headers: {
@@ -60,15 +60,15 @@ export const createSiniestro = async (dispatch, newSiniestro) => {
     if (response.ok) {
       const data = await response.json();
       const newData = data;
-      dispatch(addSiniestroPending(false));
-      return dispatch(addSiniestroSuccess(newData.data));
+      dispatch(postSiniestroPending(false));
+      return dispatch(postSiniestroSuccess(newData.data));
     } else {
-      dispatch(addSiniestroPending(false));
-      return dispatch(addSiniestroError(true));
+      dispatch(postSiniestroPending(false));
+      return dispatch(postSiniestroError(true));
     }
   } catch (error) {
-    dispatch(addSiniestroPending(false));
-    return dispatch(addSiniestroError(true));
+    dispatch(postSiniestroPending(false));
+    return dispatch(postSiniestroError(true));
   }
 };
 

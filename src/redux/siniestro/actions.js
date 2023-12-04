@@ -5,29 +5,29 @@ import {
   DELETE_SINIESTRO_PENDING,
   DELETE_SINIESTRO_SUCCESS,
   DELETE_SINIESTRO_ERROR,
-  ADD_SINIESTRO_PENDING,
-  ADD_SINIESTRO_SUCCESS,
-  ADD_SINIESTRO_ERROR,
+  POST_SINIESTRO_PENDING,
+  POST_SINIESTRO_SUCCESS,
+  POST_SINIESTRO_ERROR,
   UPDATE_SINIESTRO_PENDING,
   UPDATE_SINIESTRO_SUCCESS,
   UPDATE_SINIESTRO_ERROR
 } from './constants';
 
-export const getSiniestrosPending = (pending) => {
+export const getSiniestroPending = (pending) => {
   return {
     type: GET_SINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const getSiniestrosSuccess = (list) => {
+export const getSiniestroSuccess = (list) => {
   return {
     type: GET_SINIESTRO_SUCCESS,
     payload: list
   };
 };
 
-export const getSiniestrosError = (error) => {
+export const getSiniestroError = (error) => {
   return {
     type: GET_SINIESTRO_ERROR,
     payload: error
@@ -55,23 +55,23 @@ export const deleteSiniestroError = (error) => {
   };
 };
 
-export const addSiniestroPending = (pending) => {
+export const postSiniestroPending = (pending) => {
   return {
-    type: ADD_SINIESTRO_PENDING,
+    type: POST_SINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const addSiniestroSuccess = (siniestro) => {
+export const postSiniestroSuccess = (siniestro) => {
   return {
-    type: ADD_SINIESTRO_SUCCESS,
+    type: POST_SINIESTRO_SUCCESS,
     payload: siniestro
   };
 };
 
-export const addSiniestroError = (error) => {
+export const postSiniestroError = (error) => {
   return {
-    type: ADD_SINIESTRO_ERROR,
+    type: POST_SINIESTRO_ERROR,
     payload: error
   };
 };
