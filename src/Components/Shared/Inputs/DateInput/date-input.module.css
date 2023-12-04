@@ -6,7 +6,9 @@
 
 .nameLabel {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-size: 15px;
   margin-right: 20px;
   margin-bottom: 10px;
@@ -15,7 +17,6 @@
 .normalInput {
   width: 100px;
   height: 29px;
-  margin-left: 10px;
 }
 
 .error {
@@ -23,8 +24,8 @@
   margin-left: 5px;
   color: rgb(240, 8, 8);
   font-size: 12px;
-  width: 255px;
-  height: 30px;
+  width: 100px;
+  height: 29px;
 }
 
 .errorInput {

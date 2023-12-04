@@ -239,6 +239,7 @@ const SiniestrosForm = () => {
               nameTitle="N° Siniestro"
               type="number"
               nameInput="numSiniestro"
+              styleInput="numberInput"
             />
           </div>
           <div className={styles.inputContainer}>
@@ -248,6 +249,7 @@ const SiniestrosForm = () => {
               nameTitle="N° Poliza"
               type="number"
               nameInput="numPoliza"
+              styleInput="numberInput"
               required
             />
           </div>
@@ -258,6 +260,7 @@ const SiniestrosForm = () => {
               nameTitle="N° Informe"
               type="number"
               nameInput="numInforme"
+              styleInput="numberInput"
               required
             />
           </div>
@@ -337,7 +340,7 @@ const SiniestrosForm = () => {
               register={register}
               nameTitle="Instrucciones"
               type="text"
-              nameInput="instrucciones"
+              nameInput="medium"
               required
             />
           </div>
@@ -348,6 +351,7 @@ const SiniestrosForm = () => {
               nameTitle="Denuncia"
               type="text"
               nameInput="denuncia"
+              styleInput="big"
               required
             />
           </div>

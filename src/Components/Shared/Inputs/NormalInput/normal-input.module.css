@@ -1,9 +1,31 @@
+.big {
+  width: 255px;
+  border: 1px solid;
+  height: 400px;
+  border-radius: 4px;
+}
+
+.medium {
+  width: 255px;
+  border: 1px solid;
+  height: 200px;
+  border-radius: 4px;
+}
+
+.numberInput {
+  width: 100px;
+  border: 1px solid;
+  height: 25px;
+  border-radius: 4px;
+}
+
 .normalInput {
   width: 255px;
   border: 1px solid;
   height: 25px;
   border-radius: 4px;
 }
+
 .nameLabel label {
   display: flex;
   flex-direction: column;
@@ -11,6 +33,7 @@
   margin-right: 20px;
   margin-bottom: 10px;
 }
+
 .error {
   margin-top: 3px;
   margin-left: 5px;
@@ -19,11 +42,14 @@
   width: 255px;
   height: 30px;
 }
+
 .errorInput {
   border: 2px solid red;
   margin-top: 0;
 }
+
 .spaceErrorMsg{
   margin-top: 0;
   height: 30px;
 }
+

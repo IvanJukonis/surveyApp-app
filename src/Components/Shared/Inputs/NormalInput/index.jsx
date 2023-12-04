@@ -1,13 +1,13 @@
 import React from 'react';
-import styles from './disable-input.module.css';
+import styles from './normal-input.module.css';
 
-const Inputs = ({ register, error, type, isDisabled, nameInput, nameTitle }) => {
+const Inputs = ({ register, error, type, isDisabled, nameInput, nameTitle, styleInput }) => {
   return (
     <div className={styles.nameLabel}>
       <label>{nameTitle}</label>
       <input
         {...register(nameInput, { required: { value: true, message: 'This field is required' } })}
-        className={error ? `${styles.errorInput} ${styles.normalInput}` : styles.normalInput}
+        className={error ? `${styles.errorInput} ${styles[styleInput]}` : `${styles[styleInput]}`}
         type={type}
         disabled={isDisabled}
         name={nameInput}

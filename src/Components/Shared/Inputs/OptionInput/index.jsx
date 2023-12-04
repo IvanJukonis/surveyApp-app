@@ -24,11 +24,7 @@ const SelectInput = ({ data, dataLabel, name, register, error }) => {
     <div className={styles.containerInput}>
       <label htmlFor="selectInput">{dataLabel}:</label>
       <select
-        className={
-          error
-            ? `${styles.errorInput} ${styles.optionInput}`
-            : `${styles.optionInput} ${styles.styleInput}`
-        }
+        className={error ? `${styles.errorInput} ${styles.optionInput}` : styles.optionInput}
         name={name}
         {...register(name, { required: { value: true, message: 'This field is required' } })}
       >
