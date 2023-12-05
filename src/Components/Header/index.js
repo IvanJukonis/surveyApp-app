@@ -19,23 +19,8 @@ function Header() {
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="relevador/menu">
-              Menu
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
             <NavLink className={styles.textList} to="relevador/siniestros">
               Siniestros
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="relevador/manual">
-              Manual
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="relevador/perfil">
-              Perfil
             </NavLink>
           </div>
         </div>
@@ -44,36 +29,6 @@ function Header() {
           <div className={styles.homeButtons}>
             <NavLink className={styles.textList} to="/home">
               Cerrar Sesión
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="controlador/relevamientos">
-              Relevamientos
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="controlador/fraudes">
-              Fraudes
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="controlador/involucrados">
-              Involucrados
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="controlador/vehiculos">
-              Vehiculos
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="controlador/lugardeocurrencia">
-              Lugar
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="controlador/relevadores">
-              Relevadores
             </NavLink>
           </div>
           <div className={styles.homeButtons}>
@@ -87,36 +42,6 @@ function Header() {
           <div className={styles.homeButtons}>
             <NavLink className={styles.textList} to="/home">
               Cerrar Sesión
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="administrativo/facturacion">
-              Facturacion
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="administrativo/avisos">
-              Avisos
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="administrativo/variables">
-              Variables
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="administrativo/recursoshumanos">
-              Recursos Humanos
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="administrativo/contabilidad">
-              Contabilidad
-            </NavLink>
-          </div>
-          <div className={styles.homeButtons}>
-            <NavLink className={styles.textList} to="administrativo/manuales">
-              Manuales
             </NavLink>
           </div>
           <div className={styles.homeButtons}>

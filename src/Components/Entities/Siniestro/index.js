@@ -40,15 +40,21 @@ function Siniestro() {
     history.push('/relevador/siniestros/form/', { params: { mode: 'create' } });
   };
 
+  const isAddButtonVisible = ['/relevador/siniestros', '/controlador/siniestros'].includes(
+    location.pathname
+  );
+
   useEffect(() => {
     getSiniestro(dispatch);
   }, []);
 
   return (
     <section className={styles.container}>
-      <div className={styles.btnAdd}>
-        <AddButton entity="siniestro" createMode={createMode} />
-      </div>
+      {!isAddButtonVisible && (
+        <div className={styles.btnAdd}>
+          <AddButton entity="siniestro" createMode={createMode} />
+        </div>
+      )}
       {isPending ? (
         <Loader />
       ) : (
