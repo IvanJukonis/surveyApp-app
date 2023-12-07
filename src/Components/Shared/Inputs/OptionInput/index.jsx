@@ -3,8 +3,8 @@ import styles from './option-input.module.css';
 
 const SelectInput = ({ data, dataLabel, name, register, error }) => {
   const ifFirstName = (item) => {
-    if (item.firstName && item.lastName) {
-      return `${item.firstName} ${item.lastName}`;
+    if (item.nombre && item.apellido) {
+      return `${item.nombre} ${item.apellido}`;
     }
   };
 

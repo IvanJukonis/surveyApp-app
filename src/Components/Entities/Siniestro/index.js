@@ -32,17 +32,36 @@ function Siniestro() {
     'tipo'
   ];
 
+  const getPathPrefix = () => {
+    if (relevador) {
+      return '/relevador';
+    }
+    if (controlador) {
+      return '/controlador';
+    }
+    return '/administrativo';
+  };
+
   const handleEditClick = (item) => {
-    history.push(`/relevador/siniestros/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/form/${item._id}`, {
+      params: { ...item, mode: 'edit' }
+    });
   };
 
   const createMode = () => {
-    history.push('/relevador/siniestros/form/', { params: { mode: 'create' } });
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/form/`, { params: { mode: 'create' } });
   };
 
-  const isAddButtonVisible = ['/relevador/siniestros', '/controlador/siniestros'].includes(
+  const relevador = ['/relevador/siniestros'].includes(location.pathname);
+  const controlador = ['/controlador/siniestros'].includes(location.pathname);
+
+  const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
     location.pathname
   );
+
+  const deleteButton = actualUser ? undefined : deleteSiniestro;
 
   useEffect(() => {
     getSiniestro(dispatch);
@@ -50,7 +69,7 @@ function Siniestro() {
 
   return (
     <section className={styles.container}>
-      {!isAddButtonVisible && (
+      {!actualUser && (
         <div className={styles.btnAdd}>
           <AddButton entity="siniestro" createMode={createMode} />
         </div>
@@ -63,11 +82,11 @@ function Siniestro() {
           data={siniestro}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={deleteSiniestro}
+          deleteButton={deleteButton}
         />
       )}
       {toastErroOpen && (
-        <ToastError setToastErroOpen={setToastErroOpen} message="Error in database" />
+        <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
     </section>
   );

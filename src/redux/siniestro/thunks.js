@@ -21,6 +21,7 @@ export const getSiniestro = async (dispatch) => {
     const siniestrosList = data.data;
     dispatch(getSiniestroPending(false));
     dispatch(getSiniestroSuccess(siniestrosList));
+    dispatch(getSiniestroError(false));
   } catch (error) {
     dispatch(getSiniestroPending(false));
     dispatch(getSiniestroError(true));

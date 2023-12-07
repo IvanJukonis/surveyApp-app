@@ -8,7 +8,12 @@ const Home = React.lazy(() => import('../Home/index'));
 
 //Controller
 const SiniestroController = React.lazy(() => import('../Users/Relevador/Siniestros'));
-const SiniestrosForm = React.lazy(() => import('../Entities/Siniestro'));
+const SiniestrosAdmForm = React.lazy(() =>
+  import('../Entities/Siniestro/FormAdministrativo/SiniestroForm')
+);
+const SiniestrosRelForm = React.lazy(() =>
+  import('../Entities/Siniestro/FormRelevador/SiniestroForm')
+);
 
 function Layout() {
   return (
@@ -22,9 +27,9 @@ function Layout() {
                 <Route exact path="/controlador/siniestros" component={SiniestroController} />
                 <Route exact path="/relevador/siniestros" component={SiniestroController} />
                 <Route exact path="/administrativo/siniestros" component={SiniestroController} />
-                <Route path="/controlador/siniestros/form/:id?" component={SiniestrosForm} />
-                <Route path="/relevador/siniestros/form/:id?" component={SiniestrosForm} />
-                <Route path="/administrativo/siniestros/form/:id?" component={SiniestrosForm} />
+                <Route path="/controlador/siniestros/form/:id?" component={SiniestrosRelForm} />
+                <Route path="/relevador/siniestros/form/:id?" component={SiniestrosRelForm} />
+                <Route path="/administrativo/siniestros/form/:id?" component={SiniestrosAdmForm} />
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/">
                   <Redirect to="/home" />

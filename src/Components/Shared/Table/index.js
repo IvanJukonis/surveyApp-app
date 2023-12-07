@@ -22,8 +22,10 @@ const TableComponent = ({
   const dispatch = useDispatch();
 
   const onConfirmOpen = (id) => {
-    setModalConfirm(true);
-    setIdDelete(id);
+    if (deleteButton != undefined) {
+      setModalConfirm(true);
+      setIdDelete(id);
+    }
   };
 
   const onConfirm = () => {
