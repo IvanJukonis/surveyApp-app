@@ -9,7 +9,7 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateControlador, postControlador, getControlador } from 'redux/controlador/thunks';
+import { updateRelevador, postRelevador, getRelevador } from 'redux/relevador/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -17,15 +17,15 @@ import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 
-const ControladoresForm = () => {
+const RelevadoresForm = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [controlador, setControlador] = useState({});
-  const controladores = useSelector((state) => state.controlador.list);
-  const updateItem = controladores.find((item) => item._id === id);
+  const [relevador, setRelevador] = useState({});
+  const relevadores = useSelector((state) => state.relevador.list);
+  const updateItem = relevadores.find((item) => item._id === id);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -113,9 +113,9 @@ const ControladoresForm = () => {
       })
       .required(),
 
-    telefono: Joi.string()
-      .min(9)
-      .max(12)
+    telefono: Joi.number()
+      .min(99999999)
+      .max(999999999999)
       .messages({
         'string.base': 'El campo "Telefono" debe ser una cadena numerica',
         'string.empty': 'El campo "Telefono" es un campo requerido',
@@ -142,13 +142,13 @@ const ControladoresForm = () => {
       .required(),
 
     salario: Joi.number()
-      .min(3)
-      .max(8)
+      .min(9999)
+      .max(999999999)
       .messages({
         'string.base': 'El campo "Salario" debe ser una cadena numerica',
         'string.empty': 'El campo "Salario" es un campo requerido',
-        'string.min': 'El campo "Salario" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Salario" debe tener como máximo 8 caracteres'
+        'string.min': 'El campo "Salario" debe tener al menos 4 caracteres',
+        'string.max': 'El campo "Salario" debe tener como máximo 9 caracteres'
       })
       .required(),
 
@@ -160,13 +160,13 @@ const ControladoresForm = () => {
       .required(),
 
     numeroSeguridadSocial: Joi.number()
-      .min(3)
-      .max(8)
+      .min(999)
+      .max(999999999999)
       .messages({
         'string.base': 'El campo "Numero de Seguridad Social" debe ser una cadena numerica',
         'string.empty': 'El campo "Numero de Seguridad Social" es un campo requerido',
         'string.min': 'El campo "Numero de Seguridad Social" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Numero de Seguridad Social" debe tener como máximo 8 caracteres'
+        'string.max': 'El campo "Numero de Seguridad Social" debe tener como máximo 12 caracteres'
       })
       .required(),
 
@@ -183,13 +183,13 @@ const ControladoresForm = () => {
     }),
 
     cantidadHijos: Joi.number()
-      .min(3)
-      .max(8)
+      .min(0)
+      .max(20)
       .messages({
         'string.base': 'El campo "Cantidad Hijos" debe ser una cadena numerica',
         'string.empty': 'El campo "Cantidad Hijos" es un campo requerido',
-        'string.min': 'El campo "Cantidad Hijos" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Cantidad Hijos" debe tener como máximo 8 caracteres'
+        'string.min': 'El campo "Cantidad Hijos" debe tener al menos 0 caracteres',
+        'string.max': 'El campo "Cantidad Hijos" debe tener como máximo 2 caracteres'
       })
       .required(),
 
@@ -205,13 +205,13 @@ const ControladoresForm = () => {
       .required(),
 
     cuentaBancaria: Joi.number()
-      .min(3)
-      .max(15)
+      .min(9999)
+      .max(999999999999)
       .messages({
         'string.base': 'El campo "Cuenta Bancaria" debe ser una cadena numerica',
         'string.empty': 'El campo "Cuenta Bancaria" es un campo requerido',
-        'string.min': 'El campo "Cuenta Bancaria" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Cuenta Bancaria" debe tener como máximo 15 caracteres'
+        'string.min': 'El campo "Cuenta Bancaria" debe tener al menos 4 caracteres',
+        'string.max': 'El campo "Cuenta Bancaria" debe tener como máximo 12 caracteres'
       })
       .required(),
 
@@ -248,7 +248,7 @@ const ControladoresForm = () => {
 
   console.log(updateItem);
 
-  const controladorUpdate = {
+  const relevadorUpdate = {
     tipo: data.tipo,
     nombre: data.nombre,
     apellido: data.apellido,
@@ -283,13 +283,13 @@ const ControladoresForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...controladorUpdate }
+    defaultValues: { ...relevadorUpdate }
   });
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addControladorResponse = await postControlador(dispatch, controlador);
-      if (addControladorResponse.type === 'POST_CONTROLADOR_SUCCESS') {
+      const addRelevadorResponse = await postRelevador(dispatch, relevador);
+      if (addRelevadorResponse.type === 'POST_RELEVADOR_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -298,8 +298,8 @@ const ControladoresForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editControladorResponse = await updateControlador(dispatch, id, controlador);
-      if (editControladorResponse.type === 'UPDATE_CONTROLADOR_SUCCESS') {
+      const editRelevadorResponse = await updateRelevador(dispatch, id, relevador);
+      if (editRelevadorResponse.type === 'UPDATE_RELEVADOR_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -311,11 +311,11 @@ const ControladoresForm = () => {
   };
 
   const onSubmit = async (data) => {
-    setControlador(data);
+    setRelevador(data);
     setModalAddConfirmOpen(true);
   };
 
-  const tipoArray = ['Relevador', 'Controlador', 'Administrativo', 'Consultor'];
+  const tipoArray = ['Relevador', 'Relevador', 'Administrativo', 'Consultor'];
   const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
   const oficinaArray = ['Rosario', 'Vgg', 'San Lorenzo'];
   const departamentoArray = ['Administracion', 'Produccion', 'Marketing', 'RRHH'];
@@ -323,7 +323,7 @@ const ControladoresForm = () => {
   const civilArray = ['Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a'];
 
   useEffect(() => {
-    getControlador(dispatch);
+    getRelevador(dispatch);
   }, []);
 
   return (
@@ -337,21 +337,21 @@ const ControladoresForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Esta seguro que quiere actualizar este controlador?'
-                  : 'Esta seguro que quiere añadir este controlador?'
+                  ? 'Esta seguro que quiere actualizar este relevador?'
+                  : 'Esta seguro que quiere añadir este relevador?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Controlador edited' : 'Controlador added'}
+              message={id ? 'Relevador edited' : 'Relevador added'}
             />
           )}
         </div>
       }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Editar Controlador' : 'Agregar Controlador'}</h3>
+        <h3 className={styles.title}>{id ? 'Editar Relevador' : 'Agregar Relevador'}</h3>
       </div>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
@@ -401,12 +401,23 @@ const ControladoresForm = () => {
           </div>
           <div className={styles.secondGroup}>
             <div className={styles.inputContainer}>
+              <Inputs
+                error={errors.dni?.message}
+                register={register}
+                nameTitle="Dni"
+                type="text"
+                nameInput="dni"
+                styleInput="normalInput"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
               <DateInput
                 error={errors.fechaNacimiento?.message}
                 register={register}
                 nameTitle="Fecha Nacimiento"
                 type="date"
-                nameInput="fechaNacimientor"
+                nameInput="fechaNacimiento"
                 required
               />
             </div>
@@ -620,4 +631,4 @@ const ControladoresForm = () => {
   );
 };
 
-export default ControladoresForm;
+export default RelevadoresForm;

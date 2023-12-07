@@ -7,8 +7,8 @@ import Footer from '../Footer/index';
 const Home = React.lazy(() => import('../Home/index'));
 
 const SiniestroController = React.lazy(() => import('../Users/Relevador/Siniestros'));
-const RelevadorController = React.lazy(() => import('../Users/Administrativo/Controladores'));
-const ControladorController = React.lazy(() => import('../Users/Administrativo/Relevadores'));
+const RelevadorController = React.lazy(() => import('../Users/Administrativo/Relevadores'));
+const ControladorController = React.lazy(() => import('../Users/Administrativo/Controladores'));
 const SiniestrosAdmForm = React.lazy(() =>
   import('../Entities/Siniestro/FormAdministrativo/SiniestroForm')
 );
