@@ -145,7 +145,8 @@ const SiniestrosForm = () => {
     relevador: Joi.alternatives()
       .try(
         Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required()
+        Joi.string().hex().length(24).required(),
+        Joi.string()
       )
       .required()
       .messages({
@@ -157,7 +158,8 @@ const SiniestrosForm = () => {
     controlador: Joi.alternatives()
       .try(
         Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required()
+        Joi.string().hex().length(24).required(),
+        Joi.string()
       )
       .required()
       .messages({
@@ -263,7 +265,8 @@ const SiniestrosForm = () => {
     })
   });
 
-  const controladorInput = controlador.map((controlador) => controlador.firstName.toLowerCase());
+  //const controladorInput = controlador.map((controlador) => controlador.nombre.toLowerCase());
+  //const relevadorInput = relevador.map((relevador) => relevador.nombre.toLowerCase());
 
   const formatDate = (dateString) => {
     const dateObject = new Date(dateString);
@@ -272,6 +275,8 @@ const SiniestrosForm = () => {
     const day = String(dateObject.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+
+  console.log(updateItem);
 
   const siniestroUpdate = {
     numSiniestro: data.numSiniestro,
@@ -287,8 +292,8 @@ const SiniestrosForm = () => {
     presencial: data.presencial,
     instrucciones: data.instrucciones,
     denuncia: data.denuncia,
-    relevador: updateItem?.relevador ? updateItem.relevador.map((item) => item._id) : [],
-    controlador: updateItem?.controlador ? updateItem.controlador.map((item) => item._id) : [],
+    relevador: data.relevador,
+    controlador: data.controlador,
     requerido: data.requerido,
     comisaria: data.comisaria,
     lugar: data.lugar,
@@ -440,7 +445,8 @@ const SiniestrosForm = () => {
                 error={errors.tipo?.message}
               />
             </div>
-
+          </div>
+          <div className={styles.secondGroup}>
             <div className={styles.inputContainer}>
               <OptionInput
                 data={ciaArray}
@@ -452,7 +458,7 @@ const SiniestrosForm = () => {
             </div>
             <div className={styles.inputContainer}>
               <OptionInput
-                data={controladorInput}
+                data={controlador}
                 dataLabel="Controlador"
                 name="controlador"
                 register={register}
@@ -466,6 +472,16 @@ const SiniestrosForm = () => {
                 name="relevador"
                 register={register}
                 error={errors.relevador?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.presencial?.message}
+                register={register}
+                nameTitle="Presencial"
+                type="checkbox"
+                nameInput="presencial"
+                required
               />
             </div>
           </div>
@@ -500,7 +516,6 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
-
             <div className={styles.inputContainer}>
               <DateInput
                 error={errors.fechaAsignacion?.message}
@@ -522,7 +537,7 @@ const SiniestrosForm = () => {
               />
             </div>
           </div>
-          <div className={styles.textAreaGroup}>
+          <div className={styles.thirdGroup}>
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.instrucciones?.message}
@@ -546,19 +561,7 @@ const SiniestrosForm = () => {
               />
             </div>
           </div>
-          <div className={styles.booleanGroup}>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.presencial?.message}
-                register={register}
-                nameTitle="Presencial"
-                type="checkbox"
-                nameInput="presencial"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.booleanGroup}>
+          <div className={styles.fourGroup}>
             <div className={styles.inputContainer}>
               <OptionInput
                 data={requeridoArray}
@@ -574,7 +577,8 @@ const SiniestrosForm = () => {
                 register={register}
                 nameTitle="Comisaria"
                 type="text"
-                nameInput="Comisaria"
+                nameInput="comisaria"
+                styleInput="normalInput"
                 required
               />
             </div>
@@ -585,9 +589,12 @@ const SiniestrosForm = () => {
                 nameTitle="Lugar"
                 type="text"
                 nameInput="lugar"
+                styleInput="normalInput"
                 required
               />
             </div>
+          </div>
+          <div className={styles.fiveGroup}>
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.conclusionDescripcion?.message}
@@ -610,6 +617,8 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
+          </div>
+          <div className={styles.sixGroup}>
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.conclusionDaños?.message}
@@ -621,6 +630,7 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
+
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.conclusionResponsabilidad?.message}
@@ -632,6 +642,8 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
+          </div>
+          <div className={styles.sevenGroup}>
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.conclusionCredibilidad?.message}
@@ -654,6 +666,8 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
+          </div>
+          <div className={styles.eightGroup}>
             <div className={styles.inputContainer}>
               <OptionInput
                 data={estadoArray}
@@ -674,6 +688,8 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
+          </div>
+          <div className={styles.nineGroup}>
             <div className={styles.inputContainer}>
               <DateInput
                 error={errors.fechaFinalizacion?.message}

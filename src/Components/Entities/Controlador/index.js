@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getControlador, deleteControlador } from 'redux/controlador/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
-import styles from './Relevador.module.css';
+import styles from './Controlador.module.css';
 
 function Controlador() {
   const dispatch = useDispatch();

@@ -1,8 +1,9 @@
 .container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   background-color: #c5c5c5c2;
-  width: 80%;
+  width: 60%;
   margin: 30px;
 }
 
@@ -10,8 +11,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
   margin: 10px;
   gap: 10px;
 }
@@ -32,19 +31,67 @@
   flex-direction: row;
 }
 
+.booleanGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.firstGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.secondGroup {
+  display: flex;
+  flex-direction: row;
+}
+
 .dateGroup {
   display: flex;
   flex-direction: row;
 }
 
-.booleanGroup {
+.thirdGroup {
   display: flex;
+  flex-direction: row;
+}
+
+.fourGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.fiveGroup {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.sixGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.sevenGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.eightGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.nineGroup {
+  display: flex;
+  flex-direction: row;
 }
 
 .titleContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   height: 40px;
   background-color: #3C3C3C;
 }

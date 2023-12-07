@@ -49,6 +49,16 @@ function Header() {
               Siniestros
             </NavLink>
           </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="administrativo/relevadores">
+              Relevadores
+            </NavLink>
+          </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="administrativo/controladores">
+              Controladores
+            </NavLink>
+          </div>
         </div>
       ) : location.pathname === '/home' ? (
         <div className={styles.header}>

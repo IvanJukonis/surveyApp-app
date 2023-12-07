@@ -310,9 +310,6 @@ const SiniestrosForm = () => {
     fechaContactoTercero: formatDate(data.fechaContactoTercero)
   };
 
-  //relevador: updateItem?.relevador ? updateItem.relevador.map((item) => item._id) : [],
-  //controlador: updateItem?.controlador ? updateItem.controlador.map((item) => item._id) : [],
-
   const {
     register,
     reset,
@@ -355,14 +352,6 @@ const SiniestrosForm = () => {
 
   const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
   const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
-  const estadoArray = [
-    'Sin asignar',
-    'Asignado',
-    'Activo',
-    'Finalizado',
-    'Controlado',
-    'Completado'
-  ];
   const requeridoArray = [
     'Relevamiento completo',
     'Relevamiento sin cierre',
@@ -448,7 +437,8 @@ const SiniestrosForm = () => {
                 error={errors.tipo?.message}
               />
             </div>
-
+          </div>
+          <div className={styles.secondGroup}>
             <div className={styles.inputContainer}>
               <OptionInput
                 data={ciaArray}
@@ -474,6 +464,16 @@ const SiniestrosForm = () => {
                 name="relevador"
                 register={register}
                 error={errors.relevador?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.presencial?.message}
+                register={register}
+                nameTitle="Presencial"
+                type="checkbox"
+                nameInput="presencial"
+                required
               />
             </div>
           </div>
@@ -508,7 +508,6 @@ const SiniestrosForm = () => {
                 required
               />
             </div>
-
             <div className={styles.inputContainer}>
               <DateInput
                 error={errors.fechaAsignacion?.message}
@@ -530,7 +529,7 @@ const SiniestrosForm = () => {
               />
             </div>
           </div>
-          <div className={styles.textAreaGroup}>
+          <div className={styles.thirdGroup}>
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.instrucciones?.message}
@@ -554,19 +553,7 @@ const SiniestrosForm = () => {
               />
             </div>
           </div>
-          <div className={styles.booleanGroup}>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.presencial?.message}
-                register={register}
-                nameTitle="Presencial"
-                type="checkbox"
-                nameInput="presencial"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.booleanGroup}>
+          <div className={styles.fourGroup}>
             <div className={styles.inputContainer}>
               <OptionInput
                 data={requeridoArray}
@@ -595,122 +582,6 @@ const SiniestrosForm = () => {
                 type="text"
                 nameInput="lugar"
                 styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionDescripcion?.message}
-                register={register}
-                nameTitle="Conclusion Descripcion"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionDescripcion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionLesiones?.message}
-                register={register}
-                nameTitle="Conclusion Lesiones"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionLesiones"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionDaños?.message}
-                register={register}
-                nameTitle="Conclusion Daños"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionDaños"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionResponsabilidad?.message}
-                register={register}
-                nameTitle="Conclusion Responsabilidad"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionResponsabilidad"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionCredibilidad?.message}
-                register={register}
-                nameTitle="Conclusion Credibilidad"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionCredibilidad"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionRecomendacion?.message}
-                register={register}
-                nameTitle="Conclusion Recomendacion"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionRecomendacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={estadoArray}
-                dataLabel="Estado"
-                name="estado"
-                register={register}
-                error={errors.estado?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.autorizacion?.message}
-                register={register}
-                nameTitle="Autorizacion"
-                type="text"
-                styleInput="medium"
-                nameInput="autorizacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaFinalizacion?.message}
-                register={register}
-                nameTitle="Fecha Finalizacion"
-                type="date"
-                nameInput="fechaFinalizacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaContactoAsegurado?.message}
-                register={register}
-                nameTitle="Fecha Contacto Asegurado"
-                type="date"
-                nameInput="fechaContactoAsegurado"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaContactoTercero?.message}
-                register={register}
-                nameTitle="Fecha Contacto Tercero"
-                type="date"
-                nameInput="fechaContactoTercero"
                 required
               />
             </div>

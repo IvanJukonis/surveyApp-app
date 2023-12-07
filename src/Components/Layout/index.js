@@ -6,13 +6,20 @@ import Footer from '../Footer/index';
 
 const Home = React.lazy(() => import('../Home/index'));
 
-//Controller
 const SiniestroController = React.lazy(() => import('../Users/Relevador/Siniestros'));
+const RelevadorController = React.lazy(() => import('../Users/Administrativo/Controladores'));
+const ControladorController = React.lazy(() => import('../Users/Administrativo/Relevadores'));
 const SiniestrosAdmForm = React.lazy(() =>
   import('../Entities/Siniestro/FormAdministrativo/SiniestroForm')
 );
 const SiniestrosRelForm = React.lazy(() =>
   import('../Entities/Siniestro/FormRelevador/SiniestroForm')
+);
+const RelevadorRelForm = React.lazy(() =>
+  import('../Entities/Relevador/FormRelevador/RelevadorForm')
+);
+const ControladorRelForm = React.lazy(() =>
+  import('../Entities/Controlador/FormControlador/ControladorForm')
 );
 
 function Layout() {
@@ -30,6 +37,18 @@ function Layout() {
                 <Route path="/controlador/siniestros/form/:id?" component={SiniestrosRelForm} />
                 <Route path="/relevador/siniestros/form/:id?" component={SiniestrosRelForm} />
                 <Route path="/administrativo/siniestros/form/:id?" component={SiniestrosAdmForm} />
+                <Route exact path="/administrativo/siniestros" component={SiniestroController} />
+                <Route exact path="/administrativo/relevadores" component={RelevadorController} />
+                <Route path="/administrativo/relevadores/form/:id?" component={RelevadorRelForm} />
+                <Route
+                  exact
+                  path="/administrativo/controladores"
+                  component={ControladorController}
+                />
+                <Route
+                  path="/administrativo/controladores/form/:id?"
+                  component={ControladorRelForm}
+                />
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/">
                   <Redirect to="/home" />
