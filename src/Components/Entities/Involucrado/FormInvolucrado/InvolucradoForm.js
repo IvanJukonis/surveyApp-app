@@ -10,14 +10,13 @@ import {
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { updateInvolucrado, createInvolucrado } from 'redux/involucrado/thunks';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
 const InvolucradosForm = () => {
   const dispatch = useDispatch();
-  const isError = useSelector((state) => state.involucrado.errorForm);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
@@ -333,7 +332,9 @@ const InvolucradosForm = () => {
         <Button clickAction={() => reset()} text="Reset" />
         <Button text="Cancel" clickAction={() => history.goBack()} />
       </form>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={isError.message} />}
+      {toastError && (
+        <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
+      )}
     </div>
   );
 };

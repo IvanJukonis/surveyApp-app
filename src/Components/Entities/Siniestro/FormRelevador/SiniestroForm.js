@@ -26,9 +26,11 @@ const SiniestrosForm = () => {
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [siniestro, setSiniestro] = useState({});
+  const [siniestro, setSiniestro] = useState();
+  const siniestros = useSelector((state) => state.siniestro.list);
   const relevador = useSelector((state) => state.relevador.list);
   const controlador = useSelector((state) => state.controlador.list);
+  const siniestroActual = siniestros.find((item) => item._id === id);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -366,41 +368,43 @@ const SiniestrosForm = () => {
       return '/relevador';
     }
     if (controladorPath) {
+      console.log('hola');
       return '/controlador';
     }
+    console.log('chau');
     return '/administrativo';
   };
 
-  const handleInvolucrado = (item) => {
+  const handleInvolucrado = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/involucrado/${item._id}`, {
-      params: { ...item, mode: 'create' }
+    history.push(`${pathPrefix}/siniestros/involucrado/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
     });
   };
 
-  const handleVehiculo = (item) => {
+  const handleVehiculo = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/vehiculo/${item._id}`, {
-      params: { ...item, mode: 'create' }
+    history.push(`${pathPrefix}/siniestros/vehiculo/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
     });
   };
 
-  const handleNovedad = (item) => {
+  const handleNovedad = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/novedad${item._id}`, {
-      params: { ...item, mode: 'create' }
+    history.push(`${pathPrefix}/siniestros/novedad/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
     });
   };
 
-  const handleLugar = (item) => {
+  const handleLugar = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/LugarSiniestro/${item._id}`, {
-      params: { ...item, mode: 'create' }
+    history.push(`${pathPrefix}/siniestros/LugarSiniestro/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
     });
   };
 
-  const relevadorPath = ['/relevador/siniestros'].includes(location.pathname);
-  const controladorPath = ['/controlador/siniestros'].includes(location.pathname);
+  const relevadorPath = /\/relevador\/siniestro/.test(location.pathname);
+  const controladorPath = /\/controlador\/siniestro/.test(location.pathname);
 
   useEffect(() => {
     getControlador(dispatch);
@@ -408,6 +412,7 @@ const SiniestrosForm = () => {
     getSiniestro(dispatch);
   }, []);
 
+  console.log(siniestro);
   return (
     <div className={styles.container}>
       {
@@ -629,10 +634,10 @@ const SiniestrosForm = () => {
             </div>
           </div>
           <div className={styles.btnsGroup}>
-            <Button clickAction={() => handleInvolucrado(siniestro)} text="Involucrado" />
-            <Button clickAction={() => handleNovedad(siniestro)} text="Novedad" />
-            <Button clickAction={() => handleVehiculo(siniestro)} text="Vehiculo" />
-            <Button clickAction={() => handleLugar(siniestro)} text="Lugar" />
+            <Button clickAction={handleInvolucrado} text="Involucrado" />
+            <Button clickAction={handleNovedad} text="Novedad" />
+            <Button clickAction={handleVehiculo} text="Vehiculo" />
+            <Button clickAction={handleLugar} text="Lugar" />
           </div>
           <div className={styles.fiveGroup}>
             <div className={styles.inputContainer}>

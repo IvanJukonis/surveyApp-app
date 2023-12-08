@@ -43,8 +43,14 @@ function Layout() {
                 <Route exact path="/administrativo/siniestros" component={SiniestroController} />
                 <Route exact path="/administrativo/relevadores" component={RelevadorController} />
                 <Route path="/administrativo/relevadores/form/:id?" component={RelevadorRelForm} />
-                <Route path="/controlador/involucrados/form/:id?" component={InvolucradoForm} />
-                <Route path="/relevador/involucrados/form/:id?" component={InvolucradoForm} />
+                <Route
+                  path="/controlador/siniestros/involucrado/form/:id?"
+                  component={InvolucradoForm}
+                />
+                <Route
+                  path="/relevador/siniestros/involucrado/form/:id?"
+                  component={InvolucradoForm}
+                />
                 <Route
                   exact
                   path="/administrativo/controladores"
