@@ -3,7 +3,7 @@ import formStyles from '../Form/vehicles.module.css';
 import { ModalConfirm, ModalSuccess, Button, Inputs, OptionInput, Loader } from 'Components/Shared';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { createVehicle, updateVehicle } from 'redux/vehicle/thunks';
+import { createVehicle, updateVehicle } from 'redux/vehiculo/thunks';
 //import { getAllInvolveds } from 'redux/involved/thunks';
 import { useForm } from 'react-hook-form';
 import Joi from 'joi';
