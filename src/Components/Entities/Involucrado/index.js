@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllInvolveds, deleteInvolved } from 'redux/involucrado/thunks';
+import { getAllInvolucrados, deleteInvolucrado } from 'redux/involucrado/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
-function Involved() {
+function Involucrado() {
   const dispatch = useDispatch();
-  const involved = useSelector((state) => state.involved.list);
-  const isPending = useSelector((state) => state.involved.pending);
-  const isError = useSelector((state) => state.involved.error);
+  const involucrado = useSelector((state) => state.involucrado.list);
+  const isPending = useSelector((state) => state.involucrado.pending);
+  const isError = useSelector((state) => state.involucrado.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const columnTitleArray = [
@@ -45,23 +45,23 @@ function Involved() {
   };
 
   useEffect(() => {
-    getAllInvolveds(dispatch);
+    getAllInvolucrados(dispatch);
   }, []);
 
   return (
     <section>
       <div>
-        <AddButton entity="Involved" createMode={createMode} />
+        <AddButton entity="Involucrado" createMode={createMode} />
       </div>
       {isPending ? (
         <Loader />
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={involved}
+          data={involucrado}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={deleteInvolved}
+          deleteButton={deleteInvolucrado}
         />
       )}
       {toastErroOpen && (
@@ -70,4 +70,4 @@ function Involved() {
     </section>
   );
 }
-export default Involved;
+export default Involucrado;

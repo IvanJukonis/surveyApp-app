@@ -307,7 +307,6 @@ const ControladoresForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log('la submitiasion');
     setControlador(data);
     setModalAddConfirmOpen(true);
   };

@@ -9,19 +9,19 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateInvolved, createInvolved } from 'redux/involucrado/thunks';
+import { updateInvolucrado, createInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
-const InvolvedsForm = () => {
+const InvolucradosForm = () => {
   const dispatch = useDispatch();
-  const isError = useSelector((state) => state.involved.errorForm);
+  const isError = useSelector((state) => state.involucrado.errorForm);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [involved, setInvolved] = useState({});
+  const [involucrado, setInvolucrado] = useState({});
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -142,7 +142,7 @@ const InvolvedsForm = () => {
       .required()
   });
 
-  const involvedUpdate = {
+  const involucradoUpdate = {
     nombre: data.nombre,
     apellido: data.apellido,
     dni: data.dni,
@@ -164,13 +164,13 @@ const InvolvedsForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...involvedUpdate }
+    defaultValues: { ...involucradoUpdate }
   });
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addInvolvedResponse = await dispatch(createInvolved(involved));
-      if (addInvolvedResponse.type === 'ADD_INVOLVED_SUCCESS') {
+      const addInvolucradoResponse = await dispatch(createInvolucrado(involucrado));
+      if (addInvolucradoResponse.type === 'ADD_INVOLUCRADO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -179,8 +179,8 @@ const InvolvedsForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editInvolvedResponse = await dispatch(updateInvolved(id, involved));
-      if (editInvolvedResponse.type === 'EDIT_INVOLVED_SUCCESS') {
+      const editInvolucradoResponse = await dispatch(updateInvolucrado(id, involucrado));
+      if (editInvolucradoResponse.type === 'EDIT_INVOLUCRADO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -193,7 +193,7 @@ const InvolvedsForm = () => {
 
   const onSubmit = async (data) => {
     console.log(data);
-    setInvolved(data);
+    setInvolucrado(data);
     setModalAddConfirmOpen(true);
   };
 
@@ -212,20 +212,20 @@ const InvolvedsForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Are sure do you want update this involved?'
-                  : 'Are sure do you want add this involved?'
+                  ? 'Are sure do you want update this involucrado?'
+                  : 'Are sure do you want add this involucrado?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Involved edited' : 'Involved added'}
+              message={id ? 'Involucrado edited' : 'Involucrado added'}
             />
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Involved' : 'Add Involved'}</h3>
+      <h3 className={styles.title}>{id ? 'Edit Involucrado' : 'Add Involucrado'}</h3>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
           <div className={styles.inputGroup}>
@@ -338,4 +338,4 @@ const InvolvedsForm = () => {
   );
 };
 
-export default InvolvedsForm;
+export default InvolucradosForm;
