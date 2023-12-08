@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllInvolveds, involvedDelete } from 'redux/involved/thunks';
+import { getAllInvolveds, involvedDelete } from 'redux/involucrado/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 

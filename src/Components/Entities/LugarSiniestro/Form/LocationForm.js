@@ -9,7 +9,7 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateInvolved, createInvolved } from 'redux/involved/thunks';
+import { updateInvolved, createInvolved } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';

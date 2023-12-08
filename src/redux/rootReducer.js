@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import involvedReducer from './involved/reducer';
+import involvedReducer from './involucrado/reducer';
 import locationReducer from './location/reducer';
 import vehicleReducer from './vehicle/reducer';
 import investigatorReducer from './investigator/reducer';
