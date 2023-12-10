@@ -21,7 +21,6 @@ export const getAllInvolucrado = async (dispatch) => {
     const involucradosList = data.data;
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoSuccess(involucradosList));
-    console.log(data);
   } catch (error) {
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoError(true));
