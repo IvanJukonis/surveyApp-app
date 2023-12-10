@@ -24,6 +24,7 @@ const ControladorRelForm = React.lazy(() =>
 const InvolucradoForm = React.lazy(() =>
   import('../Entities/Involucrado/FormInvolucrado/InvolucradoForm')
 );
+const NovedadForm = React.lazy(() => import('../Entities/Novedad/FormNovedad/NovedadForm'));
 
 function Layout() {
   return (
@@ -51,6 +52,8 @@ function Layout() {
                   path="/relevador/siniestros/involucrado/form/:id?"
                   component={InvolucradoForm}
                 />
+                <Route path="/controlador/siniestros/novedad/form/:id?" component={NovedadForm} />
+                <Route path="/relevador/siniestros/novedad/form/:id?" component={NovedadForm} />
                 <Route
                   exact
                   path="/administrativo/controladores"
