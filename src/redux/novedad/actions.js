@@ -5,9 +5,9 @@ import {
   DELETE_NOVEDAD_PENDING,
   DELETE_NOVEDAD_SUCCESS,
   DELETE_NOVEDAD_ERROR,
-  ADD_NOVEDAD_PENDING,
-  ADD_NOVEDAD_SUCCESS,
-  ADD_NOVEDAD_ERROR,
+  POST_NOVEDAD_PENDING,
+  POST_NOVEDAD_SUCCESS,
+  POST_NOVEDAD_ERROR,
   UPDATE_NOVEDAD_PENDING,
   UPDATE_NOVEDAD_SUCCESS,
   UPDATE_NOVEDAD_ERROR
@@ -55,23 +55,23 @@ export const deleteNovedadError = (error) => {
   };
 };
 
-export const addNovedadPending = (pending) => {
+export const postNovedadPending = (pending) => {
   return {
-    type: ADD_NOVEDAD_PENDING,
+    type: POST_NOVEDAD_PENDING,
     payload: pending
   };
 };
 
-export const addNovedadSuccess = (novedad) => {
+export const postNovedadSuccess = (novedad) => {
   return {
-    type: ADD_NOVEDAD_SUCCESS,
+    type: POST_NOVEDAD_SUCCESS,
     payload: novedad
   };
 };
 
-export const addNovedadError = (error) => {
+export const postNovedadError = (error) => {
   return {
-    type: ADD_NOVEDAD_ERROR,
+    type: POST_NOVEDAD_ERROR,
     payload: error
   };
 };

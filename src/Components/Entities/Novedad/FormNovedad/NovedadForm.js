@@ -9,18 +9,18 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateInvolucrado, createInvolucrado } from 'redux/involucrado/thunks';
+import { updateNovedad, createNovedad } from 'redux/novedad/thunks';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
-const InvolucradosForm = () => {
+const NovedadesForm = () => {
   const dispatch = useDispatch();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [involucrado, setInvolucrado] = useState({});
+  const [novedad, setNovedad] = useState({});
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -141,7 +141,7 @@ const InvolucradosForm = () => {
       .required()
   });
 
-  const involucradoUpdate = {
+  const novedadUpdate = {
     nombre: data.nombre,
     apellido: data.apellido,
     dni: data.dni,
@@ -163,13 +163,13 @@ const InvolucradosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...involucradoUpdate }
+    defaultValues: { ...novedadUpdate }
   });
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addInvolucradoResponse = await dispatch(createInvolucrado(involucrado));
-      if (addInvolucradoResponse.type === 'ADD_INVOLUCRADO_SUCCESS') {
+      const addNovedadResponse = await dispatch(createNovedad(novedad));
+      if (addNovedadResponse.type === 'ADD_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -178,8 +178,8 @@ const InvolucradosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editInvolucradoResponse = await dispatch(updateInvolucrado(id, involucrado));
-      if (editInvolucradoResponse.type === 'EDIT_INVOLUCRADO_SUCCESS') {
+      const editNovedadResponse = await dispatch(updateNovedad(id, novedad));
+      if (editNovedadResponse.type === 'EDIT_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -192,7 +192,7 @@ const InvolucradosForm = () => {
 
   const onSubmit = async (data) => {
     console.log(data);
-    setInvolucrado(data);
+    setNovedad(data);
     setModalAddConfirmOpen(true);
   };
 
@@ -211,20 +211,20 @@ const InvolucradosForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Are sure do you want update this involucrado?'
-                  : 'Are sure do you want add this involucrado?'
+                  ? 'Are sure do you want update this novedad?'
+                  : 'Are sure do you want add this novedad?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Involucrado edited' : 'Involucrado added'}
+              message={id ? 'Novedad edited' : 'Novedad added'}
             />
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Involucrado' : 'Add Involucrado'}</h3>
+      <h3 className={styles.title}>{id ? 'Edit Novedad' : 'Add Novedad'}</h3>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
           <div className={styles.inputGroup}>
@@ -339,4 +339,4 @@ const InvolucradosForm = () => {
   );
 };
 
-export default InvolucradosForm;
+export default NovedadesForm;

@@ -5,9 +5,9 @@ import {
   deleteNovedadPending,
   deleteNovedadSuccess,
   deleteNovedadError,
-  addNovedadPending,
-  addNovedadSuccess,
-  addNovedadError,
+  postNovedadPending,
+  postNovedadSuccess,
+  postNovedadError,
   updateNovedadPending,
   updateNovedadSuccess,
   updateNovedadError
@@ -44,9 +44,9 @@ export const deleteNovedad = (novedadID) => {
   };
 };
 
-export const createNovedad = async (dispatch, novedadData) => {
+export const postNovedad = async (dispatch, novedadData) => {
   try {
-    dispatch(addNovedadPending(true));
+    dispatch(postNovedadPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/novedad`, {
       method: 'POST',
       headers: {
@@ -56,13 +56,13 @@ export const createNovedad = async (dispatch, novedadData) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      dispatch(addNovedadPending(false));
+      dispatch(postNovedadPending(false));
       throw new Error(data.message);
     }
-    dispatch(addNovedadSuccess(data.result));
+    dispatch(postNovedadSuccess(data.result));
   } catch (error) {
-    dispatch(addNovedadPending(false));
-    dispatch(addNovedadError(error.message));
+    dispatch(postNovedadPending(false));
+    dispatch(postNovedadError(error.message));
   }
 };
 

@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllInvolucrados, deleteInvolucrado } from 'redux/involucrado/thunks';
+import { getAllNovedades, deleteNovedad } from 'redux/novedad/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
-function Involucrado() {
+function Novedad() {
   const dispatch = useDispatch();
-  const involucrado = useSelector((state) => state.involucrado.list);
-  const isPending = useSelector((state) => state.involucrado.pending);
-  const isError = useSelector((state) => state.involucrado.error);
+  const novedad = useSelector((state) => state.novedad.list);
+  const isPending = useSelector((state) => state.novedad.pending);
+  const isError = useSelector((state) => state.novedad.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const columnTitleArray = [
@@ -37,31 +37,31 @@ function Involucrado() {
   ];
 
   const handleEditClick = (item) => {
-    history.push(`/involucrados/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    history.push(`/novedades/form/${item._id}`, { params: { ...item, mode: 'edit' } });
   };
 
   const createMode = () => {
-    history.push('/involucrados/form/', { params: { mode: 'create' } });
+    history.push('/novedades/form/', { params: { mode: 'create' } });
   };
 
   useEffect(() => {
-    getAllInvolucrados(dispatch);
+    getAllNovedades(dispatch);
   }, []);
 
   return (
     <section>
       <div>
-        <AddButton entity="Involucrado" createMode={createMode} />
+        <AddButton entity="Novedad" createMode={createMode} />
       </div>
       {isPending ? (
         <Loader />
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={involucrado}
+          data={novedad}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={deleteInvolucrado}
+          deleteButton={deleteNovedad}
         />
       )}
       {toastErroOpen && (
@@ -70,4 +70,4 @@ function Involucrado() {
     </section>
   );
 }
-export default Involucrado;
+export default Novedad;

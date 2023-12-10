@@ -2,9 +2,9 @@ import {
   GET_NOVEDAD_PENDING,
   GET_NOVEDAD_SUCCESS,
   GET_NOVEDAD_ERROR,
-  ADD_NOVEDAD_PENDING,
-  ADD_NOVEDAD_SUCCESS,
-  ADD_NOVEDAD_ERROR,
+  POST_NOVEDAD_PENDING,
+  POST_NOVEDAD_SUCCESS,
+  POST_NOVEDAD_ERROR,
   UPDATE_NOVEDAD_PENDING,
   UPDATE_NOVEDAD_SUCCESS,
   UPDATE_NOVEDAD_ERROR,
@@ -40,21 +40,21 @@ const novedadReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case ADD_NOVEDAD_PENDING: {
+    case POST_NOVEDAD_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case ADD_NOVEDAD_SUCCESS: {
+    case POST_NOVEDAD_SUCCESS: {
       return {
         ...state,
         list: [...state.list, action.payload]
       };
     }
 
-    case ADD_NOVEDAD_ERROR: {
+    case POST_NOVEDAD_ERROR: {
       return {
         ...state,
         error: action.payload
