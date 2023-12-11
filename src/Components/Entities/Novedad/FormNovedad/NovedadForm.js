@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -9,15 +9,16 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateNovedad, postNovedad } from 'redux/novedad/thunks';
+import { getAllNovedad, updateNovedad, postNovedad } from 'redux/novedad/thunks';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
 const NovedadesForm = () => {
   const dispatch = useDispatch();
+  const novedades = useSelector((state) => state.novedad.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
@@ -156,6 +157,33 @@ const NovedadesForm = () => {
 
   const arrayRelaciones = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
 
+  const columnTitleArray = ['Fecha', 'Titulo', 'Tipo', 'Relacion'];
+  const columns = ['fecha', 'titulo', 'tipo', 'relacion'];
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
+  useEffect(() => {
+    getAllNovedad(dispatch);
+  }, []);
+
   return (
     <div className={styles.container}>
       {
@@ -180,95 +208,134 @@ const NovedadesForm = () => {
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Novedad' : 'Add Novedad'}</h3>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <section className={styles.inputGroups}>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fecha?.message}
-                register={register}
-                nameTitle="Fecha"
-                type="date"
-                nameInput="fecha"
-                required
-              />
+      <div className={styles.titleContainer}>
+        <h3 className={styles.title}>{id ? 'Novedad' : 'Novedad'}</h3>
+      </div>
+      <div className={styles.innerContainer}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <section className={styles.inputGroups}>
+            <div className={styles.leftGroup}>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.fecha?.message}
+                  register={register}
+                  nameTitle="Fecha"
+                  type="date"
+                  nameInput="fecha"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.hora?.message}
+                  register={register}
+                  nameTitle="Hora"
+                  type="date"
+                  nameInput="hora"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.titulo?.message}
+                  register={register}
+                  nameTitle="Titulo"
+                  type="text"
+                  nameInput="titulo"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayTipos}
+                  dataLabel="Tipo"
+                  name="tipo"
+                  register={register}
+                  error={errors.tipo?.message}
+                />
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.hora?.message}
-                register={register}
-                nameTitle="Hora"
-                type="date"
-                nameInput="hora"
-                required
-              />
+            <div className={styles.rightGroup}>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayRelaciones}
+                  dataLabel="Relacion"
+                  name="relacion"
+                  register={register}
+                  error={errors.relacion?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.descripcion?.message}
+                  register={register}
+                  nameTitle="Descripcion"
+                  type="text"
+                  nameInput="descripcion"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.visibilidad?.message}
+                  register={register}
+                  nameTitle="Visibilidad"
+                  type="checkbox"
+                  nameInput="visibilidad"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.respuesta?.message}
+                  register={register}
+                  nameTitle="Respuesta"
+                  type="checkbox"
+                  nameInput="respuesta"
+                  required
+                />
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.titulo?.message}
-                register={register}
-                nameTitle="Titulo"
-                type="text"
-                nameInput="titulo"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayTipos}
-                dataLabel="Tipo"
-                name="tipo"
-                register={register}
-                error={errors.tipo?.message}
-              />
-            </div>
+          </section>
+          <div className={styles.btnContainer}>
+            <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
+            <Button clickAction={() => reset()} text="Reset" />
+            <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayRelaciones}
-                dataLabel="Relacion"
-                name="relacion"
-                register={register}
-                error={errors.relacion?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.descripcion?.message}
-                register={register}
-                nameTitle="Descripcion"
-                type="text"
-                nameInput="descripcion"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.visibilidad?.message}
-                register={register}
-                nameTitle="Visibilidad"
-                type="checkbox"
-                nameInput="visibilidad"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.respuesta?.message}
-                register={register}
-                nameTitle="Respuesta"
-                type="checkbox"
-                nameInput="respuesta"
-                required
-              />
-            </div>
-          </div>
-        </section>
+        </form>
+        <div className={styles.rightTable}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableContent}>
+                {columnTitleArray.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {novedades.map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
 
-        <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-        <Button clickAction={() => reset()} text="Reset" />
-        <Button text="Cancel" clickAction={() => history.goBack()} />
-      </form>
+                return (
+                  <tr className={rowClass} key={index}>
+                    {columns.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column.startsWith('fecha') ? (
+                          formatDate(row[column])
+                        ) : (
+                          <>
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
       )}

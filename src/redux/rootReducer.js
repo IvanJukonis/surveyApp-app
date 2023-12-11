@@ -6,6 +6,7 @@ import investigatorReducer from './investigator/reducer';
 import siniestroReducer from './siniestro/reducer';
 import relevadorReducer from './relevador/reducer';
 import controladorReducer from './controlador/reducer';
+import novedadReducer from './novedad/reducer';
 
 const rootReducer = combineReducers({
   involved: involvedReducer,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   siniestro: siniestroReducer,
   investigator: investigatorReducer,
   relevador: relevadorReducer,
+  novedad: novedadReducer,
   controlador: controladorReducer
 });
 
