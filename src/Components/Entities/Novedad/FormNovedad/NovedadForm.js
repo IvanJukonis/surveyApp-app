@@ -9,7 +9,8 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateNovedad, createNovedad } from 'redux/novedad/thunks';
+import { updateNovedad, postNovedad } from 'redux/novedad/thunks';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -27,132 +28,88 @@ const NovedadesForm = () => {
   const { id } = useParams();
 
   const schema = Joi.object({
-    nombre: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
+    fecha: Joi.date()
       .messages({
-        'string.base': 'El nombre debe ser una cadena de texto',
-        'string.empty': 'El nombre es un campo requerido',
-        'string.min': 'El nombre debe tener al menos 3 caracteres',
-        'string.max': 'El nombre debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El nombre debe contener solo letras'
+        'date.base': 'El campo "fecha" debe ser una fecha válida',
+        'date.empty': 'El campo "fecha" es un campo requerido'
       })
       .required(),
 
-    apellido: Joi.string()
-      .min(3)
-      .max(15)
+    hora: Joi.date()
       .messages({
-        'string.base': 'El apellido debe ser una cadena de texto',
-        'string.empty': 'El apellido es un campo requerido',
-        'string.min': 'El apellido debe tener al menos 3 caracteres',
-        'string.max': 'El apellido debe tener como máximo 15 caracteres'
+        'date.base': 'El campo "hora" de nacimiento debe ser una fecha válida',
+        'date.empty': 'El campo "hora" de nacimiento es un campo requerido'
       })
       .required(),
 
-    dni: Joi.number().min(10000000).max(99999999).integer().messages({
-      'number.base': 'El DNI debe ser un número',
-      'number.empty': 'El DNI es un campo requerido',
-      'number.min': 'El DNI debe ser al menos 10,000,000',
-      'number.max': 'El DNI debe ser como máximo 99,999,999',
-      'number.integer': 'El DNI debe ser un número entero'
-    }),
-
-    telefono: Joi.string()
-      .min(10)
-      .messages({
-        'string.base': 'El número de teléfono debe ser una cadena de texto',
-        'string.empty': 'El número de teléfono es un campo requerido',
-        'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
-      })
-      .required(),
-
-    email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-      .messages({
-        'string.base': 'El correo electrónico debe ser una cadena de texto',
-        'string.empty': 'El correo electrónico es un campo requerido',
-        'string.email': 'El correo electrónico debe ser una dirección de correo válida',
-        'string.minDomainSegments':
-          'El correo electrónico debe tener al menos 2 segmentos de dominio',
-        'string.tlds.allow':
-          'El correo electrónico debe tener un dominio de nivel superior válido (com o net)'
-      })
-      .required(),
-
-    ciudad: Joi.string()
+    titulo: Joi.string()
       .min(3)
       .max(15)
       .messages({
-        'string.base': 'La ciudad debe ser una cadena de texto',
-        'string.empty': 'La ciudad es un campo requerido',
-        'string.min': 'La ciudad debe tener al menos 3 caracteres',
-        'string.max': 'La ciudad debe tener como máximo 15 caracteres'
+        'string.base': 'El campo "titulo" debe ser una cadena de texto',
+        'string.empty': 'El campo "titulo" es un campo requerido',
+        'string.min': 'El campo "titulo" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "titulo" debe tener como máximo 15 caracteres'
       })
       .required(),
 
     tipo: Joi.string()
-      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TERCERO', 'ABOG')
+      .valid('Consulta', 'Notificacion', 'Aviso', 'Respuesta')
       .messages({
-        'any.only': 'Los tipos solo pueden ser CVA, CVT, PVA, PVT, TTG, TERCERO, ABOG'
+        'any.only': 'Selecciona un "Tipo" permitido'
       })
       .required(),
 
-    lesiones: Joi.string()
-      .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
+    relacion: Joi.string()
+      .valid('CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT')
       .messages({
-        'any.only':
-          'Las lesiones solo pueden ser Lesiones GRAVES, Lesiones LEVES, Lesiones REGULARES'
+        'any.only': 'Selecciona una "Relacion" permitida'
       })
       .required(),
 
-    fechaDeNacimiento: Joi.date()
-      .messages({
-        'date.base': 'La fecha de nacimiento debe ser una fecha válida',
-        'date.empty': 'La fecha de nacimiento es un campo requerido'
-      })
-      .required(),
-
-    direccion: Joi.string()
+    descripcion: Joi.string()
       .min(3)
       .max(15)
-      .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'La dirección debe ser una cadena de texto',
-        'string.empty': 'La dirección es un campo requerido',
-        'string.min': 'La dirección debe tener al menos 3 caracteres',
-        'string.max': 'La dirección debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'La dirección debe contener solo letras'
+        'string.base': 'El campo "descripcion" debe ser una cadena de texto',
+        'string.empty': 'El campo "descripcion" es un campo requerido',
+        'string.min': 'El campo "descripcion" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "descripcion" debe tener como máximo 15 caracteres'
       })
       .required(),
 
-    pais: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
+    visibilidad: Joi.boolean()
       .messages({
-        'string.base': 'El país debe ser una cadena de texto',
-        'string.empty': 'El país es un campo requerido',
-        'string.min': 'El país debe tener al menos 3 caracteres',
-        'string.max': 'El país debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El país debe contener solo letras'
+        'boolean.base': 'El campo "Presencial" es un campo booleano',
+        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
+      })
+      .required(),
+
+    respuesta: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Presencial" es un campo booleano',
+        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
       })
       .required()
   });
 
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const novedadUpdate = {
-    nombre: data.nombre,
-    apellido: data.apellido,
-    dni: data.dni,
-    telefono: data.telefono,
-    email: data.email,
-    ciudad: data.ciudad,
+    fecha: formatDate(data.fecha),
+    hora: formatDate(data.hora),
+    titulo: data.titulo,
     tipo: data.tipo,
-    lesiones: data.lesiones,
-    fechaDeNacimiento: data.fechaDeNacimiento,
-    direccion: data.direccion,
-    pais: data.pais
+    relacion: data.relacion,
+    descripcion: data.descripcion,
+    visibilidad: data.visibilidad,
+    respuesta: data.respuesta
   };
 
   const {
@@ -168,7 +125,7 @@ const NovedadesForm = () => {
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addNovedadResponse = await dispatch(createNovedad(novedad));
+      const addNovedadResponse = await dispatch(postNovedad(novedad));
       if (addNovedadResponse.type === 'ADD_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -191,14 +148,13 @@ const NovedadesForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     setNovedad(data);
     setModalAddConfirmOpen(true);
   };
 
-  const arrayTipos = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'ABOG', 'TERCERO'];
+  const arrayTipos = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
 
-  const arrayLesiones = ['Lesiones LEVES', 'Lesiones REGULARES', 'Lesiones GRAVES'];
+  const arrayRelaciones = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
 
   return (
     <div className={styles.container}>
@@ -230,71 +186,31 @@ const NovedadesForm = () => {
           <div className={styles.inputGroup}>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.nombre?.message}
+                error={errors.fecha?.message}
                 register={register}
-                nameTitle="Nombre"
-                type="text"
-                nameInput="nombre"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.apellido?.message}
-                register={register}
-                nameTitle="Apellido"
-                type="text"
-                nameInput="apellido"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.dni?.message}
-                register={register}
-                nameTitle="DNI"
-                type="number"
-                nameInput="dni"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.telefono?.message}
-                register={register}
-                nameTitle="Telefono"
-                type="number"
-                nameInput="telefono"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.email?.message}
-                register={register}
-                nameTitle="Email"
-                type="email"
-                nameInput="email"
+                nameTitle="Fecha"
+                type="date"
+                nameInput="fecha"
                 required
               />
             </div>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.ciudad?.message}
+                error={errors.hora?.message}
                 register={register}
-                nameTitle="Ciudad"
-                type="text"
-                nameInput="ciudad"
+                nameTitle="Hora"
+                type="date"
+                nameInput="hora"
                 required
               />
             </div>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.direccion?.message}
+                error={errors.titulo?.message}
                 register={register}
-                nameTitle="Direccion"
+                nameTitle="Titulo"
                 type="text"
-                nameInput="direccion"
-                required
+                nameInput="titulo"
               />
             </div>
             <div className={styles.inputContainer}>
@@ -306,23 +222,44 @@ const NovedadesForm = () => {
                 error={errors.tipo?.message}
               />
             </div>
+          </div>
+          <div className={styles.inputGroup}>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayRelaciones}
+                dataLabel="Relacion"
+                name="relacion"
+                register={register}
+                error={errors.relacion?.message}
+              />
+            </div>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.fechaDeNacimiento?.message}
+                error={errors.descripcion?.message}
                 register={register}
-                nameTitle="FechaDeNacimiento"
-                type="date"
-                nameInput="fechaDeNacimiento"
+                nameTitle="Descripcion"
+                type="text"
+                nameInput="descripcion"
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.visibilidad?.message}
+                register={register}
+                nameTitle="Visibilidad"
+                type="checkbox"
+                nameInput="visibilidad"
                 required
               />
             </div>
             <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayLesiones}
-                dataLabel="Lesiones"
-                name="lesiones"
+              <Checkbox
+                error={errors.respuesta?.message}
                 register={register}
-                error={errors.lesiones?.message}
+                nameTitle="Respuesta"
+                type="checkbox"
+                nameInput="respuesta"
+                required
               />
             </div>
           </div>
