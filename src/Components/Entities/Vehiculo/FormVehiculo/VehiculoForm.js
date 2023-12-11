@@ -9,10 +9,11 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateVehiculo, postVehiculo } from 'redux/novedad/thunks';
+import { updateVehiculo, postVehiculo } from 'redux/vehiculo/thunks';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import DateInput from 'Components/Shared/Inputs/DateInput';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
@@ -21,74 +22,123 @@ const VehiculosForm = () => {
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [novedad, setVehiculo] = useState({});
+  const [vehiculo, setVehiculo] = useState({});
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
   const { id } = useParams();
 
   const schema = Joi.object({
-    fecha: Joi.date()
+    rol: Joi.string()
+      .valid('VA', 'VT', 'VT2', 'VT3', 'VAd')
       .messages({
-        'date.base': 'El campo "fecha" debe ser una fecha válida',
-        'date.empty': 'El campo "fecha" es un campo requerido'
+        'any.only': 'Selecciona un "Rol" permitido'
       })
       .required(),
 
-    hora: Joi.date()
+    prioridad: Joi.boolean()
       .messages({
-        'date.base': 'El campo "hora" de nacimiento debe ser una fecha válida',
-        'date.empty': 'El campo "hora" de nacimiento es un campo requerido'
+        'boolean.base': 'El campo "Prioridad" es un campo booleano',
+        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
       })
       .required(),
 
-    titulo: Joi.string()
+    dominio: Joi.string()
       .min(3)
       .max(15)
       .messages({
-        'string.base': 'El campo "titulo" debe ser una cadena de texto',
-        'string.empty': 'El campo "titulo" es un campo requerido',
-        'string.min': 'El campo "titulo" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "titulo" debe tener como máximo 15 caracteres'
+        'string.base': 'El campo "dominio" debe ser una cadena de texto',
+        'string.empty': 'El campo "dominio" es un campo requerido',
+        'string.min': 'El campo "dominio" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "dominio" debe tener como máximo 15 caracteres'
       })
       .required(),
 
+    marca: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'El campo "marca" debe ser una cadena de texto',
+        'string.empty': 'El campo "marca" es un campo requerido',
+        'string.min': 'El campo "marca" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "marca" debe tener como máximo 15 caracteres'
+      })
+      .required(),
+
+    modelo: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'El campo "modelo" debe ser una cadena de texto',
+        'string.empty': 'El campo "modelo" es un campo requerido',
+        'string.min': 'El campo "modelo" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "modelo" debe tener como máximo 15 caracteres'
+      })
+      .required(),
+
+    color: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'El campo "color" debe ser una cadena de texto',
+        'string.empty': 'El campo "color" es un campo requerido',
+        'string.min': 'El campo "color" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "color" debe tener como máximo 15 caracteres'
+      })
+      .required(),
+
+    uso: Joi.string()
+      .valid('Particular', 'Profesional', 'Servicio', 'Otro')
+      .messages({
+        'any.only': 'Selecciona un "Uso" permitido'
+      })
+      .required(),
+
+    fabricacion: Joi.date()
+      .messages({
+        'date.base': 'El campo "Fecha de Fabricacion" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha de Fabricacion" no puede permanecer vacio.'
+      })
+      .required(),
     tipo: Joi.string()
-      .valid('Consulta', 'Notificacion', 'Aviso', 'Respuesta')
+      .valid('Automovil', 'Camioneta', 'Motocicleta', 'Bicicleta', 'Cuatrimoto', 'Camion', 'Otro')
       .messages({
         'any.only': 'Selecciona un "Tipo" permitido'
       })
       .required(),
 
-    relacion: Joi.string()
-      .valid('CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT')
+    fechaAdquisicion: Joi.date()
       .messages({
-        'any.only': 'Selecciona una "Relacion" permitida'
+        'date.base': 'El campo "Fecha de Adquisición" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha de Adquisición" no puede permanecer vacio.'
       })
       .required(),
-
-    descripcion: Joi.string()
+    danos: Joi.string()
+      .valid('Graves', 'Leves', 'Medios', 'Sin Daños')
+      .messages({
+        'any.only': 'Selecciona un "Daño" permitido'
+      })
+      .required(),
+    descripcionDanos: Joi.string()
       .min(3)
       .max(15)
       .messages({
-        'string.base': 'El campo "descripcion" debe ser una cadena de texto',
-        'string.empty': 'El campo "descripcion" es un campo requerido',
-        'string.min': 'El campo "descripcion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "descripcion" debe tener como máximo 15 caracteres'
+        'string.base': 'El campo "Descripcion Daños" debe ser una cadena de texto',
+        'string.empty': 'El campo "Descripcion Daños" es un campo requerido',
+        'string.min': 'El campo "Descripcion Daños" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Descripcion Daños" debe tener como máximo 15 caracteres'
       })
       .required(),
-
-    visibilidad: Joi.boolean()
+    alarma: Joi.string()
+      .valid('Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma')
       .messages({
-        'boolean.base': 'El campo "Presencial" es un campo booleano',
-        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
+        'any.only': 'Selecciona una "Alarma" permitido'
       })
       .required(),
-
-    respuesta: Joi.boolean()
+    cierreCentralizado: Joi.string()
+      .valid('Con cierre (Activado)', 'Con cierre (Desactivado)', 'Sin cierre')
       .messages({
-        'boolean.base': 'El campo "Presencial" es un campo booleano',
-        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
+        'any.only': 'Selecciona un "Cierre Centralizado" permitido'
       })
       .required()
   });
@@ -101,15 +151,21 @@ const VehiculosForm = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const novedadUpdate = {
-    fecha: formatDate(data.fecha),
-    hora: formatDate(data.hora),
-    titulo: data.titulo,
+  const vehiculoUpdate = {
+    rol: data.rol,
+    prioridad: data.prioridad,
+    dominio: data.dominio,
+    marca: data.marca,
+    modelo: data.modelo,
+    color: data.color,
+    uso: data.uso,
+    fabricacion: formatDate(data.fabricacion),
     tipo: data.tipo,
-    relacion: data.relacion,
-    descripcion: data.descripcion,
-    visibilidad: data.visibilidad,
-    respuesta: data.respuesta
+    fechaAdquisicion: formatDate(data.fechaAdquisicion),
+    danos: data.danos,
+    descripcionDanos: data.descripcionDanos,
+    alarma: data.alarma,
+    cierreCentralizado: data.cierreCentralizado
   };
 
   const {
@@ -120,12 +176,12 @@ const VehiculosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...novedadUpdate }
+    defaultValues: { ...vehiculoUpdate }
   });
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addVehiculoResponse = await dispatch(postVehiculo(novedad));
+      const addVehiculoResponse = await dispatch(postVehiculo(vehiculo));
       if (addVehiculoResponse.type === 'ADD_VEHICULO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -135,7 +191,7 @@ const VehiculosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editVehiculoResponse = await dispatch(updateVehiculo(id, novedad));
+      const editVehiculoResponse = await dispatch(updateVehiculo(id, vehiculo));
       if (editVehiculoResponse.type === 'EDIT_VEHICULO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -152,9 +208,20 @@ const VehiculosForm = () => {
     setModalAddConfirmOpen(true);
   };
 
-  const arrayTipos = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
-
-  const arrayRelaciones = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
+  const arrayRol = ['VA', 'VT', 'VT2', 'VT3', 'VAd'];
+  const arrayUso = ['Particular', 'Profesional', 'Servicio', 'Otro'];
+  const arrayTipo = [
+    'Automovil',
+    'Camioneta',
+    'Motocicleta',
+    'Bicicleta',
+    'Cuatrimoto',
+    'Camion',
+    'Otro'
+  ];
+  const arrayDanos = ['Graves', 'Leves', 'Medios', 'Sin Daños'];
+  const arrayAlarma = ['Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma'];
+  const arrayCierre = ['Con cierre (Activado)', 'Con cierre (Desactivado)', 'Sin cierre'];
 
   return (
     <div className={styles.container}>
@@ -167,8 +234,8 @@ const VehiculosForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Are sure do you want update this novedad?'
-                  : 'Are sure do you want add this novedad?'
+                  ? 'Are sure do you want update this vehiculo?'
+                  : 'Are sure do you want add this vehiculo?'
               }
             />
           )}
@@ -185,81 +252,134 @@ const VehiculosForm = () => {
         <section className={styles.inputGroups}>
           <div className={styles.inputGroup}>
             <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fecha?.message}
+              <OptionInput
+                data={arrayRol}
+                dataLabel="Rol"
+                name="rol"
                 register={register}
-                nameTitle="Fecha"
-                type="date"
-                nameInput="fecha"
+                error={errors.rol?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.prioridad?.message}
+                register={register}
+                nameTitle="Prioridad"
+                type="checkbox"
+                nameInput="prioridad"
                 required
               />
             </div>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.hora?.message}
+                error={errors.dominio?.message}
                 register={register}
-                nameTitle="Hora"
-                type="date"
-                nameInput="hora"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.titulo?.message}
-                register={register}
-                nameTitle="Titulo"
+                nameTitle="Dominio"
                 type="text"
-                nameInput="titulo"
+                nameInput="dominio"
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Inputs
+                error={errors.marca?.message}
+                register={register}
+                nameTitle="Marca"
+                type="text"
+                nameInput="marca"
+              />
+            </div>
+          </div>
+          <div className={styles.inputGroup}>
+            <div className={styles.inputContainer}>
+              <Inputs
+                error={errors.modelo?.message}
+                register={register}
+                nameTitle="Modelo"
+                type="text"
+                nameInput="modelo"
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Inputs
+                error={errors.color?.message}
+                register={register}
+                nameTitle="Color"
+                type="text"
+                nameInput="color"
               />
             </div>
             <div className={styles.inputContainer}>
               <OptionInput
-                data={arrayTipos}
+                data={arrayUso}
+                dataLabel="Uso"
+                name="uso"
+                register={register}
+                error={errors.uso?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <DateInput
+                error={errors.fabricacion?.message}
+                register={register}
+                nameTitle="Fabricacion"
+                type="date"
+                nameInput="fabricacion"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayTipo}
                 dataLabel="Tipo"
                 name="tipo"
                 register={register}
                 error={errors.tipo?.message}
               />
             </div>
-          </div>
-          <div className={styles.inputGroup}>
+            <div className={styles.inputContainer}>
+              <DateInput
+                error={errors.fechaAdquisicion?.message}
+                register={register}
+                nameTitle="Fecha de Adquisicion"
+                type="date"
+                nameInput="fechaAdquisicion"
+                required
+              />
+            </div>
             <div className={styles.inputContainer}>
               <OptionInput
-                data={arrayRelaciones}
-                dataLabel="Relacion"
-                name="relacion"
+                data={arrayDanos}
+                dataLabel="Daños"
+                name="danos"
                 register={register}
-                error={errors.relacion?.message}
+                error={errors.danos?.message}
               />
             </div>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.descripcion?.message}
+                error={errors.descripcionDanos?.message}
                 register={register}
-                nameTitle="Descripcion"
+                nameTitle="Descripcion Daños"
                 type="text"
-                nameInput="descripcion"
+                nameInput="descripcionDanos"
               />
             </div>
             <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.visibilidad?.message}
+              <OptionInput
+                data={arrayAlarma}
+                dataLabel="Alarma"
+                name="alarma"
                 register={register}
-                nameTitle="Visibilidad"
-                type="checkbox"
-                nameInput="visibilidad"
-                required
+                error={errors.alarma?.message}
               />
             </div>
             <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.respuesta?.message}
+              <OptionInput
+                data={arrayCierre}
+                dataLabel="Cierre Centralizado"
+                name="cierreCentralizado"
                 register={register}
-                nameTitle="Respuesta"
-                type="checkbox"
-                nameInput="respuesta"
-                required
+                error={errors.cierreCentralizado?.message}
               />
             </div>
           </div>

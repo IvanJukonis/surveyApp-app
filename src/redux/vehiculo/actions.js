@@ -34,63 +34,63 @@ export const getVehiculoError = (error) => {
   };
 };
 
-export const deleteVehiclePending = (pending) => {
+export const deleteVehiculoPending = (pending) => {
   return {
     type: DELETE_VEHICULO_PENDING,
     payload: pending
   };
 };
 
-export const deleteVehicleSuccess = (vehiculoID) => {
+export const deleteVehiculoSuccess = (vehiculoID) => {
   return {
     type: DELETE_VEHICULO_SUCCESS,
     payload: vehiculoID
   };
 };
 
-export const deleteVehicleError = (error) => {
+export const deleteVehiculoError = (error) => {
   return {
     type: DELETE_VEHICULO_ERROR,
     payload: error
   };
 };
 
-export const postVehiclePending = (pending) => {
+export const postVehiculoPending = (pending) => {
   return {
     type: POST_VEHICULO_PENDING,
     payload: pending
   };
 };
 
-export const postVehicleSuccess = (vehiculo) => {
+export const postVehiculoSuccess = (vehiculo) => {
   return {
     type: POST_VEHICULO_SUCCESS,
     payload: vehiculo
   };
 };
 
-export const postVehicleError = (error) => {
+export const postVehiculoError = (error) => {
   return {
     type: POST_VEHICULO_ERROR,
     payload: error
   };
 };
 
-export const updateVehiclePending = (pending) => {
+export const updateVehiculoPending = (pending) => {
   return {
     type: UPDATE_VEHICULO_PENDING,
     payload: pending
   };
 };
 
-export const updateVehicleSuccess = (vehiculo) => {
+export const updateVehiculoSuccess = (vehiculo) => {
   return {
     type: UPDATE_VEHICULO_SUCCESS,
     payload: vehiculo
   };
 };
 
-export const updateVehicleError = (error) => {
+export const updateVehiculoError = (error) => {
   return {
     type: UPDATE_VEHICULO_ERROR,
     payload: error

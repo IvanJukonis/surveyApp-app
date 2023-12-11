@@ -45,7 +45,7 @@ export const deleteVehiculo = (vehiculoID) => {
   };
 };
 
-export const createVehiculo = async (dispatch, vehiculoData) => {
+export const postVehiculo = async (dispatch, vehiculoData) => {
   try {
     dispatch(postVehiculoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`, {

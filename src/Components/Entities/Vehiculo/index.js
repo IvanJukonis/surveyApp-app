@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllVehiculos, deleteVehiculo } from 'redux/novedad/thunks';
+import { getAllVehiculos, deleteVehiculo } from 'redux/vehiculo/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
 function Vehiculo() {
   const dispatch = useDispatch();
-  const novedad = useSelector((state) => state.novedad.list);
-  const isPending = useSelector((state) => state.novedad.pending);
-  const isError = useSelector((state) => state.novedad.error);
+  const vehiculo = useSelector((state) => state.vehiculo.list);
+  const isPending = useSelector((state) => state.vehiculo.pending);
+  const isError = useSelector((state) => state.vehiculo.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const columnTitleArray = [
@@ -58,7 +58,7 @@ function Vehiculo() {
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={novedad}
+          data={vehiculo}
           columns={columns}
           handleClick={handleEditClick}
           deleteButton={deleteVehiculo}

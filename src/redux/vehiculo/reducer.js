@@ -69,12 +69,12 @@ const vehiculoReducer = (state = INITIAL_STATE, action) => {
     }
 
     case UPDATE_VEHICULO_SUCCESS: {
-      const updatedVehicle = state.list.map((vehiculo) => {
+      const updatedVehiculo = state.list.map((vehiculo) => {
         return vehiculo._id === action.payload._id ? { ...vehiculo, ...action.payload } : vehiculo;
       });
       return {
         ...state,
-        list: [...updatedVehicle]
+        list: [...updatedVehiculo]
       };
     }
 

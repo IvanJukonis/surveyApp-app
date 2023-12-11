@@ -28,7 +28,7 @@ const InvolucradoForm = React.lazy(() =>
   import('../Entities/Involucrado/FormInvolucrado/InvolucradoForm')
 );
 const NovedadForm = React.lazy(() => import('../Entities/Novedad/FormNovedad/NovedadForm'));
-const VehiculoForm = React.lazy(() => import('../Entities/Novedad/FormVehiculo/VehiculoForm'));
+const VehiculoForm = React.lazy(() => import('../Entities/Vehiculo/FormVehiculo/VehiculoForm'));
 
 function Layout() {
   return (

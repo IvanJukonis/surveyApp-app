@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import involvedReducer from './involucrado/reducer';
-import locationReducer from './location/reducer';
+import locationReducer from './lugarSiniestro/reducer';
 import vehicleReducer from './vehiculo/reducer';
 import investigatorReducer from './investigator/reducer';
 import siniestroReducer from './siniestro/reducer';
