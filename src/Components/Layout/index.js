@@ -6,9 +6,12 @@ import Footer from '../Footer/index';
 
 const Home = React.lazy(() => import('../Home/index'));
 
+//TABLES
 const SiniestroController = React.lazy(() => import('../Users/Relevador/Siniestros'));
 const RelevadorController = React.lazy(() => import('../Users/Administrativo/Relevadores'));
 const ControladorController = React.lazy(() => import('../Users/Administrativo/Controladores'));
+
+//FORMS
 const SiniestrosAdmForm = React.lazy(() =>
   import('../Entities/Siniestro/FormAdministrativo/SiniestroForm')
 );
@@ -25,6 +28,7 @@ const InvolucradoForm = React.lazy(() =>
   import('../Entities/Involucrado/FormInvolucrado/InvolucradoForm')
 );
 const NovedadForm = React.lazy(() => import('../Entities/Novedad/FormNovedad/NovedadForm'));
+const VehiculoForm = React.lazy(() => import('../Entities/Novedad/FormVehiculo/VehiculoForm'));
 
 function Layout() {
   return (
@@ -54,6 +58,8 @@ function Layout() {
                 />
                 <Route path="/controlador/siniestros/novedad/form/:id?" component={NovedadForm} />
                 <Route path="/relevador/siniestros/novedad/form/:id?" component={NovedadForm} />
+                <Route path="/controlador/siniestros/vehiculo/form/:id?" component={VehiculoForm} />
+                <Route path="/controlador/siniestros/vehiculo/form/:id?" component={VehiculoForm} />
                 <Route
                   exact
                   path="/administrativo/controladores"
