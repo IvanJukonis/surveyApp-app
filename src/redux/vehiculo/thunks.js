@@ -5,9 +5,9 @@ import {
   deleteVehiculoPending,
   deleteVehiculoSuccess,
   deleteVehiculoError,
-  addVehiculoPending,
-  addVehiculoSuccess,
-  addVehiculoError,
+  postVehiculoPending,
+  postVehiculoSuccess,
+  postVehiculoError,
   updateVehiculoPending,
   updateVehiculoSuccess,
   updateVehiculoError
@@ -47,7 +47,7 @@ export const deleteVehiculo = (vehiculoID) => {
 
 export const createVehiculo = async (dispatch, vehiculoData) => {
   try {
-    dispatch(addVehiculoPending(true));
+    dispatch(postVehiculoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`, {
       method: 'POST',
       headers: {
@@ -57,13 +57,13 @@ export const createVehiculo = async (dispatch, vehiculoData) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      dispatch(addVehiculoPending(false));
+      dispatch(postVehiculoPending(false));
       throw new Error(data.message);
     }
-    dispatch(addVehiculoSuccess(data.result));
+    dispatch(postVehiculoSuccess(data.result));
   } catch (error) {
-    dispatch(addVehiculoPending(false));
-    dispatch(addVehiculoError(error.message));
+    dispatch(postVehiculoPending(false));
+    dispatch(postVehiculoError(error.message));
   }
 };
 

@@ -2,9 +2,9 @@ import {
   GET_VEHICULO_PENDING,
   GET_VEHICULO_SUCCESS,
   GET_VEHICULO_ERROR,
-  ADD_VEHICULO_PENDING,
-  ADD_VEHICULO_SUCCESS,
-  ADD_VEHICULO_ERROR,
+  POST_VEHICULO_PENDING,
+  POST_VEHICULO_SUCCESS,
+  POST_VEHICULO_ERROR,
   UPDATE_VEHICULO_PENDING,
   UPDATE_VEHICULO_SUCCESS,
   UPDATE_VEHICULO_ERROR,
@@ -40,21 +40,21 @@ const vehiculoReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case ADD_VEHICULO_PENDING: {
+    case POST_VEHICULO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case ADD_VEHICULO_SUCCESS: {
+    case POST_VEHICULO_SUCCESS: {
       return {
         ...state,
         list: [...state.list, action.payload]
       };
     }
 
-    case ADD_VEHICULO_ERROR: {
+    case POST_VEHICULO_ERROR: {
       return {
         ...state,
         error: action.payload

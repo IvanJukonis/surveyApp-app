@@ -5,9 +5,9 @@ import {
   DELETE_VEHICULO_PENDING,
   DELETE_VEHICULO_SUCCESS,
   DELETE_VEHICULO_ERROR,
-  ADD_VEHICULO_PENDING,
-  ADD_VEHICULO_SUCCESS,
-  ADD_VEHICULO_ERROR,
+  POST_VEHICULO_PENDING,
+  POST_VEHICULO_SUCCESS,
+  POST_VEHICULO_ERROR,
   UPDATE_VEHICULO_PENDING,
   UPDATE_VEHICULO_SUCCESS,
   UPDATE_VEHICULO_ERROR
@@ -55,23 +55,23 @@ export const deleteVehicleError = (error) => {
   };
 };
 
-export const addVehiclePending = (pending) => {
+export const postVehiclePending = (pending) => {
   return {
-    type: ADD_VEHICULO_PENDING,
+    type: POST_VEHICULO_PENDING,
     payload: pending
   };
 };
 
-export const addVehicleSuccess = (vehiculo) => {
+export const postVehicleSuccess = (vehiculo) => {
   return {
-    type: ADD_VEHICULO_SUCCESS,
+    type: POST_VEHICULO_SUCCESS,
     payload: vehiculo
   };
 };
 
-export const addVehicleError = (error) => {
+export const postVehicleError = (error) => {
   return {
-    type: ADD_VEHICULO_ERROR,
+    type: POST_VEHICULO_ERROR,
     payload: error
   };
 };
