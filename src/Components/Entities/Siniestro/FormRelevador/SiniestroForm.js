@@ -291,18 +291,7 @@ const SiniestrosForm = () => {
     controlador: data.controlador,
     requerido: data.requerido,
     comisaria: data.comisaria,
-    lugar: data.lugar,
-    conclusionDescripcion: data.conclusionDescripcion,
-    conclusionLesiones: data.conclusionLesiones,
-    conclusionDaños: data.conclusionDaños,
-    conclusionResponsabilidad: data.conclusionResponsabilidad,
-    conclusionCredibilidad: data.conclusionCredibilidad,
-    conclusionRecomendacion: data.conclusionRecomendacion,
-    estado: data.estado,
-    autorizacion: data.autorizacion,
-    fechaFinalizacion: formatDate(data.fechaFinalizacion),
-    fechaContactoAsegurado: formatDate(data.fechaContactoAsegurado),
-    fechaContactoTercero: formatDate(data.fechaContactoTercero)
+    lugar: data.lugar
   };
 
   const {

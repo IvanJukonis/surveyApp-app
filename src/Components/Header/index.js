@@ -59,6 +59,26 @@ function Header() {
               Controladores
             </NavLink>
           </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="administrativo/involucrados">
+              Involucrados
+            </NavLink>
+          </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="administrativo/vehiculos">
+              Vehiculos
+            </NavLink>
+          </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="administrativo/lugarsiniestros">
+              Lugar Siniestro
+            </NavLink>
+          </div>
+          <div className={styles.homeButtons}>
+            <NavLink className={styles.textList} to="administrativo/lugarroboruedas">
+              Lugar Robo Rueda
+            </NavLink>
+          </div>
         </div>
       ) : location.pathname === '/home' ? (
         <div className={styles.header}>

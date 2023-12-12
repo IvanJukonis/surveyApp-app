@@ -10,6 +10,10 @@ const Home = React.lazy(() => import('../Home/index'));
 const SiniestroController = React.lazy(() => import('../Users/Relevador/Siniestros'));
 const RelevadorController = React.lazy(() => import('../Users/Administrativo/Relevadores'));
 const ControladorController = React.lazy(() => import('../Users/Administrativo/Controladores'));
+const VehiculoController = React.lazy(() => import('../Entities/Vehiculo'));
+const InvolucradoController = React.lazy(() => import('../Entities/Involucrado'));
+const LugarSiniestroController = React.lazy(() => import('../Entities/LugarSiniestro'));
+const LugarRoboRuedaController = React.lazy(() => import('../Entities/LugarRoboRueda'));
 
 //FORMS
 const SiniestrosAdmForm = React.lazy(() =>
@@ -41,7 +45,22 @@ function Layout() {
               <Switch>
                 <Route exact path="/controlador/siniestros" component={SiniestroController} />
                 <Route exact path="/relevador/siniestros" component={SiniestroController} />
-                <Route exact path="/administrativo/siniestros" component={SiniestroController} />
+                <Route
+                  exact
+                  path="/administrativo/involucrados"
+                  component={InvolucradoController}
+                />
+                <Route exact path="/administrativo/vehiculos" component={VehiculoController} />
+                <Route
+                  exact
+                  path="/administrativo/lugarsiniestros"
+                  component={LugarSiniestroController}
+                />
+                <Route
+                  exact
+                  path="/administrativo/lugarroboruedas"
+                  component={LugarRoboRuedaController}
+                />
                 <Route path="/controlador/siniestros/form/:id?" component={SiniestrosRelForm} />
                 <Route path="/relevador/siniestros/form/:id?" component={SiniestrosRelForm} />
                 <Route path="/administrativo/siniestros/form/:id?" component={SiniestrosAdmForm} />

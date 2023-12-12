@@ -11,30 +11,8 @@ function Vehiculo() {
   const isError = useSelector((state) => state.vehiculo.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
-  const columnTitleArray = [
-    'Nombre',
-    'Apellido',
-    'DNI',
-    'Telefono',
-    'Email',
-    'Ciudad',
-    'Tipo',
-    'Lesiones',
-    'Direccion',
-    'Pais'
-  ];
-  const columns = [
-    'nombre',
-    'apellido',
-    'DNI',
-    'telefono',
-    'email',
-    'ciudad',
-    'tipo',
-    'lesiones',
-    'direccion',
-    'pais'
-  ];
+  const columnTitleArray = ['Rol', 'Dominio', 'Modelo', 'Marca', 'Color'];
+  const columns = ['rol', 'dominio', 'modelo', 'marca', 'color'];
 
   const handleEditClick = (item) => {
     history.push(`/vehiculos/form/${item._id}`, { params: { ...item, mode: 'edit' } });

@@ -1,29 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllLocations, deleteLocation } from 'redux/lugarSiniestro/thunks';
+import { getAllLugarSiniestro, deleteLugarSiniestro } from 'redux/lugarSiniestro/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
-function location() {
+function lugarSiniestro() {
   const dispatch = useDispatch();
-  const location = useSelector((state) => state.location.list);
-  const isPending = useSelector((state) => state.location.pending);
-  const isError = useSelector((state) => state.location.error);
+  const lugarSiniestro = useSelector((state) => state.lugarSiniestro.list);
+  const isPending = useSelector((state) => state.lugarSiniestro.pending);
+  const isError = useSelector((state) => state.lugarSiniestro.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const columnTitleArray = [
-    'calleVT',
-    'calleVA',
-    'direccionVA',
-    'direccionVT',
-    'direccionCalleVA',
-    'direccionCalleVT',
-    'estadoCalleVA',
-    'estadoCalleVT',
-    'calleAdicional',
-    'direccionCalleAdicional',
+    'Calle VA',
+    'Calle VT',
+    'Direccion VA',
+    'Direccion VT',
+    'Direccion Calle VA',
+    'Direccion Calle VT',
     'ciudad',
-    'localidad'
+    'provincia'
   ];
   const columns = [
     'calleVA',
@@ -32,40 +28,36 @@ function location() {
     'direccionVT',
     'direccionCalleVA',
     'direccionCalleVT',
-    'estadoCalleVA',
-    'estadoCalleVT',
-    'calleAdicional',
-    'direccionCalleAdicional',
     'ciudad',
-    'localidad'
+    'provincia'
   ];
 
   const handleEditClick = (item) => {
-    history.push(`/location/form/${item._id}`, { params: { ...item, mode: 'edit' } });
+    history.push(`/lugarSiniestro/form/${item._id}`, { params: { ...item, mode: 'edit' } });
   };
 
   const createMode = () => {
-    history.push('/location/form/', { params: { mode: 'create' } });
+    history.push('/lugarSiniestro/form/', { params: { mode: 'create' } });
   };
 
   useEffect(() => {
-    getAllLocations(dispatch);
+    getAllLugarSiniestro(dispatch);
   }, []);
 
   return (
     <section>
       <div>
-        <AddButton entity="location" createMode={createMode} />
+        <AddButton entity="lugarSiniestro" createMode={createMode} />
       </div>
       {isPending ? (
         <Loader />
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={location}
+          data={lugarSiniestro}
           columns={columns}
           handleClick={handleEditClick}
-          deleteButton={deleteLocation}
+          deleteButton={deleteLugarSiniestro}
         />
       )}
       {toastErroOpen && (
@@ -74,4 +66,4 @@ function location() {
     </section>
   );
 }
-export default location;
+export default lugarSiniestro;

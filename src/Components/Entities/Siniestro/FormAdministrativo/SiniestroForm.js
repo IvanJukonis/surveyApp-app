@@ -28,9 +28,7 @@ const SiniestrosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [siniestro, setSiniestro] = useState({});
   const relevador = useSelector((state) => state.relevador.list);
-  const siniestros = useSelector((state) => state.siniestro.list);
   const controlador = useSelector((state) => state.controlador.list);
-  const updateItem = siniestros.find((item) => item._id === id);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -193,80 +191,18 @@ const SiniestrosForm = () => {
       'string.min': 'El campo "Lugar" debe tener al menos 3 caracteres',
       'string.max': 'El campo "Lugar" debe tener como máximo 50 caracteres'
     }),
-
-    conclusionDescripcion: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion descripcion" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion descripcion" es un campo requerido',
-      'string.min': 'El campo "Conclusion descripcion" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion descripcion" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionLesiones: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion lesiones" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion lesiones" es un campo requerido',
-      'string.min': 'El campo "Conclusion lesiones" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion lesiones" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionDaños: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion daños" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion daños" es un campo requerido',
-      'string.min': 'El campo "Conclusion daños" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion daños" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionResponsabilidad: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion responsabilidad" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion responsabilidad" es un campo requerido',
-      'string.min': 'El campo "Conclusion responsabilidad" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion responsabilidad" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionCredibilidad: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion credibilidad" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion credibilidad" es un campo requerido',
-      'string.min': 'El campo "Conclusion credibilidad" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion credibilidad" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionRecomendacion: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion recomendacion" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion recomendacion" es un campo requerido',
-      'string.min': 'El campo "Conclusion recomendacion" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion recomendacion" debe tener como máximo 500 caracteres'
-    }),
-
-    estado: Joi.string()
-      .valid('Sin asignar', 'Asignado', 'Activo', 'Finalizado', 'Controlado', 'Completado')
-      .messages({
-        'any.only': 'El campo "Estado" debe contener un estado valido'
-      }),
-
-    autorizacion: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Autorizacion" debe ser una cadena de texto',
-      'string.empty': 'El campo "Autorizacion" es un campo requerido',
-      'string.min': 'El campo "Autorizacion" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Autorizacion" debe tener como máximo 500 caracteres'
-    }),
-
-    fechaFinalizacion: Joi.date().messages({
-      'date.base': 'El campo "Fecha de Finalizacion" debe ser una fecha valida.',
-      'date.empty': 'El campo "Fecha de Finalizacion" no puede permanecer vacio.'
-    }),
-
-    fechaContactoAsegurado: Joi.date().messages({
-      'date.base': 'El campo "Fecha de Contacto Asegurado" debe ser una fecha valida.',
-      'date.empty': 'El campo "Fecha de Contacto Asegurado" no puede permanecer vacio.'
-    }),
-
-    fechaContactoTercero: Joi.date().messages({
-      'date.base': 'El campo "Fecha de Contacto Tercero" debe ser una fecha valida.',
-      'date.empty': 'El campo "Fecha de  Contacto Tercero" no puede permanecer vacio.'
-    })
+    conclusionDescripcion: Joi.any,
+    conclusionLesiones: Joi.any,
+    conclusionDaños: Joi.any,
+    conclusionResponsabilidad: Joi.any,
+    conclusionCredibilidad: Joi.any,
+    conclusionRecomendacion: Joi.any,
+    estado: Joi.any,
+    autorizacion: Joi.any,
+    fechaFinalizacion: Joi.string().allow(''),
+    fechaContactoAsegurado: Joi.string().allow(''),
+    fechaContactoTercero: Joi.string().allow('')
   });
-
-  //const controladorInput = controlador.map((controlador) => controlador.nombre.toLowerCase());
-  //const relevadorInput = relevador.map((relevador) => relevador.nombre.toLowerCase());
 
   const formatDate = (dateString) => {
     const dateObject = new Date(dateString);
@@ -275,8 +211,6 @@ const SiniestrosForm = () => {
     const day = String(dateObject.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-
-  console.log(updateItem);
 
   const siniestroUpdate = {
     numSiniestro: data.numSiniestro,
@@ -296,18 +230,7 @@ const SiniestrosForm = () => {
     controlador: data.controlador,
     requerido: data.requerido,
     comisaria: data.comisaria,
-    lugar: data.lugar,
-    conclusionDescripcion: data.conclusionDescripcion,
-    conclusionLesiones: data.conclusionLesiones,
-    conclusionDaños: data.conclusionDaños,
-    conclusionResponsabilidad: data.conclusionResponsabilidad,
-    conclusionCredibilidad: data.conclusionCredibilidad,
-    conclusionRecomendacion: data.conclusionRecomendacion,
-    estado: data.estado,
-    autorizacion: data.autorizacion,
-    fechaFinalizacion: formatDate(data.fechaFinalizacion),
-    fechaContactoAsegurado: formatDate(data.fechaContactoAsegurado),
-    fechaContactoTercero: formatDate(data.fechaContactoTercero)
+    lugar: data.lugar
   };
 
   const {
@@ -346,6 +269,7 @@ const SiniestrosForm = () => {
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     setSiniestro(data);
     setModalAddConfirmOpen(true);
   };
@@ -366,6 +290,7 @@ const SiniestrosForm = () => {
     getSiniestro(dispatch);
   }, []);
 
+  console.log(errors);
   return (
     <div className={styles.container}>
       {
