@@ -357,7 +357,6 @@ const SiniestrosForm = () => {
       return '/relevador';
     }
     if (controladorPath) {
-      console.log('hola');
       return '/controlador';
     }
     console.log('chau');
@@ -401,7 +400,6 @@ const SiniestrosForm = () => {
     getSiniestro(dispatch);
   }, []);
 
-  console.log(siniestro);
   return (
     <div className={styles.container}>
       {

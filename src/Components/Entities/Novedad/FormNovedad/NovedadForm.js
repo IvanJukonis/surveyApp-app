@@ -8,11 +8,13 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { getAllNovedad, updateNovedad, postNovedad } from 'redux/novedad/thunks';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import DateInput from 'Components/Shared/Inputs/DateInput';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
@@ -20,12 +22,11 @@ const NovedadesForm = () => {
   const dispatch = useDispatch();
   const novedades = useSelector((state) => state.novedad.list);
   const [toastError, setToastErroOpen] = useState(false);
+  const [buttonType, setButtonType] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [novedad, setNovedad] = useState({});
-  const location = useLocation();
   const history = useHistory();
-  const data = location.state.params;
   const { id } = useParams();
 
   const schema = Joi.object({
@@ -70,7 +71,7 @@ const NovedadesForm = () => {
 
     descripcion: Joi.string()
       .min(3)
-      .max(15)
+      .max(150)
       .messages({
         'string.base': 'El campo "descripcion" debe ser una cadena de texto',
         'string.empty': 'El campo "descripcion" es un campo requerido',
@@ -102,17 +103,6 @@ const NovedadesForm = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const novedadUpdate = {
-    fecha: formatDate(data.fecha),
-    hora: formatDate(data.hora),
-    titulo: data.titulo,
-    tipo: data.tipo,
-    relacion: data.relacion,
-    descripcion: data.descripcion,
-    visibilidad: data.visibilidad,
-    respuesta: data.respuesta
-  };
-
   const {
     register,
     reset,
@@ -121,22 +111,27 @@ const NovedadesForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...novedadUpdate }
+    defaultValues: { ...novedad }
   });
 
   const onConfirmFunction = async () => {
-    if (!id) {
-      const addNovedadResponse = await dispatch(postNovedad(novedad));
-      if (addNovedadResponse.type === 'ADD_NOVEDAD_SUCCESS') {
+    if (!buttonType) {
+      console.log('add');
+      console.log(novedad);
+      const addNovedadResponse = await postNovedad(dispatch, novedad);
+      if (addNovedadResponse.type === 'POST_NOVEDAD_SUCCESS') {
+        console.log('hola');
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
           history.goBack();
         }, 1000);
       }
+      console.log('HOLA');
       return setToastErroOpen(true);
     } else {
-      const editNovedadResponse = await dispatch(updateNovedad(id, novedad));
+      console.log('edit');
+      const editNovedadResponse = await updateNovedad(dispatch, id, novedad);
       if (editNovedadResponse.type === 'EDIT_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -149,13 +144,19 @@ const NovedadesForm = () => {
   };
 
   const onSubmit = async (data) => {
-    setNovedad(data);
+    const formattedData = {
+      ...data,
+      fecha: formatDate(data.fecha),
+      hora: formatDate(data.hora)
+    };
+    setNovedad(formattedData);
     setModalAddConfirmOpen(true);
+    resetForm();
   };
 
-  const arrayTipos = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
+  const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
 
-  const arrayRelaciones = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
+  const arrayRelaciones = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
 
   const columnTitleArray = ['Fecha', 'Titulo', 'Tipo', 'Relacion'];
   const columns = ['fecha', 'titulo', 'tipo', 'relacion'];
@@ -180,6 +181,31 @@ const NovedadesForm = () => {
     }
   };
 
+  const resetForm = () => {
+    setButtonType(false);
+    const emptyData = {
+      hora: 'dd / mm / aaaa',
+      fecha: 'dd / mm / aaaa',
+      relacion: 'Pick relacion',
+      respuesta: false,
+      tipo: 'Pick tipo',
+      visibilidad: false,
+      titulo: '',
+      descripcion: ''
+    };
+    reset({ ...emptyData });
+  };
+
+  const tableClick = (datosFila) => {
+    setButtonType(true);
+    const formattedData = {
+      ...datosFila,
+      fecha: formatDate(datosFila.fecha),
+      hora: formatDate(datosFila.hora)
+    };
+    reset({ ...formattedData });
+  };
+
   useEffect(() => {
     getAllNovedad(dispatch);
   }, []);
@@ -190,7 +216,7 @@ const NovedadesForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={buttonType ? 'Update' : 'Add'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
@@ -215,89 +241,99 @@ const NovedadesForm = () => {
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
             <div className={styles.leftGroup}>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.fecha?.message}
-                  register={register}
-                  nameTitle="Fecha"
-                  type="date"
-                  nameInput="fecha"
-                  required
-                />
+              <div className={styles.topGroup}>
+                <div className={styles.leftLeftGroup}>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.fecha?.message}
+                      register={register}
+                      nameTitle="Fecha"
+                      type="date"
+                      nameInput="fecha"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Inputs
+                      error={errors.titulo?.message}
+                      register={register}
+                      nameTitle="Titulo"
+                      type="text"
+                      nameInput="titulo"
+                      styleInput="normalInput"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={arrayTipos}
+                      dataLabel="Tipo"
+                      name="tipo"
+                      register={register}
+                      error={errors.tipo?.message}
+                    />
+                  </div>
+                </div>
+                <div className={styles.leftRightGroup}>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.hora?.message}
+                      register={register}
+                      nameTitle="Hora"
+                      type="date"
+                      nameInput="hora"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={arrayRelaciones}
+                      dataLabel="Relacion"
+                      name="relacion"
+                      register={register}
+                      error={errors.relacion?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.visibilidad?.message}
+                      register={register}
+                      nameTitle="Visibilidad"
+                      type="checkbox"
+                      nameInput="visibilidad"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.respuesta?.message}
+                      register={register}
+                      nameTitle="Respuesta"
+                      type="checkbox"
+                      nameInput="respuesta"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.hora?.message}
-                  register={register}
-                  nameTitle="Hora"
-                  type="date"
-                  nameInput="hora"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.titulo?.message}
-                  register={register}
-                  nameTitle="Titulo"
-                  type="text"
-                  nameInput="titulo"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayTipos}
-                  dataLabel="Tipo"
-                  name="tipo"
-                  register={register}
-                  error={errors.tipo?.message}
-                />
-              </div>
-            </div>
-            <div className={styles.rightGroup}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayRelaciones}
-                  dataLabel="Relacion"
-                  name="relacion"
-                  register={register}
-                  error={errors.relacion?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descripcion?.message}
-                  register={register}
-                  nameTitle="Descripcion"
-                  type="text"
-                  nameInput="descripcion"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.visibilidad?.message}
-                  register={register}
-                  nameTitle="Visibilidad"
-                  type="checkbox"
-                  nameInput="visibilidad"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.respuesta?.message}
-                  register={register}
-                  nameTitle="Respuesta"
-                  type="checkbox"
-                  nameInput="respuesta"
-                  required
-                />
+              <div className={styles.botGroup}>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.descripcion?.message}
+                    register={register}
+                    nameTitle="Descripcion"
+                    type="text"
+                    nameInput="descripcion"
+                    styleInput="big"
+                    required
+                  />
+                </div>
               </div>
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-            <Button clickAction={() => reset()} text="Reset" />
+            <Button clickAction={() => {}} text={buttonType ? 'edit' : 'Add'} />
+            <Button clickAction={resetForm} text="Reset" />
             <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
         </form>
@@ -315,7 +351,13 @@ const NovedadesForm = () => {
                 const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
 
                 return (
-                  <tr className={rowClass} key={index}>
+                  <tr
+                    onClick={() => {
+                      tableClick(row);
+                    }}
+                    className={rowClass}
+                    key={index}
+                  >
                     {columns.map((column, columnIndex) => (
                       <td key={columnIndex}>
                         {column.startsWith('fecha') ? (
