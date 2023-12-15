@@ -13,12 +13,15 @@ import {
   updateNovedadError
 } from './actions';
 
-export const getAllNovedad = async (dispatch) => {
+export const getAllNovedad = async (dispatch, siniestroId) => {
   try {
     dispatch(getNovedadPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/novedad`);
-    const data = await reponse.json();
-    const novedadesList = data.data;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/novedad`);
+    const data = await response.json();
+    const novedadesListAll = data.data;
+    const novedadesList = novedadesListAll.filter((novedad) =>
+      novedad.siniestro.includes(siniestroId)
+    );
     dispatch(getNovedadPending(false));
     dispatch(getNovedadSuccess(novedadesList));
   } catch (error) {
@@ -54,15 +57,18 @@ export const postNovedad = async (dispatch, novedadData) => {
       },
       body: JSON.stringify(novedadData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(postNovedadPending(false));
-      throw new Error(data.message);
+      return dispatch(postNovedadSuccess(newData.data));
+    } else {
+      dispatch(postNovedadPending(false));
+      return dispatch(postNovedadError(true));
     }
-    dispatch(postNovedadSuccess(data.result));
   } catch (error) {
     dispatch(postNovedadPending(false));
-    dispatch(postNovedadError(error.message));
+    return dispatch(postNovedadError(true));
   }
 };
 
@@ -81,7 +87,6 @@ export const updateNovedad = async (dispatch, id, novedadData) => {
       dispatch(updateNovedadPending(false));
       throw new Error(data.message);
     }
-
     dispatch(updateNovedadSuccess(data));
   } catch (error) {
     dispatch(updateNovedadPending(false));

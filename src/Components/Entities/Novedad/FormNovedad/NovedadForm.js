@@ -116,21 +116,18 @@ const NovedadesForm = () => {
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
-      console.log('add');
-      console.log(novedad);
-      const addNovedadResponse = await postNovedad(dispatch, novedad);
+      const novedadConSiniestro = { ...novedad, siniestro: id };
+      const addNovedadResponse = await postNovedad(dispatch, novedadConSiniestro);
+      console.log(addNovedadResponse);
       if (addNovedadResponse.type === 'POST_NOVEDAD_SUCCESS') {
-        console.log('hola');
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
           history.goBack();
         }, 1000);
       }
-      console.log('HOLA');
       return setToastErroOpen(true);
     } else {
-      console.log('edit');
       const editNovedadResponse = await updateNovedad(dispatch, id, novedad);
       if (editNovedadResponse.type === 'EDIT_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
@@ -207,7 +204,7 @@ const NovedadesForm = () => {
   };
 
   useEffect(() => {
-    getAllNovedad(dispatch);
+    getAllNovedad(dispatch, id);
   }, []);
 
   return (
