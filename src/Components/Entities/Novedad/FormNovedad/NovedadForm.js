@@ -92,7 +92,10 @@ const NovedadesForm = () => {
         'boolean.base': 'El campo "Presencial" es un campo booleano',
         'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
       })
-      .required()
+      .required(),
+    siniestro: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any()
   });
 
   const formatDate = (dateString) => {
@@ -115,40 +118,46 @@ const NovedadesForm = () => {
   });
 
   const onConfirmFunction = async () => {
+    console.log(buttonType);
     if (!buttonType) {
       const novedadConSiniestro = { ...novedad, siniestro: id };
       const addNovedadResponse = await postNovedad(dispatch, novedadConSiniestro);
-      console.log(addNovedadResponse);
       if (addNovedadResponse.type === 'POST_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     } else {
-      const editNovedadResponse = await updateNovedad(dispatch, id, novedad);
-      if (editNovedadResponse.type === 'EDIT_NOVEDAD_SUCCESS') {
+      const editNovedadResponse = await updateNovedad(dispatch, novedad._id, novedad);
+      console.log(editNovedadResponse);
+      if (editNovedadResponse.type === 'UPDATE_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     }
   };
 
   const onSubmit = async (data) => {
-    const formattedData = {
-      ...data,
-      fecha: formatDate(data.fecha),
-      hora: formatDate(data.hora)
-    };
-    setNovedad(formattedData);
-    setModalAddConfirmOpen(true);
-    resetForm();
+    if (buttonType) {
+      const formattedData = {
+        ...data,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setNovedad(formattedData);
+      setModalAddConfirmOpen(true);
+    } else {
+      const formattedData = {
+        ...data,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setNovedad(formattedData);
+      setModalAddConfirmOpen(true);
+    }
   };
 
   const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
@@ -194,13 +203,13 @@ const NovedadesForm = () => {
   };
 
   const tableClick = (datosFila) => {
-    setButtonType(true);
     const formattedData = {
       ...datosFila,
       fecha: formatDate(datosFila.fecha),
       hora: formatDate(datosFila.hora)
     };
     reset({ ...formattedData });
+    setButtonType(true);
   };
 
   useEffect(() => {
@@ -226,7 +235,7 @@ const NovedadesForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Novedad edited' : 'Novedad added'}
+              message={buttonType ? 'Novedad edited' : 'Novedad added'}
             />
           )}
         </div>
@@ -329,7 +338,7 @@ const NovedadesForm = () => {
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={buttonType ? 'edit' : 'Add'} />
+            <Button clickAction={() => {}} text={buttonType ? 'Edit' : 'Add'} />
             <Button clickAction={resetForm} text="Reset" />
             <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>

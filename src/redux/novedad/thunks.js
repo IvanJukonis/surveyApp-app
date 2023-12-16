@@ -74,6 +74,7 @@ export const postNovedad = async (dispatch, novedadData) => {
 
 export const updateNovedad = async (dispatch, id, novedadData) => {
   try {
+    console.log(novedadData);
     dispatch(updateNovedadPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/novedad/${id}`, {
       method: 'PUT',
@@ -82,14 +83,18 @@ export const updateNovedad = async (dispatch, id, novedadData) => {
       },
       body: JSON.stringify(novedadData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
+      console.log(newData);
       dispatch(updateNovedadPending(false));
-      throw new Error(data.message);
+      return dispatch(updateNovedadSuccess(newData.data));
+    } else {
+      dispatch(updateNovedadPending(false));
+      return dispatch(updateNovedadError(true));
     }
-    dispatch(updateNovedadSuccess(data));
   } catch (error) {
     dispatch(updateNovedadPending(false));
-    dispatch(updateNovedadError(error.message));
+    return dispatch(updateNovedadError(error.message));
   }
 };
