@@ -5,20 +5,23 @@ import {
   deleteInvolucradoPending,
   deleteInvolucradoSuccess,
   deleteInvolucradoError,
-  addInvolucradoPending,
-  addInvolucradoSuccess,
-  addInvolucradoError,
+  postInvolucradoPending,
+  postInvolucradoSuccess,
+  postInvolucradoError,
   updateInvolucradoPending,
   updateInvolucradoSuccess,
   updateInvolucradoError
 } from './actions';
 
-export const getAllInvolucrado = async (dispatch) => {
+export const getAllNovedad = async (dispatch, siniestroId) => {
   try {
     dispatch(getInvolucradoPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
-    const data = await reponse.json();
-    const involucradosList = data.data;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
+    const data = await response.json();
+    const involucradosListAll = data.data;
+    const involucradosList = involucradosListAll.filter((involucrado) =>
+      involucrado.siniestro.includes(siniestroId)
+    );
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoSuccess(involucradosList));
   } catch (error) {
@@ -47,9 +50,9 @@ export const deleteInvolucrado = (involucradoID) => {
   };
 };
 
-export const createInvolucrado = async (dispatch, involucradoData) => {
+export const postInvolucrado = async (dispatch, involucradoData) => {
   try {
-    dispatch(addInvolucradoPending(true));
+    dispatch(postInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`, {
       method: 'POST',
       headers: {
@@ -57,15 +60,18 @@ export const createInvolucrado = async (dispatch, involucradoData) => {
       },
       body: JSON.stringify(involucradoData)
     });
-    const data = await response.json();
-    if (!response.ok) {
-      dispatch(addInvolucradoPending(false));
-      throw new Error(data.message);
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
+      dispatch(postInvolucradoPending(false));
+      return dispatch(postInvolucradoSuccess(newData.data));
+    } else {
+      dispatch(postInvolucradoPending(false));
+      return dispatch(postInvolucradoError(true));
     }
-    dispatch(addInvolucradoSuccess(data.result));
   } catch (error) {
-    dispatch(addInvolucradoPending(false));
-    dispatch(addInvolucradoError(error.message));
+    dispatch(postInvolucradoPending(false));
+    return dispatch(postInvolucradoError(true));
   }
 };
 
@@ -79,15 +85,17 @@ export const updateInvolucrado = async (dispatch, id, involucradoData) => {
       },
       body: JSON.stringify(involucradoData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(updateInvolucradoPending(false));
-      throw new Error(data.message);
+      return dispatch(updateInvolucradoSuccess(newData.data));
+    } else {
+      dispatch(updateInvolucradoPending(false));
+      return dispatch(updateInvolucradoError(true));
     }
-
-    dispatch(updateInvolucradoSuccess(data));
   } catch (error) {
     dispatch(updateInvolucradoPending(false));
-    dispatch(updateInvolucradoError(error.message));
+    return dispatch(updateInvolucradoError(error.message));
   }
 };
