@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -10,8 +10,8 @@ import {
 } from 'Components/Shared';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateInvolucrado, createInvolucrado } from 'redux/involucrado/thunks';
-import { useDispatch } from 'react-redux';
+import { updateInvolucrado, postInvolucrado, getAllInvolucrado } from 'redux/involucrado/thunks';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
@@ -20,8 +20,10 @@ const InvolucradosForm = () => {
   const dispatch = useDispatch();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
+  const involucrados = useSelector((state) => state.involucrado.list);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [involucrado, setInvolucrado] = useState({});
+  const [buttonType, setButtonType] = useState(false);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -142,18 +144,12 @@ const InvolucradosForm = () => {
       .required()
   });
 
-  const involucradoUpdate = {
-    nombre: data.nombre,
-    apellido: data.apellido,
-    dni: data.dni,
-    telefono: data.telefono,
-    email: data.email,
-    ciudad: data.ciudad,
-    tipo: data.tipo,
-    lesiones: data.lesiones,
-    fechaDeNacimiento: data.fechaDeNacimiento,
-    direccion: data.direccion,
-    pais: data.pais
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const {
@@ -164,42 +160,106 @@ const InvolucradosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...involucradoUpdate }
+    defaultValues: { ...involucrado }
   });
 
   const onConfirmFunction = async () => {
-    if (!id) {
-      const addInvolucradoResponse = await dispatch(createInvolucrado(involucrado));
-      if (addInvolucradoResponse.type === 'ADD_INVOLUCRADO_SUCCESS') {
+    if (!buttonType) {
+      const involucradoConSiniestro = { ...involucrado, siniestro: id };
+      const addInvolucradoResponse = await postInvolucrado(dispatch, involucradoConSiniestro);
+      if (addInvolucradoResponse.type === 'POST_INVOLUCRADO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     } else {
-      const editInvolucradoResponse = await dispatch(updateInvolucrado(id, involucrado));
-      if (editInvolucradoResponse.type === 'EDIT_INVOLUCRADO_SUCCESS') {
+      const editInvolucradoResponse = await updateInvolucrado(
+        dispatch,
+        involucrado._id,
+        involucrado
+      );
+      if (editInvolucradoResponse.type === 'UPDATE_INVOLUCRADO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     }
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
-    setInvolucrado(data);
-    setModalAddConfirmOpen(true);
+    if (buttonType) {
+      const formattedData = {
+        ...data,
+        fechaDeNacimiento: formatDate(data.fechaDeNacimiento)
+      };
+      setInvolucrado(formattedData);
+      setModalAddConfirmOpen(true);
+    } else {
+      const formattedData = {
+        ...data,
+        fechaDeNacimiento: formatDate(data.fechaDeNacimiento)
+      };
+      setInvolucrado(formattedData);
+      setModalAddConfirmOpen(true);
+    }
   };
 
   const arrayTipos = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'ABOG', 'TERCERO'];
-
   const arrayLesiones = ['Lesiones LEVES', 'Lesiones REGULARES', 'Lesiones GRAVES'];
+  const columnTitleArray = ['Nombre', 'Apellido', 'Direccion', 'DNI'];
+  const columns = ['nombre', 'apellido', 'direccion', 'dni'];
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
+  const resetForm = () => {
+    setButtonType(false);
+    const emptyData = {
+      nombre: '',
+      apellido: '',
+      direccion: '',
+      ciudad: '',
+      email: '',
+      dni: '',
+      telefono: '',
+      tipo: 'Pick tipo',
+      lesiones: 'Pick lesiones',
+      fechaDeNacimiento: 'dd / mm / aaaa'
+    };
+    reset({ ...emptyData });
+  };
+
+  const tableClick = (datosFila) => {
+    const formattedData = {
+      ...datosFila,
+      fechaDeNacimiento: formatDate(data.fechaDeNacimiento)
+    };
+    reset({ ...formattedData });
+    setButtonType(true);
+  };
+
+  useEffect(() => {
+    getAllInvolucrado(dispatch, id);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -341,11 +401,50 @@ const InvolucradosForm = () => {
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-            <Button clickAction={() => reset()} text="Reset" />
+            <Button clickAction={() => {}} text={buttonType ? 'Update' : 'Add'} />
+            <Button clickAction={resetForm} text="Reset" />
             <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
         </form>
+        <div className={styles.rightTable}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableContent}>
+                {columnTitleArray.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {involucrados.map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                return (
+                  <tr
+                    onClick={() => {
+                      tableClick(row);
+                    }}
+                    className={rowClass}
+                    key={index}
+                  >
+                    {columns.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column.startsWith('fecha') ? (
+                          formatDate(row[column])
+                        ) : (
+                          <>
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />

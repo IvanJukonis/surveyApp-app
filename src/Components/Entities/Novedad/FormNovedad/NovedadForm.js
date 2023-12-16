@@ -118,7 +118,6 @@ const NovedadesForm = () => {
   });
 
   const onConfirmFunction = async () => {
-    console.log(buttonType);
     if (!buttonType) {
       const novedadConSiniestro = { ...novedad, siniestro: id };
       const addNovedadResponse = await postNovedad(dispatch, novedadConSiniestro);
@@ -130,7 +129,6 @@ const NovedadesForm = () => {
       return setToastErroOpen(true);
     } else {
       const editNovedadResponse = await updateNovedad(dispatch, novedad._id, novedad);
-      console.log(editNovedadResponse);
       if (editNovedadResponse.type === 'UPDATE_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
