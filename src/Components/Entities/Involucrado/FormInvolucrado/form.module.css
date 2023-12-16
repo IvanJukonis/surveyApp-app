@@ -1,13 +1,30 @@
 .container {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background-color: #c5c5c5c2;
+  width: 60%;
+  margin: 30px;
+}
+
+.titleContainer {
+  display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 40px;
+  background-color: #3C3C3C;
+}
+
+.innerContainer {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
 }
 
 .title {
-  color: var(--Blue);
+  color: #fafafa;
+  margin: 0;
 }
 
 .form {
@@ -24,6 +41,30 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
+}
+
+.inputGroups {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px;
+}
+
+.leftGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.leftRightGroup {
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+}
+
+.leftLeftGroup {
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
 }
 
 .submitButton {
@@ -70,4 +111,56 @@
 .radioContainer div{
  margin: 0 10px;
  font-size: 15px;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: space-around;
+  max-width: 460px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #3C3C3C;
+  color: #FAFAFA;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0px 6px 30px -7px rgba(0, 0, 0, 0.75);
+  margin: 50px;
+}
+
+.table tr td,
+.table tr th {
+  padding: 5px 3px 5px 15px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100px;
+  transition: all 0.1s;
+}
+
+.table tr td:nth-last-child(-n + 2):hover {
+  background-color: #3C3C3C;
+  transform: scale(1.2);
+}
+
+.table tr td:hover {
+  transform: scale(1.1);
+  max-width: 280px;
+  background-color: #3C3C3C;
+  color: #fff;
+  cursor: pointer;
+}
+
+.rowBackground1 {
+  background-color: #FAFAFA;
+  color: #3C3C3C;
+  font-weight: bold;
+}
+
+.rowBackground2 {
+  background-color: #ffffffc4;
+  color: #3C3C3C;
+  font-weight: bold;
 }

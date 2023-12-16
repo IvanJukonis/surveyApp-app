@@ -8,6 +8,7 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
+import DateInput from 'Components/Shared/Inputs/DateInput';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { updateInvolucrado, createInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch } from 'react-redux';
@@ -224,114 +225,128 @@ const InvolucradosForm = () => {
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Involucrado' : 'Add Involucrado'}</h3>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <section className={styles.inputGroups}>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.nombre?.message}
-                register={register}
-                nameTitle="Nombre"
-                type="text"
-                nameInput="nombre"
-              />
+      <div className={styles.titleContainer}>
+        <h3 className={styles.title}>{id ? 'Involucrado' : 'Involucrado'}</h3>
+      </div>
+      <div className={styles.innerContainer}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <section className={styles.inputGroups}>
+            <div className={styles.leftGroup}>
+              <div className={styles.leftLeftGroup}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.nombre?.message}
+                    register={register}
+                    nameTitle="Nombre"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="nombre"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.apellido?.message}
+                    register={register}
+                    nameTitle="Apellido"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="apellido"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.dni?.message}
+                    register={register}
+                    nameTitle="DNI"
+                    type="number"
+                    styleInput="normalInput"
+                    nameInput="dni"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.telefono?.message}
+                    register={register}
+                    nameTitle="Telefono"
+                    type="number"
+                    styleInput="normalInput"
+                    nameInput="telefono"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.fechaDeNacimiento?.message}
+                    register={register}
+                    nameTitle="Fecha De Nacimiento"
+                    type="date"
+                    nameInput="fechaDeNacimiento"
+                    required
+                  />
+                </div>
+              </div>
+              <div className={styles.leftRightGroup}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.ciudad?.message}
+                    register={register}
+                    nameTitle="Ciudad"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="ciudad"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.direccion?.message}
+                    register={register}
+                    nameTitle="Direccion"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="direccion"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayTipos}
+                    dataLabel="Tipo"
+                    name="tipo"
+                    register={register}
+                    error={errors.tipo?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.email?.message}
+                    register={register}
+                    nameTitle="Email"
+                    type="email"
+                    styleInput="normalInput"
+                    nameInput="email"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayLesiones}
+                    dataLabel="Lesiones"
+                    name="lesiones"
+                    register={register}
+                    error={errors.lesiones?.message}
+                  />
+                </div>
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.apellido?.message}
-                register={register}
-                nameTitle="Apellido"
-                type="text"
-                nameInput="apellido"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.dni?.message}
-                register={register}
-                nameTitle="DNI"
-                type="number"
-                nameInput="dni"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.telefono?.message}
-                register={register}
-                nameTitle="Telefono"
-                type="number"
-                nameInput="telefono"
-                required
-              />
-            </div>
+          </section>
+          <div className={styles.btnContainer}>
+            <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
+            <Button clickAction={() => reset()} text="Reset" />
+            <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.email?.message}
-                register={register}
-                nameTitle="Email"
-                type="email"
-                nameInput="email"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.ciudad?.message}
-                register={register}
-                nameTitle="Ciudad"
-                type="text"
-                nameInput="ciudad"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.direccion?.message}
-                register={register}
-                nameTitle="Direccion"
-                type="text"
-                nameInput="direccion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayTipos}
-                dataLabel="Tipo"
-                name="tipo"
-                register={register}
-                error={errors.tipo?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fechaDeNacimiento?.message}
-                register={register}
-                nameTitle="FechaDeNacimiento"
-                type="date"
-                nameInput="fechaDeNacimiento"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayLesiones}
-                dataLabel="Lesiones"
-                name="lesiones"
-                register={register}
-                error={errors.lesiones?.message}
-              />
-            </div>
-          </div>
-        </section>
-
-        <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-        <Button clickAction={() => reset()} text="Reset" />
-        <Button text="Cancel" clickAction={() => history.goBack()} />
-      </form>
+        </form>
+      </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
       )}
