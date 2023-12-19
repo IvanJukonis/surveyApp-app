@@ -74,7 +74,6 @@ export const postNovedad = async (dispatch, novedadData) => {
 
 export const updateNovedad = async (dispatch, id, novedadData) => {
   try {
-    console.log(novedadData);
     dispatch(updateNovedadPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/novedad/${id}`, {
       method: 'PUT',

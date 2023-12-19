@@ -5,9 +5,9 @@ import {
   DELETE_INVOLUCRADO_PENDING,
   DELETE_INVOLUCRADO_SUCCESS,
   DELETE_INVOLUCRADO_ERROR,
-  ADD_INVOLUCRADO_PENDING,
-  ADD_INVOLUCRADO_SUCCESS,
-  ADD_INVOLUCRADO_ERROR,
+  POST_INVOLUCRADO_PENDING,
+  POST_INVOLUCRADO_SUCCESS,
+  POST_INVOLUCRADO_ERROR,
   UPDATE_INVOLUCRADO_PENDING,
   UPDATE_INVOLUCRADO_SUCCESS,
   UPDATE_INVOLUCRADO_ERROR
@@ -55,23 +55,23 @@ export const deleteInvolucradoError = (error) => {
   };
 };
 
-export const addInvolucradoPending = (pending) => {
+export const postInvolucradoPending = (pending) => {
   return {
-    type: ADD_INVOLUCRADO_PENDING,
+    type: POST_INVOLUCRADO_PENDING,
     payload: pending
   };
 };
 
-export const addInvolucradoSuccess = (involucrado) => {
+export const postInvolucradoSuccess = (involucrado) => {
   return {
-    type: ADD_INVOLUCRADO_SUCCESS,
+    type: POST_INVOLUCRADO_SUCCESS,
     payload: involucrado
   };
 };
 
-export const addInvolucradoError = (error) => {
+export const postInvolucradoError = (error) => {
   return {
-    type: ADD_INVOLUCRADO_ERROR,
+    type: POST_INVOLUCRADO_ERROR,
     payload: error
   };
 };

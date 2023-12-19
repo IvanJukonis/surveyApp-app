@@ -95,10 +95,10 @@ const InvolucradosForm = () => {
       })
       .required(),
 
-    tipo: Joi.string()
-      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TERCERO', 'ABOG')
+    rol: Joi.string()
+      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC')
       .messages({
-        'any.only': 'Los tipos solo pueden ser CVA, CVT, PVA, PVT, TTG, TERCERO, ABOG'
+        'any.only': 'Selecciona un ROL permitido'
       })
       .required(),
 
@@ -206,7 +206,7 @@ const InvolucradosForm = () => {
     }
   };
 
-  const arrayTipos = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'ABOG', 'TERCERO'];
+  const arrayRoles = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC'];
   const arrayLesiones = ['Lesiones LEVES', 'Lesiones REGULARES', 'Lesiones GRAVES'];
   const columnTitleArray = ['Nombre', 'Apellido', 'Direccion', 'DNI'];
   const columns = ['nombre', 'apellido', 'direccion', 'dni'];
@@ -241,7 +241,7 @@ const InvolucradosForm = () => {
       email: '',
       dni: '',
       telefono: '',
-      tipo: 'Pick tipo',
+      rol: 'Pick tipo',
       lesiones: 'Pick lesiones',
       fechaDeNacimiento: 'dd / mm / aaaa'
     };
@@ -261,17 +261,19 @@ const InvolucradosForm = () => {
     getAllInvolucrado(dispatch, id);
   }, []);
 
+  console.log(errors);
+
   return (
     <div className={styles.container}>
       {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={buttonType ? 'Update' : 'Add'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                id
+                buttonType
                   ? 'Are sure do you want update this involucrado?'
                   : 'Are sure do you want add this involucrado?'
               }
@@ -280,7 +282,7 @@ const InvolucradosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Involucrado edited' : 'Involucrado added'}
+              message={buttonType ? 'Involucrado edited' : 'Involucrado added'}
             />
           )}
         </div>
@@ -370,11 +372,11 @@ const InvolucradosForm = () => {
                 </div>
                 <div className={styles.inputContainer}>
                   <OptionInput
-                    data={arrayTipos}
-                    dataLabel="Tipo"
-                    name="tipo"
+                    data={arrayRoles}
+                    dataLabel="Rol"
+                    name="rol"
                     register={register}
-                    error={errors.tipo?.message}
+                    error={errors.rol?.message}
                   />
                 </div>
                 <div className={styles.inputContainer}>
@@ -395,6 +397,17 @@ const InvolucradosForm = () => {
                     name="lesiones"
                     register={register}
                     error={errors.lesiones?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.pais?.message}
+                    register={register}
+                    nameTitle="Pais"
+                    type="pais"
+                    styleInput="normalInput"
+                    nameInput="pais"
+                    required
                   />
                 </div>
               </div>

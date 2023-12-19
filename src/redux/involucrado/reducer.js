@@ -2,9 +2,9 @@ import {
   GET_INVOLUCRADO_PENDING,
   GET_INVOLUCRADO_SUCCESS,
   GET_INVOLUCRADO_ERROR,
-  ADD_INVOLUCRADO_PENDING,
-  ADD_INVOLUCRADO_SUCCESS,
-  ADD_INVOLUCRADO_ERROR,
+  POST_INVOLUCRADO_PENDING,
+  POST_INVOLUCRADO_SUCCESS,
+  POST_INVOLUCRADO_ERROR,
   UPDATE_INVOLUCRADO_PENDING,
   UPDATE_INVOLUCRADO_SUCCESS,
   UPDATE_INVOLUCRADO_ERROR,
@@ -40,21 +40,21 @@ const involucradoReducer = (state = INITIAL_STATE, action) => {
       };
     }
 
-    case ADD_INVOLUCRADO_PENDING: {
+    case POST_INVOLUCRADO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case ADD_INVOLUCRADO_SUCCESS: {
+    case POST_INVOLUCRADO_SUCCESS: {
       return {
         ...state,
         list: [...state.list, action.payload]
       };
     }
 
-    case ADD_INVOLUCRADO_ERROR: {
+    case POST_INVOLUCRADO_ERROR: {
       return {
         ...state,
         error: action.payload
