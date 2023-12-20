@@ -141,7 +141,15 @@ const InvolucradosForm = () => {
         'string.max': 'El país debe tener como máximo 15 caracteres',
         'string.pattern.base': 'El país debe contener solo letras'
       })
-      .required()
+      .required(),
+    entrevistado: Joi.any(),
+    licenciaAportada: Joi.any(),
+    licenciaHabilitada: Joi.any(),
+    prioridad: Joi.any(),
+    siniestro: Joi.any(),
+    titular: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any()
   });
 
   const formatDate = (dateString) => {
@@ -174,6 +182,7 @@ const InvolucradosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
+      console.log('entre');
       const editInvolucradoResponse = await updateInvolucrado(
         dispatch,
         involucrado._id,

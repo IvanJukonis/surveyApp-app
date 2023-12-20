@@ -52,7 +52,6 @@ export const deleteInvolucrado = (involucradoID) => {
 
 export const postInvolucrado = async (dispatch, involucradoData) => {
   try {
-    console.log(involucradoData);
     dispatch(postInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`, {
       method: 'POST',
@@ -64,7 +63,6 @@ export const postInvolucrado = async (dispatch, involucradoData) => {
     if (response.ok) {
       const data = await response.json();
       const newData = data;
-      console.log(newData);
       dispatch(postInvolucradoPending(false));
       return dispatch(postInvolucradoSuccess(newData.data));
     } else {
