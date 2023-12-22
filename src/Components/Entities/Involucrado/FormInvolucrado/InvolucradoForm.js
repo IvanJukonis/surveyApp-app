@@ -9,6 +9,7 @@ import {
   OptionInput
 } from 'Components/Shared';
 import DateInput from 'Components/Shared/Inputs/DateInput';
+import Checkbox from 'Components/Shared/Inputs/DateInput';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { updateInvolucrado, postInvolucrado, getAllInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,6 +31,28 @@ const InvolucradosForm = () => {
   const { id } = useParams();
 
   const schema = Joi.object({
+    prioridad: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Prioridad" es un campo booleano',
+        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
+      })
+      .required(),
+    rol: Joi.string()
+      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC')
+      .messages({
+        'any.only': 'Ingrese un rol permitido'
+      })
+      .required(),
+    apellido: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'El apellido debe ser una cadena de texto',
+        'string.empty': 'El apellido es un campo requerido',
+        'string.min': 'El apellido debe tener al menos 3 caracteres',
+        'string.max': 'El apellido debe tener como máximo 15 caracteres'
+      })
+      .required(),
     nombre: Joi.string()
       .min(3)
       .max(15)
@@ -42,18 +65,24 @@ const InvolucradosForm = () => {
         'string.pattern.base': 'El nombre debe contener solo letras'
       })
       .required(),
-
-    apellido: Joi.string()
+    relacion: Joi.string()
       .min(3)
       .max(15)
+      .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'El apellido debe ser una cadena de texto',
-        'string.empty': 'El apellido es un campo requerido',
-        'string.min': 'El apellido debe tener al menos 3 caracteres',
-        'string.max': 'El apellido debe tener como máximo 15 caracteres'
+        'string.base': 'El campo "Relacion" debe ser una cadena de texto',
+        'string.empty': 'El campo "Relacion" es un campo requerido',
+        'string.min': 'El campo "Relacion" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Relacion" debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'El campo "Relacion" debe contener solo letras'
       })
       .required(),
-
+    titular: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Titular" es un campo booleano',
+        'boolean.empty': 'El campo "Titular" debe tener un valor determinado'
+      })
+      .required(),
     dni: Joi.number().min(10000000).max(99999999).integer().messages({
       'number.base': 'El DNI debe ser un número',
       'number.empty': 'El DNI es un campo requerido',
@@ -61,16 +90,34 @@ const InvolucradosForm = () => {
       'number.max': 'El DNI debe ser como máximo 99,999,999',
       'number.integer': 'El DNI debe ser un número entero'
     }),
-
-    telefono: Joi.string()
-      .min(10)
+    fechaDeNacimiento: Joi.date()
       .messages({
-        'string.base': 'El número de teléfono debe ser una cadena de texto',
-        'string.empty': 'El número de teléfono es un campo requerido',
-        'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
+        'date.base': 'La fecha de nacimiento debe ser una fecha válida',
+        'date.empty': 'La fecha de nacimiento es un campo requerido'
       })
       .required(),
-
+    domicilio: Joi.string()
+      .min(3)
+      .max(15)
+      .regex(/^[a-zA-Z ]+$/)
+      .messages({
+        'string.base': 'El campo "Domicilio" debe ser una cadena de texto',
+        'string.empty': 'El campo "Domicilio" es un campo requerido',
+        'string.min': 'El campo "Domicilio" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Domicilio" debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'El campo "Domicilio" debe contener solo letras'
+      })
+      .required(),
+    ciudad: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'La ciudad debe ser una cadena de texto',
+        'string.empty': 'La ciudad es un campo requerido',
+        'string.min': 'La ciudad debe tener al menos 3 caracteres',
+        'string.max': 'La ciudad debe tener como máximo 15 caracteres'
+      })
+      .required(),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
       .messages({
@@ -83,53 +130,6 @@ const InvolucradosForm = () => {
           'El correo electrónico debe tener un dominio de nivel superior válido (com o net)'
       })
       .required(),
-
-    ciudad: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'La ciudad debe ser una cadena de texto',
-        'string.empty': 'La ciudad es un campo requerido',
-        'string.min': 'La ciudad debe tener al menos 3 caracteres',
-        'string.max': 'La ciudad debe tener como máximo 15 caracteres'
-      })
-      .required(),
-
-    rol: Joi.string()
-      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC')
-      .messages({
-        'any.only': 'Selecciona un ROL permitido'
-      })
-      .required(),
-
-    lesiones: Joi.string()
-      .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
-      .messages({
-        'any.only':
-          'Las lesiones solo pueden ser Lesiones GRAVES, Lesiones LEVES, Lesiones REGULARES'
-      })
-      .required(),
-
-    fechaDeNacimiento: Joi.date()
-      .messages({
-        'date.base': 'La fecha de nacimiento debe ser una fecha válida',
-        'date.empty': 'La fecha de nacimiento es un campo requerido'
-      })
-      .required(),
-
-    direccion: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'La dirección debe ser una cadena de texto',
-        'string.empty': 'La dirección es un campo requerido',
-        'string.min': 'La dirección debe tener al menos 3 caracteres',
-        'string.max': 'La dirección debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'La dirección debe contener solo letras'
-      })
-      .required(),
-
     pais: Joi.string()
       .min(3)
       .max(15)
@@ -142,12 +142,90 @@ const InvolucradosForm = () => {
         'string.pattern.base': 'El país debe contener solo letras'
       })
       .required(),
-    entrevistado: Joi.any(),
-    licenciaAportada: Joi.any(),
-    licenciaHabilitada: Joi.any(),
-    prioridad: Joi.any(),
+    codigoPostal: Joi.string()
+      .min(4)
+      .messages({
+        'string.base': 'El número de codigo postal debe ser una cadena de texto',
+        'string.empty': 'El número de codigo postal es un campo requerido',
+        'string.min': 'El número de codigo postal debe tener al menos 4 dígitos'
+      })
+      .required(),
+    telefono: Joi.string()
+      .min(10)
+      .messages({
+        'string.base': 'El número de teléfono debe ser una cadena de texto',
+        'string.empty': 'El número de teléfono es un campo requerido',
+        'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
+      })
+      .required(),
+    cuit: Joi.string()
+      .min(10)
+      .messages({
+        'string.base': 'El número de CUIT debe ser una cadena de texto',
+        'string.empty': 'El número de CUIT es un campo requerido',
+        'string.min': 'El número de CUIT debe tener al menos 10 dígitos'
+      })
+      .required(),
+    lesiones: Joi.string()
+      .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
+      .messages({
+        'any.only':
+          'Las lesiones solo pueden ser Lesiones GRAVES, Lesiones LEVES, Lesiones REGULARES'
+      })
+      .required(),
+    entrevistado: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Entrevistado" es un campo booleano',
+        'boolean.empty': 'El campo "Entrevistado" debe tener un valor determinado'
+      })
+      .required(),
+    ocupacion: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'El campo "Ocupacion" debe ser una cadena de texto',
+        'string.empty': 'El campo "Ocupacion" es un campo requerido',
+        'string.min': 'El campo "Ocupacion" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Ocupacion" debe tener como máximo 15 caracteres'
+      })
+      .required(),
+    direccionOcupacion: Joi.string()
+      .min(3)
+      .max(15)
+      .messages({
+        'string.base': 'El campo "Direccion Ocupacion" debe ser una cadena de texto',
+        'string.empty': 'El campo "Direccion Ocupacion" es un campo requerido',
+        'string.min': 'El campo "Direccion Ocupacion" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Direccion Ocupacion" debe tener como máximo 15 caracteres'
+      })
+      .required(),
+    licenciaAportada: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Licencia Aportada" es un campo booleano',
+        'boolean.empty': 'El campo "Licencia Aportada" debe tener un valor determinado'
+      })
+      .required(),
+    licenciaVencimiento: Joi.date()
+      .messages({
+        'date.base': 'El campo "Licencia Vencimiento" debe ser una fecha válida',
+        'date.empty': 'El campo "Licencia Vencimiento" es un campo requerido'
+      })
+      .required(),
+    licenciaHabilitada: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Licencia Habilitada" es un campo booleano',
+        'boolean.empty': 'El campo "Licencia Habilitada" debe tener un valor determinado'
+      })
+      .required(),
+    licenciaCategoria: Joi.string()
+      .valid('A1', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'D4', 'E1')
+      .messages({
+        'any.only': 'Ingrese una categoria permitida'
+      })
+      .required(),
+
     siniestro: Joi.any(),
-    titular: Joi.any(),
+
     __v: Joi.any(),
     _id: Joi.any()
   });
@@ -217,8 +295,23 @@ const InvolucradosForm = () => {
 
   const arrayRoles = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC'];
   const arrayLesiones = ['Lesiones LEVES', 'Lesiones REGULARES', 'Lesiones GRAVES'];
-  const columnTitleArray = ['Nombre', 'Apellido', 'Direccion', 'DNI'];
-  const columns = ['nombre', 'apellido', 'direccion', 'dni'];
+  const arrayCategorias = [
+    'A1',
+    'A2',
+    'A3',
+    'B1',
+    'B2',
+    'C1',
+    'C2',
+    'C3',
+    'D1',
+    'D2',
+    'D3',
+    'D4',
+    'E1'
+  ];
+  const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
+  const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
 
   const ifNotArrayNotObject = (item, itemContent) => {
     if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
@@ -245,7 +338,7 @@ const InvolucradosForm = () => {
     const emptyData = {
       nombre: '',
       apellido: '',
-      direccion: '',
+      domicilio: '',
       ciudad: '',
       email: '',
       dni: '',
@@ -355,6 +448,112 @@ const InvolucradosForm = () => {
                     required
                   />
                 </div>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.licenciaVencimiento?.message}
+                    register={register}
+                    nameTitle="Licencia de Vencimiento"
+                    type="date"
+                    nameInput="licenciaVencimiento"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayCategorias}
+                    dataLabel="Categoria de Licencias"
+                    name="licenciaCategoria"
+                    register={register}
+                    error={errors.licenciaCategoria?.message}
+                  />
+                </div>
+              </div>
+              <div className={styles.leftMiddleGroup}>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.prioridad?.message}
+                    register={register}
+                    nameTitle="Prioridad"
+                    type="checkbox"
+                    nameInput="prioridad"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.relacion?.message}
+                    register={register}
+                    nameTitle="Relacion"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="relacion"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.titular?.message}
+                    register={register}
+                    nameTitle="Titular"
+                    type="checkbox"
+                    nameInput="titular"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.codigoPostal?.message}
+                    register={register}
+                    nameTitle="Codigo Postal"
+                    type="number"
+                    styleInput="normalInput"
+                    nameInput="codigoPostal"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.cuit?.message}
+                    register={register}
+                    nameTitle="Cuit"
+                    type="number"
+                    styleInput="normalInput"
+                    nameInput="cuit"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.entrevistado?.message}
+                    register={register}
+                    nameTitle="Entrevistado"
+                    type="checkbox"
+                    nameInput="entrevistado"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.ocupacion?.message}
+                    register={register}
+                    nameTitle="Ocupacion"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="ocupacion"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.direccionOcupacion?.message}
+                    register={register}
+                    nameTitle="Direccion Ocupacion"
+                    type="text"
+                    styleInput="normalInput"
+                    nameInput="direccionOcupacion"
+                    required
+                  />
+                </div>
               </div>
               <div className={styles.leftRightGroup}>
                 <div className={styles.inputContainer}>
@@ -370,12 +569,12 @@ const InvolucradosForm = () => {
                 </div>
                 <div className={styles.inputContainer}>
                   <Inputs
-                    error={errors.direccion?.message}
+                    error={errors.domicilio?.message}
                     register={register}
-                    nameTitle="Direccion"
+                    nameTitle="Domicilio"
                     type="text"
                     styleInput="normalInput"
-                    nameInput="direccion"
+                    nameInput="domicilio"
                     required
                   />
                 </div>
@@ -416,6 +615,26 @@ const InvolucradosForm = () => {
                     type="pais"
                     styleInput="normalInput"
                     nameInput="pais"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.licenciaAportada?.message}
+                    register={register}
+                    nameTitle="Licencia Aportada"
+                    type="checkbox"
+                    nameInput="licenciaAportada"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.licenciaHabilitada?.message}
+                    register={register}
+                    nameTitle="Licencia Habilitada"
+                    type="checkbox"
+                    nameInput="licenciaHabilitada"
                     required
                   />
                 </div>
