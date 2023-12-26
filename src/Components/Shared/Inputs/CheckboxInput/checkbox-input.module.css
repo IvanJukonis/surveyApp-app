@@ -1,15 +1,23 @@
 .normalInput {
   border: 1px solid;
-  height: 25px;
+  height: 20px;
   border-radius: 4px;
 }
 
-.nameLabel {
+.wrapper {
   display: flex;
   flex-direction: row;
+  height: 30px;
+  align-items: center;
   font-size: 15px;
-  margin-right: 20px;
-  margin-bottom: 10px;
+}
+
+.wrapper  label{
+  color: #3c3c3c;
+  font-weight: bold;
+  padding: 5px;
+  font-size: 15px;
+  outline: none;
 }
 
 .normalInput {
@@ -18,20 +26,16 @@
 }
 
 .error {
-  margin-top: 3px;
-  margin-left: 5px;
   color: rgb(240, 8, 8);
   font-size: 12px;
-  width: 255px;
-  height: 30px;
+  width: 100%;
+  margin: 5px 0 5px 0;
 }
 
 .errorInput {
-  border: 2px solid red;
   margin-top: 0;
 }
 
 .spaceErrorMsg{
   margin-top: 0;
-  height: 30px;
 }

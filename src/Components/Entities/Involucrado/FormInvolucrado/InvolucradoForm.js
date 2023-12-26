@@ -9,7 +9,7 @@ import {
   OptionInput
 } from 'Components/Shared';
 import DateInput from 'Components/Shared/Inputs/DateInput';
-import Checkbox from 'Components/Shared/Inputs/DateInput';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { updateInvolucrado, postInvolucrado, getAllInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -92,7 +92,7 @@ const InvolucradosForm = () => {
     }),
     fechaDeNacimiento: Joi.date()
       .messages({
-        'date.base': 'La fecha de nacimiento debe ser una fecha válida',
+        'date.base': 'Ingrese una fecha válida',
         'date.empty': 'La fecha de nacimiento es un campo requerido'
       })
       .required(),
@@ -169,8 +169,7 @@ const InvolucradosForm = () => {
     lesiones: Joi.string()
       .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
       .messages({
-        'any.only':
-          'Las lesiones solo pueden ser Lesiones GRAVES, Lesiones LEVES, Lesiones REGULARES'
+        'any.only': 'Selecciona un tipo de lesion permitido'
       })
       .required(),
     entrevistado: Joi.boolean()
@@ -207,7 +206,7 @@ const InvolucradosForm = () => {
       .required(),
     licenciaVencimiento: Joi.date()
       .messages({
-        'date.base': 'El campo "Licencia Vencimiento" debe ser una fecha válida',
+        'date.base': 'Ingrese una fecha válida',
         'date.empty': 'El campo "Licencia Vencimiento" es un campo requerido'
       })
       .required(),
@@ -598,22 +597,19 @@ const InvolucradosForm = () => {
                     required
                   />
                 </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayLesiones}
+                    dataLabel="Lesiones"
+                    name="lesiones"
+                    register={register}
+                    error={errors.lesiones?.message}
+                  />
+                </div>
               </div>
-
               <div className={styles.licenceData}>
                 <div className={styles.licenceDataText}> </div>
-                <div className={styles.licenceDataDate}>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.licenciaVencimiento?.message}
-                      register={register}
-                      nameTitle="Licencia de Vencimiento"
-                      type="date"
-                      nameInput="licenciaVencimiento"
-                      required
-                    />
-                  </div>{' '}
-                </div>
+                <div className={styles.licenceDataDate}></div>
                 <div className={styles.licenceDataOption}>
                   <div className={styles.inputContainer}>
                     <OptionInput
@@ -622,6 +618,16 @@ const InvolucradosForm = () => {
                       name="licenciaCategoria"
                       register={register}
                       error={errors.licenciaCategoria?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.licenciaVencimiento?.message}
+                      register={register}
+                      nameTitle="Fecha de Vencimiento"
+                      type="date"
+                      nameInput="licenciaVencimiento"
+                      required
                     />
                   </div>
                 </div>
@@ -651,17 +657,7 @@ const InvolucradosForm = () => {
               <div className={styles.siniestroData}>
                 <div className={styles.siniestroDataText}> </div>
                 <div className={styles.siniestroDataDate}> </div>
-                <div className={styles.siniestroDataOption}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={arrayLesiones}
-                      dataLabel="Lesiones"
-                      name="lesiones"
-                      register={register}
-                      error={errors.lesiones?.message}
-                    />
-                  </div>
-                </div>
+                <div className={styles.siniestroDataOption}></div>
                 <div className={styles.siniestroDataBoolean}> </div>
               </div>
             </div>
