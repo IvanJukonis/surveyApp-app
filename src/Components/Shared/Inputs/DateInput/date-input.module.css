@@ -1,19 +1,49 @@
-.normalInput {
-  border: 1px solid;
-  height: 25px;
-  border-radius: 4px;
-}
-
 .wrapper {
- width: 170px;
+  width: 203px;
+  padding: 20px 20px 0px 0px;
+  background-color: transparent;
 }
 
-.dateLabel {
-  font-size: 16px;
-  color: #3c3c3c;
-  margin-bottom: 10px;
+input:focus {
+  outline: none;
+}
+
+input::-moz-focus-inner {
+  border: 0;
+}
+
+.wrapper .inputData {
+  position: relative;
+  height: 21px;
+  width: 100%;
+}
+
+.inputLabel {
   font-weight: bold;
   padding: 5px;
+}
+
+.wrapper .inputData input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid silver;
+}
+
+.inputData input:focus ~ label,
+.inputData input:not(:placeholder-shown) ~ label {
+  transform: translateY(-20px);
+  color: #3c3c3c;
+  font-weight: bold;
+  padding: 5px;
+  outline: none;
+}
+
+.wrapper .inputData label{
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  transition: all 0.3s ease;
 }
 
 .normalInput {
@@ -24,20 +54,16 @@
 }
 
 .error {
-  margin-top: 3px;
-  margin-left: 5px;
   color: rgb(240, 8, 8);
   font-size: 12px;
-  width: 100px;
-  height: 29px;
+  width: 100%;
+  margin: 5px 0 5px 0;
 }
 
 .errorInput {
-  border: 2px solid red;
   margin-top: 0;
 }
 
 .spaceErrorMsg{
   margin-top: 0;
-  height: 30px;
 }
