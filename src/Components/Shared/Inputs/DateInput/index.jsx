@@ -3,8 +3,8 @@ import styles from './date-input.module.css';
 
 const DateInput = ({ register, error, type, isDisabled, nameInput, nameTitle }) => {
   return (
-    <div className={styles.nameLabel}>
-      <label>{nameTitle}</label>
+    <div className={styles.wrapper}>
+      <label className={styles.dateLabel}>{nameTitle}</label>
       <input
         {...register(nameInput, { required: { value: true, message: 'This field is required' } })}
         className={error ? `${styles.errorInput} ${styles.normalInput}` : styles.normalInput}

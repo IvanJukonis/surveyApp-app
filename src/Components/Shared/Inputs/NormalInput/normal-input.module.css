@@ -32,14 +32,15 @@
 input:focus {
   outline: none;
 }
+
 input::-moz-focus-inner {
   border: 0;
 }
 
 .wrapper .inputData {
+  position: relative;
   height: 20px;
   width: 100%;
-  position: relative;
 }
 
 .inputLabel {
@@ -50,7 +51,7 @@ input::-moz-focus-inner {
 .wrapper .inputData input {
   height: 100%;
   width: 100%;
-  border:none;
+  border: none;
   border-bottom: 2px solid silver;
 }
 

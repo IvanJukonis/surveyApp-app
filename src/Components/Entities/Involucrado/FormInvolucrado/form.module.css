@@ -15,12 +15,6 @@
   background-color: #3C3C3C;
 }
 
-.innerContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-}
-
 .title {
   color: #fafafa;
   margin: 0;
@@ -32,14 +26,31 @@
   margin-bottom: 20px;
 }
 
+.innerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.leftGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.personalData {
+  display: flex;
+  flex-direction: column;
+}
+
+.personalDataText {
+  display: flex;
+  flex-direction: row;
+  border: 2px solid red;
+}
+
 .inputGroups {
   display: flex;
   gap: 15px;
-}
-
-.inputGroup {
-  display: flex;
-  flex-direction: column;
 }
 
 .inputGroups {
@@ -47,11 +58,6 @@
   flex-direction: row;
   align-items: center;
   margin: 10px;
-}
-
-.leftGroup {
-  display: flex;
-  flex-direction: row;
 }
 
 .inputContainer {

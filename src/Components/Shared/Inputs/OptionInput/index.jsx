@@ -21,24 +21,28 @@ const SelectInput = ({ data, dataLabel, name, register, error }) => {
   };
 
   return (
-    <div className={styles.containerInput}>
-      <label htmlFor="selectInput">{dataLabel}:</label>
-      <select
-        className={error ? `${styles.errorInput} ${styles.optionInput}` : styles.optionInput}
-        name={name}
-        {...register(name, { required: { value: true, message: 'This field is required' } })}
-      >
-        <option value="">Pick {name}</option>
-        {data.map((item, index) => {
-          return (
-            <option key={index} value={item._id ? item._id : item}>
-              {ifFirstName(item)}
-              {ifObject(item)}
-            </option>
-          );
-        })}
-      </select>
-      {error ? <p className={styles.error}>{error}</p> : <p className={styles.spaceErrorMsg}></p>}
+    <div className={styles.wrapper}>
+      <div className={styles.inputData}>
+        <select
+          className={error ? `${styles.errorInput} ${styles.optionInput}` : styles.optionInput}
+          name={name}
+          {...register(name, { required: { value: true, message: 'This field is required' } })}
+        >
+          <option className={styles.optionText} value="">
+            Seleccionar {name}
+          </option>
+          {data.map((item, index) => {
+            return (
+              <option key={index} value={item._id ? item._id : item}>
+                {ifFirstName(item)}
+                {ifObject(item)}
+              </option>
+            );
+          })}
+        </select>
+        <label className={styles.inputLabel}>{dataLabel}</label>
+        {error ? <p className={styles.error}>{error}</p> : <p className={styles.spaceErrorMsg}></p>}
+      </div>
     </div>
   );
 };
