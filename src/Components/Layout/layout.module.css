@@ -4,6 +4,14 @@
   min-height: 100vh;
 }
 
+label, div, p, input, textarea {
+  font-family: "Roboto", sans-serif;
+}
+
+input, textarea {
+  font-size: 15px;
+}
+
 .mainContainer {
   display: flex;
   flex-direction: column;

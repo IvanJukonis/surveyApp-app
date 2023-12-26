@@ -23,11 +23,74 @@
   border-radius: 4px;
 }
 
-.normalInput {
-  width: 255px;
-  border: 1px solid;
-  height: 25px;
-  border-radius: 4px;
+.wrapper {
+  width: 200px;
+  padding: 20px 20px 0px 0px;
+  background-color: transparent;
+}
+
+input:focus {
+  outline: none;
+}
+input::-moz-focus-inner {
+  border: 0;
+}
+
+.wrapper .inputData {
+  height: 20px;
+  width: 100%;
+  position: relative;
+}
+
+.inputLabel {
+  font-weight: bold;
+  padding: 5px;
+}
+
+.wrapper .inputData input {
+  height: 100%;
+  width: 100%;
+  border:none;
+  border-bottom: 2px solid silver;
+}
+
+.inputData input:focus ~ label,
+.inputData input:not(:placeholder-shown) ~ label {
+  transform: translateY(-20px);
+  color: #3c3c3c;
+  outline: none;
+}
+
+.wrapper .inputData label{
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  color:rgb(128, 128, 128);
+  transition: all 0.3s ease;
+}
+
+.wrapper .inputData .underline {
+  position: absolute;
+  bottom: 0px;
+  height: 2px;
+  width: 100%;
+}
+
+.inputData .underline:before {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  background: #3c3c3c;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.inputData input:focus ~ .underline:before,
+.inputData input:focus ~ .underline:before{
+  transform: scaleX(1);
+  background: #858383;
+  margin-left: 2px;
 }
 
 .nameLabel label {
@@ -38,21 +101,17 @@
 }
 
 .error {
-  margin-top: 3px;
-  margin-left: 5px;
   color: rgb(240, 8, 8);
   font-size: 12px;
-  width: 255px;
-  height: 30px;
+  width: 100%;
+  margin: 5px 0 5px 0;
 }
 
 .errorInput {
-  border: 2px solid red;
   margin-top: 0;
 }
 
 .spaceErrorMsg{
   margin-top: 0;
-  height: 30px;
 }
 
