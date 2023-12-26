@@ -396,8 +396,8 @@ const InvolucradosForm = () => {
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
             <div className={styles.leftGroup}>
-              <div className={styles.leftLeftGroup}>
-                <div className={styles.inputContainer}>
+              <div className={styles.personalData}>
+                <div className={styles.personalDataText}>
                   <Inputs
                     error={errors.nombre?.message}
                     register={register}
@@ -422,7 +422,7 @@ const InvolucradosForm = () => {
                     error={errors.dni?.message}
                     register={register}
                     nameTitle="DNI"
-                    type="number"
+                    type="text"
                     styleInput="normalInput"
                     nameInput="dni"
                   />
@@ -432,50 +432,9 @@ const InvolucradosForm = () => {
                     error={errors.telefono?.message}
                     register={register}
                     nameTitle="Telefono"
-                    type="number"
+                    type="text"
                     styleInput="normalInput"
                     nameInput="telefono"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <DateInput
-                    error={errors.fechaDeNacimiento?.message}
-                    register={register}
-                    nameTitle="Fecha De Nacimiento"
-                    type="date"
-                    nameInput="fechaDeNacimiento"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <DateInput
-                    error={errors.licenciaVencimiento?.message}
-                    register={register}
-                    nameTitle="Licencia de Vencimiento"
-                    type="date"
-                    nameInput="licenciaVencimiento"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <OptionInput
-                    data={arrayCategorias}
-                    dataLabel="Categoria de Licencias"
-                    name="licenciaCategoria"
-                    register={register}
-                    error={errors.licenciaCategoria?.message}
-                  />
-                </div>
-              </div>
-              <div className={styles.leftMiddleGroup}>
-                <div className={styles.inputContainer}>
-                  <Checkbox
-                    error={errors.prioridad?.message}
-                    register={register}
-                    nameTitle="Prioridad"
-                    type="checkbox"
-                    nameInput="prioridad"
                     required
                   />
                 </div>
@@ -487,16 +446,6 @@ const InvolucradosForm = () => {
                     type="text"
                     styleInput="normalInput"
                     nameInput="relacion"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <Checkbox
-                    error={errors.titular?.message}
-                    register={register}
-                    nameTitle="Titular"
-                    type="checkbox"
-                    nameInput="titular"
                     required
                   />
                 </div>
@@ -523,16 +472,6 @@ const InvolucradosForm = () => {
                   />
                 </div>
                 <div className={styles.inputContainer}>
-                  <Checkbox
-                    error={errors.entrevistado?.message}
-                    register={register}
-                    nameTitle="Entrevistado"
-                    type="checkbox"
-                    nameInput="entrevistado"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
                   <Inputs
                     error={errors.ocupacion?.message}
                     register={register}
@@ -554,8 +493,6 @@ const InvolucradosForm = () => {
                     required
                   />
                 </div>
-              </div>
-              <div className={styles.leftRightGroup}>
                 <div className={styles.inputContainer}>
                   <Inputs
                     error={errors.ciudad?.message}
@@ -579,15 +516,6 @@ const InvolucradosForm = () => {
                   />
                 </div>
                 <div className={styles.inputContainer}>
-                  <OptionInput
-                    data={arrayRoles}
-                    dataLabel="Rol"
-                    name="rol"
-                    register={register}
-                    error={errors.rol?.message}
-                  />
-                </div>
-                <div className={styles.inputContainer}>
                   <Inputs
                     error={errors.email?.message}
                     register={register}
@@ -596,15 +524,6 @@ const InvolucradosForm = () => {
                     styleInput="normalInput"
                     nameInput="email"
                     required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <OptionInput
-                    data={arrayLesiones}
-                    dataLabel="Lesiones"
-                    name="lesiones"
-                    register={register}
-                    error={errors.lesiones?.message}
                   />
                 </div>
                 <div className={styles.inputContainer}>
@@ -618,6 +537,89 @@ const InvolucradosForm = () => {
                     required
                   />
                 </div>
+              </div>
+              <div className={styles.personalDataDate}>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.fechaDeNacimiento?.message}
+                    register={register}
+                    nameTitle="Fecha De Nacimiento"
+                    type="date"
+                    nameInput="fechaDeNacimiento"
+                    required
+                  />
+                </div>
+              </div>
+              <div className={styles.personalDataOption}>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayRoles}
+                    dataLabel="Rol"
+                    name="rol"
+                    register={register}
+                    error={errors.rol?.message}
+                  />
+                </div>
+              </div>
+              <div className={styles.personalDataBoolean}>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.titular?.message}
+                    register={register}
+                    nameTitle="Titular"
+                    type="checkbox"
+                    nameInput="titular"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.entrevistado?.message}
+                    register={register}
+                    nameTitle="Entrevistado"
+                    type="checkbox"
+                    nameInput="entrevistado"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.prioridad?.message}
+                    register={register}
+                    nameTitle="Prioridad"
+                    type="checkbox"
+                    nameInput="prioridad"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className={styles.licenceData}>
+              <div className={styles.licenceDataText}> </div>
+              <div className={styles.licenceDataDate}>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.licenciaVencimiento?.message}
+                    register={register}
+                    nameTitle="Licencia de Vencimiento"
+                    type="date"
+                    nameInput="licenciaVencimiento"
+                    required
+                  />
+                </div>{' '}
+              </div>
+              <div className={styles.licenceDataOption}>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayCategorias}
+                    dataLabel="Categoria de Licencias"
+                    name="licenciaCategoria"
+                    register={register}
+                    error={errors.licenciaCategoria?.message}
+                  />
+                </div>
+              </div>
+              <div className={styles.licenceDataBoolean}>
                 <div className={styles.inputContainer}>
                   <Checkbox
                     error={errors.licenciaAportada?.message}
@@ -639,6 +641,22 @@ const InvolucradosForm = () => {
                   />
                 </div>
               </div>
+            </div>
+            <div className={styles.siniestroData}>
+              <div className={styles.siniestroDataText}> </div>
+              <div className={styles.siniestroDataDate}> </div>
+              <div className={styles.siniestroDataOption}>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayLesiones}
+                    dataLabel="Lesiones"
+                    name="lesiones"
+                    register={register}
+                    error={errors.lesiones?.message}
+                  />
+                </div>
+              </div>
+              <div className={styles.siniestroDataBoolean}> </div>
             </div>
           </section>
           <div className={styles.btnContainer}>

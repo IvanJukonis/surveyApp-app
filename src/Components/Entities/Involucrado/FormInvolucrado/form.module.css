@@ -1,7 +1,6 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   background-color: #c5c5c5c2;
   width: 80%;
   margin: 30px;
@@ -19,7 +18,7 @@
 .innerContainer {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .title {
@@ -55,16 +54,10 @@
   flex-direction: row;
 }
 
-.leftRightGroup {
+.inputContainer {
   display: flex;
   flex-direction: column;
-  margin: 5px;
-}
-
-.leftLeftGroup {
-  display: flex;
-  flex-direction: column;
-  margin: 5px;
+  margin: 5px 0;
 }
 
 .submitButton {
@@ -83,34 +76,9 @@
   color: white;
 }
 
-.inputContainer {
-  display: flex;
-  flex-direction: column;
-  margin: 5px 0;
-}
-
 .buttonContainer {
   display: flex;
   gap: 20px;
-}
-
-.nameLabel {
-  display: flex;
-  flex-direction: column;
-  font-size: 20px;
-  margin-right: 20px;
-  margin-bottom: 10px;
-}
-
-.radioContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.radioContainer div{
- margin: 0 10px;
- font-size: 15px;
 }
 
 .btnContainer {
