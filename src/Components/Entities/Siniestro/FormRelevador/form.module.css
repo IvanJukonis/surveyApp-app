@@ -7,11 +7,20 @@
   margin: 30px;
 }
 
+.firstGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.inputContainer {
+  padding-top: 30px;
+}
+
 .inputGroups {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px;
+  margin-top: 10px;
   gap: 10px;
 }
 
@@ -21,10 +30,6 @@
   text-transform: uppercase;
 }
 
-.firstGroup {
-  display: flex;
-  flex-direction: row;
-}
 
 .textAreaGroup {
   display: flex;
@@ -34,11 +39,6 @@
 .booleanGroup {
   display: flex;
   flex-direction: column;
-}
-
-.firstGroup {
-  display: flex;
-  flex-direction: row;
 }
 
 .secondGroup {
@@ -117,14 +117,6 @@
 .submitButton:hover {
   background-color: var(--Blue);
   color: white;
-}
-
-.inputContainer {
-  display: flex;
-  flex-direction: column;
-  margin: 5px 0;
-  padding-left: 10px;
-  padding-right: 10px;
 }
 
 .buttonContainer {

@@ -18,7 +18,6 @@
 .personalDataBoolean {
   display: flex;
   justify-content: space-evenly;
-  padding-top: 15px;
 }
 
 .title {
@@ -31,7 +30,6 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
 .innerContainer {
@@ -71,14 +69,12 @@
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  padding-top: 25px;
 }
 
 .licenceDataBoolean {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  padding-top: 15px;
 }
 
 .inputContainer {

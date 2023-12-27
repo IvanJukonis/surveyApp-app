@@ -41,8 +41,8 @@ const SelectInput = ({ data, dataLabel, name, register, error }) => {
           })}
         </select>
         <label className={styles.inputLabel}>{dataLabel}</label>
-        {error ? <p className={styles.error}>{error}</p> : <p className={styles.spaceErrorMsg}></p>}
       </div>
+      {error ? <p className={styles.error}>{error}</p> : <p className={styles.spaceErrorMsg}></p>}
     </div>
   );
 };

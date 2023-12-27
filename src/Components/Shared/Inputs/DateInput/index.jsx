@@ -13,8 +13,8 @@ const DateInput = ({ register, error, type, isDisabled, nameInput, nameTitle }) 
           name={nameInput}
         />
         <label className={styles.dateLabel}>{nameTitle}</label>
-        {error ? <p className={styles.error}>{error}</p> : <p className={styles.spaceErrorMsg}></p>}
       </div>
+      {error ? <p className={styles.error}>{error}</p> : <p className={styles.spaceErrorMsg}></p>}
     </div>
   );
 };
