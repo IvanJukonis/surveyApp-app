@@ -13,7 +13,7 @@
 }
 
 .inputContainer {
-  padding-top: 30px;
+  padding-top: 5px;
 }
 
 .inputGroups {
@@ -21,7 +21,7 @@
   flex-direction: column;
   align-items: center;
   margin-top: 10px;
-  gap: 10px;
+  gap: 5px;
 }
 
 .title {
@@ -29,7 +29,6 @@
   margin: 0;
   text-transform: uppercase;
 }
-
 
 .textAreaGroup {
   display: flex;
@@ -39,6 +38,13 @@
 .booleanGroup {
   display: flex;
   flex-direction: column;
+}
+
+.entitiesButtons {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .secondGroup {
@@ -61,22 +67,6 @@
   flex-direction: row;
 }
 
-.fiveGroup {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.sixGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.sevenGroup {
-  display: flex;
-  flex-direction: row;
-}
-
 .eightGroup {
   display: flex;
   flex-direction: row;
@@ -85,6 +75,22 @@
 .nineGroup {
   display: flex;
   flex-direction: row;
+}
+
+.textAreasGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.textAreaColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputContainerEstado {
+  padding-left: 20px;
+  padding-top: 8px;
 }
 
 .titleContainer {

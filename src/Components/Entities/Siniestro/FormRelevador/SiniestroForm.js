@@ -598,8 +598,6 @@ const SiniestrosForm = () => {
               </div>
             </div>
           </div>
-          <div className={styles.secondGroup}></div>
-          <div className={styles.dateGroup}></div>
           <div className={styles.thirdGroup}>
             <div className={styles.inputContainer}>
               <TextArea
@@ -624,107 +622,107 @@ const SiniestrosForm = () => {
               />
             </div>
           </div>
-          <div className={styles.btnsGroup}>
+          <div className={styles.entitiesButtons}>
             <Button clickAction={handleInvolucrado} text="Involucrados" />
             <Button clickAction={handleNovedad} text="Novedades" />
             <Button clickAction={handleVehiculo} text="Vehiculos" />
             <Button clickAction={handleLugar} text="Lugar" />
           </div>
-          <div className={styles.fiveGroup}>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionDescripcion?.message}
-                register={register}
-                nameTitle="Conclusion Descripcion"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionDescripcion"
-                required
-              />
+          <div className={styles.textAreasGroup}>
+            <div className={styles.textAreaColumn}>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.conclusionDescripcion?.message}
+                  register={register}
+                  nameTitle="Conclusion Descripcion"
+                  type="text"
+                  styleInput="big"
+                  nameInput="conclusionDescripcion"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.conclusionCredibilidad?.message}
+                  register={register}
+                  nameTitle="Conclusion Credibilidad"
+                  type="text"
+                  styleInput="big"
+                  nameInput="conclusionCredibilidad"
+                  required
+                />
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionLesiones?.message}
-                register={register}
-                nameTitle="Conclusion Lesiones"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionLesiones"
-                required
-              />
+            <div className={styles.textAreaColumn}>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.conclusionResponsabilidad?.message}
+                  register={register}
+                  nameTitle="Conclusion Responsabilidad"
+                  type="text"
+                  styleInput="small"
+                  nameInput="conclusionResponsabilidad"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.conclusionRecomendacion?.message}
+                  register={register}
+                  nameTitle="Conclusion Recomendacion"
+                  type="text"
+                  styleInput="small"
+                  nameInput="conclusionRecomendacion"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.autorizacion?.message}
+                  register={register}
+                  nameTitle="Autorizacion"
+                  type="text"
+                  styleInput="small"
+                  nameInput="autorizacion"
+                  required
+                />
+              </div>
+            </div>
+            <div className={styles.textAreaColumn}>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.conclusionLesiones?.message}
+                  register={register}
+                  nameTitle="Conclusion Lesiones"
+                  type="text"
+                  styleInput="small"
+                  nameInput="conclusionLesiones"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errors.conclusionDaños?.message}
+                  register={register}
+                  nameTitle="Conclusion Daños"
+                  type="text"
+                  styleInput="small"
+                  nameInput="conclusionDaños"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainerEstado}>
+                <OptionInput
+                  data={estadoArray}
+                  dataLabel="Estado"
+                  name="estado"
+                  register={register}
+                  error={errors.estado?.message}
+                />
+              </div>
             </div>
           </div>
-          <div className={styles.sixGroup}>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionDaños?.message}
-                register={register}
-                nameTitle="Conclusion Daños"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionDaños"
-                required
-              />
-            </div>
-
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionResponsabilidad?.message}
-                register={register}
-                nameTitle="Conclusion Responsabilidad"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionResponsabilidad"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.sevenGroup}>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionCredibilidad?.message}
-                register={register}
-                nameTitle="Conclusion Credibilidad"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionCredibilidad"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.conclusionRecomendacion?.message}
-                register={register}
-                nameTitle="Conclusion Recomendacion"
-                type="text"
-                styleInput="medium"
-                nameInput="conclusionRecomendacion"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.eightGroup}>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={estadoArray}
-                dataLabel="Estado"
-                name="estado"
-                register={register}
-                error={errors.estado?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.autorizacion?.message}
-                register={register}
-                nameTitle="Autorizacion"
-                type="text"
-                styleInput="medium"
-                nameInput="autorizacion"
-                required
-              />
-            </div>
-          </div>
+          <div className={styles.eightGroup}></div>
           <div className={styles.nineGroup}>
             <div className={styles.inputContainer}>
               <DateInput
