@@ -259,7 +259,6 @@ const InvolucradosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      console.log('entre');
       const editInvolucradoResponse = await updateInvolucrado(
         dispatch,
         involucrado._id,

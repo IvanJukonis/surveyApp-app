@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -9,20 +9,22 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateVehiculo, postVehiculo } from 'redux/vehiculo/thunks';
+import { updateVehiculo, postVehiculo, getAllVehiculos } from 'redux/vehiculo/thunks';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
 import DateInput from 'Components/Shared/Inputs/DateInput';
+import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
 const VehiculosForm = () => {
   const dispatch = useDispatch();
+  const vehiculos = useSelector((state) => state.involucrado.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [vehiculo, setVehiculo] = useState({});
+  const [buttonType, setButtonType] = useState(false);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -132,7 +134,7 @@ const VehiculosForm = () => {
     alarma: Joi.string()
       .valid('Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma')
       .messages({
-        'any.only': 'Selecciona una "Alarma" permitido'
+        'any.only': 'Selecciona una "Alarma" permitida'
       })
       .required(),
     cierreCentralizado: Joi.string()
@@ -151,23 +153,6 @@ const VehiculosForm = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const vehiculoUpdate = {
-    rol: data.rol,
-    prioridad: data.prioridad,
-    dominio: data.dominio,
-    marca: data.marca,
-    modelo: data.modelo,
-    color: data.color,
-    uso: data.uso,
-    fabricacion: formatDate(data.fabricacion),
-    tipo: data.tipo,
-    fechaAdquisicion: formatDate(data.fechaAdquisicion),
-    danos: data.danos,
-    descripcionDanos: data.descripcionDanos,
-    alarma: data.alarma,
-    cierreCentralizado: data.cierreCentralizado
-  };
-
   const {
     register,
     reset,
@@ -176,36 +161,48 @@ const VehiculosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...vehiculoUpdate }
+    defaultValues: { ...vehiculo }
   });
 
   const onConfirmFunction = async () => {
-    if (!id) {
-      const addVehiculoResponse = await dispatch(postVehiculo(vehiculo));
-      if (addVehiculoResponse.type === 'ADD_VEHICULO_SUCCESS') {
+    if (!buttonType) {
+      const vehiculoConSiniestro = { ...vehiculo, siniestro: id };
+      const addVehiculoResponse = await postVehiculo(dispatch, vehiculoConSiniestro);
+      if (addVehiculoResponse.type === 'POST_VEHICULO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     } else {
-      const editVehiculoResponse = await dispatch(updateVehiculo(id, vehiculo));
-      if (editVehiculoResponse.type === 'EDIT_VEHICULO_SUCCESS') {
+      const editVehiculoResponse = await updateVehiculo(dispatch, vehiculo._id, vehiculo);
+      if (editVehiculoResponse.type === 'UPDATE_VEHICULO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     }
   };
 
   const onSubmit = async (data) => {
-    setVehiculo(data);
-    setModalAddConfirmOpen(true);
+    if (buttonType) {
+      const formattedData = {
+        ...data,
+        fechaAdquisicion: formatDate(data.fechaAdquisicion),
+        fabricacion: formatDate(data.fabricacion)
+      };
+      setVehiculo(formattedData);
+      setModalAddConfirmOpen(true);
+    } else {
+      const formattedData = {
+        ...data,
+        fechaAdquisicion: formatDate(data.fechaAdquisicion),
+        fabricacion: formatDate(data.fabricacion)
+      };
+      setVehiculo(formattedData);
+      setModalAddConfirmOpen(true);
+    }
   };
 
   const arrayRol = ['VA', 'VT', 'VT2', 'VT3', 'VAd'];
@@ -222,6 +219,62 @@ const VehiculosForm = () => {
   const arrayDanos = ['Graves', 'Leves', 'Medios', 'Sin Daños'];
   const arrayAlarma = ['Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma'];
   const arrayCierre = ['Con cierre (Activado)', 'Con cierre (Desactivado)', 'Sin cierre'];
+  const columnTitleArray = ['Rol', 'Modelo', 'Dominio', 'Marca', 'Prioridad'];
+  const columns = ['rol', 'modelo', 'dominio', 'marca', 'prioridad'];
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
+  const resetForm = () => {
+    setButtonType(false);
+    const emptyData = {
+      rol: 'Pick rol',
+      prioridad: '',
+      dominio: '',
+      marca: '',
+      modelo: '',
+      color: '',
+      uso: 'Pick uso',
+      fabricacion: 'dd / mm / aaaa',
+      tipo: 'Pick tipo',
+      fechaAdquisicion: 'dd / mm / aaaa',
+      danos: 'Pick daños',
+      descripcionDanos: '',
+      alarma: 'Pick cierre',
+      cierreCentralizado: 'Pick cierre'
+    };
+    reset({ ...emptyData });
+  };
+
+  const tableClick = (datosFila) => {
+    const formattedData = {
+      ...datosFila,
+      fechaAdquisicion: formatDate(data.fechaAdquisicion)
+    };
+    reset({ ...formattedData });
+    setButtonType(true);
+  };
+
+  useEffect(() => {
+    getAllVehiculos(dispatch, id);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -247,148 +300,194 @@ const VehiculosForm = () => {
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Vehiculo' : 'Add Vehiculo'}</h3>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <section className={styles.inputGroups}>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayRol}
-                dataLabel="Rol"
-                name="rol"
-                register={register}
-                error={errors.rol?.message}
-              />
+      <div className={styles.titleContainer}>
+        <h3 className={styles.title}>{id ? 'Vehiculo' : 'Vehiculo'}</h3>
+      </div>
+      <div className={styles.innerContainer}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <section className={styles.inputGroups}>
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayRol}
+                  dataLabel="Rol"
+                  name="rol"
+                  register={register}
+                  error={errors.rol?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.modelo?.message}
+                  register={register}
+                  nameTitle="Modelo"
+                  type="text"
+                  nameInput="modelo"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayTipo}
+                  dataLabel="Tipo"
+                  name="tipo"
+                  register={register}
+                  error={errors.tipo?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayAlarma}
+                  dataLabel="Alarma"
+                  name="alarma"
+                  register={register}
+                  error={errors.alarma?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.prioridad?.message}
+                  register={register}
+                  nameTitle="Prioridad"
+                  type="checkbox"
+                  nameInput="prioridad"
+                  required
+                />
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.prioridad?.message}
-                register={register}
-                nameTitle="Prioridad"
-                type="checkbox"
-                nameInput="prioridad"
-                required
-              />
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.dominio?.message}
+                  register={register}
+                  nameTitle="Dominio"
+                  type="text"
+                  nameInput="dominio"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.color?.message}
+                  register={register}
+                  nameTitle="Color"
+                  type="text"
+                  nameInput="color"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.fabricacion?.message}
+                  register={register}
+                  nameTitle="Fabricacion"
+                  type="date"
+                  nameInput="fabricacion"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayDanos}
+                  dataLabel="Daños"
+                  name="danos"
+                  register={register}
+                  error={errors.danos?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayCierre}
+                  dataLabel="Cierre Centralizado"
+                  name="cierreCentralizado"
+                  register={register}
+                  error={errors.cierreCentralizado?.message}
+                />
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.dominio?.message}
-                register={register}
-                nameTitle="Dominio"
-                type="text"
-                nameInput="dominio"
-              />
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.marca?.message}
+                  register={register}
+                  nameTitle="Marca"
+                  type="text"
+                  nameInput="marca"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayUso}
+                  dataLabel="Uso"
+                  name="uso"
+                  register={register}
+                  error={errors.uso?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.fechaAdquisicion?.message}
+                  register={register}
+                  nameTitle="Fecha de Adquisicion"
+                  type="date"
+                  nameInput="fechaAdquisicion"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.descripcionDanos?.message}
+                  register={register}
+                  nameTitle="Descripcion Daños"
+                  type="text"
+                  nameInput="descripcionDanos"
+                />
+              </div>
             </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.marca?.message}
-                register={register}
-                nameTitle="Marca"
-                type="text"
-                nameInput="marca"
-              />
-            </div>
+          </section>
+          <div className={styles.btnContainer}>
+            <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
+            <Button clickAction={resetForm} text="Reiniciar" />
+            <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
-          <div className={styles.inputGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.modelo?.message}
-                register={register}
-                nameTitle="Modelo"
-                type="text"
-                nameInput="modelo"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.color?.message}
-                register={register}
-                nameTitle="Color"
-                type="text"
-                nameInput="color"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayUso}
-                dataLabel="Uso"
-                name="uso"
-                register={register}
-                error={errors.uso?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fabricacion?.message}
-                register={register}
-                nameTitle="Fabricacion"
-                type="date"
-                nameInput="fabricacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayTipo}
-                dataLabel="Tipo"
-                name="tipo"
-                register={register}
-                error={errors.tipo?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaAdquisicion?.message}
-                register={register}
-                nameTitle="Fecha de Adquisicion"
-                type="date"
-                nameInput="fechaAdquisicion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayDanos}
-                dataLabel="Daños"
-                name="danos"
-                register={register}
-                error={errors.danos?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.descripcionDanos?.message}
-                register={register}
-                nameTitle="Descripcion Daños"
-                type="text"
-                nameInput="descripcionDanos"
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayAlarma}
-                dataLabel="Alarma"
-                name="alarma"
-                register={register}
-                error={errors.alarma?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayCierre}
-                dataLabel="Cierre Centralizado"
-                name="cierreCentralizado"
-                register={register}
-                error={errors.cierreCentralizado?.message}
-              />
-            </div>
-          </div>
-        </section>
+        </form>
+        <div className={styles.rightTable}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableContent}>
+                {columnTitleArray.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {vehiculos.map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
 
-        <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-        <Button clickAction={() => reset()} text="Reset" />
-        <Button text="Cancel" clickAction={() => history.goBack()} />
-      </form>
+                return (
+                  <tr
+                    onClick={() => {
+                      tableClick(row);
+                    }}
+                    className={rowClass}
+                    key={index}
+                  >
+                    {columns.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column.startsWith('fecha') ? (
+                          formatDate(row[column])
+                        ) : (
+                          <>
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
       )}
