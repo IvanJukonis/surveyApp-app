@@ -19,7 +19,7 @@ import Joi from 'joi';
 
 const VehiculosForm = () => {
   const dispatch = useDispatch();
-  const vehiculos = useSelector((state) => state.involucrado.list);
+  const vehiculos = useSelector((state) => state.vehiculo.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
@@ -282,20 +282,20 @@ const VehiculosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={buttonType ? 'Update' : 'Add'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                id
-                  ? 'Are sure do you want update this vehiculo?'
-                  : 'Are sure do you want add this vehiculo?'
+                buttonType
+                  ? 'Estas seguro que quieres editar este vehiculo?'
+                  : 'Estas seguro que quieres agregar este vehiculo?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Vehiculo edited' : 'Vehiculo added'}
+              message={buttonType ? 'Vehiculo editado' : 'Vehiculo agregado'}
             />
           )}
         </div>
