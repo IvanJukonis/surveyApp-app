@@ -13,15 +13,17 @@ import {
   updateVehiculoError
 } from './actions';
 
-export const getAllVehiculos = async (dispatch) => {
+export const getAllVehiculos = async (dispatch, siniestroId) => {
   try {
     dispatch(getVehiculoPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`);
-    const data = await reponse.json();
-    const vehiculosList = data.data;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`);
+    const data = await response.json();
+    const vehiculosListAll = data.data;
+    const vehiculosList = vehiculosListAll.filter((vehiculo) =>
+      vehiculo.siniestro.includes(siniestroId)
+    );
     dispatch(getVehiculoPending(false));
     dispatch(getVehiculoSuccess(vehiculosList));
-    console.log(data);
   } catch (error) {
     dispatch(getVehiculoPending(false));
     dispatch(getVehiculoError(true));
@@ -55,15 +57,18 @@ export const postVehiculo = async (dispatch, vehiculoData) => {
       },
       body: JSON.stringify(vehiculoData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(postVehiculoPending(false));
-      throw new Error(data.message);
+      return dispatch(postVehiculoSuccess(newData.data));
+    } else {
+      dispatch(postVehiculoPending(false));
+      return dispatch(postVehiculoError(true));
     }
-    dispatch(postVehiculoSuccess(data.result));
   } catch (error) {
     dispatch(postVehiculoPending(false));
-    dispatch(postVehiculoError(error.message));
+    return dispatch(postVehiculoError(true));
   }
 };
 

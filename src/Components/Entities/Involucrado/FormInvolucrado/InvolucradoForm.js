@@ -361,8 +361,6 @@ const InvolucradosForm = () => {
     getAllInvolucrado(dispatch, id);
   }, []);
 
-  console.log(errors);
-
   return (
     <div className={styles.container}>
       {
@@ -662,9 +660,9 @@ const InvolucradosForm = () => {
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={buttonType ? 'Update' : 'Add'} />
-            <Button clickAction={resetForm} text="Reset" />
-            <Button text="Cancel" clickAction={() => history.goBack()} />
+            <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
+            <Button clickAction={resetForm} text="Reiniciar" />
+            <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
         </form>
         <div className={styles.rightTable}>
