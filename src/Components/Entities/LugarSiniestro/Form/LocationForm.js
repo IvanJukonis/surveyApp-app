@@ -9,140 +9,194 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateInvolved, createInvolved } from 'redux/involucrado/thunks';
+import { updateLugarSiniestro, createLugarSiniestro } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
-const InvolvedsForm = () => {
+const LugarSiniestrosForm = () => {
   const dispatch = useDispatch();
-  const isError = useSelector((state) => state.involved.errorForm);
+  const isError = useSelector((state) => state.lugarSiniestro.errorForm);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [involved, setInvolved] = useState({});
+  const [lugarSiniestro, setLugarSiniestro] = useState({});
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
   const { id } = useParams();
 
   const schema = Joi.object({
-    nombre: Joi.string()
+    prioridad: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Prioridad" es un campo booleano',
+        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
+      })
+      .required(),
+    calleVa: Joi.string()
       .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
+      .max(20)
       .messages({
-        'string.base': 'El nombre debe ser una cadena de texto',
-        'string.empty': 'El nombre es un campo requerido',
-        'string.min': 'El nombre debe tener al menos 3 caracteres',
-        'string.max': 'El nombre debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El nombre debe contener solo letras'
+        'string.base': 'La calle debe ser una cadena de texto',
+        'string.empty': 'La calle es un campo requerido',
+        'string.min': 'La calle debe tener al menos 3 caracteres',
+        'string.max': 'La calle debe tener como máximo 20 caracteres'
       })
       .required(),
-
-    apellido: Joi.string()
+    orientacionVa: Joi.string()
+      .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
+      .messages({
+        'any.only': 'Ingrese una orientacion permitida'
+      })
+      .required(),
+    direcionCalleVa: Joi.string()
+      .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
+      .messages({
+        'any.only': 'Ingrese una direccion permitida'
+      })
+      .required(),
+    estadoCalleVa: Joi.string()
+      .valid('Buen', 'Regular', 'Mal')
+      .messages({
+        'any.only': 'Ingrese un estado permitido'
+      })
+      .required(),
+    tipoCalleVa: Joi.string()
+      .valid('Asfalto', 'Tierra', 'Pavimento', 'Grava', 'Piedra')
+      .messages({
+        'any.only': 'Ingrese un tipo permitido'
+      })
+      .required(),
+    badenCalleVa: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Baden" es un campo booleano',
+        'boolean.empty': 'El campo "Baden" debe tener un valor determinado'
+      })
+      .required(),
+    semaforoCalleVa: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Semaforo" es un campo booleano',
+        'boolean.empty': 'El campo "Semaforo" debe tener un valor determinado'
+      })
+      .required(),
+    cartelPareCalleVa: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Cartel" es un campo booleano',
+        'boolean.empty': 'El campo "Cartel" debe tener un valor determinado'
+      })
+      .required(),
+    camaraCalleVa: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Camara" es un campo booleano',
+        'boolean.empty': 'El campo "Camara" debe tener un valor determinado'
+      })
+      .required(),
+    calleVt: Joi.string()
       .min(3)
-      .max(15)
+      .max(20)
       .messages({
-        'string.base': 'El apellido debe ser una cadena de texto',
-        'string.empty': 'El apellido es un campo requerido',
-        'string.min': 'El apellido debe tener al menos 3 caracteres',
-        'string.max': 'El apellido debe tener como máximo 15 caracteres'
+        'string.base': 'La calle debe ser una cadena de texto',
+        'string.empty': 'La calle es un campo requerido',
+        'string.min': 'La calle debe tener al menos 3 caracteres',
+        'string.max': 'La calle debe tener como máximo 15 caracteres'
       })
       .required(),
-
-    dni: Joi.number().min(10000000).max(99999999).integer().messages({
-      'number.base': 'El DNI debe ser un número',
-      'number.empty': 'El DNI es un campo requerido',
-      'number.min': 'El DNI debe ser al menos 10,000,000',
-      'number.max': 'El DNI debe ser como máximo 99,999,999',
-      'number.integer': 'El DNI debe ser un número entero'
-    }),
-
-    telefono: Joi.string()
-      .min(10)
+    orientacionVt: Joi.string()
+      .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
       .messages({
-        'string.base': 'El número de teléfono debe ser una cadena de texto',
-        'string.empty': 'El número de teléfono es un campo requerido',
-        'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
+        'any.only': 'Ingrese una orientación permitida'
       })
       .required(),
-
-    email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    direccionCalleVt: Joi.string()
+      .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
       .messages({
-        'string.base': 'El correo electrónico debe ser una cadena de texto',
-        'string.empty': 'El correo electrónico es un campo requerido',
-        'string.email': 'El correo electrónico debe ser una dirección de correo válida',
-        'string.minDomainSegments':
-          'El correo electrónico debe tener al menos 2 segmentos de dominio',
-        'string.tlds.allow':
-          'El correo electrónico debe tener un dominio de nivel superior válido (com o net)'
+        'any.only': 'Ingrese una direccion permitida'
       })
       .required(),
-
+    estadoCalleVt: Joi.string()
+      .valid('Buen', 'Regular', 'Mal')
+      .messages({
+        'any.only': 'Ingrese un estado permitido'
+      })
+      .required(),
+    tipoCalleVt: Joi.string()
+      .valid('Asfalto', 'Tierra', 'Pavimento', 'Grava', 'Piedra')
+      .messages({
+        'any.only': 'Ingrese un tipo permitido'
+      })
+      .required(),
+    badenCalleVt: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Baden" es un campo booleano',
+        'boolean.empty': 'El campo "Baden" debe tener un valor determinado'
+      })
+      .required(),
+    semaforoCalleVt: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Semaforo" es un campo booleano',
+        'boolean.empty': 'El campo "Semaforo" debe tener un valor determinado'
+      })
+      .required(),
+    cartelPareCalleVt: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Cartel" es un campo booleano',
+        'boolean.empty': 'El campo "Cartel" debe tener un valor determinado'
+      })
+      .required(),
+    camaraCalleVt: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Camara" es un campo booleano',
+        'boolean.empty': 'El campo "Camara" debe tener un valor determinado'
+      })
+      .required(),
+    calleAd: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'La calle debe ser una cadena de texto',
+        'string.empty': 'La calle es un campo requerido',
+        'string.min': 'La calle debe tener al menos 3 caracteres',
+        'string.max': 'La calle debe tener como máximo 20 caracteres'
+      })
+      .required(),
     ciudad: Joi.string()
       .min(3)
-      .max(15)
+      .max(20)
       .messages({
         'string.base': 'La ciudad debe ser una cadena de texto',
         'string.empty': 'La ciudad es un campo requerido',
         'string.min': 'La ciudad debe tener al menos 3 caracteres',
-        'string.max': 'La ciudad debe tener como máximo 15 caracteres'
+        'string.max': 'La ciudad debe tener como máximo 20 caracteres'
       })
       .required(),
-
-    tipo: Joi.string()
-      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TERCERO', 'ABOG')
-      .messages({
-        'any.only': 'Los tipos solo pueden ser CVA, CVT, PVA, PVT, TTG, TERCERO, ABOG'
-      })
-      .required(),
-
-    lesiones: Joi.string()
-      .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
-      .messages({
-        'any.only':
-          'Las lesiones solo pueden ser Lesiones GRAVES, Lesiones LEVES, Lesiones REGULARES'
-      })
-      .required(),
-
-    fechaDeNacimiento: Joi.date()
-      .messages({
-        'date.base': 'La fecha de nacimiento debe ser una fecha válida',
-        'date.empty': 'La fecha de nacimiento es un campo requerido'
-      })
-      .required(),
-
-    direccion: Joi.string()
+    provincia: Joi.string()
       .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
+      .max(20)
       .messages({
-        'string.base': 'La dirección debe ser una cadena de texto',
-        'string.empty': 'La dirección es un campo requerido',
-        'string.min': 'La dirección debe tener al menos 3 caracteres',
-        'string.max': 'La dirección debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'La dirección debe contener solo letras'
+        'string.base': 'La provincia debe ser una cadena de texto',
+        'string.empty': 'La provincia es un campo requerido',
+        'string.min': 'La provincia debe tener al menos 3 caracteres',
+        'string.max': 'La provincia debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    descripcion: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'La descripción debe ser una cadena de texto',
+        'string.empty': 'La descripción es un campo requerido',
+        'string.min': 'La descripción debe tener al menos 3 caracteres',
+        'string.max': 'La descripción debe tener como máximo 20 caracteres'
       })
       .required(),
 
-    pais: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'El país debe ser una cadena de texto',
-        'string.empty': 'El país es un campo requerido',
-        'string.min': 'El país debe tener al menos 3 caracteres',
-        'string.max': 'El país debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El país debe contener solo letras'
-      })
-      .required()
+    siniestro: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any()
   });
 
-  const involvedUpdate = {
+  const lugarSiniestroUpdate = {
     nombre: data.nombre,
     apellido: data.apellido,
     dni: data.dni,
@@ -164,13 +218,13 @@ const InvolvedsForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...involvedUpdate }
+    defaultValues: { ...lugarSiniestroUpdate }
   });
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addInvolvedResponse = await dispatch(createInvolved(involved));
-      if (addInvolvedResponse.type === 'ADD_INVOLVED_SUCCESS') {
+      const addLugarSiniestroResponse = await dispatch(createLugarSiniestro(lugarSiniestro));
+      if (addLugarSiniestroResponse.type === 'POST_LUGARSINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -179,8 +233,8 @@ const InvolvedsForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editInvolvedResponse = await dispatch(updateInvolved(id, involved));
-      if (editInvolvedResponse.type === 'EDIT_INVOLVED_SUCCESS') {
+      const editLugarSiniestroResponse = await dispatch(updateLugarSiniestro(id, lugarSiniestro));
+      if (editLugarSiniestroResponse.type === 'UPDATE_LUGARSINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {
@@ -192,8 +246,7 @@ const InvolvedsForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
-    setInvolved(data);
+    setLugarSiniestro(data);
     setModalAddConfirmOpen(true);
   };
 
@@ -212,20 +265,20 @@ const InvolvedsForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Are sure do you want update this involved?'
-                  : 'Are sure do you want add this involved?'
+                  ? 'Are sure do you want update this lugarSiniestro?'
+                  : 'Are sure do you want add this lugarSiniestro?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Involved edited' : 'Involved added'}
+              message={id ? 'LugarSiniestro edited' : 'LugarSiniestro added'}
             />
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit Involved' : 'Add Involved'}</h3>
+      <h3 className={styles.title}>{id ? 'Edit LugarSiniestro' : 'Add LugarSiniestro'}</h3>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
           <div className={styles.inputGroup}>
@@ -338,4 +391,4 @@ const InvolvedsForm = () => {
   );
 };
 
-export default InvolvedsForm;
+export default LugarSiniestrosForm;

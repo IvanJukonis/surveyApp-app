@@ -344,13 +344,12 @@ const VehiculosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.prioridad?.message}
+                <OptionInput
+                  data={arrayCierre}
+                  dataLabel="Cierre Centralizado"
+                  name="cierreCentralizado"
                   register={register}
-                  nameTitle="Prioridad"
-                  type="checkbox"
-                  nameInput="prioridad"
-                  required
+                  error={errors.cierreCentralizado?.message}
                 />
               </div>
             </div>
@@ -393,12 +392,13 @@ const VehiculosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayCierre}
-                  dataLabel="Cierre Centralizado"
-                  name="cierreCentralizado"
+                <Checkbox
+                  error={errors.prioridad?.message}
                   register={register}
-                  error={errors.cierreCentralizado?.message}
+                  nameTitle="Prioridad"
+                  type="checkbox"
+                  nameInput="prioridad"
+                  required
                 />
               </div>
             </div>
