@@ -8,24 +8,26 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateLugarSiniestro, createLugarSiniestro } from 'redux/involucrado/thunks';
-import { useDispatch, useSelector } from 'react-redux';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
+import { useHistory, useParams, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import { postLugarSiniestro } from 'redux/lugarSiniestro/thunks';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
 const LugarSiniestrosForm = () => {
   const dispatch = useDispatch();
-  const isError = useSelector((state) => state.lugarSiniestro.errorForm);
+  const { id } = useParams();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [lugarSiniestro, setLugarSiniestro] = useState({});
+  const [lugarSiniestro, setLugarSiniestro] = useState();
+
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
-  const { id } = useParams();
 
   const schema = Joi.object({
     prioridad: Joi.boolean()
@@ -44,7 +46,7 @@ const LugarSiniestrosForm = () => {
         'string.max': 'La calle debe tener como máximo 20 caracteres'
       })
       .required(),
-    orientacionVa: Joi.string()
+    orientacionCalleVa: Joi.string()
       .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
       .messages({
         'any.only': 'Ingrese una orientacion permitida'
@@ -102,7 +104,7 @@ const LugarSiniestrosForm = () => {
         'string.max': 'La calle debe tener como máximo 15 caracteres'
       })
       .required(),
-    orientacionVt: Joi.string()
+    orientacionCalleVt: Joi.string()
       .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
       .messages({
         'any.only': 'Ingrese una orientación permitida'
@@ -196,63 +198,86 @@ const LugarSiniestrosForm = () => {
     _id: Joi.any()
   });
 
-  const lugarSiniestroUpdate = {
-    nombre: data.nombre,
-    apellido: data.apellido,
-    dni: data.dni,
-    telefono: data.telefono,
-    email: data.email,
+  const siniestroUpdate = {
+    prioridad: data.prioridad,
+    calleVa: data.calleVa,
+    orientacionCalleVa: data.orientacionCalleVa,
+    direcionCalleVa: data.direcionCalleVa,
+    estadoCalleVa: data.estadoCalleVa,
+    tipoCalleVa: data.tipoCalleVa,
+    badenCalleVa: data.badenCalleVa,
+    semaforoCalleVa: data.semaforoCalleVa,
+    cartelPareCalleVa: data.cartelPareCalleVa,
+    camaraCalleVa: data.camaraCalleVa,
+    calleVt: data.calleVt,
+    orientacionCalleVt: data.orientacionCalleVt,
+    direccionCalleVt: data.direccionCalleVt,
+    estadoCalleVt: data.estadoCalleVt,
+    tipoCalleVt: data.tipoCalleVt,
+    badenCalleVt: data.badenCalleVt,
+    semaforoCalleVt: data.semaforoCalleVt,
+    cartelPareCalleVt: data.cartelPareCalleVt,
+    camaraCalleVt: data.camaraCalleVt,
+    calleAd: data.calleAd,
     ciudad: data.ciudad,
-    tipo: data.tipo,
-    lesiones: data.lesiones,
-    fechaDeNacimiento: data.fechaDeNacimiento,
-    direccion: data.direccion,
-    pais: data.pais
+    provincia: data.provincia,
+    descripcion: data.descripcion
   };
 
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors }
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...lugarSiniestroUpdate }
+    defaultValues: { ...siniestroUpdate }
   });
 
   const onConfirmFunction = async () => {
     if (!id) {
-      const addLugarSiniestroResponse = await dispatch(createLugarSiniestro(lugarSiniestro));
+      const lugarSiniestroConSiniestro = { ...lugarSiniestro, siniestro: id };
+      const addLugarSiniestroResponse = await postLugarSiniestro(
+        dispatch,
+        lugarSiniestroConSiniestro
+      );
       if (addLugarSiniestroResponse.type === 'POST_LUGARSINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
-      }
-      return setToastErroOpen(true);
-    } else {
-      const editLugarSiniestroResponse = await dispatch(updateLugarSiniestro(id, lugarSiniestro));
-      if (editLugarSiniestroResponse.type === 'UPDATE_LUGARSINIESTRO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return;
       }
       return setToastErroOpen(true);
     }
   };
 
   const onSubmit = async (data) => {
-    setLugarSiniestro(data);
-    setModalAddConfirmOpen(true);
+    if (id) {
+      const formattedData = {
+        ...data
+      };
+      setLugarSiniestro(formattedData);
+      setModalAddConfirmOpen(true);
+    } else {
+      const formattedData = {
+        ...data
+      };
+      setLugarSiniestro(formattedData);
+      setModalAddConfirmOpen(true);
+    }
   };
 
-  const arrayTipos = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'ABOG', 'TERCERO'];
-
-  const arrayLesiones = ['Lesiones LEVES', 'Lesiones REGULARES', 'Lesiones GRAVES'];
+  const arrayOrientacion = [
+    'SUR',
+    'ESTE',
+    'OESTE',
+    'NORTE',
+    'SUDOESTE',
+    'NOROESTE',
+    'NORESTE',
+    'SUDESTE'
+  ];
+  const arrayEstado = ['Buen', 'Regular', 'Mal'];
+  const arrayTipo = ['Asfalto', 'Tierra', 'Pavimento', 'Grava', 'Piedra'];
 
   return (
     <div className={styles.container}>
@@ -265,8 +290,8 @@ const LugarSiniestrosForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Are sure do you want update this lugarSiniestro?'
-                  : 'Are sure do you want add this lugarSiniestro?'
+                  ? 'Esta seguro que quiere actualizar este lugar de siniestro?'
+                  : 'Esta seguro que quiere añadir este lugar de siniestro?'
               }
             />
           )}
@@ -281,54 +306,201 @@ const LugarSiniestrosForm = () => {
       <h3 className={styles.title}>{id ? 'Edit LugarSiniestro' : 'Add LugarSiniestro'}</h3>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
-          <div className={styles.inputGroup}>
+          <div className={styles.leftColumn}>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.nombre?.message}
+                error={errors.calleVa?.message}
                 register={register}
-                nameTitle="Nombre"
+                nameTitle="Calle VA"
                 type="text"
-                nameInput="nombre"
+                styleInput="normalInput"
+                nameInput="calleVa"
               />
             </div>
             <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.apellido?.message}
+              <OptionInput
+                data={arrayOrientacion}
+                dataLabel="Orientación"
+                name="orientacionCalleVa"
                 register={register}
-                nameTitle="Apellido"
-                type="text"
-                nameInput="apellido"
+                error={errors.orientacionCalleVa?.message}
               />
             </div>
             <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.dni?.message}
+              <OptionInput
+                data={arrayOrientacion}
+                dataLabel="Dirección VA"
+                name="direccionCalleVa"
                 register={register}
-                nameTitle="DNI"
-                type="number"
-                nameInput="dni"
+                error={errors.direccionCalleVa?.message}
               />
             </div>
             <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.telefono?.message}
+              <OptionInput
+                data={arrayEstado}
+                dataLabel="Estado VA"
+                name="estadoCalleVa"
                 register={register}
-                nameTitle="Telefono"
-                type="number"
-                nameInput="telefono"
+                error={errors.estadoCalleVa?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayTipo}
+                dataLabel="Tipo VA"
+                name="tipoCalleVa"
+                register={register}
+                error={errors.tipoCalleVa?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.badenCalleVa?.message}
+                register={register}
+                nameTitle="Baden VA"
+                type="checkbox"
+                nameInput="badenCalleVa"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.semaforoCalleVa?.message}
+                register={register}
+                nameTitle="Semaforo Va"
+                type="checkbox"
+                nameInput="semaforoCalleVa"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.cartelPareCalleVa?.message}
+                register={register}
+                nameTitle="Cartel de Pare VA"
+                type="checkbox"
+                nameInput="cartelPareCalleVa"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.camaraCalleVa?.message}
+                register={register}
+                nameTitle="Camara VA"
+                type="checkbox"
+                nameInput="camaraCalleVa"
                 required
               />
             </div>
           </div>
-          <div className={styles.inputGroup}>
+          <div className={styles.middleColumn}>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.email?.message}
+                error={errors.calleVt?.message}
                 register={register}
-                nameTitle="Email"
-                type="email"
-                nameInput="email"
+                nameTitle="Calle VT"
+                type="text"
+                styleInput="normalInput"
+                nameInput="calleVt"
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayOrientacion}
+                dataLabel="Orientación"
+                name="orientacionCalleVt"
+                register={register}
+                error={errors.orientacionCalleVt?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayOrientacion}
+                dataLabel="Dirección VT"
+                name="direccionCalleVt"
+                register={register}
+                error={errors.direccionCalleVt?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayEstado}
+                dataLabel="Estado VT"
+                name="estadoCalleVt"
+                register={register}
+                error={errors.estadoCalleVt?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <OptionInput
+                data={arrayTipo}
+                dataLabel="Tipo VT"
+                name="tipoCalleVt"
+                register={register}
+                error={errors.tipoCalleVt?.message}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.badenCalleVt?.message}
+                register={register}
+                nameTitle="Baden VT"
+                type="checkbox"
+                nameInput="badenCalleVt"
                 required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.semaforoCalleVt?.message}
+                register={register}
+                nameTitle="Semaforo VT"
+                type="checkbox"
+                nameInput="semaforoCalleVt"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.cartelPareCalleVt?.message}
+                register={register}
+                nameTitle="Cartel de Pare VT"
+                type="checkbox"
+                nameInput="cartelPareCalleVt"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.camaraCalleVt?.message}
+                register={register}
+                nameTitle="Camara VT"
+                type="checkbox"
+                nameInput="camaraCalleVt"
+                required
+              />
+            </div>
+          </div>
+          <div className={styles.rightColumn}>
+            <div className={styles.inputContainer}>
+              <Checkbox
+                error={errors.prioridad?.message}
+                register={register}
+                nameTitle="Prioridad"
+                type="checkbox"
+                nameInput="prioridad"
+                required
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <Inputs
+                error={errors.calleAd?.message}
+                register={register}
+                nameTitle="Calle Adicional"
+                type="text"
+                styleInput="normalInput"
+                nameInput="calleAd"
               />
             </div>
             <div className={styles.inputContainer}>
@@ -337,56 +509,38 @@ const LugarSiniestrosForm = () => {
                 register={register}
                 nameTitle="Ciudad"
                 type="text"
+                styleInput="normalInput"
                 nameInput="ciudad"
-                required
               />
             </div>
             <div className={styles.inputContainer}>
               <Inputs
-                error={errors.direccion?.message}
+                error={errors.provincia?.message}
                 register={register}
-                nameTitle="Direccion"
+                nameTitle="Provincia"
                 type="text"
-                nameInput="direccion"
+                styleInput="normalInput"
+                nameInput="provincia"
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <TextArea
+                error={errors.descripcion?.message}
+                register={register}
+                nameTitle="Descripción"
+                type="text"
+                nameInput="descripcion"
+                styleInput="medium"
                 required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayTipos}
-                dataLabel="Tipo"
-                name="tipo"
-                register={register}
-                error={errors.tipo?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.fechaDeNacimiento?.message}
-                register={register}
-                nameTitle="FechaDeNacimiento"
-                type="date"
-                nameInput="fechaDeNacimiento"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={arrayLesiones}
-                dataLabel="Lesiones"
-                name="lesiones"
-                register={register}
-                error={errors.lesiones?.message}
               />
             </div>
           </div>
         </section>
-
-        <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-        <Button clickAction={() => reset()} text="Reset" />
-        <Button text="Cancel" clickAction={() => history.goBack()} />
+        <div className={styles.btnContainer}>
+          <Button text="Cancelar" clickAction={() => history.goBack()} />
+        </div>
       </form>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={isError.message} />}
+      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={'Error'} />}
     </div>
   );
 };

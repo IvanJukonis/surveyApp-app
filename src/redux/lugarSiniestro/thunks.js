@@ -57,15 +57,18 @@ export const postLugarSiniestro = async (dispatch, lugarSiniestroData) => {
       },
       body: JSON.stringify(lugarSiniestroData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(postLugarSiniestroPending(false));
-      throw new Error(data.message);
+      return dispatch(postLugarSiniestroSuccess(newData.data));
+    } else {
+      dispatch(postLugarSiniestroPending(false));
+      return dispatch(postLugarSiniestroError(true));
     }
-    dispatch(postLugarSiniestroSuccess(data.result));
   } catch (error) {
     dispatch(postLugarSiniestroPending(false));
-    dispatch(postLugarSiniestroError(error.message));
+    return dispatch(postLugarSiniestroError(true));
   }
 };
 

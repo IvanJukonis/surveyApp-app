@@ -359,7 +359,6 @@ const SiniestrosForm = () => {
     if (controladorPath) {
       return '/controlador';
     }
-    console.log('chau');
     return '/administrativo';
   };
 
