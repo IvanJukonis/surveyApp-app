@@ -303,9 +303,11 @@ const LugarSiniestrosForm = () => {
           )}
         </div>
       }
-      <h3 className={styles.title}>{id ? 'Edit LugarSiniestro' : 'Add LugarSiniestro'}</h3>
+      <div className={styles.titleContainer}>
+        <h3 className={styles.title}>{'LUGAR DE SINIESTRO'}</h3>
+      </div>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <section className={styles.inputGroups}>
+        <section className={styles.innerForm}>
           <div className={styles.leftColumn}>
             <div className={styles.inputContainer}>
               <Inputs
@@ -360,6 +362,7 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Baden VA"
                 type="checkbox"
                 nameInput="badenCalleVa"
+                wrapper={true}
                 required
               />
             </div>
@@ -370,6 +373,7 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Semaforo Va"
                 type="checkbox"
                 nameInput="semaforoCalleVa"
+                wrapper={true}
                 required
               />
             </div>
@@ -380,6 +384,7 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Cartel de Pare VA"
                 type="checkbox"
                 nameInput="cartelPareCalleVa"
+                wrapper={true}
                 required
               />
             </div>
@@ -390,6 +395,7 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Camara VA"
                 type="checkbox"
                 nameInput="camaraCalleVa"
+                wrapper={true}
                 required
               />
             </div>
@@ -448,6 +454,7 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Baden VT"
                 type="checkbox"
                 nameInput="badenCalleVt"
+                wrapper={true}
                 required
               />
             </div>
@@ -458,6 +465,7 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Semaforo VT"
                 type="checkbox"
                 nameInput="semaforoCalleVt"
+                wrapper={true}
                 required
               />
             </div>
@@ -467,6 +475,7 @@ const LugarSiniestrosForm = () => {
                 register={register}
                 nameTitle="Cartel de Pare VT"
                 type="checkbox"
+                wrapper={true}
                 nameInput="cartelPareCalleVt"
                 required
               />
@@ -478,21 +487,12 @@ const LugarSiniestrosForm = () => {
                 nameTitle="Camara VT"
                 type="checkbox"
                 nameInput="camaraCalleVt"
+                wrapper={true}
                 required
               />
             </div>
           </div>
           <div className={styles.rightColumn}>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.prioridad?.message}
-                register={register}
-                nameTitle="Prioridad"
-                type="checkbox"
-                nameInput="prioridad"
-                required
-              />
-            </div>
             <div className={styles.inputContainer}>
               <Inputs
                 error={errors.calleAd?.message}
@@ -523,6 +523,16 @@ const LugarSiniestrosForm = () => {
                 nameInput="provincia"
               />
             </div>
+            <div className={`${styles.inputContainer} ${styles.checkBoxSpace}`}>
+              <Checkbox
+                error={errors.prioridad?.message}
+                register={register}
+                nameTitle="Prioridad"
+                type="checkbox"
+                nameInput="prioridad"
+                required
+              />
+            </div>
             <div className={styles.inputContainer}>
               <TextArea
                 error={errors.descripcion?.message}
@@ -537,6 +547,7 @@ const LugarSiniestrosForm = () => {
           </div>
         </section>
         <div className={styles.btnContainer}>
+          <Button clickAction={() => {}} text={'Actualizar'} />
           <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>

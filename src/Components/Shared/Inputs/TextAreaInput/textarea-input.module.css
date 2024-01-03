@@ -26,7 +26,6 @@
 .inputData {
   display: flex;
   flex-direction: column;
-  margin: 0px 10px 0px 10px;
 }
 
 .numberInput {
