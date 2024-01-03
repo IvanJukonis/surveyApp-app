@@ -13,12 +13,15 @@ import {
   updateLugarSiniestroError
 } from './actions';
 
-export const getAllLugarSiniestro = async (dispatch) => {
+export const getAllLugarSiniestro = async (dispatch, siniestroId) => {
   try {
     dispatch(getLugarSiniestroPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/lugarSiniestro`);
-    const data = await reponse.json();
-    const lugaresSiniestroList = data.data;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/lugarSiniestro`);
+    const data = await response.json();
+    const lugaresSiniestroListAll = data.data;
+    const lugaresSiniestroList = lugaresSiniestroListAll.filter((lugarSiniestro) =>
+      lugarSiniestro.siniestro.includes(siniestroId)
+    );
     dispatch(getLugarSiniestroPending(false));
     dispatch(getLugarSiniestroSuccess(lugaresSiniestroList));
   } catch (error) {

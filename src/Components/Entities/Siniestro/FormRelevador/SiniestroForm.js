@@ -35,6 +35,8 @@ const SiniestrosForm = () => {
   const history = useHistory();
   const data = location.state.params;
 
+  console.log(data);
+
   const schema = Joi.object({
     numSiniestro: Joi.number()
       .max(9999999999999)
@@ -598,7 +600,7 @@ const SiniestrosForm = () => {
             </div>
           </div>
           <div className={styles.thirdGroup}>
-            <div className={styles.inputContainer}>
+            <div className={`${styles.inputContainer} ${styles.textAreaSpace}`}>
               <TextArea
                 error={errors.instrucciones?.message}
                 register={register}
@@ -628,7 +630,7 @@ const SiniestrosForm = () => {
             <Button clickAction={handleLugar} text="Lugar" />
           </div>
           <div className={styles.textAreasGroup}>
-            <div className={styles.textAreaColumn}>
+            <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>
               <div className={styles.inputContainer}>
                 <TextArea
                   error={errors.conclusionDescripcion?.message}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -10,9 +10,13 @@ import {
 } from 'Components/Shared';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import { useHistory, useParams, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
-import { postLugarSiniestro } from 'redux/lugarSiniestro/thunks';
-import { useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import {
+  getAllLugarSiniestro,
+  postLugarSiniestro,
+  updateLugarSiniestro
+} from 'redux/lugarSiniestro/thunks';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
@@ -24,10 +28,8 @@ const LugarSiniestrosForm = () => {
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [lugarSiniestro, setLugarSiniestro] = useState();
-
-  const location = useLocation();
+  const lugarSiniestros = useSelector((state) => state.lugarSiniestro.list);
   const history = useHistory();
-  const data = location.state.params;
 
   const schema = Joi.object({
     prioridad: Joi.boolean()
@@ -52,7 +54,7 @@ const LugarSiniestrosForm = () => {
         'any.only': 'Ingrese una orientacion permitida'
       })
       .required(),
-    direcionCalleVa: Joi.string()
+    direccionCalleVa: Joi.string()
       .valid('SUR', 'ESTE', 'OESTE', 'NORTE', 'SUDOESTE', 'NOROESTE', 'NORESTE', 'SUDESTE')
       .messages({
         'any.only': 'Ingrese una direccion permitida'
@@ -198,31 +200,34 @@ const LugarSiniestrosForm = () => {
     _id: Joi.any()
   });
 
-  const siniestroUpdate = {
-    prioridad: data.prioridad,
-    calleVa: data.calleVa,
-    orientacionCalleVa: data.orientacionCalleVa,
-    direcionCalleVa: data.direcionCalleVa,
-    estadoCalleVa: data.estadoCalleVa,
-    tipoCalleVa: data.tipoCalleVa,
-    badenCalleVa: data.badenCalleVa,
-    semaforoCalleVa: data.semaforoCalleVa,
-    cartelPareCalleVa: data.cartelPareCalleVa,
-    camaraCalleVa: data.camaraCalleVa,
-    calleVt: data.calleVt,
-    orientacionCalleVt: data.orientacionCalleVt,
-    direccionCalleVt: data.direccionCalleVt,
-    estadoCalleVt: data.estadoCalleVt,
-    tipoCalleVt: data.tipoCalleVt,
-    badenCalleVt: data.badenCalleVt,
-    semaforoCalleVt: data.semaforoCalleVt,
-    cartelPareCalleVt: data.cartelPareCalleVt,
-    camaraCalleVt: data.camaraCalleVt,
-    calleAd: data.calleAd,
-    ciudad: data.ciudad,
-    provincia: data.provincia,
-    descripcion: data.descripcion
-  };
+  let updatedSiniestro;
+
+  if (lugarSiniestros.length > 0) {
+    updatedSiniestro = {
+      calleVa: lugarSiniestros[0].calleVa,
+      orientacionCalleVa: lugarSiniestros[0].orientacionCalleVa,
+      direccionCalleVa: lugarSiniestros[0].direccionCalleVa,
+      estadoCalleVa: lugarSiniestros[0].estadoCalleVa,
+      tipoCalleVa: lugarSiniestros[0].tipoCalleVa,
+      badenCalleVa: lugarSiniestros[0].badenCalleVa,
+      semaforoCalleVa: lugarSiniestros[0].semaforoCalleVa,
+      cartelPareCalleVa: lugarSiniestros[0].cartelPareCalleVa,
+      camaraCalleVa: lugarSiniestros[0].camaraCalleVa,
+      calleVt: lugarSiniestros[0].calleVt,
+      orientacionCalleVt: lugarSiniestros[0].orientacionCalleVt,
+      direccionCalleVt: lugarSiniestros[0].direccionCalleVt,
+      estadoCalleVt: lugarSiniestros[0].estadoCalleVt,
+      tipoCalleVt: lugarSiniestros[0].tipoCalleVt,
+      badenCalleVt: lugarSiniestros[0].badenCalleVt,
+      semaforoCalleVt: lugarSiniestros[0].semaforoCalleVt,
+      cartelPareCalleVt: lugarSiniestros[0].cartelPareCalleVt,
+      camaraCalleVt: lugarSiniestros[0].camaraCalleVt,
+      calleAd: lugarSiniestros[0].calleAd,
+      ciudad: lugarSiniestros[0].ciudad,
+      provincia: lugarSiniestros[0].provincia,
+      descripcion: lugarSiniestros[0].descripcion
+    };
+  }
 
   const {
     register,
@@ -231,11 +236,11 @@ const LugarSiniestrosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...siniestroUpdate }
+    defaultValues: { ...updatedSiniestro }
   });
 
   const onConfirmFunction = async () => {
-    if (!id) {
+    if (!lugarSiniestros) {
       const lugarSiniestroConSiniestro = { ...lugarSiniestro, siniestro: id };
       const addLugarSiniestroResponse = await postLugarSiniestro(
         dispatch,
@@ -245,6 +250,19 @@ const LugarSiniestrosForm = () => {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return;
+      }
+      return setToastErroOpen(true);
+    } else {
+      const editLugarSiniestroResponse = await updateLugarSiniestro(
+        dispatch,
+        lugarSiniestro._id,
+        lugarSiniestro
+      );
+      console.log(editLugarSiniestroResponse);
+      if (editLugarSiniestroResponse.type === 'UPDATE_LUGARSINIESTRO_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpen(true);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     }
@@ -279,17 +297,21 @@ const LugarSiniestrosForm = () => {
   const arrayEstado = ['Buen', 'Regular', 'Mal'];
   const arrayTipo = ['Asfalto', 'Tierra', 'Pavimento', 'Grava', 'Piedra'];
 
+  useEffect(() => {
+    getAllLugarSiniestro(dispatch, id);
+  }, []);
+
   return (
     <div className={styles.container}>
       {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={lugarSiniestros ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                id
+                lugarSiniestros
                   ? 'Esta seguro que quiere actualizar este lugar de siniestro?'
                   : 'Esta seguro que quiere añadir este lugar de siniestro?'
               }
@@ -298,7 +320,7 @@ const LugarSiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'LugarSiniestro edited' : 'LugarSiniestro added'}
+              message={lugarSiniestros ? 'LugarSiniestro edited' : 'LugarSiniestro added'}
             />
           )}
         </div>
