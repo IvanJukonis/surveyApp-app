@@ -10,7 +10,7 @@ import {
 } from 'Components/Shared';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { updateInvolucrado, postInvolucrado, getAllInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -25,9 +25,7 @@ const InvolucradosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [involucrado, setInvolucrado] = useState({});
   const [buttonType, setButtonType] = useState(false);
-  const location = useLocation();
   const history = useHistory();
-  const data = location.state.params;
   const { id } = useParams();
 
   const schema = Joi.object({
@@ -90,7 +88,7 @@ const InvolucradosForm = () => {
       'number.max': 'El DNI debe ser como máximo 99,999,999',
       'number.integer': 'El DNI debe ser un número entero'
     }),
-    fechaDeNacimiento: Joi.date()
+    fechaNacimiento: Joi.date()
       .messages({
         'date.base': 'Ingrese una fecha válida',
         'date.empty': 'La fecha de nacimiento es un campo requerido'
@@ -277,14 +275,14 @@ const InvolucradosForm = () => {
     if (buttonType) {
       const formattedData = {
         ...data,
-        fechaDeNacimiento: formatDate(data.fechaDeNacimiento)
+        fechaNacimiento: formatDate(data.fechaNacimiento)
       };
       setInvolucrado(formattedData);
       setModalAddConfirmOpen(true);
     } else {
       const formattedData = {
         ...data,
-        fechaDeNacimiento: formatDate(data.fechaDeNacimiento)
+        fechaNacimiento: formatDate(data.fechaNacimiento)
       };
       setInvolucrado(formattedData);
       setModalAddConfirmOpen(true);
@@ -334,24 +332,39 @@ const InvolucradosForm = () => {
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
-      nombre: '',
-      apellido: '',
+      prioridad: false,
+      relacion: '',
+      titular: false,
+      dni: '',
       domicilio: '',
       ciudad: '',
-      email: '',
-      dni: '',
       telefono: '',
+      email: '',
+      pais: '',
+      codigoPostal: '',
+      cuit: '',
+      entrevistado: false,
+      ocupacion: '',
+      direccionOcupacion: '',
+      licenciaAportada: false,
+      licenciaVencimiento: 'dd / mm / aaaa',
+      licenciaHabilitada: false,
+      licenciaCategoria: '',
+      nombre: '',
+      apellido: '',
       rol: 'Pick tipo',
       lesiones: 'Pick lesiones',
-      fechaDeNacimiento: 'dd / mm / aaaa'
+      fechaNacimiento: 'dd / mm / aaaa'
     };
     reset({ ...emptyData });
   };
 
-  const tableClick = (datosFila) => {
+  const tableClick = (index) => {
+    console.log(involucrados[index]);
     const formattedData = {
-      ...datosFila,
-      fechaDeNacimiento: formatDate(data.fechaDeNacimiento)
+      ...involucrados[index],
+      fechaNacimiento: formatDate(involucrados[index].fechaNacimiento),
+      licenciaVencimiento: formatDate(involucrados[index].licenciaVencimiento)
     };
     reset({ ...formattedData });
     setButtonType(true);
@@ -372,15 +385,15 @@ const InvolucradosForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 buttonType
-                  ? 'Are sure do you want update this involucrado?'
-                  : 'Are sure do you want add this involucrado?'
+                  ? '¿Estás seguro de que quieres actualizar este involucrado?'
+                  : '¿Estás seguro de que quieres agregar este involucrado?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Involucrado edited' : 'Involucrado added'}
+              message={buttonType ? 'Involucrado editado' : 'Involucrado agregado'}
             />
           )}
         </div>
@@ -550,11 +563,11 @@ const InvolucradosForm = () => {
                     </div>
                     <div className={styles.inputContainer}>
                       <DateInput
-                        error={errors.fechaDeNacimiento?.message}
+                        error={errors.fechaNacimiento?.message}
                         register={register}
                         nameTitle="Fecha de Nacimiento"
                         type="date"
-                        nameInput="fechaDeNacimiento"
+                        nameInput="fechaNacimiento"
                         required
                       />
                     </div>
@@ -681,7 +694,7 @@ const InvolucradosForm = () => {
                 return (
                   <tr
                     onClick={() => {
-                      tableClick(row);
+                      tableClick(index);
                     }}
                     className={rowClass}
                     key={index}
