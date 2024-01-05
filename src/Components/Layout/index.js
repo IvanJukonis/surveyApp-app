@@ -14,6 +14,7 @@ const VehiculoController = React.lazy(() => import('../Entities/Vehiculo'));
 const InvolucradoController = React.lazy(() => import('../Entities/Involucrado'));
 const LugarSiniestroController = React.lazy(() => import('../Entities/LugarSiniestro'));
 const LugarRoboRuedaController = React.lazy(() => import('../Entities/LugarRoboRueda'));
+const EntrevistaController = React.lazy(() => import('../Entities/Entrevista/index'));
 
 //FORMS
 const SiniestrosAdmForm = React.lazy(() =>
@@ -94,6 +95,11 @@ function Layout() {
                   exact
                   path="/administrativo/controladores"
                   component={ControladorController}
+                />
+                <Route
+                  exact
+                  path="/controlador/siniestros/entrevista/:id?"
+                  component={EntrevistaController}
                 />
                 <Route
                   path="/administrativo/controladores/form/:id?"

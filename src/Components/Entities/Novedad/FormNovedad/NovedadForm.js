@@ -364,7 +364,7 @@ const NovedadesForm = () => {
                   >
                     {columns.map((column, columnIndex) => (
                       <td key={columnIndex}>
-                        {column.startsWith('prioridad') ? (
+                        {column.startsWith('fecha') ? (
                           formatDate(row[column])
                         ) : (
                           <>

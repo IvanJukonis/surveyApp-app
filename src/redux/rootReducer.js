@@ -8,6 +8,8 @@ import siniestroReducer from './siniestro/reducer';
 import relevadorReducer from './relevador/reducer';
 import controladorReducer from './controlador/reducer';
 import novedadReducer from './novedad/reducer';
+import entrevistaRoboRuedaReducer from './entrevistaRoboRueda/reducer';
+import entrevistaSiniestroReducer from './entrevistaSiniestro/reducer';
 
 const rootReducer = combineReducers({
   involucrado: involucradoReducer,
@@ -18,7 +20,9 @@ const rootReducer = combineReducers({
   investigator: investigatorReducer,
   relevador: relevadorReducer,
   novedad: novedadReducer,
-  controlador: controladorReducer
+  controlador: controladorReducer,
+  entrevistaSiniestro: entrevistaSiniestroReducer,
+  entrevistaRoboRueda: entrevistaRoboRuedaReducer
 });
 
 export default rootReducer;

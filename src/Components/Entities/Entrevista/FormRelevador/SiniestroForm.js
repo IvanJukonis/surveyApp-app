@@ -392,7 +392,7 @@ const SiniestrosForm = () => {
 
   const handleEntrevista = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/entrevista/${siniestroActual._id}`, {
+    history.push(`${pathPrefix}/siniestros/entrevistaSiniestro/form/${siniestroActual._id}`, {
       params: { ...siniestroActual, mode: 'create' }
     });
   };
