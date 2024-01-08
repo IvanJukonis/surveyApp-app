@@ -1,36 +1,65 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSiniestro, deleteSiniestro } from 'redux/siniestro/thunks';
-import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
+import {
+  getAllEntrevistaSiniestro,
+  deleteEntrevistaSiniestro
+} from 'redux/entrevistaSiniestro/thunks';
+import {
+  getAllEntrevistaRoboRueda,
+  deleteEntrevistaRoboRueda
+} from 'redux/entrevistaRoboRueda/thunks';
+import { Button, OptionInput } from 'Components/Shared';
+import { ToastError, TableComponent, Loader } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
-import styles from './Siniestro.module.css';
+import styles from './entrevista.module.css';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
 
-function Siniestro() {
+function Entrevista() {
   const dispatch = useDispatch();
-  const siniestro = useSelector((state) => state.siniestro.list);
+  const entrevistaRoboRueda = useSelector((state) => state.entrevistaRoboRueda.list);
+  const entrevistaSiniestro = useSelector((state) => state.entrevistaSiniestro.list);
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const entrevistas = [...entrevistaRoboRueda, ...entrevistaSiniestro];
 
-  const columnTitleArray = [
-    'N°Siniestro',
-    'N°Informe',
-    'Fecha',
-    'Vencimiento',
-    'Asignacion',
-    'CIA',
-    'Tipo'
-  ];
-  const columns = [
-    'numSiniestro',
-    'numInforme',
-    'fechaSiniestro',
-    'fechaVencimiento',
-    'fechaAsignacion',
-    'cia',
-    'tipo'
-  ];
+  const columnTitleArray = ['Fecha', 'Rol', 'Tipo', 'Firma'];
+  const columns = ['fechaEntrevista', 'rol', 'tipoEntrevista', 'firma'];
+  const rolArray = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
+  const tipoArray = ['Relevamiento', 'Fraude'];
+  const tipoExportacion = ['PDF', 'Word'];
+
+  const relevador = ['/relevador/siniestros'].includes(location.pathname);
+  const controlador = ['/controlador/siniestros'].includes(location.pathname);
+  const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
+    location.pathname
+  );
+
+  const schema = Joi.object({
+    rol: Joi.string()
+      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG')
+      .messages({
+        'any.only': 'Selecciona un tipo de rol permitido'
+      }),
+    tipo: Joi.string().valid('Relevamiento', 'Fraude').messages({
+      'any.only': 'Selecciona un tipo de siniestro permitido'
+    }),
+    exportacion: Joi.string().valid('PDF', 'Word').messages({
+      'any.only': 'Selecciona un tipo de exportacion permitida'
+    })
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    mode: 'onBlur',
+    resolver: joiResolver(schema)
+  });
 
   const getPathPrefix = () => {
     if (relevador) {
@@ -49,46 +78,83 @@ function Siniestro() {
     });
   };
 
-  const createMode = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/form/`, { params: { mode: 'create' } });
+  const deleteEntrevista = () => {
+    deleteEntrevistaRoboRueda;
+    deleteEntrevistaSiniestro;
   };
-
-  const relevador = ['/relevador/siniestros'].includes(location.pathname);
-  const controlador = ['/controlador/siniestros'].includes(location.pathname);
-
-  const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
-    location.pathname
-  );
-
-  const deleteButton = actualUser ? undefined : deleteSiniestro;
+  const deleteButton = actualUser ? undefined : deleteEntrevista;
 
   useEffect(() => {
-    getSiniestro(dispatch);
+    getAllEntrevistaSiniestro(dispatch);
+    getAllEntrevistaRoboRueda(dispatch);
   }, []);
 
   return (
     <section className={styles.container}>
-      {!actualUser && (
-        <div className={styles.btnAdd}>
-          <AddButton entity="siniestro" createMode={createMode} />
+      <div className={styles.innerContainer}>
+        <div className={styles.leftContainer}>
+          {isPending ? (
+            <Loader />
+          ) : (
+            <TableComponent
+              columnTitleArray={columnTitleArray}
+              data={entrevistas}
+              columns={columns}
+              handleClick={handleEditClick}
+              deleteButton={deleteButton}
+            />
+          )}
         </div>
-      )}
-      {isPending ? (
-        <Loader />
-      ) : (
-        <TableComponent
-          columnTitleArray={columnTitleArray}
-          data={siniestro}
-          columns={columns}
-          handleClick={handleEditClick}
-          deleteButton={deleteButton}
-        />
-      )}
+        <div className={styles.rightContainer}>
+          <div className={styles.topContainer}>
+            <form className={styles.form} onSubmit={handleSubmit()}>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={rolArray}
+                  dataLabel="Seleccionar Rol"
+                  name="Rol"
+                  register={register}
+                  error={errors.rol?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={tipoArray}
+                  dataLabel="Seleccionar Tipo"
+                  name="Tipo"
+                  register={register}
+                  error={errors.tipo?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Button clickAction={() => {}} text="AGREGAR" />
+              </div>
+              <div className={`${styles.inputContainer} ${styles.exportacionSpace}`}>
+                <OptionInput
+                  data={tipoExportacion}
+                  dataLabel="Exportaciones"
+                  name="Exportacion"
+                  register={register}
+                  error={errors.exportacion?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Button clickAction={() => {}} text="EXPORTAR" />
+              </div>
+            </form>
+          </div>
+          <div className={styles.bottomContainer}>
+            <div className={styles.inputContainer}>
+              <Button clickAction={() => {}} text="CANCELAR" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {toastErroOpen && (
         <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
     </section>
   );
 }
-export default Siniestro;
+export default Entrevista;

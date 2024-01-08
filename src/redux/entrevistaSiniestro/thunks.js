@@ -1,101 +1,100 @@
 import {
-  getEntrevistaRoboRuedaPending,
-  getEntrevistaRoboRuedaSuccess,
-  getEntrevistaRoboRuedaError,
-  deleteEntrevistaRoboRuedaPending,
-  deleteEntrevistaRoboRuedaSuccess,
-  deleteEntrevistaRoboRuedaError,
-  postEntrevistaRoboRuedaPending,
-  postEntrevistaRoboRuedaSuccess,
-  postEntrevistaRoboRuedaError,
-  updateEntrevistaRoboRuedaPending,
-  updateEntrevistaRoboRuedaSuccess,
-  updateEntrevistaRoboRuedaError
+  getEntrevistaSiniestroPending,
+  getEntrevistaSiniestroSuccess,
+  getEntrevistaSiniestroError,
+  deleteEntrevistaSiniestroPending,
+  deleteEntrevistaSiniestroSuccess,
+  deleteEntrevistaSiniestroError,
+  postEntrevistaSiniestroPending,
+  postEntrevistaSiniestroSuccess,
+  postEntrevistaSiniestroError,
+  updateEntrevistaSiniestroPending,
+  updateEntrevistaSiniestroSuccess,
+  updateEntrevistaSiniestroError
 } from './actions';
 
-export const getAllEntrevistaRoboRueda = async (dispatch, siniestroId) => {
+export const getAllEntrevistaSiniestro = async (dispatch) => {
   try {
-    dispatch(getEntrevistaRoboRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`);
+    dispatch(getEntrevistaSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro`);
     const data = await response.json();
-    const entrevistaRoboRuedasListAll = data.data;
-    const entrevistaRoboRuedasList = entrevistaRoboRuedasListAll.filter((entrevistaRoboRueda) =>
-      entrevistaRoboRueda.siniestro.includes(siniestroId)
-    );
-    dispatch(getEntrevistaRoboRuedaPending(false));
-    dispatch(getEntrevistaRoboRuedaSuccess(entrevistaRoboRuedasList));
+
+    const EntrevistaSiniestrosListAll = data.data;
+    console.log(data.data + 'llega?');
+    dispatch(getEntrevistaSiniestroPending(false));
+    dispatch(getEntrevistaSiniestroSuccess(EntrevistaSiniestrosListAll));
   } catch (error) {
-    dispatch(getEntrevistaRoboRuedaPending(false));
-    dispatch(getEntrevistaRoboRuedaError(true));
+    dispatch(getEntrevistaSiniestroPending(false));
+    dispatch(getEntrevistaSiniestroError(true));
   }
 };
 
-export const deleteEntrevistaRoboRueda = (entrevistaRoboRuedaID) => {
+export const deleteEntrevistaSiniestro = (entrevistaSiniestroID) => {
   return async (dispatch) => {
     try {
-      dispatch(deleteEntrevistaRoboRuedaPending(true));
+      dispatch(deleteEntrevistaSiniestroPending(true));
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda/${entrevistaRoboRuedaID}`,
+        `${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro/${entrevistaSiniestroID}`,
         {
           method: 'DELETE'
         }
       );
       if (response.ok) {
-        dispatch(deleteEntrevistaRoboRuedaPending(false));
-        dispatch(deleteEntrevistaRoboRuedaSuccess(entrevistaRoboRuedaID));
+        dispatch(deleteEntrevistaSiniestroPending(false));
+        dispatch(deleteEntrevistaSiniestroSuccess(entrevistaSiniestroID));
       }
     } catch (error) {
-      dispatch(deleteEntrevistaRoboRuedaError(error));
+      dispatch(deleteEntrevistaSiniestroError(error));
     }
   };
 };
 
-export const postEntrevistaRoboRueda = async (dispatch, entrevistaRoboRuedaData) => {
+export const postEntrevistaSiniestro = async (dispatch, entrevistaSiniestroData) => {
   try {
-    dispatch(postEntrevistaRoboRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`, {
+    dispatch(postEntrevistaSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(entrevistaRoboRuedaData)
+      body: JSON.stringify(entrevistaSiniestroData)
     });
     if (response.ok) {
       const data = await response.json();
       const newData = data;
-      dispatch(postEntrevistaRoboRuedaPending(false));
-      return dispatch(postEntrevistaRoboRuedaSuccess(newData.data));
+      dispatch(postEntrevistaSiniestroPending(false));
+      return dispatch(postEntrevistaSiniestroSuccess(newData.data));
     } else {
-      dispatch(postEntrevistaRoboRuedaPending(false));
-      return dispatch(postEntrevistaRoboRuedaError(true));
+      dispatch(postEntrevistaSiniestroPending(false));
+      return dispatch(postEntrevistaSiniestroError(true));
     }
   } catch (error) {
-    dispatch(postEntrevistaRoboRuedaPending(false));
-    return dispatch(postEntrevistaRoboRuedaError(true));
+    dispatch(postEntrevistaSiniestroPending(false));
+    return dispatch(postEntrevistaSiniestroError(true));
   }
 };
 
-export const updateEntrevistaRoboRueda = async (dispatch, id, entrevistaRoboRuedaData) => {
+export const updateEntrevistaSiniestro = async (dispatch, id, entrevistaSiniestroData) => {
   try {
-    dispatch(updateEntrevistaRoboRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda/${id}`, {
+    dispatch(updateEntrevistaSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(entrevistaRoboRuedaData)
+      body: JSON.stringify(entrevistaSiniestroData)
     });
     if (response.ok) {
       const data = await response.json();
       const newData = data;
-      dispatch(updateEntrevistaRoboRuedaPending(false));
-      return dispatch(updateEntrevistaRoboRuedaSuccess(newData.data));
+      dispatch(updateEntrevistaSiniestroPending(false));
+      return dispatch(updateEntrevistaSiniestroSuccess(newData.data));
     } else {
-      dispatch(updateEntrevistaRoboRuedaPending(false));
-      return dispatch(updateEntrevistaRoboRuedaError(true));
+      dispatch(updateEntrevistaSiniestroPending(false));
+      return dispatch(updateEntrevistaSiniestroError(true));
     }
   } catch (error) {
-    dispatch(updateEntrevistaRoboRuedaPending(false));
-    return dispatch(updateEntrevistaRoboRuedaError(error.message));
+    dispatch(updateEntrevistaSiniestroPending(false));
+    return dispatch(updateEntrevistaSiniestroError(error.message));
   }
 };

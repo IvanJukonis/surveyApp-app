@@ -1,110 +1,110 @@
 import {
-  GET_ENTREVISTAROBORUEDA_PENDING,
-  GET_ENTREVISTAROBORUEDA_SUCCESS,
-  GET_ENTREVISTAROBORUEDA_ERROR,
-  POST_ENTREVISTAROBORUEDA_PENDING,
-  POST_ENTREVISTAROBORUEDA_SUCCESS,
-  POST_ENTREVISTAROBORUEDA_ERROR,
-  UPDATE_ENTREVISTAROBORUEDA_PENDING,
-  UPDATE_ENTREVISTAROBORUEDA_SUCCESS,
-  UPDATE_ENTREVISTAROBORUEDA_ERROR,
-  DELETE_ENTREVISTAROBORUEDA_PENDING,
-  DELETE_ENTREVISTAROBORUEDA_SUCCESS,
-  DELETE_ENTREVISTAROBORUEDA_ERROR
+  GET_ENTREVISTASINIESTRO_PENDING,
+  GET_ENTREVISTASINIESTRO_SUCCESS,
+  GET_ENTREVISTASINIESTRO_ERROR,
+  POST_ENTREVISTASINIESTRO_PENDING,
+  POST_ENTREVISTASINIESTRO_SUCCESS,
+  POST_ENTREVISTASINIESTRO_ERROR,
+  UPDATE_ENTREVISTASINIESTRO_PENDING,
+  UPDATE_ENTREVISTASINIESTRO_SUCCESS,
+  UPDATE_ENTREVISTASINIESTRO_ERROR,
+  DELETE_ENTREVISTASINIESTRO_PENDING,
+  DELETE_ENTREVISTASINIESTRO_SUCCESS,
+  DELETE_ENTREVISTASINIESTRO_ERROR
 } from './constants';
 
 const INITIAL_STATE = {
   list: []
 };
 
-const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
+const entrevistaSiniestroReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case GET_ENTREVISTAROBORUEDA_PENDING: {
+    case GET_ENTREVISTASINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case GET_ENTREVISTAROBORUEDA_SUCCESS: {
+    case GET_ENTREVISTASINIESTRO_SUCCESS: {
       return {
         ...state,
         list: action.payload
       };
     }
 
-    case GET_ENTREVISTAROBORUEDA_ERROR: {
+    case GET_ENTREVISTASINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
       };
     }
 
-    case POST_ENTREVISTAROBORUEDA_PENDING: {
+    case POST_ENTREVISTASINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case POST_ENTREVISTAROBORUEDA_SUCCESS: {
+    case POST_ENTREVISTASINIESTRO_SUCCESS: {
       return {
         ...state,
         list: [...state.list, action.payload]
       };
     }
 
-    case POST_ENTREVISTAROBORUEDA_ERROR: {
+    case POST_ENTREVISTASINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
       };
     }
 
-    case UPDATE_ENTREVISTAROBORUEDA_PENDING: {
+    case UPDATE_ENTREVISTASINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case UPDATE_ENTREVISTAROBORUEDA_SUCCESS: {
-      // const entrevistaRoboRuedaUpdated = action.payload;
-      const updatedEntrevistaRoboRueda = state.list.map((entrevistaRoboRueda) => {
-        return entrevistaRoboRueda._id === action.payload._id
-          ? { ...entrevistaRoboRueda, ...action.payload }
-          : entrevistaRoboRueda;
+    case UPDATE_ENTREVISTASINIESTRO_SUCCESS: {
+      // const entrevistaSiniestroUpdated = action.payload;
+      const updatedEntrevistaSiniestro = state.list.map((entrevistaSiniestro) => {
+        return entrevistaSiniestro._id === action.payload._id
+          ? { ...entrevistaSiniestro, ...action.payload }
+          : entrevistaSiniestro;
       });
       return {
         ...state,
-        list: [...updatedEntrevistaRoboRueda]
+        list: [...updatedEntrevistaSiniestro]
       };
     }
 
-    case UPDATE_ENTREVISTAROBORUEDA_ERROR: {
+    case UPDATE_ENTREVISTASINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
       };
     }
 
-    case DELETE_ENTREVISTAROBORUEDA_PENDING: {
+    case DELETE_ENTREVISTASINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case DELETE_ENTREVISTAROBORUEDA_SUCCESS: {
-      const newList = state.list.filter((entrevistaRoboRueda) => {
-        return entrevistaRoboRueda._id !== action.payload;
+    case DELETE_ENTREVISTASINIESTRO_SUCCESS: {
+      const newList = state.list.filter((entrevistaSiniestro) => {
+        return entrevistaSiniestro._id !== action.payload;
       });
       return {
         list: [...newList]
       };
     }
 
-    case DELETE_ENTREVISTAROBORUEDA_ERROR: {
+    case DELETE_ENTREVISTASINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
@@ -116,4 +116,4 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-export default entrevistaRoboRuedaReducer;
+export default entrevistaSiniestroReducer;

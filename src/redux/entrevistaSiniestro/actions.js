@@ -1,98 +1,98 @@
 import {
-  GET_ENTREVISTAROBORUEDA_PENDING,
-  GET_ENTREVISTAROBORUEDA_SUCCESS,
-  GET_ENTREVISTAROBORUEDA_ERROR,
-  DELETE_ENTREVISTAROBORUEDA_PENDING,
-  DELETE_ENTREVISTAROBORUEDA_SUCCESS,
-  DELETE_ENTREVISTAROBORUEDA_ERROR,
-  POST_ENTREVISTAROBORUEDA_PENDING,
-  POST_ENTREVISTAROBORUEDA_SUCCESS,
-  POST_ENTREVISTAROBORUEDA_ERROR,
-  UPDATE_ENTREVISTAROBORUEDA_PENDING,
-  UPDATE_ENTREVISTAROBORUEDA_SUCCESS,
-  UPDATE_ENTREVISTAROBORUEDA_ERROR
+  GET_ENTREVISTASINIESTRO_PENDING,
+  GET_ENTREVISTASINIESTRO_SUCCESS,
+  GET_ENTREVISTASINIESTRO_ERROR,
+  DELETE_ENTREVISTASINIESTRO_PENDING,
+  DELETE_ENTREVISTASINIESTRO_SUCCESS,
+  DELETE_ENTREVISTASINIESTRO_ERROR,
+  POST_ENTREVISTASINIESTRO_PENDING,
+  POST_ENTREVISTASINIESTRO_SUCCESS,
+  POST_ENTREVISTASINIESTRO_ERROR,
+  UPDATE_ENTREVISTASINIESTRO_PENDING,
+  UPDATE_ENTREVISTASINIESTRO_SUCCESS,
+  UPDATE_ENTREVISTASINIESTRO_ERROR
 } from './constants';
 
-export const getEntrevistaRoboRuedaPending = (pending) => {
+export const getEntrevistaSiniestroPending = (pending) => {
   return {
-    type: GET_ENTREVISTAROBORUEDA_PENDING,
+    type: GET_ENTREVISTASINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const getEntrevistaRoboRuedaSuccess = (list) => {
+export const getEntrevistaSiniestroSuccess = (list) => {
   return {
-    type: GET_ENTREVISTAROBORUEDA_SUCCESS,
+    type: GET_ENTREVISTASINIESTRO_SUCCESS,
     payload: list
   };
 };
 
-export const getEntrevistaRoboRuedaError = (error) => {
+export const getEntrevistaSiniestroError = (error) => {
   return {
-    type: GET_ENTREVISTAROBORUEDA_ERROR,
+    type: GET_ENTREVISTASINIESTRO_ERROR,
     payload: error
   };
 };
 
-export const deleteEntrevistaRoboRuedaPending = (pending) => {
+export const deleteEntrevistaSiniestroPending = (pending) => {
   return {
-    type: DELETE_ENTREVISTAROBORUEDA_PENDING,
+    type: DELETE_ENTREVISTASINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const deleteEntrevistaRoboRuedaSuccess = (entrevistaRoboRuedaID) => {
+export const deleteEntrevistaSiniestroSuccess = (entrevistaSiniestroID) => {
   return {
-    type: DELETE_ENTREVISTAROBORUEDA_SUCCESS,
-    payload: entrevistaRoboRuedaID
+    type: DELETE_ENTREVISTASINIESTRO_SUCCESS,
+    payload: entrevistaSiniestroID
   };
 };
 
-export const deleteEntrevistaRoboRuedaError = (error) => {
+export const deleteEntrevistaSiniestroError = (error) => {
   return {
-    type: DELETE_ENTREVISTAROBORUEDA_ERROR,
+    type: DELETE_ENTREVISTASINIESTRO_ERROR,
     payload: error
   };
 };
 
-export const postEntrevistaRoboRuedaPending = (pending) => {
+export const postEntrevistaSiniestroPending = (pending) => {
   return {
-    type: POST_ENTREVISTAROBORUEDA_PENDING,
+    type: POST_ENTREVISTASINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const postEntrevistaRoboRuedaSuccess = (entrevistaRoboRueda) => {
+export const postEntrevistaSiniestroSuccess = (entrevistaSiniestro) => {
   return {
-    type: POST_ENTREVISTAROBORUEDA_SUCCESS,
-    payload: entrevistaRoboRueda
+    type: POST_ENTREVISTASINIESTRO_SUCCESS,
+    payload: entrevistaSiniestro
   };
 };
 
-export const postEntrevistaRoboRuedaError = (error) => {
+export const postEntrevistaSiniestroError = (error) => {
   return {
-    type: POST_ENTREVISTAROBORUEDA_ERROR,
+    type: POST_ENTREVISTASINIESTRO_ERROR,
     payload: error
   };
 };
 
-export const updateEntrevistaRoboRuedaPending = (pending) => {
+export const updateEntrevistaSiniestroPending = (pending) => {
   return {
-    type: UPDATE_ENTREVISTAROBORUEDA_PENDING,
+    type: UPDATE_ENTREVISTASINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const updateEntrevistaRoboRuedaSuccess = (entrevistaRoboRueda) => {
+export const updateEntrevistaSiniestroSuccess = (entrevistaSiniestro) => {
   return {
-    type: UPDATE_ENTREVISTAROBORUEDA_SUCCESS,
-    payload: entrevistaRoboRueda
+    type: UPDATE_ENTREVISTASINIESTRO_SUCCESS,
+    payload: entrevistaSiniestro
   };
 };
 
-export const updateEntrevistaRoboRuedaError = (error) => {
+export const updateEntrevistaSiniestroError = (error) => {
   return {
-    type: UPDATE_ENTREVISTAROBORUEDA_ERROR,
+    type: UPDATE_ENTREVISTASINIESTRO_ERROR,
     payload: error
   };
 };

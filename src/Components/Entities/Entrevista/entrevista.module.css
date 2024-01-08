@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.innerContainer {
+  display: flex;
+  flex-direction: row;
+  width: 60%;
+}
+
+.leftContainer {
+  width: 70%;
+}
+
+.rightContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  margin-top: 55px;
+  background-color: #c5c5c5c2;
+}
+
+.exportacionSpace {
+  padding-top: 20px;
+}
+
+.formContainer {
+  
+}
+
+.inputContainer {
+  
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.bottomContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 200px;
+  padding-bottom: 10px;
+}
+
+.btnAdd {
+  display: flex;
+  align-self: baseline;
+}
