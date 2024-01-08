@@ -37,6 +37,12 @@ const VehiculoForm = React.lazy(() => import('../Entities/Vehiculo/FormVehiculo/
 const LugarSiniestroForm = React.lazy(() =>
   import('../Entities/LugarSiniestro/Form/LugarSiniestroForm')
 );
+const entrevistaRoboRueda = React.lazy(() =>
+  import('../Entities/Entrevista/FormRoboRueda/entrevistaRoboRuedaForm')
+);
+const entrevistaSiniestro = React.lazy(() =>
+  import('../Entities/Entrevista/FormSiniestro/entrevistaSiniestroForm')
+);
 
 function Layout() {
   return (
@@ -83,6 +89,14 @@ function Layout() {
                 <Route path="/relevador/siniestros/novedad/form/:id?" component={NovedadForm} />
                 <Route path="/controlador/siniestros/vehiculo/form/:id?" component={VehiculoForm} />
                 <Route path="/controlador/siniestros/vehiculo/form/:id?" component={VehiculoForm} />
+                <Route
+                  path="/controlador/siniestros/entrevista/entrevistasiniestro/:tipo/:id?"
+                  component={entrevistaSiniestro}
+                />
+                <Route
+                  path="/controlador/siniestros/entrevista/entrevistaroborueda/:tipo/:id?"
+                  component={entrevistaRoboRueda}
+                />
                 <Route
                   path="/controlador/siniestros/lugarSiniestro/form/:id?"
                   component={LugarSiniestroForm}

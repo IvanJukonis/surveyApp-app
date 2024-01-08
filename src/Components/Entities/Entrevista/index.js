@@ -38,8 +38,6 @@ function Entrevista() {
   const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
     location.pathname
   );
-  console.log(id);
-
   const schema = Joi.object({
     rol: Joi.string()
       .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG')
@@ -72,11 +70,10 @@ function Entrevista() {
   };
 
   const handleAddClick = (rol, tipo) => {
-    const pathPrefix = getPathPrefix();
     if (tipo == 'Fraude') {
-      history.push(`${pathPrefix}/siniestros/entrevistaroborueda/${rol}/${id.id}`);
+      history.push(`entrevistaroborueda/${rol}/${id.id}`);
     } else {
-      history.push(`${pathPrefix}/siniestros/entrevistasiniestro/${rol}/${id.id}`);
+      history.push(`entrevistasiniestro/${rol}/${id.id}`);
     }
   };
 
@@ -101,8 +98,6 @@ function Entrevista() {
     getAllEntrevistaSiniestro(dispatch);
     getAllEntrevistaRoboRueda(dispatch);
   }, []);
-
-  console.log(errors);
 
   return (
     <section className={styles.container}>
