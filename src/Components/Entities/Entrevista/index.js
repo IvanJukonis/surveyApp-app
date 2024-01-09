@@ -19,11 +19,13 @@ import Joi from 'joi';
 function Entrevista() {
   const dispatch = useDispatch();
   const id = useParams();
+  const history = useHistory();
   const entrevistaRoboRueda = useSelector((state) => state.entrevistaRoboRueda.list);
   const entrevistaSiniestro = useSelector((state) => state.entrevistaSiniestro.list);
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
-  const history = useHistory();
+  const entrevistaSiniestroActual = entrevistaSiniestro.find((item) => item._id === id);
+  const entrevistaRoboRuedaActual = entrevistaRoboRueda.find((item) => item._id === id);
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const entrevistas = [...entrevistaRoboRueda, ...entrevistaSiniestro];
 
@@ -33,11 +35,10 @@ function Entrevista() {
   const tipoArray = ['Relevamiento', 'Fraude'];
   const tipoExportacion = ['PDF', 'Word'];
 
-  const relevador = ['/relevador/siniestros'].includes(location.pathname);
-  const controlador = ['/controlador/siniestros'].includes(location.pathname);
   const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
     location.pathname
   );
+
   const schema = Joi.object({
     rol: Joi.string()
       .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG')
@@ -59,29 +60,28 @@ function Entrevista() {
     resolver: joiResolver(schema)
   });
 
-  const getPathPrefix = () => {
-    if (relevador) {
-      return '/relevador';
-    }
-    if (controlador) {
-      return '/controlador';
-    }
-    return '/administrativo';
-  };
-
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
-      history.push(`entrevistaroborueda/${rol}/${id.id}`);
+      history.push(`entrevistaroborueda/${rol}/${id.id}`, {
+        params: { ...entrevistaRoboRuedaActual, mode: 'create' }
+      });
     } else {
-      history.push(`entrevistasiniestro/${rol}/${id.id}`, { params: { mode: 'create' } });
+      history.push(`entrevistasiniestro/${rol}/${id.id}`, {
+        params: { ...entrevistaSiniestroActual, mode: 'create' }
+      });
     }
   };
 
   const handleEditClick = (item) => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/form/${item._id}`, {
-      params: { ...item, mode: 'edit' }
-    });
+    if (item.alarmaActiva == undefined) {
+      history.push(`entrevistasiniestro/${item.rol}/${item._id}`, {
+        params: { ...item, mode: 'edit' }
+      });
+    } else {
+      history.push(`entrevistaroborueda/${item.rol}/${item._id}`, {
+        params: { ...item, mode: 'edit' }
+      });
+    }
   };
 
   const onSubmit = (data) => {

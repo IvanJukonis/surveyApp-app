@@ -32,6 +32,7 @@ const SiniestrosForm = () => {
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
+  const formType = data.mode;
 
   const schema = Joi.object({
     fechaEntrevista: Joi.date()
@@ -373,11 +374,11 @@ const SiniestrosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Actualizar' : 'Agregar'}
+              method={formType == 'edit' ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                id
+                formType == 'edit'
                   ? 'Esta seguro que quiere actualizar esta entrevista?'
                   : 'Esta seguro que quiere añadir esta entrevista?'
               }
@@ -386,13 +387,15 @@ const SiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
         </div>
       }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Editar Entrevista' : 'Agregar Entrevista'}</h3>
+        <h3 className={styles.title}>
+          {formType == 'edit' ? 'Editar Entrevista' : 'Agregar Entrevista'}
+        </h3>
       </div>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
@@ -446,6 +449,17 @@ const SiniestrosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.descLesiones?.message}
+                  register={register}
+                  nameTitle="Lesiones"
+                  type="text"
+                  nameInput="descLesiones"
+                  styleInput="normalInput"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
                 <Checkbox
                   error={errors.aportaDni?.message}
                   register={register}
@@ -462,17 +476,6 @@ const SiniestrosForm = () => {
                   nameTitle="Aporta LC"
                   type="checkbox"
                   nameInput="aportaLc"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descLesiones?.message}
-                  register={register}
-                  nameTitle="Lesiones"
-                  type="text"
-                  nameInput="descLesiones"
-                  styleInput="normalInput"
                   required
                 />
               </div>
@@ -516,6 +519,17 @@ const SiniestrosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.descGastos?.message}
+                  register={register}
+                  nameTitle="Gastos"
+                  type="text"
+                  nameInput="descGastos"
+                  styleInput="normalInput"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
                 <Checkbox
                   error={errors.aportaTv?.message}
                   register={register}
@@ -542,17 +556,6 @@ const SiniestrosForm = () => {
                   nameTitle="Comprobantes Gastos"
                   type="checkbox"
                   nameInput="comprobantesGastos"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descGastos?.message}
-                  register={register}
-                  nameTitle="Gastos"
-                  type="text"
-                  nameInput="descGastos"
-                  styleInput="normalInput"
                   required
                 />
               </div>
@@ -597,6 +600,17 @@ const SiniestrosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.zonaImpactoVa?.message}
+                  register={register}
+                  nameTitle="Zona Impacto VA"
+                  type="text"
+                  nameInput="zonaImpactoVa"
+                  styleInput="normalInput"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
                 <Checkbox
                   error={errors.reparaciones?.message}
                   register={register}
@@ -623,17 +637,6 @@ const SiniestrosForm = () => {
                   nameTitle="Comprobantes Lesiones"
                   type="checkbox"
                   nameInput="comprobantesLesiones"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.zonaImpactoVa?.message}
-                  register={register}
-                  nameTitle="Zona Impacto VA"
-                  type="text"
-                  nameInput="zonaImpactoVa"
-                  styleInput="normalInput"
                   required
                 />
               </div>
@@ -678,6 +681,17 @@ const SiniestrosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.zonaImpactoVt?.message}
+                  register={register}
+                  nameTitle="Zona Impacto VT"
+                  type="text"
+                  nameInput="zonaImpactoVt"
+                  styleInput="normalInput"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
                 <Checkbox
                   error={errors.aporteLesiones?.message}
                   register={register}
@@ -707,17 +721,6 @@ const SiniestrosForm = () => {
                   required
                 />
               </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.zonaImpactoVt?.message}
-                  register={register}
-                  nameTitle="Zona Impacto VT"
-                  type="text"
-                  nameInput="zonaImpactoVt"
-                  styleInput="normalInput"
-                  required
-                />
-              </div>
             </div>
           </div>
           <div className={styles.bottomRow}>
@@ -735,7 +738,7 @@ const SiniestrosForm = () => {
           </div>
         </section>
         <div className={styles.btnGroup}>
-          <Button clickAction={() => {}} text={id ? 'Actualizar' : 'Agregar'} />
+          <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
           <Button clickAction={() => reset()} text="Reset" />
           <Button text="Cancel" clickAction={() => history.goBack()} />
         </div>
