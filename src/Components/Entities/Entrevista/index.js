@@ -73,7 +73,7 @@ function Entrevista() {
     if (tipo == 'Fraude') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`);
     } else {
-      history.push(`entrevistasiniestro/${rol}/${id.id}`);
+      history.push(`entrevistasiniestro/${rol}/${id.id}`, { params: { mode: 'create' } });
     }
   };
 
