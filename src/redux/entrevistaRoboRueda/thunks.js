@@ -47,15 +47,25 @@ export const deleteEntrevistaRoboRueda = (entrevistaRoboRuedaID) => {
   };
 };
 
-export const postEntrevistaRoboRueda = async (dispatch, entrevistaRoboRuedaData) => {
+export const postEntrevistaRoboRueda = async (
+  dispatch,
+  entrevistaRoboRuedaData,
+  involucradoIdList,
+  siniestroId
+) => {
   try {
     dispatch(postEntrevistaRoboRuedaPending(true));
+    const requestBody = {
+      ...entrevistaRoboRuedaData,
+      involucrado: involucradoIdList,
+      siniestro: siniestroId.id
+    };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(entrevistaRoboRuedaData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();

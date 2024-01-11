@@ -63,11 +63,11 @@ function Entrevista() {
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
-        params: { ...entrevistaRoboRuedaActual, mode: 'create' }
+        params: { ...entrevistaRoboRuedaActual, mode: 'create', siniestroId: id }
       });
     } else {
       history.push(`entrevistasiniestro/${rol}/${id.id}`, {
-        params: { ...entrevistaSiniestroActual, mode: 'create' }
+        params: { ...entrevistaSiniestroActual, mode: 'create', siniestroId: id }
       });
     }
   };
@@ -75,11 +75,11 @@ function Entrevista() {
   const handleEditClick = (item) => {
     if (item.alarmaActiva == undefined) {
       history.push(`entrevistasiniestro/${item.rol}/${item._id}`, {
-        params: { ...item, mode: 'edit' }
+        params: { ...item, mode: 'edit', siniestroId: id }
       });
     } else {
       history.push(`entrevistaroborueda/${item.rol}/${item._id}`, {
-        params: { ...item, mode: 'edit' }
+        params: { ...item, mode: 'edit', siniestroId: id }
       });
     }
   };

@@ -30,6 +30,20 @@ export const getAllInvolucrado = async (dispatch, siniestroId) => {
   }
 };
 
+export const getInvolucrado = async (dispatch) => {
+  try {
+    dispatch(getInvolucradoPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
+    const data = await response.json();
+    const involucradosListAll = data.data;
+    dispatch(getInvolucradoPending(false));
+    dispatch(getInvolucradoSuccess(involucradosListAll));
+  } catch (error) {
+    dispatch(getInvolucradoPending(false));
+    dispatch(getInvolucradoError(true));
+  }
+};
+
 export const deleteInvolucrado = (involucradoID) => {
   return async (dispatch) => {
     try {

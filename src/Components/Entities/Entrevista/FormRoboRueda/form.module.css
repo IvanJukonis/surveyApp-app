@@ -7,94 +7,14 @@
   margin: 30px;
 }
 
-.firstGroup {
-  display: flex;
-  flex-direction: row;
-}
-
 .inputContainer {
   padding-top: 5px;
-}
-
-.inputGroups {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
-  gap: 5px;
 }
 
 .title {
   color: #fafafa;
   margin: 0;
   text-transform: uppercase;
-}
-
-.textAreaGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.booleanGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.entitiesButtons {
-  display: flex;
-  flex-direction: row;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.secondGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.dateGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.thirdGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.textAreaSpace {
-  margin-right: 20px;
-}
-
-.fourGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.eightGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.nineGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.textAreasGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.textAreaColumn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.inputContainerEstado {
-  padding-left: 20px;
-  padding-top: 8px;
 }
 
 .titleContainer {
@@ -111,6 +31,29 @@
   flex-direction: column;
   gap: 20px;
   margin-bottom: 20px;
+}
+
+.inputGroups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.topRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.bottomRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.firstColumn, .secondColumn, .thirdColumn, .fourthColumn {
+  display: flex;
+  flex-direction: column;
 }
 
 

@@ -22,7 +22,7 @@ import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 
-const SiniestrosForm = () => {
+const EntrevistaSiniestrosForm = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [toastError, setToastErroOpen] = useState(false);
@@ -748,4 +748,4 @@ const SiniestrosForm = () => {
   );
 };
 
-export default SiniestrosForm;
+export default EntrevistaSiniestrosForm;

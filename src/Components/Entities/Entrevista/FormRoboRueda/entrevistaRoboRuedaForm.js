@@ -9,7 +9,12 @@ import {
   OptionInput
 } from 'Components/Shared';
 import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateSiniestro, postSiniestro, getSiniestro } from 'redux/siniestro/thunks';
+import {
+  updateEntrevistaRoboRueda,
+  postEntrevistaRoboRueda,
+  getAllEntrevistaRoboRueda
+} from 'redux/entrevistaRoboRueda/thunks';
+import { getInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -17,57 +22,50 @@ import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
-import { getControlador } from 'redux/controlador/thunks';
-import { getRelevador } from 'redux/relevador/thunks';
 
-const SiniestrosForm = () => {
+const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [siniestro, setSiniestro] = useState();
-  const siniestros = useSelector((state) => state.siniestro.list);
-  const relevador = useSelector((state) => state.relevador.list);
-  const controlador = useSelector((state) => state.controlador.list);
-  const siniestroActual = siniestros.find((item) => item._id === id);
+  const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
+  const [involucrado, setInvolucrado] = useState([]);
+  const involucrados = useSelector((state) => state.involucrado.list);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
+  const siniestroId = location.state.params.siniestroId;
+  const formType = data.mode;
 
   const schema = Joi.object({
-    numSiniestro: Joi.number()
-      .max(9999999999999)
-      .integer()
+    fechaEntrevista: Joi.date()
       .messages({
-        'number.base': 'El campo "Número de Siniestro" debe ser un número.',
-        'number.max': 'El campo "Número de Siniestro" debe ser como máximo 9.999.999.999.999.',
-        'number.integer': 'El campo "Número de Siniestro" debe ser un número entero.',
-        'number.empty': 'El campo "Número de Siniestro" no puede permanecer vacio.'
+        'date.base': 'El campo "Fecha de Entrevista" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha de Entrevista" no puede permanecer vacio.'
       })
       .required(),
 
-    numPoliza: Joi.number()
-      .max(9999999999999)
-      .integer()
+    hrEntrevista: Joi.date()
       .messages({
-        'number.base': 'El campo "Numero de Poliza" debe ser un número.',
-        'number.max': 'El campo "Numero de Poliza" debe ser como máximo 9.999.999.999.999.',
-        'number.integer': 'El campo "Numero de Poliza" debe ser un número entero.',
-        'number.empty': 'El campo "Numero de Poliza" no puede permanecer vacio.'
+        'date.base': 'El campo "Hora de Entrevista" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora de Entrevista" no puede permanecer vacio.'
       })
       .required(),
 
-    numInforme: Joi.number()
-      .max(99999)
-      .integer()
+    rol: Joi.string()
+      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG')
       .messages({
-        'number.base': 'El campo "Numero de Informe" debe ser un número.',
-        'number.empty': 'El campo "Numero de Informe" no puede permanecer vacio.',
-        'number.max': 'El campo "Numero de Informe" debe ser como máximo 99.999.',
-        'number.integer': 'El campo "Numero de Informe" debe ser un número entero.'
-      })
-      .required(),
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    firma: Joi.string().valid('SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+
+    tipoEntrevista: Joi.string().valid('PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
 
     fechaSiniestro: Joi.date()
       .messages({
@@ -76,193 +74,180 @@ const SiniestrosForm = () => {
       })
       .required(),
 
-    fechaDenuncia: Joi.date()
+    hrAproximada: Joi.date()
       .messages({
-        'date.base': 'El campo "Fecha de Denuncia" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Denuncia" no puede permanecer vacio.'
+        'date.base': 'El campo "Hora Aproximada" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora Aproximada" no puede permanecer vacio.'
       })
       .required(),
 
-    fechaVencimiento: Joi.date()
+    hrNotificacion: Joi.date()
       .messages({
-        'date.base': 'El campo "Fecha de Vencimiento" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Vencimiento" no puede permanecer vacio.'
+        'date.base': 'El campo "Hora de Notificacion" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora de Notificacion" no puede permanecer vacio.'
       })
       .required(),
 
-    fechaAsignacion: Joi.date()
+    hrConfirmacion: Joi.date()
       .messages({
-        'date.base': 'El campo "Fecha de Asignacion" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Asignacion" no puede permanecer vacio.'
+        'date.base': 'El campo "Hora de Confirmacion" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora de Confirmacion" no puede permanecer vacio.'
       })
       .required(),
 
-    hrSiniestro: Joi.date()
+    hrReclamo: Joi.date()
       .messages({
-        'date.base': 'El campo "Fecha de Siniestro" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Siniestro" no puede permanecer vacio.'
+        'date.base': 'El campo "Hora de Reclamo" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora de Reclamo" no puede permanecer vacio.'
       })
       .required(),
 
-    cia: Joi.string()
-      .valid('San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia')
-      .messages({
-        'any.only': 'El campo "Compañia Aseguradora" debe contener una CIA valida'
-      }),
-
-    tipo: Joi.string().valid('Siniestro', 'Fraude', 'Completo').messages({
-      'any.only': 'El campo "Tipo" debe contener un tipo de siniestro valido'
+    relacionVh: Joi.string().valid('Titular', 'Autorizado', 'Pasajero', 'No autorizado').messages({
+      'any.only': 'Seleccione una opción valida'
     }),
 
-    presencial: Joi.boolean()
+    habilitacionDni: Joi.string().valid('DNI habilitado', 'DNI no habilitado').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+
+    habilitacionLc: Joi.string()
+      .valid('Licencia de conducir habilitada', 'Licencia de conducir no habilitada')
       .messages({
-        'boolean.base': 'El campo "Presencial" es un campo booleano',
-        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    habilitacionTv: Joi.string()
+      .valid('Tarjeta verde habilitada', 'Tarjeta verde no habilitada')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    habilitacionTa: Joi.string()
+      .valid('Tarjeta azul habilitada', 'Tarjeta verde no habilitada')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    aportaDni: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporta DNI" es un campo booleano',
+        'boolean.empty': 'El campo "Aporta DNI" debe tener un valor determinado'
       })
       .required(),
 
-    instrucciones: Joi.string()
+    aportaLc: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporta Lincencia" es un campo booleano',
+        'boolean.empty': 'El campo "Aporta Licencia" debe tener un valor determinado'
+      })
+      .required(),
+
+    aportaTv: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporta Tv" es un campo booleano',
+        'boolean.empty': 'El campo "Aporta Tv" debe tener un valor determinado'
+      })
+      .required(),
+
+    aportaTa: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporta Ta" es un campo booleano',
+        'boolean.empty': 'El campo "Aporta Ta" debe tener un valor determinado'
+      })
+      .required(),
+
+    usoVh: Joi.string().valid('Particular', 'Profesional', 'Servicio', 'Otro').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+
+    tipoUsoVh: Joi.string()
       .min(3)
       .max(500)
       .messages({
-        'string.base': 'El campo "Instrucciones" debe ser una cadena de texto',
-        'string.empty': 'El campo "Instrucciones" es un campo requerido',
-        'string.min': 'El campo "Instrucciones" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Instrucciones" debe tener como máximo 500 caracteres'
+        'string.base': 'El campo "Tipo de Uso" debe ser una cadena de texto',
+        'string.empty': 'El campo "Tipo de Uso" es un campo requerido',
+        'string.min': 'El campo "Tipo de Uso" debe tener al menos 3 caracteres'
       })
       .required(),
 
-    denuncia: Joi.string()
+    alarmaActiva: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Alarma" es un campo booleano',
+        'boolean.empty': 'El campo "Alarma" debe tener un valor determinado'
+      })
+      .required(),
+
+    cierreCentralizado: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Cierre Centralizado" es un campo booleano',
+        'boolean.empty': 'El campo "Cierre Centralizado" debe tener un valor determinado'
+      })
+      .required(),
+
+    duenoPrevio: Joi.string()
       .min(3)
       .max(500)
       .messages({
-        'string.base': 'El campo "Denuncia" debe ser una cadena de texto',
-        'string.empty': 'El campo "Denuncia" es un campo requerido',
-        'string.min': 'El campo "Denuncia" debe tener al menos 3 caracteres'
+        'string.base': 'El campo "Dueño previo" debe ser una cadena de texto',
+        'string.empty': 'El campo "Dueño previo" es un campo requerido',
+        'string.min': 'El campo "Dueño previo" debe tener al menos 3 caracteres'
       })
       .required(),
 
-    relevador: Joi.alternatives()
-      .try(
-        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required(),
-        Joi.string()
-      )
+    aportaDueñoPrevio: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporte de Dueño Previo" es un campo booleano',
+        'boolean.empty': 'El campo "Aporte de Dueño Previo" debe tener un valor determinado'
+      })
+      .required(),
+
+    tuercaDeSeguridad: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Tuerca de Seguridad" es un campo booleano',
+        'boolean.empty': 'El campo "Tuerca de Seguridad" debe tener un valor determinado'
+      })
+      .required(),
+
+    bulones: Joi.string()
+      .min(3)
+      .max(500)
+      .messages({
+        'string.base': 'El campo "Bulones" debe ser una cadena de texto',
+        'string.empty': 'El campo "Bulones" es un campo requerido',
+        'string.min': 'El campo "Bulones" debe tener al menos 3 caracteres'
+      })
+      .required(),
+
+    prestaRueda: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Presta Ruedas" es un campo booleano',
+        'boolean.empty': 'El campo "Presta Ruedas" debe tener un valor determinado'
+      })
+      .required(),
+
+    intervensionPolicial: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Intervension Policial" es un campo booleano',
+        'boolean.empty': 'El campo "Intervension Policial" debe tener un valor determinado'
+      })
+      .required(),
+
+    actaIntervensionPolicial: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Acta" es un campo booleano',
+        'boolean.empty': 'El campo "Acta" debe tener un valor determinado'
+      })
+      .required(),
+
+    relato: Joi.string()
+      .min(3)
+      .max(500)
+      .messages({
+        'string.base': 'El campo "Relato" debe ser una cadena de texto',
+        'string.empty': 'El campo "Relato" es un campo requerido',
+        'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
+      })
       .required()
-      .messages({
-        'any.only': 'Please select a relevador',
-        'any.required': 'Please select a relevador',
-        'array.min': 'Please select at least one relevador'
-      }),
-
-    controlador: Joi.alternatives()
-      .try(
-        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required(),
-        Joi.string()
-      )
-      .required()
-      .messages({
-        'any.only': 'Please select a controlador',
-        'any.required': 'Please select a controlador',
-        'array.min': 'Please select at least one controlador'
-      }),
-
-    requerido: Joi.string()
-      .valid(
-        'Relevamiento completo',
-        'Relevamiento sin cierre',
-        'Investigacion de fraude',
-        'Relevamiento y comprobacion',
-        'Relevamiento y comprobacion, sin cierre'
-      )
-      .messages({
-        'any.only': 'El campo "Requerido" debe contener un requerimiento valido'
-      }),
-
-    comisaria: Joi.string().min(3).max(50).messages({
-      'string.base': 'El campo "Comisaria" debe ser una cadena de texto',
-      'string.empty': 'El campo "Comisaria" es un campo requerido',
-      'string.min': 'El campo "Comisaria" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Comisaria" debe tener como máximo 50 caracteres'
-    }),
-
-    lugar: Joi.string().min(3).max(50).messages({
-      'string.base': 'El campo "Lugar" debe ser una cadena de texto',
-      'string.empty': 'El campo "Lugar" es un campo requerido',
-      'string.min': 'El campo "Lugar" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Lugar" debe tener como máximo 50 caracteres'
-    }),
-
-    conclusionDescripcion: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion descripcion" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion descripcion" es un campo requerido',
-      'string.min': 'El campo "Conclusion descripcion" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion descripcion" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionLesiones: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion lesiones" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion lesiones" es un campo requerido',
-      'string.min': 'El campo "Conclusion lesiones" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion lesiones" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionDaños: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion daños" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion daños" es un campo requerido',
-      'string.min': 'El campo "Conclusion daños" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion daños" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionResponsabilidad: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion responsabilidad" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion responsabilidad" es un campo requerido',
-      'string.min': 'El campo "Conclusion responsabilidad" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion responsabilidad" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionCredibilidad: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion credibilidad" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion credibilidad" es un campo requerido',
-      'string.min': 'El campo "Conclusion credibilidad" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion credibilidad" debe tener como máximo 500 caracteres'
-    }),
-
-    conclusionRecomendacion: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Conclusion recomendacion" debe ser una cadena de texto',
-      'string.empty': 'El campo "Conclusion recomendacion" es un campo requerido',
-      'string.min': 'El campo "Conclusion recomendacion" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Conclusion recomendacion" debe tener como máximo 500 caracteres'
-    }),
-
-    estado: Joi.string()
-      .valid('Sin asignar', 'Asignado', 'Activo', 'Finalizado', 'Controlado', 'Completado')
-      .messages({
-        'any.only': 'El campo "Estado" debe contener un estado valido'
-      }),
-
-    autorizacion: Joi.string().min(3).max(500).messages({
-      'string.base': 'El campo "Autorizacion" debe ser una cadena de texto',
-      'string.empty': 'El campo "Autorizacion" es un campo requerido',
-      'string.min': 'El campo "Autorizacion" debe tener al menos 3 caracteres',
-      'string.max': 'El campo "Autorizacion" debe tener como máximo 500 caracteres'
-    }),
-
-    fechaFinalizacion: Joi.date().messages({
-      'date.base': 'El campo "Fecha de Finalizacion" debe ser una fecha valida.',
-      'date.empty': 'El campo "Fecha de Finalizacion" no puede permanecer vacio.'
-    }),
-
-    fechaContactoAsegurado: Joi.date().messages({
-      'date.base': 'El campo "Fecha de Contacto Asegurado" debe ser una fecha valida.',
-      'date.empty': 'El campo "Fecha de Contacto Asegurado" no puede permanecer vacio.'
-    }),
-
-    fechaContactoTercero: Joi.date().messages({
-      'date.base': 'El campo "Fecha de Contacto Tercero" debe ser una fecha valida.',
-      'date.empty': 'El campo "Fecha de  Contacto Tercero" no puede permanecer vacio.'
-    })
   });
 
   const formatDate = (dateString) => {
@@ -273,25 +258,38 @@ const SiniestrosForm = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const siniestroUpdate = {
-    numSiniestro: data.numSiniestro,
-    numPoliza: data.numPoliza,
-    numInforme: data.numInforme,
+  const entrevistaUpdate = {
+    fechaEntrevista: formatDate(data.fechaEntrevista),
+    hrEntrevista: formatDate(data.hrEntrevista),
+    rol: data.rol,
+    firma: data.firma,
+    tipoEntrevista: data.tipoEntrevista,
     fechaSiniestro: formatDate(data.fechaSiniestro),
-    fechaDenuncia: formatDate(data.fechaDenuncia),
-    fechaVencimiento: formatDate(data.fechaVencimiento),
-    fechaAsignacion: formatDate(data.fechaAsignacion),
-    hrSiniestro: formatDate(data.hrSiniestro),
-    cia: data.cia,
-    tipo: data.tipo,
-    presencial: data.presencial,
-    instrucciones: data.instrucciones,
-    denuncia: data.denuncia,
-    relevador: data.relevador,
-    controlador: data.controlador,
-    requerido: data.requerido,
-    comisaria: data.comisaria,
-    lugar: data.lugar
+    hrAproximada: formatDate(data.hrAproximada),
+    hrNotificacion: formatDate(data.hrNotificacion),
+    hrConfirmacion: formatDate(data.hrConfirmacion),
+    hrReclamo: formatDate(data.hrReclamo),
+    relacionVh: data.relacionVh,
+    habilitacionDni: data.habilitacionDni,
+    habilitacionLc: data.habilitacionLc,
+    habilitacionTv: data.habilitacionTv,
+    habilitacionTa: data.habilitacionTa,
+    aportaDni: data.aportaDni,
+    aportaLc: data.aportaLc,
+    aportaTv: data.aportaTv,
+    aportaTa: data.aportaTa,
+    usoVh: data.usoVh,
+    tipoUsoVh: data.tipoUsoVh,
+    alarmaActiva: data.alarmaActiva,
+    cierreCentralizado: data.cierreCentralizado,
+    relato: data.relato,
+    duenoPrevio: data.duenoPrevio,
+    aportaDueñoPrevio: data.aportaDueñoPrevio,
+    tuercaDeSeguridad: data.tuercaDeSeguridad,
+    bulones: data.bulones,
+    prestaRueda: data.prestaRueda,
+    intervensionPolicial: data.intervensionPolicial,
+    actaIntervensionPolicial: data.actaIntervensionPolicial
   };
 
   const {
@@ -302,108 +300,89 @@ const SiniestrosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...siniestroUpdate }
+    defaultValues: { ...entrevistaUpdate }
   });
 
+  console.log(involucrado.map((inv) => inv._id));
+
   const onConfirmFunction = async () => {
-    if (!id) {
-      const addSiniestroResponse = await postSiniestro(dispatch, siniestro);
-      if (addSiniestroResponse.type === 'POST_SINIESTRO_SUCCESS') {
+    if (formType == 'create') {
+      const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
+        dispatch,
+        entrevistaRoboRueda,
+        involucrado.map((inv) => inv._id),
+        siniestroId
+      );
+      if (addEntrevistaRoboRuedaResponse.type === 'POST_ENTREVISTAROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     } else {
-      const editSiniestroResponse = await updateSiniestro(dispatch, id, siniestro);
-      if (editSiniestroResponse.type === 'UPDATE_SINIESTRO_SUCCESS') {
+      const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
+        dispatch,
+        id,
+        entrevistaRoboRueda
+      );
+      if (editEntrevistaRoboRuedaResponse.type === 'UPDATE_ENTREVISTAROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+        return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     }
   };
 
   const onSubmit = async (data) => {
-    setSiniestro(data);
+    setEntrevistaRoboRueda(data);
+    getInvolucrado(dispatch);
     setModalAddConfirmOpen(true);
   };
 
-  const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
-  const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
-  const estadoArray = [
-    'Sin asignar',
-    'Asignado',
-    'Activo',
-    'Finalizado',
-    'Controlado',
-    'Completado'
-  ];
-  const requeridoArray = [
-    'Relevamiento completo',
-    'Relevamiento sin cierre',
-    'Investigacion de fraude',
-    'Relevamiento y comprobacion',
-    'Relevamiento y comprobacion, sin cierre'
-  ];
+  const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
+  const firma = ['SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA'];
+  const tipoEntrevista = ['PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA'];
+  const relacionVh = ['Titular', 'Autorizado', 'Pasajero', 'No autorizado'];
+  const habilitacionDni = ['DNI habilitado', 'DNI no habilitado'];
+  const habilitacionLc = ['Licencia de conducir habilitada', 'Licencia de conducir no habilitada'];
+  const habilitacionTv = ['Tarjeta verde habilitada', 'Tarjeta verde no habilitada'];
+  const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
+  const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
 
-  const getPathPrefix = () => {
-    if (relevadorPath) {
-      return '/relevador';
+  const columnTitleArray = ['Seleccionar', 'Nombre', 'Apellido', 'Rol', 'Telefono', 'Prioridad'];
+  const columns = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
+
+  const handleCheckboxChange = (index) => {
+    const updatedInvolucrados = [...involucrados];
+    updatedInvolucrados[index].selected = !updatedInvolucrados[index].selected;
+    const selectedInvolucrados = updatedInvolucrados.filter((inv) => inv.selected);
+    setInvolucrado(selectedInvolucrados);
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
     }
-    if (controladorPath) {
-      return '/controlador';
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
     }
-    return '/administrativo';
   };
-
-  const handleInvolucrado = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/involucrado/form/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
-    });
-  };
-
-  const handleVehiculo = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/vehiculo/form/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
-    });
-  };
-
-  const handleNovedad = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/novedad/form/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
-    });
-  };
-
-  const handleLugar = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/LugarSiniestro/form/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
-    });
-  };
-
-  const handleEntrevista = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/entrevistaSiniestro/form/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
-    });
-  };
-
-  const relevadorPath = /\/relevador\/siniestro/.test(location.pathname);
-  const controladorPath = /\/controlador\/siniestro/.test(location.pathname);
 
   useEffect(() => {
-    getControlador(dispatch);
-    getRelevador(dispatch);
-    getSiniestro(dispatch);
+    getAllEntrevistaRoboRueda(dispatch);
+    getInvolucrado(dispatch);
   }, []);
 
   return (
@@ -412,55 +391,65 @@ const SiniestrosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={formType == 'edit' ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                id
-                  ? 'Esta seguro que quiere actualizar este siniestro?'
-                  : 'Esta seguro que quiere añadir este siniestro?'
+                formType == 'edit'
+                  ? 'Esta seguro que quiere actualizar esta entrevista?'
+                  : 'Esta seguro que quiere añadir esta entrevista?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Siniestro edited' : 'Siniestro added'}
+              message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
         </div>
       }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Editar Siniestro' : 'Agregar Siniestro'}</h3>
+        <h3 className={styles.title}>
+          {formType == 'edit' ? 'Editar Entrevista' : 'Agregar Entrevista'}
+        </h3>
       </div>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.inputGroups}>
-          <div className={styles.firstGroup}>
-            <div className={styles.firstGroupColumn}>
+          <div className={styles.topRow}>
+            <div className={styles.firstColumn}>
               <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.numSiniestro?.message}
+                <OptionInput
+                  data={rol}
+                  dataLabel="Rol"
+                  name="rol"
                   register={register}
-                  nameTitle="N° Siniestro"
-                  type="number"
-                  nameInput="numSiniestro"
-                  styleInput="normalInput"
+                  error={errors.rol?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <OptionInput
-                  data={ciaArray}
-                  dataLabel="CIA"
-                  name="cia"
+                  data={firma}
+                  dataLabel="Firma"
+                  name="firma"
                   register={register}
-                  error={errors.cia?.message}
+                  error={errors.firma?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={tipoEntrevista}
+                  dataLabel="Tipo"
+                  name="tipoEntrevista"
+                  register={register}
+                  error={errors.tipoEntrevista?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <DateInput
                   error={errors.fechaSiniestro?.message}
                   register={register}
-                  nameTitle="Fecha Siniestro"
+                  nameTitle="Fecha de Siniestro"
                   type="date"
                   nameInput="fechaSiniestro"
                   required
@@ -468,310 +457,325 @@ const SiniestrosForm = () => {
               </div>
               <div className={styles.inputContainer}>
                 <DateInput
-                  error={errors.hrSiniestro?.message}
+                  error={errors.hrAproximada?.message}
                   register={register}
                   nameTitle="Hora Siniestro"
                   type="date"
-                  nameInput="hrSiniestro"
+                  nameInput="hrAproximada"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.aportaDni?.message}
+                  register={register}
+                  nameTitle="Aporta DNI"
+                  type="checkbox"
+                  nameInput="aportaDni"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.aportaLc?.message}
+                  register={register}
+                  nameTitle="Aporta LC"
+                  type="checkbox"
+                  nameInput="aportaLc"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.intervensionPolicial?.message}
+                  register={register}
+                  nameTitle="Intervensión Policial"
+                  type="checkbox"
+                  nameInput="intervensionPolicial"
                   required
                 />
               </div>
             </div>
-            <div className={styles.firstGroupColumn}>
+            <div className={styles.secondColumn}>
               <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.numPoliza?.message}
+                <OptionInput
+                  data={relacionVh}
+                  dataLabel="Relacion VH"
+                  name="relacionVh"
                   register={register}
-                  nameTitle="N° Poliza"
-                  type="number"
-                  nameInput="numPoliza"
-                  styleInput="normalInput"
-                  required
+                  error={errors.relacionVh?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <OptionInput
-                  data={controlador}
-                  dataLabel="Controlador"
-                  name="controlador"
+                  data={habilitacionDni}
+                  dataLabel="Habilitacion DNI"
+                  name="habilitacionDni"
                   register={register}
-                  error={errors.controlador?.message}
+                  error={errors.habilitacionDni?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={habilitacionLc}
+                  dataLabel="Habilitacion LC"
+                  name="habilitacionLc"
+                  register={register}
+                  error={errors.habilitacionLc?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <DateInput
-                  error={errors.fechaDenuncia?.message}
+                  error={errors.hrNotificacion?.message}
                   register={register}
-                  nameTitle="Fecha Denuncia"
+                  nameTitle="Hora Notificacion"
                   type="date"
-                  nameInput="fechaDenuncia"
+                  nameInput="hrNotificacion"
                   required
                 />
               </div>
               <div className={styles.inputContainer}>
-                <OptionInput
-                  data={requeridoArray}
-                  dataLabel="Requerido"
-                  name="requerido"
+                <Checkbox
+                  error={errors.aportaTv?.message}
                   register={register}
-                  error={errors.requerido?.message}
+                  nameTitle="Aporta TV"
+                  type="checkbox"
+                  nameInput="aportaTv"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.aportaTa?.message}
+                  register={register}
+                  nameTitle="Aporta TA"
+                  type="checkbox"
+                  nameInput="aportaTa"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.actaIntervensionPolicial?.message}
+                  register={register}
+                  nameTitle="Acta Policial"
+                  type="checkbox"
+                  nameInput="actaIntervensionPolicial"
+                  required
                 />
               </div>
             </div>
-            <div className={styles.firstGroupColumn}>
+            <div className={styles.thirdColumn}>
               <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.numInforme?.message}
+                <OptionInput
+                  data={habilitacionTv}
+                  dataLabel="Habilitacion TV"
+                  name="habilitacionTv"
                   register={register}
-                  nameTitle="N° Informe"
-                  type="number"
-                  nameInput="numInforme"
-                  styleInput="normalInput"
-                  required
+                  error={errors.habilitacionTv?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <OptionInput
-                  data={relevador}
-                  dataLabel="Relevador"
-                  name="relevador"
+                  data={habilitacionTa}
+                  dataLabel="Habilitacion TA"
+                  name="habilitacionTa"
                   register={register}
-                  error={errors.relevador?.message}
+                  error={errors.habilitacionTa?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <DateInput
-                  error={errors.fechaVencimiento?.message}
+                  error={errors.hrConfirmacion?.message}
                   register={register}
-                  nameTitle="Fecha Vencimiento"
+                  nameTitle="Hora Confirmación"
                   type="date"
-                  nameInput="fechaVencimiento"
+                  nameInput="hrConfirmacion"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.hrReclamo?.message}
+                  register={register}
+                  nameTitle="Hora Reclamo"
+                  type="date"
+                  nameInput="hrReclamo"
                   required
                 />
               </div>
               <div className={styles.inputContainer}>
                 <Inputs
-                  error={errors.comisaria?.message}
+                  error={errors.duenoPrevio?.message}
                   register={register}
-                  nameTitle="Comisaria"
+                  nameTitle="Dueño Previo"
                   type="text"
-                  nameInput="comisaria"
-                  styleInput="normalInput"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.firstGroupColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={tipoArray}
-                  dataLabel="Tipo"
-                  name="tipo"
-                  register={register}
-                  error={errors.tipo?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fechaAsignacion?.message}
-                  register={register}
-                  nameTitle="Fecha Asignacion"
-                  type="date"
-                  nameInput="fechaAsignacion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.lugar?.message}
-                  register={register}
-                  nameTitle="Lugar"
-                  type="text"
-                  nameInput="lugar"
+                  nameInput="duenoPrevio"
                   styleInput="normalInput"
                   required
                 />
               </div>
               <div className={styles.inputContainer}>
                 <Checkbox
-                  error={errors.presencial?.message}
+                  error={errors.alarmaActiva?.message}
                   register={register}
-                  nameTitle="Presencial"
+                  nameTitle="Alarma Activa"
                   type="checkbox"
-                  nameInput="presencial"
+                  nameInput="alarmaActiva"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.cierreCentralizado?.message}
+                  register={register}
+                  nameTitle="Cierre Centralizado"
+                  type="checkbox"
+                  nameInput="cierreCentralizado"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.prestaRueda?.message}
+                  register={register}
+                  nameTitle="Presta Rueda"
+                  type="checkbox"
+                  nameInput="prestaRueda"
                   required
                 />
               </div>
             </div>
-          </div>
-          <div className={styles.thirdGroup}>
-            <div className={`${styles.inputContainer} ${styles.textAreaSpace}`}>
-              <TextArea
-                error={errors.instrucciones?.message}
-                register={register}
-                nameTitle="Instrucciones"
-                type="text"
-                nameInput="instrucciones"
-                styleInput="medium"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.denuncia?.message}
-                register={register}
-                nameTitle="Denuncia"
-                type="text"
-                nameInput="denuncia"
-                styleInput="big"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.entitiesButtons}>
-            <Button clickAction={handleInvolucrado} text="Involucrados" />
-            <Button clickAction={handleNovedad} text="Novedades" />
-            <Button clickAction={handleVehiculo} text="Vehiculos" />
-            <Button clickAction={handleLugar} text="Lugar" />
-            <Button clickAction={handleEntrevista} text="Entrevistas" />
-          </div>
-          <div className={styles.textAreasGroup}>
-            <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>
+            <div className={styles.fourthColumn}>
               <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.conclusionDescripcion?.message}
+                <DateInput
+                  error={errors.hrEntrevista?.message}
                   register={register}
-                  nameTitle="Conclusion Descripcion"
-                  type="text"
-                  styleInput="big"
-                  nameInput="conclusionDescripcion"
+                  nameTitle="Hora Entrevista"
+                  type="date"
+                  nameInput="hrEntrevista"
                   required
                 />
               </div>
               <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.conclusionCredibilidad?.message}
+                <DateInput
+                  error={errors.fechaEntrevista?.message}
                   register={register}
-                  nameTitle="Conclusion Credibilidad"
-                  type="text"
-                  styleInput="big"
-                  nameInput="conclusionCredibilidad"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.textAreaColumn}>
-              <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.conclusionResponsabilidad?.message}
-                  register={register}
-                  nameTitle="Conclusion Responsabilidad"
-                  type="text"
-                  styleInput="small"
-                  nameInput="conclusionResponsabilidad"
+                  nameTitle="Fecha Entrevista"
+                  type="date"
+                  nameInput="fechaEntrevista"
                   required
                 />
               </div>
               <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.conclusionRecomendacion?.message}
-                  register={register}
-                  nameTitle="Conclusion Recomendacion"
-                  type="text"
-                  styleInput="small"
-                  nameInput="conclusionRecomendacion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.autorizacion?.message}
-                  register={register}
-                  nameTitle="Autorizacion"
-                  type="text"
-                  styleInput="small"
-                  nameInput="autorizacion"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.textAreaColumn}>
-              <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.conclusionLesiones?.message}
-                  register={register}
-                  nameTitle="Conclusion Lesiones"
-                  type="text"
-                  styleInput="small"
-                  nameInput="conclusionLesiones"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <TextArea
-                  error={errors.conclusionDaños?.message}
-                  register={register}
-                  nameTitle="Conclusion Daños"
-                  type="text"
-                  styleInput="small"
-                  nameInput="conclusionDaños"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainerEstado}>
                 <OptionInput
-                  data={estadoArray}
-                  dataLabel="Estado"
-                  name="estado"
+                  data={usoVh}
+                  dataLabel="Uso VH"
+                  name="usoVh"
                   register={register}
-                  error={errors.estado?.message}
+                  error={errors.usoVh?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.tipoUsoVh?.message}
+                  register={register}
+                  nameTitle="Tipo de Uso"
+                  type="text"
+                  nameInput="tipoUsoVh"
+                  styleInput="normalInput"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.bulones?.message}
+                  register={register}
+                  nameTitle="Bulones"
+                  type="text"
+                  nameInput="bulones"
+                  styleInput="normalInput"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.aportaDueñoPrevio?.message}
+                  register={register}
+                  nameTitle="Aporta Datos"
+                  type="checkbox"
+                  nameInput="aportaDueñoPrevio"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.tuercaDeSeguridad?.message}
+                  register={register}
+                  nameTitle="Tuercas"
+                  type="checkbox"
+                  nameInput="tuercaDeSeguridad"
+                  required
                 />
               </div>
             </div>
           </div>
-          <div className={styles.eightGroup}></div>
-          <div className={styles.nineGroup}>
+          <div className={styles.bottomRow}>
             <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaFinalizacion?.message}
+              <TextArea
+                error={errors.relato?.message}
                 register={register}
-                nameTitle="Fecha Finalizacion"
-                type="date"
-                nameInput="fechaFinalizacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaContactoAsegurado?.message}
-                register={register}
-                nameTitle="Fecha Contacto Asegurado"
-                type="date"
-                nameInput="fechaContactoAsegurado"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaContactoTercero?.message}
-                register={register}
-                nameTitle="Fecha Contacto Tercero"
-                type="date"
-                nameInput="fechaContactoTercero"
+                nameTitle="Relato"
+                type="text"
+                nameInput="relato"
+                styleInput="big"
                 required
               />
             </div>
           </div>
         </section>
         <div className={styles.btnGroup}>
-          <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
+          <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
           <Button clickAction={() => reset()} text="Reset" />
           <Button text="Cancel" clickAction={() => history.goBack()} />
         </div>
       </form>
+      <div className={styles.bottomTable}>
+        <table className={styles.table}>
+          <thead>
+            <tr className={styles.tableContent}>
+              {columnTitleArray.map((column, index) => (
+                <th key={index}>{column}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {involucrados.map((row, index) => {
+              const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+              return (
+                <tr className={rowClass} key={index}>
+                  {columns.map((column, columnIndex) => (
+                    <td key={columnIndex}>
+                      {column === 'selected' ? (
+                        <input type="checkbox" onChange={() => handleCheckboxChange(index)} />
+                      ) : (
+                        <>
+                          {ifNotArrayNotObject(row, column)}
+                          {ifNotExist(row[column])}
+                        </>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
     </div>
   );
 };
 
-export default SiniestrosForm;
+export default EntrevistaRoboRuedasForm;
