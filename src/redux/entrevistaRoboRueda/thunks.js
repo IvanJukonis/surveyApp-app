@@ -19,9 +19,25 @@ export const getAllEntrevistaRoboRueda = async (dispatch) => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`);
     const data = await response.json();
     const entrevistaRoboRuedasListAll = data.data;
+    console.log(entrevistaRoboRuedasListAll, 'llamado al back');
     dispatch(getEntrevistaRoboRuedaPending(false));
     dispatch(getEntrevistaRoboRuedaSuccess(entrevistaRoboRuedasListAll));
   } catch (error) {
+    dispatch(getEntrevistaRoboRuedaPending(false));
+    dispatch(getEntrevistaRoboRuedaError(true));
+  }
+};
+
+export const getByIdEntrevistaRoboRueda = async (dispatch, id) => {
+  try {
+    dispatch(getEntrevistaRoboRuedaPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda/${id}`);
+    const data = await response.json();
+    const entrevistaRoboRuedaById = data.data;
+    dispatch(getEntrevistaRoboRuedaPending(false));
+    dispatch(getEntrevistaRoboRuedaSuccess(entrevistaRoboRuedaById));
+  } catch (error) {
+    console.error(error);
     dispatch(getEntrevistaRoboRuedaPending(false));
     dispatch(getEntrevistaRoboRuedaError(true));
   }

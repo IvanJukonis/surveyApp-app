@@ -12,7 +12,7 @@ import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-r
 import {
   updateEntrevistaRoboRueda,
   postEntrevistaRoboRueda,
-  getAllEntrevistaRoboRueda
+  getByIdEntrevistaRoboRueda
 } from 'redux/entrevistaRoboRueda/thunks';
 import { getInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
+import OptionMultipleInput from 'Components/Shared/Inputs/OptionMultipleInputs';
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
@@ -30,8 +31,13 @@ const EntrevistaRoboRuedasForm = () => {
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
+  // eslint-disable-next-line no-unused-vars
+  const [involucradosSelected, setInvolucradosSelected] = useState([]);
+  const [searchInvolucrado, setSearchInvolucrado] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [involucrado, setInvolucrado] = useState([]);
   const involucrados = useSelector((state) => state.involucrado.list);
+  const entrevistaActual = useSelector((state) => state.entrevistaRoboRueda.list);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -247,7 +253,18 @@ const EntrevistaRoboRuedasForm = () => {
         'string.empty': 'El campo "Relato" es un campo requerido',
         'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
       })
+      .required(),
+    involucrados: Joi.alternatives()
+      .try(
+        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
+        Joi.string().hex().length(24).required()
+      )
       .required()
+      .messages({
+        'any.only': 'Selecciona un involucrado',
+        'any.required': 'Selecciona un involucrado',
+        'array.min': 'Selecciona almenos un involucrado'
+      })
   });
 
   const formatDate = (dateString) => {
@@ -303,8 +320,6 @@ const EntrevistaRoboRuedasForm = () => {
     defaultValues: { ...entrevistaUpdate }
   });
 
-  console.log(involucrado.map((inv) => inv._id));
-
   const onConfirmFunction = async () => {
     if (formType == 'create') {
       const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
@@ -350,14 +365,53 @@ const EntrevistaRoboRuedasForm = () => {
   const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
   const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
 
-  const columnTitleArray = ['Seleccionar', 'Nombre', 'Apellido', 'Rol', 'Telefono', 'Prioridad'];
-  const columns = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
+  const columnTitleArray = [
+    'Entrevistado',
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columns = [
+    'entrevistado',
+    'selected',
+    'nombre',
+    'apellido',
+    'rol',
+    'telefono',
+    'prioridad'
+  ];
+
+  const [selectedLi, setSelectedLi] = useState(null);
+  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
+
+  const handleIconClick = (involucradoId) => {
+    setSelectedLi(involucradoId);
+  };
+
+  const checkState = (column, index) => {
+    if (column === 'selected' && entrevistaActual && entrevistaActual.involucrado) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const handleCheckboxChange = (index) => {
-    const updatedInvolucrados = [...involucrados];
-    updatedInvolucrados[index].selected = !updatedInvolucrados[index].selected;
-    const selectedInvolucrados = updatedInvolucrados.filter((inv) => inv.selected);
-    setInvolucrado(selectedInvolucrados);
+    const checkInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (checkInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+    }
   };
 
   const ifNotArrayNotObject = (item, itemContent) => {
@@ -380,10 +434,35 @@ const EntrevistaRoboRuedasForm = () => {
     }
   };
 
+  const handleInvolucradoClick = (event) => {
+    const value = event.target.value;
+
+    if (involucradosSelected.includes(value)) {
+      setSelectedInvolucrados(involucradosSelected.filter((involucrado) => involucrado !== value));
+    } else {
+      setSelectedInvolucrados([...involucradosSelected, value]);
+    }
+  };
+
+  const involucradosInput =
+    searchInvolucrado.length > 0
+      ? involucrados.filter((involucrado) => {
+          return involucrado.nombre.toLowerCase().includes(searchInvolucrado.toLowerCase());
+        })
+      : involucrados;
+
   useEffect(() => {
-    getAllEntrevistaRoboRueda(dispatch);
+    if (data._id) {
+      getByIdEntrevistaRoboRueda(dispatch, data._id);
+    }
     getInvolucrado(dispatch);
   }, []);
+
+  useEffect(() => {
+    if (entrevistaActual.involucrado) {
+      setSelectedInvolucrados(entrevistaActual.involucrado);
+    }
+  }, [entrevistaActual.involucrado?.length]);
 
   return (
     <div className={styles.container}>
@@ -739,6 +818,27 @@ const EntrevistaRoboRuedasForm = () => {
           <Button clickAction={() => reset()} text="Reset" />
           <Button text="Cancel" clickAction={() => history.goBack()} />
         </div>
+        <div className={styles.inputContainer}>
+          Involucrados:
+          <input
+            className={styles.searchInput}
+            type="text"
+            placeholder="BuscarInvolucrado..."
+            onChange={(e) => setSearchInvolucrado(e.target.value)}
+          />
+          <OptionMultipleInput
+            membersSelected={involucradosSelected.length === 0 ? '' : involucradosSelected}
+            onAction={handleInvolucradoClick}
+            data={involucradosInput}
+            dataLabel="Involucrado"
+            setValue={{}}
+            aValue={{}}
+            name="involucrados"
+            register={register}
+            error={errors.involucrados?.message}
+            disabled={false}
+          />
+        </div>
       </form>
       <div className={styles.bottomTable}>
         <table className={styles.table}>
@@ -757,8 +857,12 @@ const EntrevistaRoboRuedasForm = () => {
                 <tr className={rowClass} key={index}>
                   {columns.map((column, columnIndex) => (
                     <td key={columnIndex}>
-                      {column === 'selected' ? (
-                        <input type="checkbox" onChange={() => handleCheckboxChange(index)} />
+                      {column === 'selected' || column === 'entrevistado' ? (
+                        <input
+                          type="checkbox"
+                          onChange={() => handleCheckboxChange(index)}
+                          checked={checkState(column, index)}
+                        />
                       ) : (
                         <>
                           {ifNotArrayNotObject(row, column)}
@@ -772,6 +876,48 @@ const EntrevistaRoboRuedasForm = () => {
             })}
           </tbody>
         </table>
+        <ul className={styles.list}>
+          {involucrados.map((involucrado) => {
+            {
+              return involucrados.map((oneInvolucrado) => {
+                if (oneInvolucrado._id === involucrado) {
+                  return (
+                    <li key={involucrado}>
+                      <div className={styles.listMembers}>
+                        <div className={styles.eachMember}>
+                          {oneInvolucrado.nombre} {oneInvolucrado.apellido}
+                          <div className={styles.boxClose}>
+                            <img
+                              className={styles.iconPic}
+                              onClick={() => {
+                                handleIconClick(involucrado);
+                              }}
+                              src={`${process.env.PUBLIC_URL}/assets/images/${'info.png'}`}
+                            />
+                            <div className={styles.close_icon} />
+                          </div>
+                        </div>
+                      </div>
+                      {selectedLi === involucrado && (
+                        <div className={styles.speechBalloon}>
+                          <div className={styles.speechElements}>
+                            <p title={'Nombre'}>{oneInvolucrado.nombre}</p>
+                            <p title={'Apellido'}>{oneInvolucrado.apellido}</p>
+                            <div
+                              onClick={() => {}}
+                              className={`${styles.boxClick} ${styles.close_icon}`}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </li>
+                  );
+                }
+                return null;
+              });
+            }
+          })}
+        </ul>
       </div>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
     </div>

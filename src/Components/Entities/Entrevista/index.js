@@ -29,8 +29,15 @@ function Entrevista() {
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const entrevistas = [...entrevistaRoboRueda, ...entrevistaSiniestro];
 
-  const columnTitleArray = ['Fecha', 'Rol', 'Tipo', 'Firma'];
-  const columns = ['fechaEntrevista', 'rol', 'tipoEntrevista', 'firma'];
+  const columnTitleArray = ['Nombre', 'Apellido', 'Fecha', 'Rol', 'Tipo', 'Firma'];
+  const columns = [
+    'nombreEntrevistado',
+    'apellidoEntrevistado',
+    'fechaEntrevista',
+    'rol',
+    'tipoEntrevista',
+    'firma'
+  ];
   const rolArray = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
   const tipoArray = ['Relevamiento', 'Fraude'];
   const tipoExportacion = ['PDF', 'Word'];
@@ -60,8 +67,11 @@ function Entrevista() {
     resolver: joiResolver(schema)
   });
 
+  console.log(entrevistaRoboRueda, 'entrevista robo rueda');
+
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
+      console.log(entrevistaRoboRuedaActual, 'params');
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
         params: { ...entrevistaRoboRuedaActual, mode: 'create', siniestroId: id }
       });
