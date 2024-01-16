@@ -160,7 +160,7 @@ function Entrevista() {
           </div>
           <div className={styles.bottomContainer}>
             <div className={styles.inputContainer}>
-              <Button text="Cancel" clickAction={() => history.goBack()} />
+              <Button text="Cancelar" clickAction={() => history.goBack()} />
             </div>
           </div>
         </div>

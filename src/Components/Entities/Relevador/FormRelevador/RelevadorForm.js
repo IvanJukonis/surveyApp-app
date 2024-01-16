@@ -623,7 +623,7 @@ const RelevadoresForm = () => {
         <div className={styles.btnGroup}>
           <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
           <Button clickAction={() => reset()} text="Reset" />
-          <Button text="Cancel" clickAction={() => history.goBack()} />
+          <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}

@@ -296,7 +296,6 @@ const SiniestrosForm = () => {
 
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -764,9 +763,8 @@ const SiniestrosForm = () => {
           </div>
         </section>
         <div className={styles.btnGroup}>
-          <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-          <Button clickAction={() => reset()} text="Reset" />
-          <Button text="Cancel" clickAction={() => history.goBack()} />
+          <Button clickAction={() => {}} text={id ? 'Actualizar' : 'Agregar'} />
+          <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}

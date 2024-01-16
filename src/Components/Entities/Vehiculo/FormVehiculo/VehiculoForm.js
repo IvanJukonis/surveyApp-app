@@ -8,8 +8,14 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateVehiculo, postVehiculo, getAllVehiculos } from 'redux/vehiculo/thunks';
+import FormTable from 'Components/Shared/formTable';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import {
+  updateVehiculo,
+  postVehiculo,
+  getAllVehiculos,
+  deleteVehiculo
+} from 'redux/vehiculo/thunks';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,16 +25,33 @@ import Joi from 'joi';
 
 const VehiculosForm = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { id } = useParams();
+
   const vehiculos = useSelector((state) => state.vehiculo.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [vehiculo, setVehiculo] = useState({});
   const [buttonType, setButtonType] = useState(false);
-  const location = useLocation();
-  const history = useHistory();
-  const data = location.state.params;
-  const { id } = useParams();
+
+  const arrayRol = ['VA', 'VT', 'VT2', 'VT3', 'VAd'];
+  const arrayUso = ['Particular', 'Profesional', 'Servicio', 'Otro'];
+  const arrayTipo = [
+    'Automovil',
+    'Camioneta',
+    'Motocicleta',
+    'Bicicleta',
+    'Cuatrimoto',
+    'Camion',
+    'Otro'
+  ];
+  const arrayDanos = ['Graves', 'Leves', 'Medios', 'Sin Daños'];
+  const arrayAlarma = ['Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma'];
+  const arrayCierre = ['Con cierre (Activado)', 'Con cierre (Desactivado)', 'Sin cierre'];
+
+  const columnTitleArray = ['Rol', 'Modelo', 'Dominio', 'Marca', 'Prioridad'];
+  const columns = ['rol', 'modelo', 'dominio', 'marca', 'prioridad'];
 
   const schema = Joi.object({
     rol: Joi.string()
@@ -205,43 +228,6 @@ const VehiculosForm = () => {
     }
   };
 
-  const arrayRol = ['VA', 'VT', 'VT2', 'VT3', 'VAd'];
-  const arrayUso = ['Particular', 'Profesional', 'Servicio', 'Otro'];
-  const arrayTipo = [
-    'Automovil',
-    'Camioneta',
-    'Motocicleta',
-    'Bicicleta',
-    'Cuatrimoto',
-    'Camion',
-    'Otro'
-  ];
-  const arrayDanos = ['Graves', 'Leves', 'Medios', 'Sin Daños'];
-  const arrayAlarma = ['Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma'];
-  const arrayCierre = ['Con cierre (Activado)', 'Con cierre (Desactivado)', 'Sin cierre'];
-  const columnTitleArray = ['Rol', 'Modelo', 'Dominio', 'Marca', 'Prioridad'];
-  const columns = ['rol', 'modelo', 'dominio', 'marca', 'prioridad'];
-
-  const ifNotArrayNotObject = (item, itemContent) => {
-    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
-      if (itemContent === 'firstName') {
-        return (
-          <span>
-            {item?.firstName} {item?.lastName}
-          </span>
-        );
-      } else {
-        return item[itemContent];
-      }
-    }
-  };
-
-  const ifNotExist = (item) => {
-    if (item?.length === 0) {
-      return <span>This element Was Deleted. Edit to add</span>;
-    }
-  };
-
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
@@ -263,10 +249,12 @@ const VehiculosForm = () => {
     reset({ ...emptyData });
   };
 
-  const tableClick = (datosFila) => {
+  const deleteButton = deleteVehiculo;
+
+  const tableClick = (index) => {
     const formattedData = {
-      ...datosFila,
-      fechaAdquisicion: formatDate(data.fechaAdquisicion)
+      ...vehiculos[index],
+      fechaAdquisicion: formatDate(vehiculos[index].fechaAdquisicion)
     };
     reset({ ...formattedData });
     setButtonType(true);
@@ -445,47 +433,19 @@ const VehiculosForm = () => {
           <div className={styles.btnContainer}>
             <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancel" clickAction={() => history.goBack()} />
+            <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
         </form>
         <div className={styles.rightTable}>
-          <table className={styles.table}>
-            <thead>
-              <tr className={styles.tableContent}>
-                {columnTitleArray.map((column, index) => (
-                  <th key={index}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {vehiculos.map((row, index) => {
-                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                return (
-                  <tr
-                    onClick={() => {
-                      tableClick(row);
-                    }}
-                    className={rowClass}
-                    key={index}
-                  >
-                    {columns.map((column, columnIndex) => (
-                      <td key={columnIndex}>
-                        {column.startsWith('fecha') ? (
-                          formatDate(row[column])
-                        ) : (
-                          <>
-                            {ifNotArrayNotObject(row, column)}
-                            {ifNotExist(row[column])}
-                          </>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className={styles.rightTable}>
+            <FormTable
+              data={vehiculos}
+              columnTitleArray={columnTitleArray}
+              columns={columns}
+              handleClick={tableClick}
+              deleteButton={deleteButton}
+            />
+          </div>
         </div>
       </div>
       {toastError && (

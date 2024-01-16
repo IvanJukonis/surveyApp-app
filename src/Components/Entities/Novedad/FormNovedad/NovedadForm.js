@@ -321,7 +321,7 @@ const NovedadesForm = () => {
           <div className={styles.btnContainer}>
             <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancel" clickAction={() => history.goBack()} />
+            <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
         </form>
         <div className={styles.rightTable}>

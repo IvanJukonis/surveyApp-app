@@ -6,7 +6,7 @@ function Button({ clickAction, text, disabled = false }) {
     <div className={styles.btnContainer}>
       <button
         type={text.toLowerCase() === 'reiniciar' ? 'button' : 'submit'}
-        className={text.toLowerCase() === 'cancel' ? styles.btnCancel : styles.btnAccept}
+        className={text.toLowerCase() === 'cancelar' ? styles.btnCancel : styles.btnAccept}
         onClick={clickAction}
         disabled={disabled}
       >

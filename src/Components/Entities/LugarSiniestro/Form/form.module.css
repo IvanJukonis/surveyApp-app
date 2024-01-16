@@ -70,6 +70,12 @@
   gap: 20px;
 }
 
+.btnContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .nameLabel {
   display: flex;
   flex-direction: column;

@@ -740,7 +740,7 @@ const EntrevistaSiniestrosForm = () => {
         <div className={styles.btnGroup}>
           <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
           <Button clickAction={() => reset()} text="Reset" />
-          <Button text="Cancel" clickAction={() => history.goBack()} />
+          <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}

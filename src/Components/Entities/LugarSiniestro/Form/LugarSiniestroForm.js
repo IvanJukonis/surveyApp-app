@@ -570,7 +570,7 @@ const LugarSiniestrosForm = () => {
         </section>
         <div className={styles.btnContainer}>
           <Button clickAction={() => {}} text={'Actualizar'} />
-          <Button text="Cancel" clickAction={() => history.goBack()} />
+          <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={'Error'} />}
