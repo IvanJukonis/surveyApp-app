@@ -1,0 +1,82 @@
+.noneTrainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40vw;
+  height: 10rem;
+  border-radius: 5px;
+  background-color: #d9d9d9ea;
+  font-size: 30px;
+  margin: 4rem auto;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.filter {
+  width: 15%;
+  height: 20px;
+  background-color: #3C3C3C;
+  font-weight: bold;
+  color: #FAFAFA;
+  margin: 20px 0 0 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #3C3C3C;
+  color: #FAFAFA;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0px 6px 30px -7px rgba(0, 0, 0, 0.75);
+  margin: 10px 0;
+}
+
+.table tr td,
+.table tr th {
+  padding: 15px 10px 15px 20px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100px;
+  transition: all 0.1s;
+}
+
+.table tr td:nth-last-child(-n + 2):hover {
+  background-color: #3C3C3C;
+  transform: scale(1.2);
+}
+
+.table tr td:hover {
+  transform: scale(1.1);
+  max-width: 280px;
+  background-color: #3C3C3C;
+  color: #fff;
+  cursor: pointer;
+}
+
+.rowBackground1 {
+  background-color: #FAFAFA;
+  color: #3C3C3C;
+  font-weight: bold;
+}
+
+.rowBackground2 {
+  background-color: #ffffffc4;
+  color: #3C3C3C;
+  font-weight: bold;
+}
+
+.trash_edit {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

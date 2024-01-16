@@ -8,10 +8,16 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
+import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateInvolucrado, postInvolucrado, getAllInvolucrado } from 'redux/involucrado/thunks';
+import {
+  updateInvolucrado,
+  postInvolucrado,
+  getAllInvolucrado,
+  deleteInvolucrado
+} from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -359,8 +365,9 @@ const InvolucradosForm = () => {
     reset({ ...emptyData });
   };
 
+  const deleteButton = deleteInvolucrado;
+
   const tableClick = (index) => {
-    console.log(involucrados[index]);
     const formattedData = {
       ...involucrados[index],
       fechaNacimiento: formatDate(involucrados[index].fechaNacimiento),
@@ -673,12 +680,19 @@ const InvolucradosForm = () => {
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
+            <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
             <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
         </form>
         <div className={styles.rightTable}>
+          <FormTable
+            data={involucrados}
+            columnTitleArray={columnTitleArray}
+            columns={columns}
+            handleClick={tableClick}
+            deleteButton={deleteButton}
+          />
           <table className={styles.table}>
             <thead>
               <tr className={styles.tableContent}>

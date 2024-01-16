@@ -337,7 +337,7 @@ const NovedadesForm = () => {
           </section>
           <div className={styles.btnContainer}>
             <Button clickAction={() => {}} text={buttonType ? 'Edit' : 'Add'} />
-            <Button clickAction={resetForm} text="Reset" />
+            <Button clickAction={resetForm} text="Reiniciar" />
             <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
         </form>
