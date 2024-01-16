@@ -8,8 +8,9 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
+import FormTable from 'Components/Shared/formTable';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { getAllNovedad, updateNovedad, postNovedad } from 'redux/novedad/thunks';
+import { getAllNovedad, updateNovedad, postNovedad, deleteNovedad } from 'redux/novedad/thunks';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -20,14 +21,21 @@ import Joi from 'joi';
 
 const NovedadesForm = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { id } = useParams();
+
   const novedades = useSelector((state) => state.novedad.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [buttonType, setButtonType] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [novedad, setNovedad] = useState({});
-  const history = useHistory();
-  const { id } = useParams();
+
+  const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
+  const arrayRelaciones = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
+
+  const columnTitleArray = ['Fecha', 'Titulo', 'Tipo', 'Relacion'];
+  const columns = ['fecha', 'titulo', 'tipo', 'relacion'];
 
   const schema = Joi.object({
     fecha: Joi.date()
@@ -158,32 +166,7 @@ const NovedadesForm = () => {
     }
   };
 
-  const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
-
-  const arrayRelaciones = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
-
-  const columnTitleArray = ['Fecha', 'Titulo', 'Tipo', 'Relacion'];
-  const columns = ['fecha', 'titulo', 'tipo', 'relacion'];
-
-  const ifNotArrayNotObject = (item, itemContent) => {
-    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
-      if (itemContent === 'firstName') {
-        return (
-          <span>
-            {item?.firstName} {item?.lastName}
-          </span>
-        );
-      } else {
-        return item[itemContent];
-      }
-    }
-  };
-
-  const ifNotExist = (item) => {
-    if (item?.length === 0) {
-      return <span>This element Was Deleted. Edit to add</span>;
-    }
-  };
+  const deleteButton = deleteNovedad;
 
   const resetForm = () => {
     setButtonType(false);
@@ -200,11 +183,11 @@ const NovedadesForm = () => {
     reset({ ...emptyData });
   };
 
-  const tableClick = (datosFila) => {
+  const tableClick = (index) => {
     const formattedData = {
-      ...datosFila,
-      fecha: formatDate(datosFila.fecha),
-      hora: formatDate(datosFila.hora)
+      ...novedades[index],
+      fecha: formatDate(novedades[index].fecha),
+      hora: formatDate(novedades[index].hora)
     };
     reset({ ...formattedData });
     setButtonType(true);
@@ -220,20 +203,20 @@ const NovedadesForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={buttonType ? 'Update' : 'Add'}
+              method={buttonType ? 'Editar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 id
-                  ? 'Are sure do you want update this novedad?'
-                  : 'Are sure do you want add this novedad?'
+                  ? 'Esta seguro que quiere editar esta novedad?'
+                  : 'Esta seguro que quiere agregar esta novedad?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Novedad edited' : 'Novedad added'}
+              message={buttonType ? 'Novedad actualizada' : 'Novedad agregada'}
             />
           )}
         </div>
@@ -336,49 +319,21 @@ const NovedadesForm = () => {
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={buttonType ? 'Edit' : 'Add'} />
+            <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
             <Button text="Cancel" clickAction={() => history.goBack()} />
           </div>
         </form>
         <div className={styles.rightTable}>
-          <table className={styles.table}>
-            <thead>
-              <tr className={styles.tableContent}>
-                {columnTitleArray.map((column, index) => (
-                  <th key={index}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {novedades.map((row, index) => {
-                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                return (
-                  <tr
-                    onClick={() => {
-                      tableClick(row);
-                    }}
-                    className={rowClass}
-                    key={index}
-                  >
-                    {columns.map((column, columnIndex) => (
-                      <td key={columnIndex}>
-                        {column.startsWith('fecha') ? (
-                          formatDate(row[column])
-                        ) : (
-                          <>
-                            {ifNotArrayNotObject(row, column)}
-                            {ifNotExist(row[column])}
-                          </>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className={styles.rightTable}>
+            <FormTable
+              data={novedades}
+              columnTitleArray={columnTitleArray}
+              columns={columns}
+              handleClick={tableClick}
+              deleteButton={deleteButton}
+            />
+          </div>
         </div>
       </div>
 

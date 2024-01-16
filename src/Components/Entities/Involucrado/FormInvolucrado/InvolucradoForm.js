@@ -315,26 +315,6 @@ const InvolucradosForm = () => {
   const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
   const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
 
-  const ifNotArrayNotObject = (item, itemContent) => {
-    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
-      if (itemContent === 'firstName') {
-        return (
-          <span>
-            {item?.firstName} {item?.lastName}
-          </span>
-        );
-      } else {
-        return item[itemContent];
-      }
-    }
-  };
-
-  const ifNotExist = (item) => {
-    if (item?.length === 0) {
-      return <span>This element Was Deleted. Edit to add</span>;
-    }
-  };
-
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
@@ -693,43 +673,6 @@ const InvolucradosForm = () => {
             handleClick={tableClick}
             deleteButton={deleteButton}
           />
-          <table className={styles.table}>
-            <thead>
-              <tr className={styles.tableContent}>
-                {columnTitleArray.map((column, index) => (
-                  <th key={index}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {involucrados.map((row, index) => {
-                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                return (
-                  <tr
-                    onClick={() => {
-                      tableClick(index);
-                    }}
-                    className={rowClass}
-                    key={index}
-                  >
-                    {columns.map((column, columnIndex) => (
-                      <td key={columnIndex}>
-                        {column.startsWith('fecha') ? (
-                          formatDate(row[column])
-                        ) : (
-                          <>
-                            {ifNotArrayNotObject(row, column)}
-                            {ifNotExist(row[column])}
-                          </>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
         </div>
       </div>
       {toastError && (

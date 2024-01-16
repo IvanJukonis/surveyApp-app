@@ -70,18 +70,27 @@ const FormTable = ({
     }
   };
 
-  const ifNotExist = (item) => {
-    if (item?.length === 0) {
-      return <span>This element Was Deleted. Edit to add</span>;
-    }
-  };
-
   const formatDate = (dateString) => {
     const dateObject = new Date(dateString);
     const year = dateObject.getFullYear();
     const month = String(dateObject.getMonth() + 1).padStart(2, '0');
     const day = String(dateObject.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
+  const checkState = (index) => {
+    if (data[index].prioridad) {
+      if (data.find((singleData) => singleData.prioridad === true)) {
+        return true;
+      }
+    }
+    return false;
   };
 
   return (
@@ -113,7 +122,14 @@ const FormTable = ({
                 >
                   {columns.map((column, columnIndex) => (
                     <td key={columnIndex}>
-                      {column.startsWith('fecha') ? (
+                      {column.startsWith('prioridad') ? (
+                        <input
+                          className={styles.checkboxInput}
+                          type="checkbox"
+                          readOnly
+                          checked={checkState(index)}
+                        />
+                      ) : column.startsWith('fecha') ? (
                         formatDate(row[column])
                       ) : (
                         <>
