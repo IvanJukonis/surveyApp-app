@@ -20,7 +20,6 @@ export const getAllEntrevistaSiniestro = async (dispatch) => {
     const data = await response.json();
 
     const EntrevistaSiniestrosListAll = data.data;
-    console.log(data.data + 'llega?');
     dispatch(getEntrevistaSiniestroPending(false));
     dispatch(getEntrevistaSiniestroSuccess(EntrevistaSiniestrosListAll));
   } catch (error) {

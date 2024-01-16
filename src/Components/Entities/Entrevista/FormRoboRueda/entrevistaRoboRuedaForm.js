@@ -22,7 +22,6 @@ import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
-import OptionMultipleInput from 'Components/Shared/Inputs/OptionMultipleInputs';
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
@@ -31,18 +30,45 @@ const EntrevistaRoboRuedasForm = () => {
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
-  // eslint-disable-next-line no-unused-vars
-  const [involucradosSelected, setInvolucradosSelected] = useState([]);
-  const [searchInvolucrado, setSearchInvolucrado] = useState('');
+  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [involucrado, setInvolucrado] = useState([]);
   const involucrados = useSelector((state) => state.involucrado.list);
-  const entrevistaActual = useSelector((state) => state.entrevistaRoboRueda.list);
+  const currentEntrevista = useSelector((state) => state.entrevistaRoboRueda.list);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
   const siniestroId = location.state.params.siniestroId;
   const formType = data.mode;
+
+  const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
+  const firma = ['SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA'];
+  const tipoEntrevista = ['PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA'];
+  const relacionVh = ['Titular', 'Autorizado', 'Pasajero', 'No autorizado'];
+  const habilitacionDni = ['DNI habilitado', 'DNI no habilitado'];
+  const habilitacionLc = ['Licencia de conducir habilitada', 'Licencia de conducir no habilitada'];
+  const habilitacionTv = ['Tarjeta verde habilitada', 'Tarjeta verde no habilitada'];
+  const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
+  const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
+
+  const columnTitleArray = [
+    'Entrevistado',
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columns = [
+    'entrevistado',
+    'selected',
+    'nombre',
+    'apellido',
+    'rol',
+    'telefono',
+    'prioridad'
+  ];
 
   const schema = Joi.object({
     fechaEntrevista: Joi.date()
@@ -320,6 +346,49 @@ const EntrevistaRoboRuedasForm = () => {
     defaultValues: { ...entrevistaUpdate }
   });
 
+  const checkState = (column, index) => {
+    if (column === 'selected' && currentEntrevista && currentEntrevista.involucrado) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxChange = (index) => {
+    const isSelectedInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+    }
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
   const onConfirmFunction = async () => {
     if (formType == 'create') {
       const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
@@ -355,102 +424,6 @@ const EntrevistaRoboRuedasForm = () => {
     setModalAddConfirmOpen(true);
   };
 
-  const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
-  const firma = ['SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA'];
-  const tipoEntrevista = ['PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA'];
-  const relacionVh = ['Titular', 'Autorizado', 'Pasajero', 'No autorizado'];
-  const habilitacionDni = ['DNI habilitado', 'DNI no habilitado'];
-  const habilitacionLc = ['Licencia de conducir habilitada', 'Licencia de conducir no habilitada'];
-  const habilitacionTv = ['Tarjeta verde habilitada', 'Tarjeta verde no habilitada'];
-  const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
-  const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
-
-  const columnTitleArray = [
-    'Entrevistado',
-    'Seleccionar',
-    'Nombre',
-    'Apellido',
-    'Rol',
-    'Telefono',
-    'Prioridad'
-  ];
-  const columns = [
-    'entrevistado',
-    'selected',
-    'nombre',
-    'apellido',
-    'rol',
-    'telefono',
-    'prioridad'
-  ];
-
-  const [selectedLi, setSelectedLi] = useState(null);
-  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
-
-  const handleIconClick = (involucradoId) => {
-    setSelectedLi(involucradoId);
-  };
-
-  const checkState = (column, index) => {
-    if (column === 'selected' && entrevistaActual && entrevistaActual.involucrado) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const handleCheckboxChange = (index) => {
-    const checkInvolucrado = selectedInvolucrados.find(
-      (involucrado) => involucrados[index]._id === involucrado
-    );
-    if (checkInvolucrado) {
-      const newListSelectedInvolucrados = selectedInvolucrados.filter(
-        (involucrado) => involucrados[index]._id !== involucrado
-      );
-      setSelectedInvolucrados(newListSelectedInvolucrados);
-    } else {
-      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
-    }
-  };
-
-  const ifNotArrayNotObject = (item, itemContent) => {
-    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
-      if (itemContent === 'firstName') {
-        return (
-          <span>
-            {item?.firstName} {item?.lastName}
-          </span>
-        );
-      } else {
-        return item[itemContent];
-      }
-    }
-  };
-
-  const ifNotExist = (item) => {
-    if (item?.length === 0) {
-      return <span>This element Was Deleted. Edit to add</span>;
-    }
-  };
-
-  const handleInvolucradoClick = (event) => {
-    const value = event.target.value;
-
-    if (involucradosSelected.includes(value)) {
-      setSelectedInvolucrados(involucradosSelected.filter((involucrado) => involucrado !== value));
-    } else {
-      setSelectedInvolucrados([...involucradosSelected, value]);
-    }
-  };
-
-  const involucradosInput =
-    searchInvolucrado.length > 0
-      ? involucrados.filter((involucrado) => {
-          return involucrado.nombre.toLowerCase().includes(searchInvolucrado.toLowerCase());
-        })
-      : involucrados;
-
   useEffect(() => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
@@ -459,10 +432,10 @@ const EntrevistaRoboRuedasForm = () => {
   }, []);
 
   useEffect(() => {
-    if (entrevistaActual.involucrado) {
-      setSelectedInvolucrados(entrevistaActual.involucrado);
+    if (currentEntrevista.involucrado) {
+      setSelectedInvolucrados(currentEntrevista.involucrado);
     }
-  }, [entrevistaActual.involucrado?.length]);
+  }, [currentEntrevista.involucrado?.length]);
 
   return (
     <div className={styles.container}>
@@ -818,27 +791,6 @@ const EntrevistaRoboRuedasForm = () => {
           <Button clickAction={() => reset()} text="Reset" />
           <Button text="Cancel" clickAction={() => history.goBack()} />
         </div>
-        <div className={styles.inputContainer}>
-          Involucrados:
-          <input
-            className={styles.searchInput}
-            type="text"
-            placeholder="BuscarInvolucrado..."
-            onChange={(e) => setSearchInvolucrado(e.target.value)}
-          />
-          <OptionMultipleInput
-            membersSelected={involucradosSelected.length === 0 ? '' : involucradosSelected}
-            onAction={handleInvolucradoClick}
-            data={involucradosInput}
-            dataLabel="Involucrado"
-            setValue={{}}
-            aValue={{}}
-            name="involucrados"
-            register={register}
-            error={errors.involucrados?.message}
-            disabled={false}
-          />
-        </div>
       </form>
       <div className={styles.bottomTable}>
         <table className={styles.table}>
@@ -876,48 +828,6 @@ const EntrevistaRoboRuedasForm = () => {
             })}
           </tbody>
         </table>
-        <ul className={styles.list}>
-          {involucrados.map((involucrado) => {
-            {
-              return involucrados.map((oneInvolucrado) => {
-                if (oneInvolucrado._id === involucrado) {
-                  return (
-                    <li key={involucrado}>
-                      <div className={styles.listMembers}>
-                        <div className={styles.eachMember}>
-                          {oneInvolucrado.nombre} {oneInvolucrado.apellido}
-                          <div className={styles.boxClose}>
-                            <img
-                              className={styles.iconPic}
-                              onClick={() => {
-                                handleIconClick(involucrado);
-                              }}
-                              src={`${process.env.PUBLIC_URL}/assets/images/${'info.png'}`}
-                            />
-                            <div className={styles.close_icon} />
-                          </div>
-                        </div>
-                      </div>
-                      {selectedLi === involucrado && (
-                        <div className={styles.speechBalloon}>
-                          <div className={styles.speechElements}>
-                            <p title={'Nombre'}>{oneInvolucrado.nombre}</p>
-                            <p title={'Apellido'}>{oneInvolucrado.apellido}</p>
-                            <div
-                              onClick={() => {}}
-                              className={`${styles.boxClick} ${styles.close_icon}`}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </li>
-                  );
-                }
-                return null;
-              });
-            }
-          })}
-        </ul>
       </div>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
     </div>

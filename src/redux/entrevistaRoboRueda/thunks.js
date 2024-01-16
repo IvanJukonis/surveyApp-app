@@ -19,7 +19,6 @@ export const getAllEntrevistaRoboRueda = async (dispatch) => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`);
     const data = await response.json();
     const entrevistaRoboRuedasListAll = data.data;
-    console.log(entrevistaRoboRuedasListAll, 'llamado al back');
     dispatch(getEntrevistaRoboRuedaPending(false));
     dispatch(getEntrevistaRoboRuedaSuccess(entrevistaRoboRuedasListAll));
   } catch (error) {

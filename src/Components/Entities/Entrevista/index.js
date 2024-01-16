@@ -67,11 +67,8 @@ function Entrevista() {
     resolver: joiResolver(schema)
   });
 
-  console.log(entrevistaRoboRueda, 'entrevista robo rueda');
-
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
-      console.log(entrevistaRoboRuedaActual, 'params');
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
         params: { ...entrevistaRoboRuedaActual, mode: 'create', siniestroId: id }
       });
