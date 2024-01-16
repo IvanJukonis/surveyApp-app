@@ -2,10 +2,10 @@
   margin: 5px;
   width: 150px;
   height: 40px;
-  background-color: #FAFAFA;
-  border: solid #3c3c3c 1.5px;
+  background-color: #3C3C3C;
+  border: solid #3C3C3C 1.5px;
   cursor: pointer;
-  color: #3C3C3C;
+  color: #FAFAFA;
   text-transform: uppercase;
   line-height: 20px;
   text-align: center;
@@ -22,9 +22,9 @@
   width: 150px;
   height: 40px;
   background-color: transparent;
-  border: solid black 1px;
+  border: solid #3C3C3C 1px;
   cursor: pointer;
-  color: black;
+  color: #3C3C3C;
   text-transform: uppercase;
   line-height: 20px;
   text-align: center;
@@ -33,16 +33,17 @@
   touch-action: manipulation;
   transition: 0.2s;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .btnCancel:hover,
 .btnAccept:hover {
-  background-color: #3C3C3C;
-  color: white;
+  background-color: #fafaface;
+  border: solid #3C3C3C 1.5px;
+  color: #3C3C3C;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
   transform: translateY(-2px);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .btnContainer {

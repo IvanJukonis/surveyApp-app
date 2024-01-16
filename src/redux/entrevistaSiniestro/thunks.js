@@ -28,6 +28,26 @@ export const getAllEntrevistaSiniestro = async (dispatch) => {
   }
 };
 
+export const getSinEntrevistaSiniestro = async (dispatch, sinId) => {
+  try {
+    dispatch(getEntrevistaSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro`);
+    const data = await response.json();
+
+    const EntrevistaSiniestrosListAll = data.data;
+    const newData = EntrevistaSiniestrosListAll.filter(
+      (entrevista) => !entrevista.siniestro.includes(sinId)
+    );
+    console.log(newData, 'lista de siniestros filtrada');
+
+    dispatch(getEntrevistaSiniestroPending(false));
+    dispatch(getEntrevistaSiniestroSuccess(newData));
+  } catch (error) {
+    dispatch(getEntrevistaSiniestroPending(false));
+    dispatch(getEntrevistaSiniestroError(true));
+  }
+};
+
 export const deleteEntrevistaSiniestro = (entrevistaSiniestroID) => {
   return async (dispatch) => {
     try {

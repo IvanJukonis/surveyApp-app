@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getAllEntrevistaSiniestro,
+  getSinEntrevistaSiniestro,
   deleteEntrevistaSiniestro
 } from 'redux/entrevistaSiniestro/thunks';
 import {
@@ -24,8 +24,6 @@ function Entrevista() {
   const entrevistaSiniestro = useSelector((state) => state.entrevistaSiniestro.list);
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
-  const entrevistaSiniestroActual = entrevistaSiniestro.find((item) => item._id === id);
-  const entrevistaRoboRuedaActual = entrevistaRoboRueda.find((item) => item._id === id);
   const [toastErroOpen, setToastErroOpen] = useState(isError);
   const entrevistas = [...entrevistaRoboRueda, ...entrevistaSiniestro];
 
@@ -70,11 +68,11 @@ function Entrevista() {
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
-        params: { ...entrevistaRoboRuedaActual, mode: 'create', siniestroId: id }
+        params: { mode: 'create' }
       });
     } else {
       history.push(`entrevistasiniestro/${rol}/${id.id}`, {
-        params: { ...entrevistaSiniestroActual, mode: 'create', siniestroId: id }
+        params: { mode: 'create' }
       });
     }
   };
@@ -102,7 +100,7 @@ function Entrevista() {
   const deleteButton = actualUser ? undefined : deleteEntrevista;
 
   useEffect(() => {
-    getAllEntrevistaSiniestro(dispatch);
+    getSinEntrevistaSiniestro(dispatch, id.id);
     getAllEntrevistaRoboRueda(dispatch);
   }, []);
 
@@ -162,7 +160,7 @@ function Entrevista() {
           </div>
           <div className={styles.bottomContainer}>
             <div className={styles.inputContainer}>
-              <Button clickAction={() => {}} text="CANCELAR" />
+              <Button text="Cancel" clickAction={() => history.goBack()} />
             </div>
           </div>
         </div>
