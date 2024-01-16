@@ -25,7 +25,13 @@ function Entrevista() {
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
   const [toastErroOpen, setToastErroOpen] = useState(isError);
-  const entrevistas = [...entrevistaRoboRueda, ...entrevistaSiniestro];
+  let entrevistas = [];
+
+  if (Array.isArray(entrevistaSiniestro) && Array.isArray(entrevistaRoboRueda)) {
+    entrevistas = [...entrevistaSiniestro, ...entrevistaRoboRueda];
+  }
+
+  console.log('entrevistaRoborueda', entrevistaRoboRueda);
 
   const columnTitleArray = ['Nombre', 'Apellido', 'Fecha', 'Rol', 'Tipo', 'Firma'];
   const columns = [

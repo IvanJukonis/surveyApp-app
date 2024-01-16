@@ -38,8 +38,6 @@ export const getSinEntrevistaSiniestro = async (dispatch, sinId) => {
     const newData = EntrevistaSiniestrosListAll.filter(
       (entrevista) => !entrevista.siniestro.includes(sinId)
     );
-    console.log(newData, 'lista de siniestros filtrada');
-
     dispatch(getEntrevistaSiniestroPending(false));
     dispatch(getEntrevistaSiniestroSuccess(newData));
   } catch (error) {
