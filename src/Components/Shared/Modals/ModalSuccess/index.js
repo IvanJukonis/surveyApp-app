@@ -15,7 +15,7 @@ const ModalSuccess = ({ setModalSuccessOpen, message }) => {
           alt="cancel icon"
         />
         <div className={styles.text_cont}>
-          <h3 className={styles.titleModal}>SUCCESSFUL</h3>
+          <h3 className={styles.titleModal}>Exitoso</h3>
           <p className={styles.textModal}>{message}</p>
         </div>
         <div className={styles.buttons}>

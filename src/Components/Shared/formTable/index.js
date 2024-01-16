@@ -156,13 +156,16 @@ const FormTable = ({
       {modalConfirm && (
         <ModalConfirm
           onConfirm={() => onConfirm()}
-          message="Are you sure to delete this?"
-          method="Delete"
+          message="¿Está seguro que desea eliminar el elemento?"
+          method="Eliminar"
           setModalConfirmOpen={setModalConfirm}
         />
       )}
       {successModal && (
-        <ModalSuccess setModalSuccessOpen={setModalSuccess} message="Delete Successfully" />
+        <ModalSuccess
+          setModalSuccessOpen={setModalSuccess}
+          message="El elemento ha sido eliminado correctamente."
+        />
       )}
     </section>
   );

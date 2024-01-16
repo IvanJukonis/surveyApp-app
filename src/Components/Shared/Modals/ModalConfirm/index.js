@@ -19,9 +19,9 @@ const ModalConfirm = ({ message, method, onConfirm, setModalConfirmOpen }) => {
         />
         <p
           className={styles.titleModal}
-          style={method.toLowerCase() === 'delete' ? { color: '#F13312' } : { color: '#494E6B' }}
+          style={method.toLowerCase() === 'eliminar' ? { color: '#F13312' } : { color: '#494E6B' }}
         >
-          Agregando Involucrado...
+          Confirmar
         </p>
         <p className={styles.textModal}>{message}</p>
         <div className={styles.buttons}>
@@ -31,11 +31,11 @@ const ModalConfirm = ({ message, method, onConfirm, setModalConfirmOpen }) => {
               setModalConfirmOpen(false);
             }}
           >
-            Cancel
+            Cancelar
           </button>
           <button
             className={
-              method.toLowerCase() === 'delete' ? styles.btnAcceptDelete : styles.btnAccept
+              method.toLowerCase() === 'eliminar' ? styles.btnAcceptDelete : styles.btnAccept
             }
             onClick={onConfirmFunction}
           >
