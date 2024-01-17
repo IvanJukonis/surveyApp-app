@@ -74,11 +74,11 @@ function Entrevista() {
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
-        params: { mode: 'create' }
+        params: { mode: 'create', siniestroId: id }
       });
     } else {
       history.push(`entrevistasiniestro/${rol}/${id.id}`, {
-        params: { mode: 'create' }
+        params: { mode: 'create', siniestroId: id }
       });
     }
   };

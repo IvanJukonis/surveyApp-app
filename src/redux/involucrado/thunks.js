@@ -13,17 +13,18 @@ import {
   updateInvolucradoError
 } from './actions';
 
-export const getAllInvolucrado = async (dispatch, siniestroId) => {
+export const getAllInvolucrado = async (dispatch, sinId) => {
   try {
+    console.log(sinId);
     dispatch(getInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
     const data = await response.json();
-    const involucradosListAll = data.data;
-    const involucradosList = involucradosListAll.filter((involucrado) =>
-      involucrado.siniestro.includes(siniestroId)
+    const involucradosList = data.data;
+    const involucradosSiniestroList = involucradosList.filter(
+      (involucrado) => involucrado.siniestro[0] === sinId.id
     );
     dispatch(getInvolucradoPending(false));
-    dispatch(getInvolucradoSuccess(involucradosList));
+    dispatch(getInvolucradoSuccess(involucradosSiniestroList));
   } catch (error) {
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoError(true));

@@ -14,7 +14,7 @@ import {
   postEntrevistaRoboRueda,
   getByIdEntrevistaRoboRueda
 } from 'redux/entrevistaRoboRueda/thunks';
-import { getInvolucrado } from 'redux/involucrado/thunks';
+import { getAllInvolucrado } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -420,7 +420,7 @@ const EntrevistaRoboRuedasForm = () => {
 
   const onSubmit = async (data) => {
     setEntrevistaRoboRueda(data);
-    getInvolucrado(dispatch);
+    getAllInvolucrado(dispatch, siniestroId);
     setModalAddConfirmOpen(true);
   };
 
@@ -428,7 +428,8 @@ const EntrevistaRoboRuedasForm = () => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
     }
-    getInvolucrado(dispatch);
+    console.log(siniestroId);
+    getAllInvolucrado(dispatch, siniestroId);
   }, []);
 
   useEffect(() => {
