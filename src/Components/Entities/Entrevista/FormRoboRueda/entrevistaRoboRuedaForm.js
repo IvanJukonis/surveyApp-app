@@ -32,6 +32,8 @@ const EntrevistaRoboRuedasForm = () => {
   const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   // eslint-disable-next-line no-unused-vars
+  const [entrevistado, setEntrevistado] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [involucrado, setInvolucrado] = useState([]);
   const involucrados = useSelector((state) => state.involucrado.list);
   const currentEntrevista = useSelector((state) => state.entrevistaRoboRueda.list);
@@ -346,7 +348,7 @@ const EntrevistaRoboRuedasForm = () => {
     defaultValues: { ...entrevistaUpdate }
   });
 
-  const checkState = (column, index) => {
+  const checkStateSelected = (column, index) => {
     if (column === 'selected' && currentEntrevista && currentEntrevista.involucrado) {
       if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
@@ -355,7 +357,30 @@ const EntrevistaRoboRuedasForm = () => {
     return false;
   };
 
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxSelected = (index) => {
+    const isSelectedInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+    }
+  };
+
+  const checkStateEntrevistado = (column, index) => {
+    if (column === 'entrevistado' && currentEntrevista && currentEntrevista.involucrado) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxEntrevistado = (index) => {
     const isSelectedInvolucrado = selectedInvolucrados.find(
       (involucrado) => involucrados[index]._id === involucrado
     );
@@ -420,7 +445,7 @@ const EntrevistaRoboRuedasForm = () => {
 
   const onSubmit = async (data) => {
     setEntrevistaRoboRueda(data);
-    getAllInvolucrado(dispatch, siniestroId);
+    getAllInvolucrado(dispatch, siniestroId.id);
     setModalAddConfirmOpen(true);
   };
 
@@ -428,8 +453,7 @@ const EntrevistaRoboRuedasForm = () => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
     }
-    console.log(siniestroId);
-    getAllInvolucrado(dispatch, siniestroId);
+    getAllInvolucrado(dispatch, siniestroId.id);
   }, []);
 
   useEffect(() => {
@@ -810,11 +834,17 @@ const EntrevistaRoboRuedasForm = () => {
                 <tr className={rowClass} key={index}>
                   {columns.map((column, columnIndex) => (
                     <td key={columnIndex}>
-                      {column === 'selected' || column === 'entrevistado' ? (
+                      {column === 'selected' ? (
                         <input
                           type="checkbox"
-                          onChange={() => handleCheckboxChange(index)}
-                          checked={checkState(column, index)}
+                          onChange={() => handleCheckboxSelected(index)}
+                          checked={checkStateSelected(column, index)}
+                        />
+                      ) : column === 'entrevistado' ? (
+                        <input
+                          type="checkbox"
+                          onChange={() => handleCheckboxEntrevistado(index)}
+                          checked={checkStateEntrevistado(column, index)}
                         />
                       ) : (
                         <>
