@@ -105,7 +105,7 @@ function Entrevista() {
 
   useEffect(() => {
     getSinEntrevistaSiniestro(dispatch, id.id);
-    getAllEntrevistaRoboRueda(dispatch);
+    getAllEntrevistaRoboRueda(dispatch, id.id);
   }, []);
 
   return (

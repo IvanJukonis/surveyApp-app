@@ -13,14 +13,17 @@ import {
   updateEntrevistaRoboRuedaError
 } from './actions';
 
-export const getAllEntrevistaRoboRueda = async (dispatch) => {
+export const getAllEntrevistaRoboRueda = async (dispatch, sinId) => {
   try {
     dispatch(getEntrevistaRoboRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`);
     const data = await response.json();
     const entrevistaRoboRuedasListAll = data.data;
+    const sinEntrevistaRoboRueda = entrevistaRoboRuedasListAll.filter(
+      (entrevista) => entrevista.siniestro[0] === sinId
+    );
     dispatch(getEntrevistaRoboRuedaPending(false));
-    dispatch(getEntrevistaRoboRuedaSuccess(entrevistaRoboRuedasListAll));
+    dispatch(getEntrevistaRoboRuedaSuccess(sinEntrevistaRoboRueda));
   } catch (error) {
     dispatch(getEntrevistaRoboRuedaPending(false));
     dispatch(getEntrevistaRoboRuedaError(true));
@@ -70,7 +73,6 @@ export const postEntrevistaRoboRueda = async (
   entrevistadoId
 ) => {
   try {
-    console.log(entrevistadoId);
     dispatch(postEntrevistaRoboRuedaPending(true));
     const requestBody = {
       ...entrevistaRoboRuedaData,

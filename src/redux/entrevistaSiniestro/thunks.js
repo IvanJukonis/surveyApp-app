@@ -35,11 +35,11 @@ export const getSinEntrevistaSiniestro = async (dispatch, sinId) => {
     const data = await response.json();
 
     const EntrevistaSiniestrosListAll = data.data;
-    const newData = EntrevistaSiniestrosListAll.filter(
-      (entrevista) => !entrevista.siniestro.includes(sinId)
+    const sinEntrevistaSiniestros = EntrevistaSiniestrosListAll.filter(
+      (entrevista) => entrevista.siniestro[0] === sinId
     );
     dispatch(getEntrevistaSiniestroPending(false));
-    dispatch(getEntrevistaSiniestroSuccess(newData));
+    dispatch(getEntrevistaSiniestroSuccess(sinEntrevistaSiniestros));
   } catch (error) {
     dispatch(getEntrevistaSiniestroPending(false));
     dispatch(getEntrevistaSiniestroError(true));
