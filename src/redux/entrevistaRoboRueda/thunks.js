@@ -70,6 +70,7 @@ export const postEntrevistaRoboRueda = async (
   entrevistadoId
 ) => {
   try {
+    console.log(entrevistadoId);
     dispatch(postEntrevistaRoboRuedaPending(true));
     const requestBody = {
       ...entrevistaRoboRuedaData,
