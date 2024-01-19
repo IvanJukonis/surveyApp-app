@@ -66,14 +66,16 @@ export const postEntrevistaRoboRueda = async (
   dispatch,
   entrevistaRoboRuedaData,
   involucradoIdList,
-  siniestroId
+  siniestroId,
+  entrevistadoId
 ) => {
   try {
     dispatch(postEntrevistaRoboRuedaPending(true));
     const requestBody = {
       ...entrevistaRoboRuedaData,
       involucrado: involucradoIdList,
-      siniestro: siniestroId.id
+      siniestro: siniestroId.id,
+      entrevistado: entrevistadoId
     };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`, {
       method: 'POST',

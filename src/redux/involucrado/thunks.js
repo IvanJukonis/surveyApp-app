@@ -15,7 +15,6 @@ import {
 
 export const getAllInvolucrado = async (dispatch, sinId) => {
   try {
-    console.log(sinId, 'fetch');
     dispatch(getInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
     const data = await response.json();
@@ -23,8 +22,6 @@ export const getAllInvolucrado = async (dispatch, sinId) => {
     const involucradosSiniestroList = involucradosList.filter(
       (involucrado) => involucrado.siniestro[0] === sinId
     );
-    console.log(involucradosList, 'fetch');
-    console.log(involucradosSiniestroList, 'fetch');
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoSuccess(involucradosSiniestroList));
   } catch (error) {

@@ -357,9 +357,6 @@ const InvolucradosForm = () => {
     setButtonType(true);
   };
 
-  console.log(id);
-
-  console.log(involucrados);
   useEffect(() => {
     getAllInvolucrado(dispatch, id);
   }, []);

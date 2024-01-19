@@ -31,8 +31,6 @@ function Entrevista() {
     entrevistas = [...entrevistaSiniestro, ...entrevistaRoboRueda];
   }
 
-  console.log('entrevistaRoborueda', entrevistaRoboRueda);
-
   const columnTitleArray = ['Nombre', 'Apellido', 'Fecha', 'Rol', 'Tipo', 'Firma'];
   const columns = [
     'nombreEntrevistado',

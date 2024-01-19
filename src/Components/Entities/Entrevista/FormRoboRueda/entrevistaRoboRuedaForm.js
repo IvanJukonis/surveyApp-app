@@ -30,9 +30,11 @@ const EntrevistaRoboRuedasForm = () => {
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
+  // eslint-disable-next-line no-unused-vars
+  const [dataEntrevistado, setDataEntrevistado] = useState();
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   // eslint-disable-next-line no-unused-vars
-  const [entrevistado, setEntrevistado] = useState([]);
+  const [selectedEntrevistado, setSelectedEntrevistado] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [involucrado, setInvolucrado] = useState([]);
   const involucrados = useSelector((state) => state.involucrado.list);
@@ -281,18 +283,7 @@ const EntrevistaRoboRuedasForm = () => {
         'string.empty': 'El campo "Relato" es un campo requerido',
         'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
       })
-      .required(),
-    involucrados: Joi.alternatives()
-      .try(
-        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required()
-      )
       .required()
-      .messages({
-        'any.only': 'Selecciona un involucrado',
-        'any.required': 'Selecciona un involucrado',
-        'array.min': 'Selecciona almenos un involucrado'
-      })
   });
 
   const formatDate = (dateString) => {
@@ -354,6 +345,11 @@ const EntrevistaRoboRuedasForm = () => {
         return true;
       }
     }
+    if (data.mode === 'create') {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
     return false;
   };
 
@@ -372,8 +368,13 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const checkStateEntrevistado = (column, index) => {
-    if (column === 'entrevistado' && currentEntrevista && currentEntrevista.involucrado) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+    if (column === 'selected' && currentEntrevista && currentEntrevista.entrevistado) {
+      if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (data.mode === 'create') {
+      if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
     }
@@ -381,16 +382,16 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const handleCheckboxEntrevistado = (index) => {
-    const isSelectedInvolucrado = selectedInvolucrados.find(
+    const isSelectedEntrevistado = selectedEntrevistado.find(
       (involucrado) => involucrados[index]._id === involucrado
     );
-    if (isSelectedInvolucrado) {
-      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+    if (isSelectedEntrevistado) {
+      const newListSelectedEntrevistado = selectedEntrevistado.filter(
         (involucrado) => involucrados[index]._id !== involucrado
       );
-      setSelectedInvolucrados(newListSelectedInvolucrados);
+      setSelectedEntrevistado(newListSelectedEntrevistado);
     } else {
-      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+      setSelectedEntrevistado([involucrados[index]._id]);
     }
   };
 
@@ -415,11 +416,16 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const onConfirmFunction = async () => {
+    const entrevistaCompleta = {
+      ...entrevistaRoboRueda,
+      nombreEntrevistado: dataEntrevistado.nombre,
+      apellidoEntrevistado: dataEntrevistado.apellido
+    };
     if (formType == 'create') {
       const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
         dispatch,
-        entrevistaRoboRueda,
-        involucrado.map((inv) => inv._id),
+        entrevistaCompleta,
+        selectedInvolucrados,
         siniestroId
       );
       if (addEntrevistaRoboRuedaResponse.type === 'POST_ENTREVISTAROBORUEDA_SUCCESS') {
@@ -443,6 +449,8 @@ const EntrevistaRoboRuedasForm = () => {
     }
   };
 
+  console.log(errors);
+
   const onSubmit = async (data) => {
     setEntrevistaRoboRueda(data);
     getAllInvolucrado(dispatch, siniestroId.id);
@@ -457,10 +465,34 @@ const EntrevistaRoboRuedasForm = () => {
   }, []);
 
   useEffect(() => {
-    if (currentEntrevista.involucrado) {
+    if (currentEntrevista?.involucrado) {
       setSelectedInvolucrados(currentEntrevista.involucrado);
+      console.log('entre inv');
     }
-  }, [currentEntrevista.involucrado?.length]);
+  }, [currentEntrevista?.involucrado?.length]);
+
+  useEffect(() => {
+    if (currentEntrevista?.entrevistado) {
+      console.log(currentEntrevista.entrevistado);
+      setSelectedEntrevistado(currentEntrevista.entrevistado);
+    }
+  }, [currentEntrevista?.entrevistado?.length]);
+
+  console.log(selectedInvolucrados);
+  console.log(selectedEntrevistado);
+
+  useEffect(() => {
+    if (selectedEntrevistado.length > 0) {
+      const entrevistado = involucrados.find(
+        (involucrado) => involucrado._id === selectedEntrevistado[0]
+      );
+      const nuevaEntrevistaRoboRueda = {
+        nombre: entrevistado.nombre,
+        apellido: entrevistado.apellido
+      };
+      setDataEntrevistado(nuevaEntrevistaRoboRueda);
+    }
+  }, [selectedEntrevistado]);
 
   return (
     <div className={styles.container}>
