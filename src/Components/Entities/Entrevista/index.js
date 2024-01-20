@@ -41,7 +41,7 @@ function Entrevista() {
     'firma'
   ];
   const rolArray = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
-  const tipoArray = ['Relevamiento', 'Fraude'];
+  const tipoArray = ['Accidente', 'Robo ruedas', 'Generica'];
   const tipoExportacion = ['PDF', 'Word'];
 
   const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
@@ -54,7 +54,7 @@ function Entrevista() {
       .messages({
         'any.only': 'Selecciona un tipo de rol permitido'
       }),
-    tipo: Joi.string().valid('Relevamiento', 'Fraude').messages({
+    tipo: Joi.string().valid('Relevamiento', 'Generica', 'Robo ruedas').messages({
       'any.only': 'Selecciona un tipo de siniestro permitido'
     }),
     exportacion: Joi.any()
@@ -70,7 +70,7 @@ function Entrevista() {
   });
 
   const handleAddClick = (rol, tipo) => {
-    if (tipo == 'Fraude') {
+    if (tipo == 'Robo ruedas') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
         params: { mode: 'create', siniestroId: id }
       });

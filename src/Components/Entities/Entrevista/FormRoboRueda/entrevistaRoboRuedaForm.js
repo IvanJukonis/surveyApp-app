@@ -25,6 +25,7 @@ import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
+  //const formRef = useRef();
   const { id } = useParams();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
@@ -35,6 +36,7 @@ const EntrevistaRoboRuedasForm = () => {
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [selectedEntrevistado, setSelectedEntrevistado] = useState([]);
+  const [redirect, setRedirect] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [involucrado, setInvolucrado] = useState([]);
   const involucrados = useSelector((state) => state.involucrado.list);
@@ -104,6 +106,7 @@ const EntrevistaRoboRuedasForm = () => {
     }),
 
     fechaSiniestro: Joi.date()
+      .empty('')
       .messages({
         'date.base': 'El campo "Fecha de Siniestro" debe ser una fecha valida.',
         'date.empty': 'El campo "Fecha de Siniestro" no puede permanecer vacio.'
@@ -111,6 +114,7 @@ const EntrevistaRoboRuedasForm = () => {
       .required(),
 
     hrAproximada: Joi.date()
+      .empty('')
       .messages({
         'date.base': 'El campo "Hora Aproximada" debe ser una fecha valida.',
         'date.empty': 'El campo "Hora Aproximada" no puede permanecer vacio.'
@@ -118,6 +122,7 @@ const EntrevistaRoboRuedasForm = () => {
       .required(),
 
     hrNotificacion: Joi.date()
+      .empty('')
       .messages({
         'date.base': 'El campo "Hora de Notificacion" debe ser una fecha valida.',
         'date.empty': 'El campo "Hora de Notificacion" no puede permanecer vacio.'
@@ -125,6 +130,7 @@ const EntrevistaRoboRuedasForm = () => {
       .required(),
 
     hrConfirmacion: Joi.date()
+      .empty('')
       .messages({
         'date.base': 'El campo "Hora de Confirmacion" debe ser una fecha valida.',
         'date.empty': 'El campo "Hora de Confirmacion" no puede permanecer vacio.'
@@ -132,33 +138,40 @@ const EntrevistaRoboRuedasForm = () => {
       .required(),
 
     hrReclamo: Joi.date()
+      .empty('')
       .messages({
         'date.base': 'El campo "Hora de Reclamo" debe ser una fecha valida.',
         'date.empty': 'El campo "Hora de Reclamo" no puede permanecer vacio.'
       })
       .required(),
 
-    relacionVh: Joi.string().valid('Titular', 'Autorizado', 'Pasajero', 'No autorizado').messages({
-      'any.only': 'Seleccione una opción valida'
-    }),
+    relacionVh: Joi.string()
+      .empty('')
+      .valid('Titular', 'Autorizado', 'Pasajero', 'No autorizado')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
 
-    habilitacionDni: Joi.string().valid('DNI habilitado', 'DNI no habilitado').messages({
+    habilitacionDni: Joi.string().empty('').valid('DNI habilitado', 'DNI no habilitado').messages({
       'any.only': 'Seleccione una opción valida'
     }),
 
     habilitacionLc: Joi.string()
+      .empty('')
       .valid('Licencia de conducir habilitada', 'Licencia de conducir no habilitada')
       .messages({
         'any.only': 'Seleccione una opción valida'
       }),
 
     habilitacionTv: Joi.string()
+      .empty('')
       .valid('Tarjeta verde habilitada', 'Tarjeta verde no habilitada')
       .messages({
         'any.only': 'Seleccione una opción valida'
       }),
 
     habilitacionTa: Joi.string()
+      .empty('')
       .valid('Tarjeta azul habilitada', 'Tarjeta verde no habilitada')
       .messages({
         'any.only': 'Seleccione una opción valida'
@@ -192,19 +205,15 @@ const EntrevistaRoboRuedasForm = () => {
       })
       .required(),
 
-    usoVh: Joi.string().valid('Particular', 'Profesional', 'Servicio', 'Otro').messages({
+    usoVh: Joi.string().empty('').valid('Particular', 'Profesional', 'Servicio', 'Otro').messages({
       'any.only': 'Seleccione una opción valida'
     }),
 
-    tipoUsoVh: Joi.string()
-      .min(3)
-      .max(500)
-      .messages({
-        'string.base': 'El campo "Tipo de Uso" debe ser una cadena de texto',
-        'string.empty': 'El campo "Tipo de Uso" es un campo requerido',
-        'string.min': 'El campo "Tipo de Uso" debe tener al menos 3 caracteres'
-      })
-      .required(),
+    tipoUsoVh: Joi.string().empty('').max(500).messages({
+      'string.base': 'El campo "Tipo de Uso" debe ser una cadena de texto',
+      'string.empty': 'El campo "Tipo de Uso" es un campo requerido',
+      'string.min': 'El campo "Tipo de Uso" debe tener al menos 3 caracteres'
+    }),
 
     alarmaActiva: Joi.boolean()
       .messages({
@@ -220,22 +229,14 @@ const EntrevistaRoboRuedasForm = () => {
       })
       .required(),
 
-    duenoPrevio: Joi.string()
-      .min(3)
-      .max(500)
-      .messages({
-        'string.base': 'El campo "Dueño previo" debe ser una cadena de texto',
-        'string.empty': 'El campo "Dueño previo" es un campo requerido',
-        'string.min': 'El campo "Dueño previo" debe tener al menos 3 caracteres'
-      })
-      .required(),
+    duenoPrevio: Joi.string().empty('').max(500).messages({
+      'string.base': 'El campo "Dueño previo" debe ser una cadena de texto'
+    }),
 
-    aportaDueñoPrevio: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Aporte de Dueño Previo" es un campo booleano',
-        'boolean.empty': 'El campo "Aporte de Dueño Previo" debe tener un valor determinado'
-      })
-      .required(),
+    aportaDueñoPrevio: Joi.boolean().empty('').messages({
+      'boolean.base': 'El campo "Aporte de Dueño Previo" es un campo booleano',
+      'boolean.empty': 'El campo "Aporte de Dueño Previo" debe tener un valor determinado'
+    }),
 
     tuercaDeSeguridad: Joi.boolean()
       .messages({
@@ -244,15 +245,10 @@ const EntrevistaRoboRuedasForm = () => {
       })
       .required(),
 
-    bulones: Joi.string()
-      .min(3)
-      .max(500)
-      .messages({
-        'string.base': 'El campo "Bulones" debe ser una cadena de texto',
-        'string.empty': 'El campo "Bulones" es un campo requerido',
-        'string.min': 'El campo "Bulones" debe tener al menos 3 caracteres'
-      })
-      .required(),
+    bulones: Joi.string().max(500).empty('').messages({
+      'string.base': 'El campo "Bulones" debe ser una cadena de texto',
+      'string.max': 'El campo "Bulones" no debe exceder los 500 caracteres'
+    }),
 
     prestaRueda: Joi.boolean()
       .messages({
@@ -275,15 +271,11 @@ const EntrevistaRoboRuedasForm = () => {
       })
       .required(),
 
-    relato: Joi.string()
-      .min(3)
-      .max(500)
-      .messages({
-        'string.base': 'El campo "Relato" debe ser una cadena de texto',
-        'string.empty': 'El campo "Relato" es un campo requerido',
-        'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
-      })
-      .required()
+    relato: Joi.string().empty('').max(500).messages({
+      'string.base': 'El campo "Relato" debe ser una cadena de texto',
+      'string.empty': 'El campo "Relato" es un campo requerido',
+      'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
+    })
   });
 
   const formatDate = (dateString) => {
@@ -416,11 +408,29 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const onConfirmFunction = async () => {
-    const entrevistaCompleta = {
-      ...entrevistaRoboRueda,
-      nombreEntrevistado: dataEntrevistado.nombre,
-      apellidoEntrevistado: dataEntrevistado.apellido
-    };
+    let entrevistaCompleta = {};
+    if (dataEntrevistado?.nombre) {
+      entrevistaCompleta = {
+        ...entrevistaRoboRueda,
+        nombreEntrevistado: dataEntrevistado.nombre,
+        apellidoEntrevistado: dataEntrevistado.apellido
+      };
+    } else {
+      entrevistaCompleta = entrevistaRoboRueda;
+    }
+
+    const entrevistaSinPropiedadesVacias = Object.keys(entrevistaCompleta)
+      .filter(
+        (key) =>
+          entrevistaCompleta[key] !== null &&
+          entrevistaCompleta[key] !== undefined &&
+          entrevistaCompleta[key] !== ''
+      )
+      .reduce((obj, key) => {
+        obj[key] = entrevistaCompleta[key];
+        return obj;
+      }, {});
+    console.log(entrevistaSinPropiedadesVacias);
     if (formType == 'create') {
       const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
         dispatch,
@@ -454,6 +464,19 @@ const EntrevistaRoboRuedasForm = () => {
     setEntrevistaRoboRueda(data);
     getAllInvolucrado(dispatch, siniestroId.id);
     setModalAddConfirmOpen(true);
+  };
+
+  const checkState = (index) => {
+    if (involucrados[index].prioridad) {
+      if (involucrados.find((singleData) => singleData.prioridad === true)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const involucradoRedirect = () => {
+    setRedirect(true);
   };
 
   useEffect(() => {
@@ -507,6 +530,8 @@ const EntrevistaRoboRuedasForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
+              redirect={redirect}
+              sinId={siniestroId.id}
               message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
@@ -837,55 +862,67 @@ const EntrevistaRoboRuedasForm = () => {
             </div>
           </div>
         </section>
+        <div>
+          <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
+        </div>
+        <div className={styles.bottomTable}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableContent}>
+                {columnTitleArray.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {involucrados.map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                return (
+                  <tr className={rowClass} key={index}>
+                    {columns.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column === 'selected' ? (
+                          <input
+                            type="checkbox"
+                            className={styles.checkboxInput}
+                            onChange={() => handleCheckboxSelected(index)}
+                            checked={checkStateSelected(column, index)}
+                          />
+                        ) : column === 'entrevistado' ? (
+                          <input
+                            type="checkbox"
+                            className={styles.checkboxInput}
+                            onChange={() => handleCheckboxEntrevistado(index)}
+                            checked={checkStateEntrevistado(column, index)}
+                          />
+                        ) : column.startsWith('prioridad') ? (
+                          <input
+                            className={styles.checkboxInput}
+                            type="checkbox"
+                            readOnly
+                            checked={checkState(index)}
+                          />
+                        ) : (
+                          <>
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         <div className={styles.btnGroup}>
           <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
           <Button clickAction={() => reset()} text="Reset" />
           <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>
-      <div className={styles.bottomTable}>
-        <table className={styles.table}>
-          <thead>
-            <tr className={styles.tableContent}>
-              {columnTitleArray.map((column, index) => (
-                <th key={index}>{column}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {involucrados.map((row, index) => {
-              const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-              return (
-                <tr className={rowClass} key={index}>
-                  {columns.map((column, columnIndex) => (
-                    <td key={columnIndex}>
-                      {column === 'selected' ? (
-                        <input
-                          type="checkbox"
-                          onChange={() => handleCheckboxSelected(index)}
-                          checked={checkStateSelected(column, index)}
-                        />
-                      ) : column === 'entrevistado' ? (
-                        <input
-                          type="checkbox"
-                          onChange={() => handleCheckboxEntrevistado(index)}
-                          checked={checkStateEntrevistado(column, index)}
-                        />
-                      ) : (
-                        <>
-                          {ifNotArrayNotObject(row, column)}
-                          {ifNotExist(row[column])}
-                        </>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
     </div>
   );
