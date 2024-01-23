@@ -38,8 +38,6 @@ const InvolucradosForm = () => {
   const { params } = location.state || {};
   const { createdEntity } = params || {};
 
-  console.log(createdEntity);
-
   const schema = Joi.object({
     prioridad: Joi.boolean()
       .messages({
@@ -365,7 +363,6 @@ const InvolucradosForm = () => {
 
   const cancelForm = () => {
     if (createdEntity) {
-      console.log('entre');
       history.push({
         pathname: `/controlador/siniestros/entrevista/entrevistaroborueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
         state: {
