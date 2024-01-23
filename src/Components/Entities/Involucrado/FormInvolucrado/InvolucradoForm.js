@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -25,14 +26,19 @@ import Joi from 'joi';
 
 const InvolucradosForm = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const involucrados = useSelector((state) => state.involucrado.list);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [involucrado, setInvolucrado] = useState({});
   const [buttonType, setButtonType] = useState(false);
-  const history = useHistory();
-  const { id } = useParams();
+  const data = useParams();
+  const location = useLocation();
+  const { params } = location.state || {};
+  const { createdEntity } = params || {};
+
+  console.log(createdEntity);
 
   const schema = Joi.object({
     prioridad: Joi.boolean()
@@ -254,7 +260,7 @@ const InvolucradosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
-      const involucradoConSiniestro = { ...involucrado, siniestro: id };
+      const involucradoConSiniestro = { ...involucrado, siniestro: data.id };
       const addInvolucradoResponse = await postInvolucrado(dispatch, involucradoConSiniestro);
       if (addInvolucradoResponse.type === 'POST_INVOLUCRADO_SUCCESS') {
         setToastErroOpen(false);
@@ -357,8 +363,22 @@ const InvolucradosForm = () => {
     setButtonType(true);
   };
 
+  const cancelForm = () => {
+    if (createdEntity) {
+      console.log('entre');
+      history.push({
+        pathname: `/controlador/siniestros/entrevista/entrevistaroborueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
+        state: {
+          params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
+        }
+      });
+    } else {
+      history.goBack();
+    }
+  };
+
   useEffect(() => {
-    getAllInvolucrado(dispatch, id);
+    getAllInvolucrado(dispatch, data.id);
   }, []);
 
   return (
@@ -386,7 +406,7 @@ const InvolucradosForm = () => {
         </div>
       }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Involucrado' : 'Involucrado'}</h3>
+        <h3 className={styles.title}>{data.id ? 'Involucrado' : 'Involucrado'}</h3>
       </div>
       <div className={styles.innerContainer}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -662,7 +682,7 @@ const InvolucradosForm = () => {
           <div className={styles.btnContainer}>
             <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={() => history.goBack()} />
+            <Button text="Cancelar" clickAction={cancelForm} />
           </div>
         </form>
         <div className={styles.rightTable}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -25,27 +25,26 @@ import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
-  //const formRef = useRef();
   const { id } = useParams();
+  const location = useLocation();
+  const history = useHistory();
+
+  const data = location.state.params;
+  const siniestroId = location.state.params.siniestroId;
+  const formType = data.mode;
+
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
-  // eslint-disable-next-line no-unused-vars
   const [dataEntrevistado, setDataEntrevistado] = useState();
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
-  // eslint-disable-next-line no-unused-vars
   const [selectedEntrevistado, setSelectedEntrevistado] = useState([]);
   const [redirect, setRedirect] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [involucrado, setInvolucrado] = useState([]);
+
   const involucrados = useSelector((state) => state.involucrado.list);
   const currentEntrevista = useSelector((state) => state.entrevistaRoboRueda.list);
-  const location = useLocation();
-  const history = useHistory();
-  const data = location.state.params;
-  const siniestroId = location.state.params.siniestroId;
-  const formType = data.mode;
+  const createdEntrevista = useSelector((state) => state.entrevistaRoboRueda.createdEntrevista);
 
   const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
   const firma = ['SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA'];
@@ -486,6 +485,14 @@ const EntrevistaRoboRuedasForm = () => {
     getAllInvolucrado(dispatch, siniestroId.id);
   }, []);
 
+  const createdEntrevistaIdRef = useRef(createdEntrevista);
+  const [entrevista, setEntrevista] = useState([]);
+
+  useEffect(() => {
+    createdEntrevistaIdRef.current = createdEntrevista;
+    setEntrevista(createdEntrevistaIdRef.current);
+  }, [createdEntrevista]);
+
   useEffect(() => {
     if (currentEntrevista?.involucrado) {
       setSelectedInvolucrados(currentEntrevista.involucrado);
@@ -531,6 +538,7 @@ const EntrevistaRoboRuedasForm = () => {
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
               redirect={redirect}
+              createdEntity={entrevista}
               sinId={siniestroId.id}
               message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />

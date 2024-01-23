@@ -29,7 +29,8 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     case GET_ENTREVISTAROBORUEDA_SUCCESS: {
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        createdEntrevista: action.payload
       };
     }
 
@@ -50,7 +51,8 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     case POST_ENTREVISTAROBORUEDA_SUCCESS: {
       return {
         ...state,
-        list: [...state.list, action.payload]
+        list: [...state.list, action.payload],
+        createdEntrevista: action.payload
       };
     }
 

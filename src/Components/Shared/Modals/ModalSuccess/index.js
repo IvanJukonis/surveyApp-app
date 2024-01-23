@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './modalSuccess.module.css';
 import { useHistory } from 'react-router-dom';
 
-const ModalSuccess = ({ setModalSuccessOpen, message, redirect, sinId }) => {
+const ModalSuccess = ({ setModalSuccessOpen, message, redirect, sinId, createdEntity }) => {
   const history = useHistory();
 
   const handleClose = () => {
@@ -10,9 +10,9 @@ const ModalSuccess = ({ setModalSuccessOpen, message, redirect, sinId }) => {
   };
 
   const handleRedirect = () => {
-    history.replace({
+    history.push({
       pathname: `/controlador/siniestros/involucrado/form/${sinId}`,
-      state: { params: { mode: 'create' } }
+      state: { params: { mode: 'create', createdEntity: createdEntity } }
     });
   };
 
