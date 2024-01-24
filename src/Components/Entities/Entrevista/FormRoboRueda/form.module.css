@@ -77,6 +77,12 @@
   gap: 20px;
 }
 
+.entityButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .nameLabel {
   display: flex;
   flex-direction: column;

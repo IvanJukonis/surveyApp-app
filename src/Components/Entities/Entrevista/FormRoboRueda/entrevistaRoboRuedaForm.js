@@ -33,6 +33,7 @@ const EntrevistaRoboRuedasForm = () => {
   const siniestroId = location.state.params.siniestroId;
   const formType = data.mode;
 
+  const [errorMessage, setErrorMessage] = useState('Error');
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
@@ -407,58 +408,63 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const onConfirmFunction = async () => {
-    let entrevistaCompleta = {};
-    if (dataEntrevistado?.nombre) {
-      entrevistaCompleta = {
-        ...entrevistaRoboRueda,
-        nombreEntrevistado: dataEntrevistado.nombre,
-        apellidoEntrevistado: dataEntrevistado.apellido
-      };
-    } else {
-      entrevistaCompleta = entrevistaRoboRueda;
-    }
+    if (selectedEntrevistado.length > 0) {
+      let entrevistaCompleta = {};
+      if (dataEntrevistado?.nombre) {
+        entrevistaCompleta = {
+          ...entrevistaRoboRueda,
+          nombreEntrevistado: dataEntrevistado.nombre,
+          apellidoEntrevistado: dataEntrevistado.apellido
+        };
+      } else {
+        entrevistaCompleta = entrevistaRoboRueda;
+      }
 
-    const entrevistaSinPropiedadesVacias = Object.keys(entrevistaCompleta)
-      .filter(
-        (key) =>
-          entrevistaCompleta[key] !== null &&
-          entrevistaCompleta[key] !== undefined &&
-          entrevistaCompleta[key] !== ''
-      )
-      .reduce((obj, key) => {
-        obj[key] = entrevistaCompleta[key];
-        return obj;
-      }, {});
-    console.log(entrevistaSinPropiedadesVacias);
-    if (formType == 'create') {
-      const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
-        dispatch,
-        entrevistaCompleta,
-        selectedInvolucrados,
-        siniestroId,
-        selectedEntrevistado
-      );
-      if (addEntrevistaRoboRuedaResponse.type === 'POST_ENTREVISTAROBORUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {}, 1000);
+      const entrevistaSinPropiedadesVacias = Object.keys(entrevistaCompleta)
+        .filter(
+          (key) =>
+            entrevistaCompleta[key] !== null &&
+            entrevistaCompleta[key] !== undefined &&
+            entrevistaCompleta[key] !== ''
+        )
+        .reduce((obj, key) => {
+          obj[key] = entrevistaCompleta[key];
+          return obj;
+        }, {});
+      console.log(entrevistaSinPropiedadesVacias);
+      if (formType == 'create') {
+        const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
+          dispatch,
+          entrevistaCompleta,
+          selectedInvolucrados,
+          siniestroId,
+          selectedEntrevistado
+        );
+        if (addEntrevistaRoboRuedaResponse.type === 'POST_ENTREVISTAROBORUEDA_SUCCESS') {
+          setToastErroOpen(false);
+          setModalSuccessOpen(true);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
+      } else {
+        const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
+          dispatch,
+          id,
+          entrevistaCompleta,
+          selectedInvolucrados,
+          siniestroId,
+          selectedEntrevistado
+        );
+        console.log(editEntrevistaRoboRuedaResponse);
+        if (editEntrevistaRoboRuedaResponse.type === 'UPDATE_ENTREVISTAROBORUEDA_SUCCESS') {
+          setToastErroOpen(false);
+          setModalSuccessOpen(true);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
       }
-      return setToastErroOpen(true);
     } else {
-      const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
-        dispatch,
-        id,
-        entrevistaCompleta,
-        selectedInvolucrados,
-        siniestroId,
-        selectedEntrevistado
-      );
-      console.log(editEntrevistaRoboRuedaResponse);
-      if (editEntrevistaRoboRuedaResponse.type === 'UPDATE_ENTREVISTAROBORUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {}, 1000);
-      }
+      setErrorMessage('Seleccione al entrevistado');
       return setToastErroOpen(true);
     }
   };
@@ -874,8 +880,11 @@ const EntrevistaRoboRuedasForm = () => {
             </div>
           </div>
         </section>
-        <div>
+        <div className={styles.entityButtons}>
           <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
+          <Button clickAction={() => involucradoRedirect()} text="Vehiculos" />
+          <Button clickAction={() => involucradoRedirect()} text="Ruedas" />
+          <Button clickAction={() => involucradoRedirect()} text="Eventos" />
         </div>
         <div className={styles.bottomTable}>
           <table className={styles.table}>
@@ -935,7 +944,7 @@ const EntrevistaRoboRuedasForm = () => {
           <Button text="Cancelar" clickAction={() => history.goBack()} />
         </div>
       </form>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
+      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={errorMessage} />}
     </div>
   );
 };

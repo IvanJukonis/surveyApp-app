@@ -29,7 +29,7 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     case GET_ENTREVISTAROBORUEDA_SUCCESS: {
       return {
         ...state,
-        list: [action.payload],
+        list: action.payload,
         createdEntrevista: action.payload
       };
     }
@@ -71,14 +71,15 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     }
 
     case UPDATE_ENTREVISTAROBORUEDA_SUCCESS: {
-      const updatedEntrevistaRoboRueda = state.list.map((entrevistaRoboRueda) => {
-        return entrevistaRoboRueda._id === action.payload._id
-          ? { ...entrevistaRoboRueda, ...action.payload }
-          : entrevistaRoboRueda;
+      const updatedInvolucrado = Object.values(state.list).map((involucrado) => {
+        return involucrado._id === action.payload._id
+          ? { ...involucrado, ...action.payload }
+          : involucrado;
       });
+
       return {
         ...state,
-        list: [...updatedEntrevistaRoboRueda]
+        list: [...updatedInvolucrado]
       };
     }
 
