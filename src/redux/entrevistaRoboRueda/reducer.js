@@ -29,7 +29,7 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     case GET_ENTREVISTAROBORUEDA_SUCCESS: {
       return {
         ...state,
-        list: action.payload,
+        list: [action.payload],
         createdEntrevista: action.payload
       };
     }
@@ -71,7 +71,6 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     }
 
     case UPDATE_ENTREVISTAROBORUEDA_SUCCESS: {
-      // const entrevistaRoboRuedaUpdated = action.payload;
       const updatedEntrevistaRoboRueda = state.list.map((entrevistaRoboRueda) => {
         return entrevistaRoboRueda._id === action.payload._id
           ? { ...entrevistaRoboRueda, ...action.payload }

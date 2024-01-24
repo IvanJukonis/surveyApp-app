@@ -32,7 +32,6 @@ const EntrevistaRoboRuedasForm = () => {
   const data = location.state.params;
   const siniestroId = location.state.params.siniestroId;
   const formType = data.mode;
-  console.log(location.state.params.siniestroId, 'estos son los params');
 
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
@@ -449,8 +448,12 @@ const EntrevistaRoboRuedasForm = () => {
       const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
         dispatch,
         id,
-        entrevistaRoboRueda
+        entrevistaCompleta,
+        selectedInvolucrados,
+        siniestroId,
+        selectedEntrevistado
       );
+      console.log(editEntrevistaRoboRuedaResponse);
       if (editEntrevistaRoboRuedaResponse.type === 'UPDATE_ENTREVISTAROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -483,7 +486,6 @@ const EntrevistaRoboRuedasForm = () => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
     }
-    console.log(siniestroId.id, 'siniestro id');
     getAllInvolucrado(dispatch, siniestroId.id || siniestroId);
   }, []);
 

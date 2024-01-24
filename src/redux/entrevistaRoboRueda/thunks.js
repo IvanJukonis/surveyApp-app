@@ -102,15 +102,28 @@ export const postEntrevistaRoboRueda = async (
   }
 };
 
-export const updateEntrevistaRoboRueda = async (dispatch, id, entrevistaRoboRuedaData) => {
+export const updateEntrevistaRoboRueda = async (
+  dispatch,
+  id,
+  entrevistaRoboRuedaData,
+  involucradoIdList,
+  siniestroId,
+  entrevistadoId
+) => {
   try {
     dispatch(updateEntrevistaRoboRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda/${id}`, {
+    const requestBody = {
+      ...entrevistaRoboRuedaData,
+      involucrado: involucradoIdList,
+      siniestro: [siniestroId.id],
+      entrevistado: entrevistadoId
+    };
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaroborueda/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(entrevistaRoboRuedaData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();
