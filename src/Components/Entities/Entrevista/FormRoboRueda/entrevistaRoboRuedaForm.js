@@ -529,8 +529,16 @@ const EntrevistaRoboRuedasForm = () => {
     }
   };
 
+  const [redirectEntity, setRedirectEntity] = useState('');
+
   const involucradoRedirect = () => {
     setRedirect(true);
+    setRedirectEntity('involucrado');
+  };
+
+  const vehiculoRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('vehiculo');
   };
 
   useEffect(() => {
@@ -553,13 +561,11 @@ const EntrevistaRoboRuedasForm = () => {
     if (currentEntrevista?.involucrado) {
       setSelectedInvolucrados(currentEntrevista.involucrado);
     }
-  }, [currentEntrevista?.involucrado?.length]);
 
-  useEffect(() => {
     if (currentEntrevista?.entrevistado) {
       setSelectedEntrevistado(currentEntrevista.entrevistado);
     }
-  }, [currentEntrevista?.entrevistado?.length]);
+  }, [currentEntrevista?.involucrado?.length, currentEntrevista?.entrevistado?.length]);
 
   useEffect(() => {
     if (selectedEntrevistado.length > 0) {
@@ -594,6 +600,7 @@ const EntrevistaRoboRuedasForm = () => {
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
               redirect={redirect}
+              redirectEntity={redirectEntity}
               createdEntity={entrevista}
               sinId={siniestroId.id}
               message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
@@ -928,7 +935,7 @@ const EntrevistaRoboRuedasForm = () => {
         </section>
         <div className={styles.entityButtons}>
           <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
-          <Button clickAction={() => involucradoRedirect()} text="Vehiculos" />
+          <Button clickAction={() => vehiculoRedirect()} text="Vehiculos" />
           <Button clickAction={() => involucradoRedirect()} text="Ruedas" />
           <Button clickAction={() => involucradoRedirect()} text="Eventos" />
         </div>

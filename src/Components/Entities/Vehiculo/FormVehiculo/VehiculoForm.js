@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -26,7 +27,10 @@ import Joi from 'joi';
 const VehiculosForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { id } = useParams();
+  const data = useParams();
+  const location = useLocation();
+  const { params } = location.state || {};
+  const { createdEntity } = params || {};
 
   const vehiculos = useSelector((state) => state.vehiculo.list);
   const [toastError, setToastErroOpen] = useState(false);
@@ -189,7 +193,7 @@ const VehiculosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
-      const vehiculoConSiniestro = { ...vehiculo, siniestro: id };
+      const vehiculoConSiniestro = { ...vehiculo, siniestro: data.id };
       const addVehiculoResponse = await postVehiculo(dispatch, vehiculoConSiniestro);
       if (addVehiculoResponse.type === 'POST_VEHICULO_SUCCESS') {
         setToastErroOpen(false);
@@ -260,8 +264,21 @@ const VehiculosForm = () => {
     setButtonType(true);
   };
 
+  const cancelForm = () => {
+    if (createdEntity) {
+      history.push({
+        pathname: `/controlador/siniestros/entrevista/entrevistaroborueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
+        state: {
+          params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
+        }
+      });
+    } else {
+      history.goBack();
+    }
+  };
+
   useEffect(() => {
-    getAllVehiculos(dispatch, id);
+    getAllVehiculos(dispatch, data.id);
   }, []);
 
   return (
@@ -289,7 +306,7 @@ const VehiculosForm = () => {
         </div>
       }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Vehiculo' : 'Vehiculo'}</h3>
+        <h3 className={styles.title}>{data.id ? 'Vehiculo' : 'Vehiculo'}</h3>
       </div>
       <div className={styles.innerContainer}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -433,7 +450,7 @@ const VehiculosForm = () => {
           <div className={styles.btnContainer}>
             <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={() => history.goBack()} />
+            <Button text="Cancelar" clickAction={cancelForm} />
           </div>
         </form>
         <div className={styles.rightTable}>

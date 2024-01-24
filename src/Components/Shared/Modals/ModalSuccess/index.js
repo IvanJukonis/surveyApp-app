@@ -2,7 +2,14 @@ import React from 'react';
 import styles from './modalSuccess.module.css';
 import { useHistory } from 'react-router-dom';
 
-const ModalSuccess = ({ setModalSuccessOpen, message, redirect, sinId, createdEntity }) => {
+const ModalSuccess = ({
+  setModalSuccessOpen,
+  message,
+  redirect,
+  redirectEntity,
+  sinId,
+  createdEntity
+}) => {
   const history = useHistory();
 
   const handleClose = () => {
@@ -10,10 +17,17 @@ const ModalSuccess = ({ setModalSuccessOpen, message, redirect, sinId, createdEn
   };
 
   const handleRedirect = () => {
-    history.push({
-      pathname: `/controlador/siniestros/involucrado/form/${sinId}`,
-      state: { params: { mode: 'create', createdEntity: createdEntity } }
-    });
+    if (redirectEntity === 'involucrado') {
+      history.push({
+        pathname: `/controlador/siniestros/involucrado/form/${sinId}`,
+        state: { params: { mode: 'create', createdEntity: createdEntity } }
+      });
+    } else if (redirectEntity === 'vehiculo') {
+      history.push({
+        pathname: `/controlador/siniestros/vehiculo/form/${sinId}`,
+        state: { params: { mode: 'create', createdEntity: createdEntity } }
+      });
+    }
   };
 
   return (
