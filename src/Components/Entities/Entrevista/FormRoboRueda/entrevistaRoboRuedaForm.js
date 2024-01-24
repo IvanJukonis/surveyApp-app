@@ -22,6 +22,7 @@ import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
+import { getAllVehiculos } from 'redux/vehiculo/thunks';
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
@@ -40,10 +41,12 @@ const EntrevistaRoboRuedasForm = () => {
   const [entrevistaRoboRueda, setEntrevistaRoboRueda] = useState();
   const [dataEntrevistado, setDataEntrevistado] = useState();
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
+  const [selectedVehiculos, setSelectedVehiculos] = useState([]);
   const [selectedEntrevistado, setSelectedEntrevistado] = useState([]);
   const [redirect, setRedirect] = useState(false);
 
   const involucrados = useSelector((state) => state.involucrado.list);
+  const vehiculos = useSelector((state) => state.vehiculo.list);
   const currentEntrevista = useSelector((state) => state.entrevistaRoboRueda.list);
   const createdEntrevista = useSelector((state) => state.entrevistaRoboRueda.createdEntrevista);
 
@@ -75,6 +78,8 @@ const EntrevistaRoboRuedasForm = () => {
     'telefono',
     'prioridad'
   ];
+  const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
+  const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
   const schema = Joi.object({
     fechaEntrevista: Joi.date()
@@ -331,6 +336,34 @@ const EntrevistaRoboRuedasForm = () => {
     defaultValues: { ...entrevistaUpdate }
   });
 
+  const checkStateSelectedVehiculo = (column, index) => {
+    if (column === 'selected' && currentEntrevista && currentEntrevista.vehiculo) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    if (data.mode === 'create') {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedVehiculo = (index) => {
+    const isSelectedVehiculo = selectedVehiculos.find(
+      (vehiculo) => vehiculos[index]._id === vehiculo
+    );
+    if (isSelectedVehiculo) {
+      const newListSelectedVehiculos = selectedVehiculos.filter(
+        (vehiculo) => vehiculos[index]._id !== vehiculo
+      );
+      setSelectedVehiculos(newListSelectedVehiculos);
+    } else {
+      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+    }
+  };
+
   const checkStateSelected = (column, index) => {
     if (column === 'selected' && currentEntrevista && currentEntrevista.involucrado) {
       if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
@@ -437,6 +470,7 @@ const EntrevistaRoboRuedasForm = () => {
           dispatch,
           entrevistaCompleta,
           selectedInvolucrados,
+          selectedVehiculos,
           siniestroId,
           selectedEntrevistado
         );
@@ -452,6 +486,7 @@ const EntrevistaRoboRuedasForm = () => {
           id,
           entrevistaCompleta,
           selectedInvolucrados,
+          selectedVehiculos,
           siniestroId,
           selectedEntrevistado
         );
@@ -475,13 +510,23 @@ const EntrevistaRoboRuedasForm = () => {
     setModalAddConfirmOpen(true);
   };
 
-  const checkState = (index) => {
-    if (involucrados[index].prioridad) {
-      if (involucrados.find((singleData) => singleData.prioridad === true)) {
-        return true;
+  const checkState = (index, entity) => {
+    if (entity === 'inv') {
+      if (involucrados[index].prioridad) {
+        if (involucrados.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
       }
+      return false;
     }
-    return false;
+    if (entity === 'veh') {
+      if (vehiculos[index].prioridad) {
+        if (vehiculos.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
   };
 
   const involucradoRedirect = () => {
@@ -492,6 +537,7 @@ const EntrevistaRoboRuedasForm = () => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
     }
+    getAllVehiculos(dispatch, siniestroId.id || siniestroId);
     getAllInvolucrado(dispatch, siniestroId.id || siniestroId);
   }, []);
 
@@ -922,7 +968,50 @@ const EntrevistaRoboRuedasForm = () => {
                             className={styles.checkboxInput}
                             type="checkbox"
                             readOnly
-                            checked={checkState(index)}
+                            checked={checkState(index, 'inv')}
+                          />
+                        ) : (
+                          <>
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableContent}>
+                {columnTitleVehiculo.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {vehiculos.map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                return (
+                  <tr className={rowClass} key={index}>
+                    {columnVehiculo.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column === 'selected' ? (
+                          <input
+                            type="checkbox"
+                            className={styles.checkboxInput}
+                            onChange={() => handleCheckboxSelectedVehiculo(index)}
+                            checked={checkStateSelectedVehiculo(column, index)}
+                          />
+                        ) : column.startsWith('prioridad') ? (
+                          <input
+                            className={styles.checkboxInput}
+                            type="checkbox"
+                            readOnly
+                            checked={checkState(index, 'veh')}
                           />
                         ) : (
                           <>

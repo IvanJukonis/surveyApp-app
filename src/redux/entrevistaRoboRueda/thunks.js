@@ -69,6 +69,7 @@ export const postEntrevistaRoboRueda = async (
   dispatch,
   entrevistaRoboRuedaData,
   involucradoIdList,
+  vehiculoIdList,
   siniestroId,
   entrevistadoId
 ) => {
@@ -77,6 +78,7 @@ export const postEntrevistaRoboRueda = async (
     const requestBody = {
       ...entrevistaRoboRuedaData,
       involucrado: involucradoIdList,
+      vehiculo: vehiculoIdList,
       siniestro: siniestroId.id,
       entrevistado: entrevistadoId
     };
@@ -107,6 +109,7 @@ export const updateEntrevistaRoboRueda = async (
   id,
   entrevistaRoboRuedaData,
   involucradoIdList,
+  vehiculoIdList,
   siniestroId,
   entrevistadoId
 ) => {
@@ -115,6 +118,7 @@ export const updateEntrevistaRoboRueda = async (
     const requestBody = {
       ...entrevistaRoboRuedaData,
       involucrado: involucradoIdList,
+      vehiculo: vehiculoIdList,
       siniestro: [siniestroId.id],
       entrevistado: entrevistadoId
     };

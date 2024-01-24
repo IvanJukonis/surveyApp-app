@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  getSinEntrevistaSiniestro,
-  deleteEntrevistaSiniestro
-} from 'redux/entrevistaSiniestro/thunks';
+import { getSinEntrevistaSiniestro } from 'redux/entrevistaSiniestro/thunks';
 import {
   getAllEntrevistaRoboRueda,
   deleteEntrevistaRoboRueda
@@ -43,10 +40,6 @@ function Entrevista() {
   const rolArray = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
   const tipoArray = ['Accidente', 'Robo ruedas', 'Generica'];
   const tipoExportacion = ['PDF', 'Word'];
-
-  const actualUser = ['/relevador/siniestros', '/controlador/siniestros'].includes(
-    location.pathname
-  );
 
   const schema = Joi.object({
     rol: Joi.string()
@@ -97,12 +90,6 @@ function Entrevista() {
     handleAddClick(data.rol, data.tipo);
   };
 
-  const deleteEntrevista = () => {
-    deleteEntrevistaRoboRueda;
-    deleteEntrevistaSiniestro;
-  };
-  const deleteButton = actualUser ? undefined : deleteEntrevista;
-
   useEffect(() => {
     getSinEntrevistaSiniestro(dispatch, id.id);
     getAllEntrevistaRoboRueda(dispatch, id.id);
@@ -120,7 +107,7 @@ function Entrevista() {
               data={entrevistas}
               columns={columns}
               handleClick={handleEditClick}
-              deleteButton={deleteButton}
+              deleteButton={deleteEntrevistaRoboRueda}
             />
           )}
         </div>

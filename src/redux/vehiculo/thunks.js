@@ -19,11 +19,11 @@ export const getAllVehiculos = async (dispatch, siniestroId) => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`);
     const data = await response.json();
     const vehiculosListAll = data.data;
-    const vehiculosList = vehiculosListAll.filter((vehiculo) =>
-      vehiculo.siniestro.includes(siniestroId)
+    const vehiculosSiniestroList = vehiculosListAll.filter(
+      (vehiculo) => vehiculo.siniestro[0] === siniestroId
     );
     dispatch(getVehiculoPending(false));
-    dispatch(getVehiculoSuccess(vehiculosList));
+    dispatch(getVehiculoSuccess(vehiculosSiniestroList));
   } catch (error) {
     dispatch(getVehiculoPending(false));
     dispatch(getVehiculoError(true));
