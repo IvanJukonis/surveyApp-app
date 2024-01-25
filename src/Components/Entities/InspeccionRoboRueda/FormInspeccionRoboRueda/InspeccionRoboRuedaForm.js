@@ -13,20 +13,25 @@ import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateRueda, postRueda, getAllRueda, deleteRueda } from 'redux/rueda/thunks';
+import {
+  updateInspeccionRoboRueda,
+  postInspeccionRoboRueda,
+  getAllInspeccionRoboRueda,
+  deleteInspeccionRoboRueda
+} from 'redux/inspeccionRoboRueda/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
-const RuedasForm = () => {
+const InspeccionRoboInspeccionRoboRuedasForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const ruedas = useSelector((state) => state.rueda.list);
+  const inspeccionRoboRuedas = useSelector((state) => state.inspeccionRoboRueda.list);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [rueda, setRueda] = useState({});
+  const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
   const [buttonType, setButtonType] = useState(false);
   const data = useParams();
   const location = useLocation();
@@ -248,22 +253,29 @@ const RuedasForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...rueda }
+    defaultValues: { ...inspeccionRoboRueda }
   });
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
-      const ruedaConSiniestro = { ...rueda, siniestro: data.id };
-      const addRuedaResponse = await postRueda(dispatch, ruedaConSiniestro);
-      if (addRuedaResponse.type === 'POST_RUEDA_SUCCESS') {
+      const inspeccionRoboRuedaConSiniestro = { ...inspeccionRoboRueda, siniestro: data.id };
+      const addInspeccionRoboRuedaResponse = await postInspeccionRoboRueda(
+        dispatch,
+        inspeccionRoboRuedaConSiniestro
+      );
+      if (addInspeccionRoboRuedaResponse.type === 'POST_INSPECCIONROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
     } else {
-      const editRuedaResponse = await updateRueda(dispatch, rueda._id, rueda);
-      if (editRuedaResponse.type === 'UPDATE_RUEDA_SUCCESS') {
+      const editInspeccionRoboRuedaResponse = await updateInspeccionRoboRueda(
+        dispatch,
+        inspeccionRoboRueda._id,
+        inspeccionRoboRueda
+      );
+      if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {}, 1000);
@@ -278,14 +290,14 @@ const RuedasForm = () => {
         ...data,
         fechaNacimiento: formatDate(data.fechaNacimiento)
       };
-      setRueda(formattedData);
+      setInspeccionRoboRueda(formattedData);
       setModalAddConfirmOpen(true);
     } else {
       const formattedData = {
         ...data,
         fechaNacimiento: formatDate(data.fechaNacimiento)
       };
-      setRueda(formattedData);
+      setInspeccionRoboRueda(formattedData);
       setModalAddConfirmOpen(true);
     }
   };
@@ -340,13 +352,13 @@ const RuedasForm = () => {
     reset({ ...emptyData });
   };
 
-  const deleteButton = deleteRueda;
+  const deleteButton = deleteInspeccionRoboRueda;
 
   const tableClick = (index) => {
     const formattedData = {
-      ...ruedas[index],
-      fechaNacimiento: formatDate(ruedas[index].fechaNacimiento),
-      licenciaVencimiento: formatDate(ruedas[index].licenciaVencimiento)
+      ...inspeccionRoboRuedas[index],
+      fechaNacimiento: formatDate(inspeccionRoboRuedas[index].fechaNacimiento),
+      licenciaVencimiento: formatDate(inspeccionRoboRuedas[index].licenciaVencimiento)
     };
     reset({ ...formattedData });
     setButtonType(true);
@@ -355,7 +367,7 @@ const RuedasForm = () => {
   const cancelForm = () => {
     if (createdEntity) {
       history.push({
-        pathname: `/controlador/siniestros/entrevista/entrevistaroborueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
+        pathname: `/controlador/siniestros/entrevista/entrevistaroboinspeccionRoboRueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
         state: {
           params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
         }
@@ -366,7 +378,7 @@ const RuedasForm = () => {
   };
 
   useEffect(() => {
-    getAllRueda(dispatch, data.id);
+    getAllInspeccionRoboRueda(dispatch, data.id);
   }, []);
 
   return (
@@ -380,21 +392,21 @@ const RuedasForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 buttonType
-                  ? '¿Estás seguro de que quieres actualizar este rueda?'
-                  : '¿Estás seguro de que quieres agregar este rueda?'
+                  ? '¿Estás seguro de que quieres actualizar este inspeccionRoboRueda?'
+                  : '¿Estás seguro de que quieres agregar este inspeccionRoboRueda?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Rueda editado' : 'Rueda agregado'}
+              message={buttonType ? 'InspeccionRoboRueda editado' : 'InspeccionRoboRueda agregado'}
             />
           )}
         </div>
       }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{data.id ? 'Rueda' : 'Rueda'}</h3>
+        <h3 className={styles.title}>{data.id ? 'InspeccionRoboRueda' : 'InspeccionRoboRueda'}</h3>
       </div>
       <div className={styles.innerContainer}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -675,7 +687,7 @@ const RuedasForm = () => {
         </form>
         <div className={styles.rightTable}>
           <FormTable
-            data={ruedas}
+            data={inspeccionRoboRuedas}
             columnTitleArray={columnTitleArray}
             columns={columns}
             handleClick={tableClick}
@@ -690,4 +702,4 @@ const RuedasForm = () => {
   );
 };
 
-export default RuedasForm;
+export default InspeccionRoboInspeccionRoboRuedasForm;
