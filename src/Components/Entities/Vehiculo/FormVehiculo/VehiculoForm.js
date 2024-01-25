@@ -169,7 +169,11 @@ const VehiculosForm = () => {
       .messages({
         'any.only': 'Selecciona un "Cierre Centralizado" permitido'
       })
-      .required()
+      .required(),
+    siniestro: Joi.any(),
+
+    __v: Joi.any(),
+    _id: Joi.any()
   });
 
   const formatDate = (dateString) => {
@@ -213,6 +217,7 @@ const VehiculosForm = () => {
   };
 
   const onSubmit = async (data) => {
+    console.log('entre');
     if (buttonType) {
       const formattedData = {
         ...data,
@@ -231,6 +236,8 @@ const VehiculosForm = () => {
       setModalAddConfirmOpen(true);
     }
   };
+
+  console.log(errors);
 
   const resetForm = () => {
     setButtonType(false);
@@ -448,7 +455,7 @@ const VehiculosForm = () => {
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
+            <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
             <Button text="Cancelar" clickAction={cancelForm} />
           </div>

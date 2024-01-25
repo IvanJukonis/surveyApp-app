@@ -82,15 +82,17 @@ export const updateVehiculo = async (dispatch, id, vehiculoData) => {
       },
       body: JSON.stringify(vehiculoData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(updateVehiculoPending(false));
-      throw new Error(data.message);
+      return dispatch(updateVehiculoSuccess(newData.data));
+    } else {
+      dispatch(updateVehiculoPending(false));
+      return dispatch(updateVehiculoError(true));
     }
-
-    dispatch(updateVehiculoSuccess(data));
   } catch (error) {
     dispatch(updateVehiculoPending(false));
-    dispatch(updateVehiculoError(error.message));
+    return dispatch(updateVehiculoError(error.message));
   }
 };

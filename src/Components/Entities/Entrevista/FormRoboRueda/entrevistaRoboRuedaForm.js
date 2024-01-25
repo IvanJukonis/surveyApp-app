@@ -490,7 +490,6 @@ const EntrevistaRoboRuedasForm = () => {
           siniestroId,
           selectedEntrevistado
         );
-        console.log(editEntrevistaRoboRuedaResponse);
         if (editEntrevistaRoboRuedaResponse.type === 'UPDATE_ENTREVISTAROBORUEDA_SUCCESS') {
           setToastErroOpen(false);
           setModalSuccessOpen(true);
@@ -558,14 +557,18 @@ const EntrevistaRoboRuedasForm = () => {
   }, [createdEntrevista]);
 
   useEffect(() => {
+    console.log(currentEntrevista.involucrado, 'invol');
+    console.log(currentEntrevista, 'invol 2');
     if (currentEntrevista?.involucrado) {
       setSelectedInvolucrados(currentEntrevista.involucrado);
     }
+  }, [currentEntrevista?.involucrado?.length]);
 
+  useEffect(() => {
     if (currentEntrevista?.entrevistado) {
       setSelectedEntrevistado(currentEntrevista.entrevistado);
     }
-  }, [currentEntrevista?.involucrado?.length, currentEntrevista?.entrevistado?.length]);
+  }, [currentEntrevista?.entrevistado?.length]);
 
   useEffect(() => {
     if (selectedEntrevistado.length > 0) {
