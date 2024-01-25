@@ -1,0 +1,157 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: #c5c5c5c2;
+  width: 70%;
+  margin: 30px;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  background-color: #3C3C3C;
+}
+
+.personalDataBoolean {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.title {
+  color: #fafafa;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.innerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.leftGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.personalData {
+  display: flex;
+  flex-direction: column;
+}
+
+.personalDataText {
+  display: flex;
+  flex-direction: row;
+}
+
+.inputGroups {
+  display: flex;
+  gap: 15px;
+}
+
+.inputGroups {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px;
+}
+
+.licenceDataOption {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.licenceDataBoolean {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.submitButton {
+  display: inline;
+  background-color: var(--Green);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-button: 10px;
+}
+
+.submitButton:hover {
+  background-color: var(--Blue);
+  color: white;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 20px;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: space-around;
+  max-width: 460px;
+}
+
+.table {
+  border-collapse: collapse;
+  background: #3C3C3C;
+  color: #FAFAFA;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0px 6px 30px -7px rgba(0, 0, 0, 0.75);
+  margin: 20px 0px 0px 0px;
+}
+
+.table tr td,
+.table tr th {
+  padding: 5px 3px 5px 15px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100px;
+  transition: all 0.1s;
+}
+
+.table tr td:nth-last-child(-n + 2):hover {
+  background-color: #3C3C3C;
+  transform: scale(1.2);
+}
+
+.table tr td:hover {
+  transform: scale(1.1);
+  max-width: 280px;
+  background-color: #3C3C3C;
+  color: #fff;
+  cursor: pointer;
+}
+
+.rowBackground1 {
+  background-color: #FAFAFA;
+  color: #3C3C3C;
+  font-weight: bold;
+}
+
+.rowBackground2 {
+  background-color: #ffffffc4;
+  color: #3C3C3C;
+  font-weight: bold;
+}
