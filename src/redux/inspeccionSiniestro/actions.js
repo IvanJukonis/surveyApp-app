@@ -1,98 +1,98 @@
 import {
-  GET_RUEDA_PENDING,
-  GET_RUEDA_SUCCESS,
-  GET_RUEDA_ERROR,
-  DELETE_RUEDA_PENDING,
-  DELETE_RUEDA_SUCCESS,
-  DELETE_RUEDA_ERROR,
-  POST_RUEDA_PENDING,
-  POST_RUEDA_SUCCESS,
-  POST_RUEDA_ERROR,
-  UPDATE_RUEDA_PENDING,
-  UPDATE_RUEDA_SUCCESS,
-  UPDATE_RUEDA_ERROR
+  GET_INSPECCIONSINIESTRO_PENDING,
+  GET_INSPECCIONSINIESTRO_SUCCESS,
+  GET_INSPECCIONSINIESTRO_ERROR,
+  DELETE_INSPECCIONSINIESTRO_PENDING,
+  DELETE_INSPECCIONSINIESTRO_SUCCESS,
+  DELETE_INSPECCIONSINIESTRO_ERROR,
+  POST_INSPECCIONSINIESTRO_PENDING,
+  POST_INSPECCIONSINIESTRO_SUCCESS,
+  POST_INSPECCIONSINIESTRO_ERROR,
+  UPDATE_INSPECCIONSINIESTRO_PENDING,
+  UPDATE_INSPECCIONSINIESTRO_SUCCESS,
+  UPDATE_INSPECCIONSINIESTRO_ERROR
 } from './constants';
 
-export const getRuedaPending = (pending) => {
+export const getInspeccionSiniestroPending = (pending) => {
   return {
-    type: GET_RUEDA_PENDING,
+    type: GET_INSPECCIONSINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const getRuedaSuccess = (list) => {
+export const getInspeccionSiniestroSuccess = (list) => {
   return {
-    type: GET_RUEDA_SUCCESS,
+    type: GET_INSPECCIONSINIESTRO_SUCCESS,
     payload: list
   };
 };
 
-export const getRuedaError = (error) => {
+export const getInspeccionSiniestroError = (error) => {
   return {
-    type: GET_RUEDA_ERROR,
+    type: GET_INSPECCIONSINIESTRO_ERROR,
     payload: error
   };
 };
 
-export const deleteRuedaPending = (pending) => {
+export const deleteInspeccionSiniestroPending = (pending) => {
   return {
-    type: DELETE_RUEDA_PENDING,
+    type: DELETE_INSPECCIONSINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const deleteRuedaSuccess = (ruedaID) => {
+export const deleteInspeccionSiniestroSuccess = (inspeccionSiniestroID) => {
   return {
-    type: DELETE_RUEDA_SUCCESS,
-    payload: ruedaID
+    type: DELETE_INSPECCIONSINIESTRO_SUCCESS,
+    payload: inspeccionSiniestroID
   };
 };
 
-export const deleteRuedaError = (error) => {
+export const deleteInspeccionSiniestroError = (error) => {
   return {
-    type: DELETE_RUEDA_ERROR,
+    type: DELETE_INSPECCIONSINIESTRO_ERROR,
     payload: error
   };
 };
 
-export const postRuedaPending = (pending) => {
+export const postInspeccionSiniestroPending = (pending) => {
   return {
-    type: POST_RUEDA_PENDING,
+    type: POST_INSPECCIONSINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const postRuedaSuccess = (rueda) => {
+export const postInspeccionSiniestroSuccess = (inspeccionSiniestro) => {
   return {
-    type: POST_RUEDA_SUCCESS,
-    payload: rueda
+    type: POST_INSPECCIONSINIESTRO_SUCCESS,
+    payload: inspeccionSiniestro
   };
 };
 
-export const postRuedaError = (error) => {
+export const postInspeccionSiniestroError = (error) => {
   return {
-    type: POST_RUEDA_ERROR,
+    type: POST_INSPECCIONSINIESTRO_ERROR,
     payload: error
   };
 };
 
-export const updateRuedaPending = (pending) => {
+export const updateInspeccionSiniestroPending = (pending) => {
   return {
-    type: UPDATE_RUEDA_PENDING,
+    type: UPDATE_INSPECCIONSINIESTRO_PENDING,
     payload: pending
   };
 };
 
-export const updateRuedaSuccess = (rueda) => {
+export const updateInspeccionSiniestroSuccess = (inspeccionSiniestro) => {
   return {
-    type: UPDATE_RUEDA_SUCCESS,
-    payload: rueda
+    type: UPDATE_INSPECCIONSINIESTRO_SUCCESS,
+    payload: inspeccionSiniestro
   };
 };
 
-export const updateRuedaError = (error) => {
+export const updateInspeccionSiniestroError = (error) => {
   return {
-    type: UPDATE_RUEDA_ERROR,
+    type: UPDATE_INSPECCIONSINIESTRO_ERROR,
     payload: error
   };
 };

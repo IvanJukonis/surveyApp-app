@@ -1,108 +1,110 @@
 import {
-  GET_RUEDA_PENDING,
-  GET_RUEDA_SUCCESS,
-  GET_RUEDA_ERROR,
-  POST_RUEDA_PENDING,
-  POST_RUEDA_SUCCESS,
-  POST_RUEDA_ERROR,
-  UPDATE_RUEDA_PENDING,
-  UPDATE_RUEDA_SUCCESS,
-  UPDATE_RUEDA_ERROR,
-  DELETE_RUEDA_PENDING,
-  DELETE_RUEDA_SUCCESS,
-  DELETE_RUEDA_ERROR
+  GET_INSPECCIONSINIESTRO_PENDING,
+  GET_INSPECCIONSINIESTRO_SUCCESS,
+  GET_INSPECCIONSINIESTRO_ERROR,
+  POST_INSPECCIONSINIESTRO_PENDING,
+  POST_INSPECCIONSINIESTRO_SUCCESS,
+  POST_INSPECCIONSINIESTRO_ERROR,
+  UPDATE_INSPECCIONSINIESTRO_PENDING,
+  UPDATE_INSPECCIONSINIESTRO_SUCCESS,
+  UPDATE_INSPECCIONSINIESTRO_ERROR,
+  DELETE_INSPECCIONSINIESTRO_PENDING,
+  DELETE_INSPECCIONSINIESTRO_SUCCESS,
+  DELETE_INSPECCIONSINIESTRO_ERROR
 } from './constants';
 
 const INITIAL_STATE = {
   list: []
 };
 
-const ruedaReducer = (state = INITIAL_STATE, action) => {
+const inspeccionSiniestroReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case GET_RUEDA_PENDING: {
+    case GET_INSPECCIONSINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case GET_RUEDA_SUCCESS: {
+    case GET_INSPECCIONSINIESTRO_SUCCESS: {
       return {
         ...state,
         list: action.payload
       };
     }
 
-    case GET_RUEDA_ERROR: {
+    case GET_INSPECCIONSINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
       };
     }
 
-    case POST_RUEDA_PENDING: {
+    case POST_INSPECCIONSINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case POST_RUEDA_SUCCESS: {
+    case POST_INSPECCIONSINIESTRO_SUCCESS: {
       return {
         ...state,
         list: [...state.list, action.payload]
       };
     }
 
-    case POST_RUEDA_ERROR: {
+    case POST_INSPECCIONSINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
       };
     }
 
-    case UPDATE_RUEDA_PENDING: {
+    case UPDATE_INSPECCIONSINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case UPDATE_RUEDA_SUCCESS: {
-      // const ruedaUpdated = action.payload;
-      const updatedRueda = state.list.map((rueda) => {
-        return rueda._id === action.payload._id ? { ...rueda, ...action.payload } : rueda;
+    case UPDATE_INSPECCIONSINIESTRO_SUCCESS: {
+      // const inspeccionSiniestroUpdated = action.payload;
+      const updatedInspeccionSiniestro = state.list.map((inspeccionSiniestro) => {
+        return inspeccionSiniestro._id === action.payload._id
+          ? { ...inspeccionSiniestro, ...action.payload }
+          : inspeccionSiniestro;
       });
       return {
         ...state,
-        list: [...updatedRueda]
+        list: [...updatedInspeccionSiniestro]
       };
     }
 
-    case UPDATE_RUEDA_ERROR: {
+    case UPDATE_INSPECCIONSINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
       };
     }
 
-    case DELETE_RUEDA_PENDING: {
+    case DELETE_INSPECCIONSINIESTRO_PENDING: {
       return {
         ...state,
         pending: action.payload
       };
     }
 
-    case DELETE_RUEDA_SUCCESS: {
-      const newList = state.list.filter((rueda) => {
-        return rueda._id !== action.payload;
+    case DELETE_INSPECCIONSINIESTRO_SUCCESS: {
+      const newList = state.list.filter((inspeccionSiniestro) => {
+        return inspeccionSiniestro._id !== action.payload;
       });
       return {
         list: [...newList]
       };
     }
 
-    case DELETE_RUEDA_ERROR: {
+    case DELETE_INSPECCIONSINIESTRO_ERROR: {
       return {
         ...state,
         error: action.payload
@@ -114,4 +116,4 @@ const ruedaReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-export default ruedaReducer;
+export default inspeccionSiniestroReducer;

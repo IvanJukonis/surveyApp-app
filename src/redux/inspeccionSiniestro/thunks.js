@@ -1,110 +1,115 @@
 import {
-  getRuedaPending,
-  getRuedaSuccess,
-  getRuedaError,
-  deleteRuedaPending,
-  deleteRuedaSuccess,
-  deleteRuedaError,
-  postRuedaPending,
-  postRuedaSuccess,
-  postRuedaError,
-  updateRuedaPending,
-  updateRuedaSuccess,
-  updateRuedaError
+  getInspeccionSiniestroPending,
+  getInspeccionSiniestroSuccess,
+  getInspeccionSiniestroError,
+  deleteInspeccionSiniestroPending,
+  deleteInspeccionSiniestroSuccess,
+  deleteInspeccionSiniestroError,
+  postInspeccionSiniestroPending,
+  postInspeccionSiniestroSuccess,
+  postInspeccionSiniestroError,
+  updateInspeccionSiniestroPending,
+  updateInspeccionSiniestroSuccess,
+  updateInspeccionSiniestroError
 } from './actions';
 
-export const getAllRueda = async (dispatch, sinId) => {
+export const getAllInspeccionSiniestro = async (dispatch, sinId) => {
   try {
-    dispatch(getRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`);
+    dispatch(getInspeccionSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro`);
     const data = await response.json();
-    const ruedasList = data.data;
-    const ruedasSiniestroList = ruedasList.filter((rueda) => rueda.siniestro[0] === sinId);
-    dispatch(getRuedaPending(false));
-    dispatch(getRuedaSuccess(ruedasSiniestroList));
+    const inspeccionSiniestrosList = data.data;
+    const inspeccionSiniestrosSiniestroList = inspeccionSiniestrosList.filter(
+      (inspeccionSiniestro) => inspeccionSiniestro.siniestro[0] === sinId
+    );
+    dispatch(getInspeccionSiniestroPending(false));
+    dispatch(getInspeccionSiniestroSuccess(inspeccionSiniestrosSiniestroList));
   } catch (error) {
-    dispatch(getRuedaPending(false));
-    dispatch(getRuedaError(true));
+    dispatch(getInspeccionSiniestroPending(false));
+    dispatch(getInspeccionSiniestroError(true));
   }
 };
 
-export const getRueda = async (dispatch) => {
+export const getInspeccionSiniestro = async (dispatch) => {
   try {
-    dispatch(getRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`);
+    dispatch(getInspeccionSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro`);
     const data = await response.json();
-    const ruedasListAll = data.data;
-    dispatch(getRuedaPending(false));
-    dispatch(getRuedaSuccess(ruedasListAll));
+    const inspeccionSiniestrosListAll = data.data;
+    dispatch(getInspeccionSiniestroPending(false));
+    dispatch(getInspeccionSiniestroSuccess(inspeccionSiniestrosListAll));
   } catch (error) {
-    dispatch(getRuedaPending(false));
-    dispatch(getRuedaError(true));
+    dispatch(getInspeccionSiniestroPending(false));
+    dispatch(getInspeccionSiniestroError(true));
   }
 };
 
-export const deleteRueda = (ruedaID) => {
+export const deleteInspeccionSiniestro = (inspeccionSiniestroID) => {
   return async (dispatch) => {
     try {
-      dispatch(deleteRuedaPending(true));
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda/${ruedaID}`, {
-        method: 'DELETE'
-      });
+      dispatch(deleteInspeccionSiniestroPending(true));
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro/${inspeccionSiniestroID}`,
+        {
+          method: 'DELETE'
+        }
+      );
       if (response.ok) {
-        dispatch(deleteRuedaPending(false));
-        dispatch(deleteRuedaSuccess(ruedaID));
+        dispatch(deleteInspeccionSiniestroPending(false));
+        dispatch(deleteInspeccionSiniestroSuccess(inspeccionSiniestroID));
       }
     } catch (error) {
-      dispatch(deleteRuedaError(error));
+      dispatch(deleteInspeccionSiniestroError(error));
     }
   };
 };
 
-export const postRueda = async (dispatch, ruedaData) => {
+export const postInspeccionSiniestro = async (dispatch, inspeccionSiniestroData) => {
   try {
-    dispatch(postRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`, {
+    dispatch(postInspeccionSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(ruedaData)
+      body: JSON.stringify(inspeccionSiniestroData)
     });
     if (response.ok) {
       const data = await response.json();
       const newData = data;
-      dispatch(postRuedaPending(false));
-      return dispatch(postRuedaSuccess(newData.data));
+      dispatch(postInspeccionSiniestroPending(false));
+      return dispatch(postInspeccionSiniestroSuccess(newData.data));
     } else {
-      dispatch(postRuedaPending(false));
-      return dispatch(postRuedaError(true));
+      dispatch(postInspeccionSiniestroPending(false));
+      return dispatch(postInspeccionSiniestroError(true));
     }
   } catch (error) {
-    dispatch(postRuedaPending(false));
-    return dispatch(postRuedaError(true));
+    dispatch(postInspeccionSiniestroPending(false));
+    return dispatch(postInspeccionSiniestroError(true));
   }
 };
 
-export const updateRueda = async (dispatch, id, ruedaData) => {
+export const updateInspeccionSiniestro = async (dispatch, id, inspeccionSiniestroData) => {
   try {
-    dispatch(updateRuedaPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda/${id}`, {
+    dispatch(updateInspeccionSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(ruedaData)
+      body: JSON.stringify(inspeccionSiniestroData)
     });
     if (response.ok) {
       const data = await response.json();
       const newData = data;
-      dispatch(updateRuedaPending(false));
-      return dispatch(updateRuedaSuccess(newData.data));
+      dispatch(updateInspeccionSiniestroPending(false));
+      return dispatch(updateInspeccionSiniestroSuccess(newData.data));
     } else {
-      dispatch(updateRuedaPending(false));
-      return dispatch(updateRuedaError(true));
+      dispatch(updateInspeccionSiniestroPending(false));
+      return dispatch(updateInspeccionSiniestroError(true));
     }
   } catch (error) {
-    dispatch(updateRuedaPending(false));
-    return dispatch(updateRuedaError(error.message));
+    dispatch(updateInspeccionSiniestroPending(false));
+    return dispatch(updateInspeccionSiniestroError(error.message));
   }
 };
