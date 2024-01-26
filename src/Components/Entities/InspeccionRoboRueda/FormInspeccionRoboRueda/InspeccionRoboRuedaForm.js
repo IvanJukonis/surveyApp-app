@@ -11,7 +11,6 @@ import {
 } from 'Components/Shared';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   updateInspeccionRoboRueda,
@@ -165,23 +164,13 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
     }
   };
 
-  const arrayRoles = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC'];
-  const arrayLesiones = ['Lesiones LEVES', 'Lesiones REGULARES', 'Lesiones GRAVES'];
-  const arrayCategorias = [
-    'A1',
-    'A2',
-    'A3',
-    'B1',
-    'B2',
-    'C1',
-    'C2',
-    'C3',
-    'D1',
-    'D2',
-    'D3',
-    'D4',
-    'E1'
+  const arrayFotos = ['Se toman fotografias del VH', 'No se toman fotografias del VH'];
+  const arrayPermisos = [
+    'Inspeccion permitida',
+    'Inspeccion no permitida',
+    'Inspeccion dificultada'
   ];
+  const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
   const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
   const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
 
@@ -274,271 +263,82 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
       <div className={styles.innerContainer}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
-            <div className={styles.leftGroup}>
-              <div className={styles.personalData}>
-                <div className={styles.personalDataText}>
-                  <div className={styles.personalDataTextColumn}>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.nombre?.message}
-                        register={register}
-                        nameTitle="Nombre"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="nombre"
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.dni?.message}
-                        register={register}
-                        nameTitle="DNI"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="dni"
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.telefono?.message}
-                        register={register}
-                        nameTitle="Telefono"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="telefono"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.pais?.message}
-                        register={register}
-                        nameTitle="Pais"
-                        type="pais"
-                        styleInput="normalInput"
-                        nameInput="pais"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.apellido?.message}
-                        register={register}
-                        nameTitle="Apellido"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="apellido"
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.personalDataTextColumn}>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.relacion?.message}
-                        register={register}
-                        nameTitle="Relacion"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="relacion"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.codigoPostal?.message}
-                        register={register}
-                        nameTitle="Codigo Postal"
-                        type="number"
-                        styleInput="normalInput"
-                        nameInput="codigoPostal"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.cuit?.message}
-                        register={register}
-                        nameTitle="Cuit"
-                        type="number"
-                        styleInput="normalInput"
-                        nameInput="cuit"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.ocupacion?.message}
-                        register={register}
-                        nameTitle="Ocupacion"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="ocupacion"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <OptionInput
-                        data={arrayRoles}
-                        dataLabel="Rol"
-                        name="rol"
-                        register={register}
-                        error={errors.rol?.message}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.personalDataTextColumn}>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.direccionOcupacion?.message}
-                        register={register}
-                        nameTitle="Direccion Ocupacion"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="direccionOcupacion"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.ciudad?.message}
-                        register={register}
-                        nameTitle="Ciudad"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="ciudad"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.domicilio?.message}
-                        register={register}
-                        nameTitle="Domicilio"
-                        type="text"
-                        styleInput="normalInput"
-                        nameInput="domicilio"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <Inputs
-                        error={errors.email?.message}
-                        register={register}
-                        nameTitle="Email"
-                        type="email"
-                        styleInput="normalInput"
-                        nameInput="email"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
-                      <DateInput
-                        error={errors.fechaNacimiento?.message}
-                        register={register}
-                        nameTitle="Fecha de Nacimiento"
-                        type="date"
-                        nameInput="fechaNacimiento"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayFotos}
+                  dataLabel="Fotos"
+                  name="fotos"
+                  register={register}
+                  error={errors.fotos?.message}
+                />
               </div>
-              <div className={styles.personalDataDate}></div>
-              <div className={styles.personalDataOption}></div>
-              <div className={styles.personalDataBoolean}>
-                <div className={styles.inputContainer}>
-                  <Checkbox
-                    error={errors.titular?.message}
-                    register={register}
-                    nameTitle="Titular"
-                    type="checkbox"
-                    nameInput="titular"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <Checkbox
-                    error={errors.entrevistado?.message}
-                    register={register}
-                    nameTitle="Entrevistado"
-                    type="checkbox"
-                    nameInput="entrevistado"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <Checkbox
-                    error={errors.prioridad?.message}
-                    register={register}
-                    nameTitle="Prioridad"
-                    type="checkbox"
-                    nameInput="prioridad"
-                    required
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <OptionInput
-                    data={arrayLesiones}
-                    dataLabel="Lesiones"
-                    name="lesiones"
-                    register={register}
-                    error={errors.lesiones?.message}
-                  />
-                </div>
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.fecha?.message}
+                  register={register}
+                  nameTitle="Fecha"
+                  type="date"
+                  nameInput="fecha"
+                  required
+                />
               </div>
-              <div className={styles.licenceData}>
-                <div className={styles.licenceDataText}> </div>
-                <div className={styles.licenceDataDate}></div>
-                <div className={styles.licenceDataOption}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={arrayCategorias}
-                      dataLabel="Categoria de Licencias"
-                      name="licenciaCategoria"
-                      register={register}
-                      error={errors.licenciaCategoria?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.licenciaVencimiento?.message}
-                      register={register}
-                      nameTitle="Fecha de Vencimiento"
-                      type="date"
-                      nameInput="licenciaVencimiento"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.licenceDataBoolean}>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      error={errors.licenciaAportada?.message}
-                      register={register}
-                      nameTitle="Licencia Aportada"
-                      type="checkbox"
-                      nameInput="licenciaAportada"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      error={errors.licenciaHabilitada?.message}
-                      register={register}
-                      nameTitle="Licencia Habilitada"
-                      type="checkbox"
-                      nameInput="licenciaHabilitada"
-                      required
-                    />
-                  </div>
-                </div>
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.hora?.message}
+                  register={register}
+                  nameTitle="Hora"
+                  type="date"
+                  nameInput="hora"
+                  required
+                />
               </div>
-              <div className={styles.siniestroData}>
-                <div className={styles.siniestroDataText}> </div>
-                <div className={styles.siniestroDataDate}> </div>
-                <div className={styles.siniestroDataOption}></div>
-                <div className={styles.siniestroDataBoolean}> </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayPermisos}
+                  dataLabel="Permisos"
+                  name="permisos"
+                  register={register}
+                  error={errors.permisos?.message}
+                />
+              </div>
+            </div>
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayProgramada}
+                  dataLabel="Programada"
+                  name="programada"
+                  register={register}
+                  error={errors.programada?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.disposicion?.message}
+                  register={register}
+                  nameTitle="Disposicion"
+                  type="text"
+                  nameInput="disposicion"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.daños?.message}
+                  register={register}
+                  nameTitle="Daños"
+                  type="text"
+                  nameInput="daños"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.conclusion?.message}
+                  register={register}
+                  nameTitle="Conclusion"
+                  type="text"
+                  nameInput="conclusion"
+                />
               </div>
             </div>
           </section>
