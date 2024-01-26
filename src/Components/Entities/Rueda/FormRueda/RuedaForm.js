@@ -34,195 +34,136 @@ const RuedasForm = () => {
   const { createdEntity } = params || {};
 
   const schema = Joi.object({
-    prioridad: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Prioridad" es un campo booleano',
-        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
-      })
-      .required(),
-    rol: Joi.string()
-      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC')
-      .messages({
-        'any.only': 'Ingrese un rol permitido'
-      })
-      .required(),
-    apellido: Joi.string()
+    descripcion: Joi.string()
       .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'El apellido debe ser una cadena de texto',
-        'string.empty': 'El apellido es un campo requerido',
-        'string.min': 'El apellido debe tener al menos 3 caracteres',
-        'string.max': 'El apellido debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    nombre: Joi.string()
-      .min(3)
-      .max(15)
+      .max(50)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'El nombre debe ser una cadena de texto',
-        'string.empty': 'El nombre es un campo requerido',
-        'string.min': 'El nombre debe tener al menos 3 caracteres',
-        'string.max': 'El nombre debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El nombre debe contener solo letras'
+        'string.base': 'La descripcion debe ser una cadena de texto',
+        'string.empty': 'La descripcion es un campo requerido',
+        'string.min': 'La descripcion debe tener al menos 3 caracteres',
+        'string.max': 'La descripcion debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'La descripcion debe contener solo letras'
       })
       .required(),
-    relacion: Joi.string()
+    marca: Joi.string()
       .min(3)
-      .max(15)
+      .max(50)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'El campo "Relacion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Relacion" es un campo requerido',
-        'string.min': 'El campo "Relacion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Relacion" debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El campo "Relacion" debe contener solo letras'
+        'string.base': 'La marca debe ser una cadena de texto',
+        'string.empty': 'La marca es un campo requerido',
+        'string.min': 'La marca debe tener al menos 3 caracteres',
+        'string.max': 'La marca debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'La marca debe contener solo letras'
       })
       .required(),
-    titular: Joi.boolean()
+    numDot: Joi.string()
+      .min(3)
+      .max(50)
+      .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'boolean.base': 'El campo "Titular" es un campo booleano',
-        'boolean.empty': 'El campo "Titular" debe tener un valor determinado'
+        'string.base': 'El DOT debe ser una cadena de texto',
+        'string.empty': 'El DOT es un campo requerido',
+        'string.min': 'El DOT debe tener al menos 3 caracteres',
+        'string.max': 'El DOT debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'El DOT debe contener solo letras'
       })
       .required(),
-    dni: Joi.number().min(10000000).max(99999999).integer().messages({
-      'number.base': 'El DNI debe ser un número',
-      'number.empty': 'El DNI es un campo requerido',
-      'number.min': 'El DNI debe ser al menos 10,000,000',
-      'number.max': 'El DNI debe ser como máximo 99,999,999',
-      'number.integer': 'El DNI debe ser un número entero'
-    }),
-    fechaNacimiento: Joi.date()
+    numLlanta: Joi.string()
+      .min(3)
+      .max(50)
+      .regex(/^[a-zA-Z ]+$/)
+      .messages({
+        'string.base': 'El numero de llanta debe ser una cadena de texto',
+        'string.empty': 'El numero de llanta es un campo requerido',
+        'string.min': 'El numero de llanta debe tener al menos 3 caracteres',
+        'string.max': 'El numero de llanta debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'El numero de llanta debe contener solo letras'
+      })
+      .required(),
+    tipo: Joi.string()
+      .valid('Original', 'Suplente', 'Prestada')
+      .messages({
+        'any.only': 'Selecciona un tipo permitido'
+      })
+      .required(),
+    tipoLlanta: Joi.string()
+      .valid('Aleacion', 'Chapa', 'Otro')
+      .messages({
+        'any.only': 'Selecciona un tipo de llanta permitido'
+      })
+      .required(),
+    posicionActual: Joi.string()
+      .valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N')
+      .messages({
+        'any.only': 'Selecciona un tipo de posicion permitida'
+      })
+      .required(),
+    fechaColocacion: Joi.date()
       .messages({
         'date.base': 'Ingrese una fecha válida',
-        'date.empty': 'La fecha de nacimiento es un campo requerido'
+        'date.empty': 'La fecha de colocacion es un campo requerido'
       })
       .required(),
-    domicilio: Joi.string()
+    posicionPrevia: Joi.string()
+      .valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N')
+      .messages({
+        'any.only': 'Selecciona un tipo de posicion permitida'
+      })
+      .required(),
+    posicionTransitoria: Joi.string()
+      .valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N')
+      .messages({
+        'any.only': 'Selecciona un tipo de posicion permitida'
+      })
+      .required(),
+    sustraida: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Sustraida" es un campo booleano',
+        'boolean.empty': 'El campo "Sustraida" debe tener un valor determinado'
+      })
+      .required(),
+    estado: Joi.string()
+      .valid('Nuevo', 'Medio desgastado', 'Desgastado')
+      .messages({
+        'any.only': 'Selecciona un tipo de estado permitido'
+      })
+      .required(),
+    aporteFoto: Joi.string()
+      .valid('Se aportan fotos previas', 'No se aportan fotos previas')
+      .messages({
+        'any.only': 'Selecciona un tipo de aporte de fotos permitido'
+      })
+      .required(),
+    metadatosFoto: Joi.string()
+      .valid('Metadatos presentes', 'Sin metadatos presentes')
+      .messages({
+        'any.only': 'Selecciona un tipo de metadato permitido'
+      })
+      .required(),
+    factura: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Factura" es un campo booleano',
+        'boolean.empty': 'El campo "Factura" debe tener un valor determinado'
+      })
+      .required(),
+    aporteFactura: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporte de factura" es un campo booleano',
+        'boolean.empty': 'El campo "Aporte de factura" debe tener un valor determinado'
+      })
+      .required(),
+    anotaciones: Joi.string()
       .min(3)
-      .max(15)
+      .max(50)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'El campo "Domicilio" debe ser una cadena de texto',
-        'string.empty': 'El campo "Domicilio" es un campo requerido',
-        'string.min': 'El campo "Domicilio" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Domicilio" debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El campo "Domicilio" debe contener solo letras'
-      })
-      .required(),
-    ciudad: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'La ciudad debe ser una cadena de texto',
-        'string.empty': 'La ciudad es un campo requerido',
-        'string.min': 'La ciudad debe tener al menos 3 caracteres',
-        'string.max': 'La ciudad debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-      .messages({
-        'string.base': 'El correo electrónico debe ser una cadena de texto',
-        'string.empty': 'El correo electrónico es un campo requerido',
-        'string.email': 'El correo electrónico debe ser una dirección de correo válida',
-        'string.minDomainSegments':
-          'El correo electrónico debe tener al menos 2 segmentos de dominio',
-        'string.tlds.allow':
-          'El correo electrónico debe tener un dominio de nivel superior válido (com o net)'
-      })
-      .required(),
-    pais: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'El país debe ser una cadena de texto',
-        'string.empty': 'El país es un campo requerido',
-        'string.min': 'El país debe tener al menos 3 caracteres',
-        'string.max': 'El país debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El país debe contener solo letras'
-      })
-      .required(),
-    codigoPostal: Joi.string()
-      .min(4)
-      .messages({
-        'string.base': 'El número de codigo postal debe ser una cadena de texto',
-        'string.empty': 'El número de codigo postal es un campo requerido',
-        'string.min': 'El número de codigo postal debe tener al menos 4 dígitos'
-      })
-      .required(),
-    telefono: Joi.string()
-      .min(10)
-      .messages({
-        'string.base': 'El número de teléfono debe ser una cadena de texto',
-        'string.empty': 'El número de teléfono es un campo requerido',
-        'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
-      })
-      .required(),
-    cuit: Joi.string()
-      .min(10)
-      .messages({
-        'string.base': 'El número de CUIT debe ser una cadena de texto',
-        'string.empty': 'El número de CUIT es un campo requerido',
-        'string.min': 'El número de CUIT debe tener al menos 10 dígitos'
-      })
-      .required(),
-    lesiones: Joi.string()
-      .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
-      .messages({
-        'any.only': 'Selecciona un tipo de lesion permitido'
-      })
-      .required(),
-    entrevistado: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Entrevistado" es un campo booleano',
-        'boolean.empty': 'El campo "Entrevistado" debe tener un valor determinado'
-      })
-      .required(),
-    ocupacion: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'El campo "Ocupacion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Ocupacion" es un campo requerido',
-        'string.min': 'El campo "Ocupacion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Ocupacion" debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    direccionOcupacion: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'El campo "Direccion Ocupacion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Direccion Ocupacion" es un campo requerido',
-        'string.min': 'El campo "Direccion Ocupacion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Direccion Ocupacion" debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    licenciaAportada: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Licencia Aportada" es un campo booleano',
-        'boolean.empty': 'El campo "Licencia Aportada" debe tener un valor determinado'
-      })
-      .required(),
-    licenciaVencimiento: Joi.date()
-      .messages({
-        'date.base': 'Ingrese una fecha válida',
-        'date.empty': 'El campo "Licencia Vencimiento" es un campo requerido'
-      })
-      .required(),
-    licenciaHabilitada: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Licencia Habilitada" es un campo booleano',
-        'boolean.empty': 'El campo "Licencia Habilitada" debe tener un valor determinado'
-      })
-      .required(),
-    licenciaCategoria: Joi.string()
-      .valid('A1', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'D4', 'E1')
-      .messages({
-        'any.only': 'Ingrese una categoria permitida'
+        'string.base': 'Las anotaciones debe ser una cadena de texto',
+        'string.empty': 'Las anotaciones es un campo requerido',
+        'string.min': 'Las anotaciones debe tener al menos 3 caracteres',
+        'string.max': 'Las anotaciones debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'Las anotaciones debe contener solo letras'
       })
       .required(),
 

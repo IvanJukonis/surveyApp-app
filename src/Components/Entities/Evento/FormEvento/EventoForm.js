@@ -34,199 +34,69 @@ const EventosForm = () => {
   const { createdEntity } = params || {};
 
   const schema = Joi.object({
-    prioridad: Joi.boolean()
+    visibilidadEntrevista: Joi.boolean()
       .messages({
-        'boolean.base': 'El campo "Prioridad" es un campo booleano',
-        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
+        'boolean.base': 'El campo "Visibilidad Entrevista" es un campo booleano',
+        'boolean.empty': 'El campo "Visibilidad Entrevista" debe tener un valor determinado'
       })
       .required(),
-    rol: Joi.string()
-      .valid('CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC')
+    visibilidadInforme: Joi.boolean()
       .messages({
-        'any.only': 'Ingrese un rol permitido'
+        'boolean.base': 'El campo "Visibilidad Informe" es un campo booleano',
+        'boolean.empty': 'El campo "Visibilidad Informe" debe tener un valor determinado'
       })
       .required(),
-    apellido: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'El apellido debe ser una cadena de texto',
-        'string.empty': 'El apellido es un campo requerido',
-        'string.min': 'El apellido debe tener al menos 3 caracteres',
-        'string.max': 'El apellido debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    nombre: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'El nombre debe ser una cadena de texto',
-        'string.empty': 'El nombre es un campo requerido',
-        'string.min': 'El nombre debe tener al menos 3 caracteres',
-        'string.max': 'El nombre debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El nombre debe contener solo letras'
-      })
-      .required(),
-    relacion: Joi.string()
-      .min(3)
-      .max(15)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'El campo "Relacion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Relacion" es un campo requerido',
-        'string.min': 'El campo "Relacion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Relacion" debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El campo "Relacion" debe contener solo letras'
-      })
-      .required(),
-    titular: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Titular" es un campo booleano',
-        'boolean.empty': 'El campo "Titular" debe tener un valor determinado'
-      })
-      .required(),
-    dni: Joi.number().min(10000000).max(99999999).integer().messages({
-      'number.base': 'El DNI debe ser un número',
-      'number.empty': 'El DNI es un campo requerido',
-      'number.min': 'El DNI debe ser al menos 10,000,000',
-      'number.max': 'El DNI debe ser como máximo 99,999,999',
-      'number.integer': 'El DNI debe ser un número entero'
+    tipo: Joi.string().valid('Acontesimiento', 'Sospecha').messages({
+      'any.only': 'Seleccione una opción valida'
     }),
-    fechaNacimiento: Joi.date()
+    fecha: Joi.date()
+      .empty('')
       .messages({
-        'date.base': 'Ingrese una fecha válida',
-        'date.empty': 'La fecha de nacimiento es un campo requerido'
+        'date.base': 'El campo "Fecha" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
       })
       .required(),
-    domicilio: Joi.string()
+    descripcion: Joi.string()
       .min(3)
-      .max(15)
+      .max(500)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'El campo "Domicilio" debe ser una cadena de texto',
-        'string.empty': 'El campo "Domicilio" es un campo requerido',
-        'string.min': 'El campo "Domicilio" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Domicilio" debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El campo "Domicilio" debe contener solo letras'
+        'string.base': 'El campo "Descripcion" debe ser una cadena de texto',
+        'string.empty': 'El campo "Descripcion" es un campo requerido',
+        'string.min': 'El campo "Descripcion" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Descripcion" debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'El campo "Descripcion" debe contener solo letras'
       })
       .required(),
-    ciudad: Joi.string()
-      .min(3)
-      .max(15)
+    comprobar: Joi.string()
+      .valid('A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado')
       .messages({
-        'string.base': 'La ciudad debe ser una cadena de texto',
-        'string.empty': 'La ciudad es un campo requerido',
-        'string.min': 'La ciudad debe tener al menos 3 caracteres',
-        'string.max': 'La ciudad debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        'any.only': 'Seleccione una opción valida'
+      }),
+    comprobado: Joi.boolean()
       .messages({
-        'string.base': 'El correo electrónico debe ser una cadena de texto',
-        'string.empty': 'El correo electrónico es un campo requerido',
-        'string.email': 'El correo electrónico debe ser una dirección de correo válida',
-        'string.minDomainSegments':
-          'El correo electrónico debe tener al menos 2 segmentos de dominio',
-        'string.tlds.allow':
-          'El correo electrónico debe tener un dominio de nivel superior válido (com o net)'
+        'boolean.base': 'El campo "Comprobado" es un campo booleano',
+        'boolean.empty': 'El campo "Comprobado" debe tener un valor determinado'
       })
       .required(),
-    pais: Joi.string()
+    comprobable: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Comprobable" es un campo booleano',
+        'boolean.empty': 'El campo "Comprobable" debe tener un valor determinado'
+      })
+      .required(),
+    resolucion: Joi.string()
       .min(3)
-      .max(15)
+      .max(500)
       .regex(/^[a-zA-Z ]+$/)
       .messages({
-        'string.base': 'El país debe ser una cadena de texto',
-        'string.empty': 'El país es un campo requerido',
-        'string.min': 'El país debe tener al menos 3 caracteres',
-        'string.max': 'El país debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El país debe contener solo letras'
+        'string.base': 'El campo "Resolucion" debe ser una cadena de texto',
+        'string.empty': 'El campo "Resolucion" es un campo requerido',
+        'string.min': 'El campo "Resolucion" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Resolucion" debe tener como máximo 15 caracteres',
+        'string.pattern.base': 'El campo "Resolucion" debe contener solo letras'
       })
       .required(),
-    codigoPostal: Joi.string()
-      .min(4)
-      .messages({
-        'string.base': 'El número de codigo postal debe ser una cadena de texto',
-        'string.empty': 'El número de codigo postal es un campo requerido',
-        'string.min': 'El número de codigo postal debe tener al menos 4 dígitos'
-      })
-      .required(),
-    telefono: Joi.string()
-      .min(10)
-      .messages({
-        'string.base': 'El número de teléfono debe ser una cadena de texto',
-        'string.empty': 'El número de teléfono es un campo requerido',
-        'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
-      })
-      .required(),
-    cuit: Joi.string()
-      .min(10)
-      .messages({
-        'string.base': 'El número de CUIT debe ser una cadena de texto',
-        'string.empty': 'El número de CUIT es un campo requerido',
-        'string.min': 'El número de CUIT debe tener al menos 10 dígitos'
-      })
-      .required(),
-    lesiones: Joi.string()
-      .valid('Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES')
-      .messages({
-        'any.only': 'Selecciona un tipo de lesion permitido'
-      })
-      .required(),
-    entrevistado: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Entrevistado" es un campo booleano',
-        'boolean.empty': 'El campo "Entrevistado" debe tener un valor determinado'
-      })
-      .required(),
-    ocupacion: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'El campo "Ocupacion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Ocupacion" es un campo requerido',
-        'string.min': 'El campo "Ocupacion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Ocupacion" debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    direccionOcupacion: Joi.string()
-      .min(3)
-      .max(15)
-      .messages({
-        'string.base': 'El campo "Direccion Ocupacion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Direccion Ocupacion" es un campo requerido',
-        'string.min': 'El campo "Direccion Ocupacion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Direccion Ocupacion" debe tener como máximo 15 caracteres'
-      })
-      .required(),
-    licenciaAportada: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Licencia Aportada" es un campo booleano',
-        'boolean.empty': 'El campo "Licencia Aportada" debe tener un valor determinado'
-      })
-      .required(),
-    licenciaVencimiento: Joi.date()
-      .messages({
-        'date.base': 'Ingrese una fecha válida',
-        'date.empty': 'El campo "Licencia Vencimiento" es un campo requerido'
-      })
-      .required(),
-    licenciaHabilitada: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Licencia Habilitada" es un campo booleano',
-        'boolean.empty': 'El campo "Licencia Habilitada" debe tener un valor determinado'
-      })
-      .required(),
-    licenciaCategoria: Joi.string()
-      .valid('A1', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'D4', 'E1')
-      .messages({
-        'any.only': 'Ingrese una categoria permitida'
-      })
-      .required(),
-
-    siniestro: Joi.any(),
 
     __v: Joi.any(),
     _id: Joi.any()
