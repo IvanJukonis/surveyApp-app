@@ -176,29 +176,16 @@ const EventosForm = () => {
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
-      prioridad: false,
-      relacion: '',
-      titular: false,
-      dni: '',
-      domicilio: '',
-      ciudad: '',
-      telefono: '',
-      email: '',
-      pais: '',
-      codigoPostal: '',
-      cuit: '',
-      entrevistado: false,
-      ocupacion: '',
-      direccionOcupacion: '',
-      licenciaAportada: false,
-      licenciaVencimiento: 'dd / mm / aaaa',
-      licenciaHabilitada: false,
-      licenciaCategoria: '',
-      nombre: '',
-      apellido: '',
-      rol: 'Pick tipo',
-      lesiones: 'Pick lesiones',
-      fechaNacimiento: 'dd / mm / aaaa'
+      visibilidadEntrevista: false,
+      visibilidadInforme: false,
+      tipo: 'Pick tipo',
+      fecha: '',
+      hora: '',
+      descripcion: '',
+      comprobar: 'Pick comprobar',
+      comprobado: false,
+      comprobable: false,
+      resolucion: ''
     };
     reset({ ...emptyData });
   };

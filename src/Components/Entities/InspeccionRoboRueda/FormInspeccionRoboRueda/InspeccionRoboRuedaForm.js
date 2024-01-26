@@ -177,29 +177,14 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
-      prioridad: false,
-      relacion: '',
-      titular: false,
-      dni: '',
-      domicilio: '',
-      ciudad: '',
-      telefono: '',
-      email: '',
-      pais: '',
-      codigoPostal: '',
-      cuit: '',
-      entrevistado: false,
-      ocupacion: '',
-      direccionOcupacion: '',
-      licenciaAportada: false,
-      licenciaVencimiento: 'dd / mm / aaaa',
-      licenciaHabilitada: false,
-      licenciaCategoria: '',
-      nombre: '',
-      apellido: '',
-      rol: 'Pick tipo',
-      lesiones: 'Pick lesiones',
-      fechaNacimiento: 'dd / mm / aaaa'
+      fecha: 'dd / mm / aaaa',
+      hora: 'dd / mm / aaaa',
+      fotos: 'Pick foto',
+      permiso: 'Pick permiso',
+      programada: 'Pick programada',
+      daños: '',
+      disposicion: '',
+      conclusion: ''
     };
     reset({ ...emptyData });
   };

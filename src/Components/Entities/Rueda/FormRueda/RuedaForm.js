@@ -246,29 +246,23 @@ const RuedasForm = () => {
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
-      prioridad: false,
-      relacion: '',
-      titular: false,
-      dni: '',
-      domicilio: '',
-      ciudad: '',
-      telefono: '',
-      email: '',
-      pais: '',
-      codigoPostal: '',
-      cuit: '',
-      entrevistado: false,
-      ocupacion: '',
-      direccionOcupacion: '',
-      licenciaAportada: false,
-      licenciaVencimiento: 'dd / mm / aaaa',
-      licenciaHabilitada: false,
-      licenciaCategoria: '',
-      nombre: '',
-      apellido: '',
-      rol: 'Pick tipo',
-      lesiones: 'Pick lesiones',
-      fechaNacimiento: 'dd / mm / aaaa'
+      descripcion: '',
+      marca: '',
+      numDot: '',
+      numLlanta: '',
+      tipo: 'Pick tipo',
+      tipoLlanta: 'Pick llanta',
+      posicionActual: 'Pick actual',
+      posicionPrevia: 'Pick previa',
+      fechaColocacion: 'dd / mm / aaaa',
+      posicionTransitoria: 'Pick transitoria',
+      sustraida: false,
+      factura: false,
+      aporteFactura: false,
+      aporteFoto: 'Pick foto',
+      metadatosFoto: 'Pick metadatos',
+      anotaciones: '',
+      estado: 'Pick estado'
     };
     reset({ ...emptyData });
   };
