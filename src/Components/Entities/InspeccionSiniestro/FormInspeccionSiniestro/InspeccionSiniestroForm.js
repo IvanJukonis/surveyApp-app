@@ -245,6 +245,7 @@ const InspeccionSiniestrosForm = () => {
   };
 
   useEffect(() => {
+    console.log('entro');
     getAllInspeccionSiniestro(dispatch, data.id);
   }, []);
 

@@ -382,9 +382,30 @@ const SiniestrosForm = () => {
     });
   };
 
-  const handleLugar = () => {
+  const handleLugarO = () => {
     const pathPrefix = getPathPrefix();
     history.push(`${pathPrefix}/siniestros/LugarSiniestro/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
+    });
+  };
+
+  const handleLugarR = () => {
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/LugarRoboRueda/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
+    });
+  };
+
+  const handleInspeccionO = () => {
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/inspeccionSiniestro/form/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
+    });
+  };
+
+  const handleInspeccionR = () => {
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/inspeccionRoboRueda/form/${siniestroActual._id}`, {
       params: { ...siniestroActual, mode: 'create' }
     });
   };
@@ -631,8 +652,11 @@ const SiniestrosForm = () => {
             <Button clickAction={handleInvolucrado} text="Involucrados" />
             <Button clickAction={handleNovedad} text="Novedades" />
             <Button clickAction={handleVehiculo} text="Vehiculos" />
-            <Button clickAction={handleLugar} text="Lugar" />
-            <Button clickAction={handleEntrevista} text="Entrevistas" />
+            <Button clickAction={handleEntrevista} text="Entrevista" />
+            <Button clickAction={handleLugarO} text="LugarO" />
+            <Button clickAction={handleLugarR} text="LugarR" />
+            <Button clickAction={handleInspeccionO} text="InspeccionO" />
+            <Button clickAction={handleInspeccionR} text="InspeccionR" />
           </div>
           <div className={styles.textAreasGroup}>
             <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>

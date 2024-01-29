@@ -10,6 +10,10 @@ import controladorReducer from './controlador/reducer';
 import novedadReducer from './novedad/reducer';
 import entrevistaRoboRuedaReducer from './entrevistaRoboRueda/reducer';
 import entrevistaSiniestroReducer from './entrevistaSiniestro/reducer';
+import inspeccionRoboRuedaReducer from './inspeccionRoboRueda/reducer';
+import inspeccionSiniestroReducer from './inspeccionSiniestro/reducer';
+import ruedaReducer from './rueda/reducer';
+import eventoReducer from './evento/reducer';
 
 const rootReducer = combineReducers({
   involucrado: involucradoReducer,
@@ -22,7 +26,11 @@ const rootReducer = combineReducers({
   novedad: novedadReducer,
   controlador: controladorReducer,
   entrevistaSiniestro: entrevistaSiniestroReducer,
-  entrevistaRoboRueda: entrevistaRoboRuedaReducer
+  entrevistaRoboRueda: entrevistaRoboRuedaReducer,
+  inspeccionSiniestro: inspeccionSiniestroReducer,
+  inspeccionRoboRueda: inspeccionRoboRuedaReducer,
+  rueda: ruedaReducer,
+  evento: eventoReducer
 });
 
 export default rootReducer;

@@ -23,7 +23,6 @@ const NovedadesForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
-
   const novedades = useSelector((state) => state.novedad.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [buttonType, setButtonType] = useState(false);
@@ -194,6 +193,7 @@ const NovedadesForm = () => {
   };
 
   useEffect(() => {
+    console.log('useEffect');
     getAllNovedad(dispatch, id);
   }, []);
 
