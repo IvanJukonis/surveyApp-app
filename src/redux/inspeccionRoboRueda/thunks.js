@@ -64,15 +64,29 @@ export const deleteInspeccionRoboRueda = (inspeccionRoboRuedaID) => {
   };
 };
 
-export const postInspeccionRoboRueda = async (dispatch, inspeccionRoboRuedaData) => {
+export const postInspeccionRoboRueda = async (
+  dispatch,
+  inspeccionSiniestroData,
+  selectedInvolucrados,
+  selectedVehiculos,
+  ruedas,
+  siniestroId
+) => {
   try {
+    const requestBody = {
+      ...inspeccionSiniestroData,
+      involucrado: selectedInvolucrados,
+      vehiculo: selectedVehiculos,
+      ruedas: ruedas,
+      siniestro: [siniestroId.id]
+    };
     dispatch(postInspeccionRoboRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionRoboRueda`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(inspeccionRoboRuedaData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();

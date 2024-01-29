@@ -78,7 +78,6 @@ export const postInspeccionSiniestro = async (
       vehiculo: selectedVehiculos,
       siniestro: [siniestroId.id]
     };
-    console.log(requestBody);
     dispatch(postInspeccionSiniestroPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro`, {
       method: 'POST',

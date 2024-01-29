@@ -59,15 +59,27 @@ export const deleteRueda = (ruedaID) => {
   };
 };
 
-export const postRueda = async (dispatch, ruedaData) => {
+export const postRueda = async (
+  dispatch,
+  ruedaData,
+  selectedInvolucrados,
+  selectedVehiculos,
+  siniestroId
+) => {
   try {
+    const requestBody = {
+      ...ruedaData,
+      involucrado: selectedInvolucrados,
+      vehiculo: selectedVehiculos,
+      siniestro: [siniestroId.id]
+    };
     dispatch(postRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(ruedaData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();

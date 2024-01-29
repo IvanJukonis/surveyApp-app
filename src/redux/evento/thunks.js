@@ -59,15 +59,19 @@ export const deleteEvento = (eventoID) => {
   };
 };
 
-export const postEvento = async (dispatch, eventoData) => {
+export const postEvento = async (dispatch, eventoData, siniestroId) => {
   try {
+    const requestBody = {
+      ...eventoData,
+      siniestro: [siniestroId.id]
+    };
     dispatch(postEventoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/evento`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(eventoData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();
