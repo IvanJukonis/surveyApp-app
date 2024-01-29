@@ -29,7 +29,6 @@ const EntrevistaRoboRuedasForm = () => {
   const { id } = useParams();
   const location = useLocation();
   const history = useHistory();
-
   const data = location.state.params;
   const siniestroId = location.state.params.siniestroId;
   const formType = data.mode;
@@ -557,8 +556,6 @@ const EntrevistaRoboRuedasForm = () => {
   }, [createdEntrevista]);
 
   useEffect(() => {
-    console.log(currentEntrevista.involucrado, 'invol');
-    console.log(currentEntrevista, 'invol 2');
     if (currentEntrevista?.involucrado) {
       setSelectedInvolucrados(currentEntrevista.involucrado);
     }

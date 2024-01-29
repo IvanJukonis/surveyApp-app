@@ -9,15 +9,15 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import FormTable from 'Components/Shared/formTable';
+import { getAllInvolucrado } from 'redux/involucrado/thunks';
+import { getAllVehiculos } from 'redux/vehiculo/thunks';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   updateInspeccionSiniestro,
   postInspeccionSiniestro,
-  getAllInspeccionSiniestro,
-  deleteInspeccionSiniestro
+  getAllInspeccionSiniestro
 } from 'redux/inspeccionSiniestro/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -27,16 +27,35 @@ import Joi from 'joi';
 const InspeccionSiniestrosForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const inspeccionSiniestros = useSelector((state) => state.inspeccionSiniestro.list);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [inspeccionSiniestro, setInspeccionSiniestro] = useState({});
-  const [buttonType, setButtonType] = useState(false);
   const data = useParams();
   const location = useLocation();
   const { params } = location.state || {};
   const { createdEntity } = params || {};
+  const siniestroId = location.state.params.siniestroId;
+
+  const [toastError, setToastErroOpen] = useState(false);
+  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
+  const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [inspeccionSiniestro, setInspeccionSiniestro] = useState({});
+  const [buttonType, setButtonType] = useState(false);
+  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
+  const [selectedVehiculos, setSelectedVehiculos] = useState([]);
+
+  const currentInspeccionSiniestro = useSelector((state) => state.inspeccionSiniestro.list);
+  const involucrados = useSelector((state) => state.involucrado.list);
+  const vehiculos = useSelector((state) => state.vehiculo.list);
+
+  const columnTitleInvolucrado = [
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columnInvolucrado = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
+  const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
+  const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
   const schema = Joi.object({
     fotos: Joi.string()
@@ -58,7 +77,7 @@ const InspeccionSiniestrosForm = () => {
         'date.empty': 'El campo "Hora" no puede permanecer vacio.'
       })
       .required(),
-    permisos: Joi.string()
+    permiso: Joi.string()
       .valid('Inspeccion permitida', 'Inspeccion no permitida', 'Inspeccion dificultada')
       .messages({
         'any.only': 'Seleccione una opción valida'
@@ -142,12 +161,15 @@ const InspeccionSiniestrosForm = () => {
     defaultValues: { ...inspeccionSiniestro }
   });
 
+  const formType = 'create';
   const onConfirmFunction = async () => {
-    if (!buttonType) {
-      const inspeccionSiniestroConSiniestro = { ...inspeccionSiniestro, siniestro: data.id };
+    if (formType == 'create') {
       const addInspeccionSiniestroResponse = await postInspeccionSiniestro(
         dispatch,
-        inspeccionSiniestroConSiniestro
+        inspeccionSiniestro,
+        selectedInvolucrados,
+        selectedVehiculos,
+        data
       );
       if (addInspeccionSiniestroResponse.type === 'POST_INSPECCIONSINIESTRO_SUCCESS') {
         setToastErroOpen(false);
@@ -156,12 +178,13 @@ const InspeccionSiniestrosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editInspeccionSiniestroResponse = await updateInspeccionSiniestro(
+      const editEntrevistaRoboRuedaResponse = await updateInspeccionSiniestro(
         dispatch,
-        inspeccionSiniestro._id,
-        inspeccionSiniestro
+        selectedInvolucrados,
+        selectedVehiculos,
+        siniestroId
       );
-      if (editInspeccionSiniestroResponse.type === 'UPDATE_INSPECCIONSINIESTRO_SUCCESS') {
+      if (editEntrevistaRoboRuedaResponse.type === 'UPDATE_ENTREVISTAROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {}, 1000);
@@ -174,14 +197,16 @@ const InspeccionSiniestrosForm = () => {
     if (buttonType) {
       const formattedData = {
         ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
       };
       setInspeccionSiniestro(formattedData);
       setModalAddConfirmOpen(true);
     } else {
       const formattedData = {
         ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
       };
       setInspeccionSiniestro(formattedData);
       setModalAddConfirmOpen(true);
@@ -197,8 +222,6 @@ const InspeccionSiniestrosForm = () => {
   const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
   const arrayTipoDaños = ['Daños graves', 'Daños leves', 'Daños medios'];
   const arrayCoincidenciaDaños = ['Coincidentes', 'No coincidentes', 'Con inconsistencias'];
-  const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
-  const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
 
   const resetForm = () => {
     setButtonType(false);
@@ -219,18 +242,6 @@ const InspeccionSiniestrosForm = () => {
     reset({ ...emptyData });
   };
 
-  const deleteButton = deleteInspeccionSiniestro;
-
-  const tableClick = (index) => {
-    const formattedData = {
-      ...inspeccionSiniestros[index],
-      fechaNacimiento: formatDate(inspeccionSiniestros[index].fechaNacimiento),
-      licenciaVencimiento: formatDate(inspeccionSiniestros[index].licenciaVencimiento)
-    };
-    reset({ ...formattedData });
-    setButtonType(true);
-  };
-
   const cancelForm = () => {
     if (createdEntity) {
       history.push({
@@ -244,10 +255,124 @@ const InspeccionSiniestrosForm = () => {
     }
   };
 
+  const checkStateSelectedVehiculo = (column, index) => {
+    if (
+      column === 'selected' &&
+      currentInspeccionSiniestro &&
+      currentInspeccionSiniestro.vehiculo
+    ) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    if (currentInspeccionSiniestro) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedVehiculo = (index) => {
+    const isSelectedVehiculo = selectedVehiculos.find(
+      (vehiculo) => vehiculos[index]._id === vehiculo
+    );
+    if (isSelectedVehiculo) {
+      const newListSelectedVehiculos = selectedVehiculos.filter(
+        (vehiculo) => vehiculos[index]._id !== vehiculo
+      );
+      setSelectedVehiculos(newListSelectedVehiculos);
+    } else {
+      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+      console.log(selectedVehiculos);
+    }
+  };
+
+  const checkStateSelected = (column, index) => {
+    if (column === 'selected' && currentInspeccionSiniestro) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (!currentInspeccionSiniestro) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelected = (index) => {
+    const isSelectedInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+      console.log(selectedInvolucrados);
+    }
+  };
+
+  const checkState = (index, entity) => {
+    if (entity === 'inv') {
+      if (involucrados[index].prioridad) {
+        if (involucrados.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (entity === 'veh') {
+      if (vehiculos[index].prioridad) {
+        if (vehiculos.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
   useEffect(() => {
-    console.log('entro');
     getAllInspeccionSiniestro(dispatch, data.id);
+    getAllVehiculos(dispatch, data.id || siniestroId);
+    getAllInvolucrado(dispatch, data.id || siniestroId);
   }, []);
+
+  useEffect(() => {
+    if (currentInspeccionSiniestro?.involucrado) {
+      setSelectedInvolucrados(currentInspeccionSiniestro.involucrado);
+    }
+  }, [currentInspeccionSiniestro?.involucrado?.length]);
+
+  useEffect(() => {
+    if (currentInspeccionSiniestro?.vehiculo) {
+      setSelectedVehiculos(currentInspeccionSiniestro.vehiculo);
+    }
+  }, [currentInspeccionSiniestro?.vehiculo?.length]);
 
   return (
     <div className={styles.container}>
@@ -312,10 +437,10 @@ const InspeccionSiniestrosForm = () => {
               <div className={styles.inputContainer}>
                 <OptionInput
                   data={arrayPermisos}
-                  dataLabel="Permisos"
-                  name="permisos"
+                  dataLabel="Permiso"
+                  name="permiso"
                   register={register}
-                  error={errors.permisos?.message}
+                  error={errors.permiso?.message}
                 />
               </div>
             </div>
@@ -397,21 +522,100 @@ const InspeccionSiniestrosForm = () => {
               </div>
             </div>
           </section>
+          <div className={styles.bottomTable}>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.tableContent}>
+                  {columnTitleInvolucrado.map((column, index) => (
+                    <th key={index}>{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {involucrados.map((row, index) => {
+                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                  return (
+                    <tr className={rowClass} key={index}>
+                      {columnInvolucrado.map((column, columnIndex) => (
+                        <td key={columnIndex}>
+                          {column === 'selected' ? (
+                            <input
+                              type="checkbox"
+                              className={styles.checkboxInput}
+                              onChange={() => handleCheckboxSelected(index)}
+                              checked={checkStateSelected(column, index)}
+                            />
+                          ) : column.startsWith('prioridad') ? (
+                            <input
+                              className={styles.checkboxInput}
+                              type="checkbox"
+                              readOnly
+                              checked={checkState(index, 'inv')}
+                            />
+                          ) : (
+                            <>
+                              {ifNotArrayNotObject(row, column)}
+                              {ifNotExist(row[column])}
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.tableContent}>
+                  {columnTitleVehiculo.map((column, index) => (
+                    <th key={index}>{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {vehiculos.map((row, index) => {
+                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                  return (
+                    <tr className={rowClass} key={index}>
+                      {columnVehiculo.map((column, columnIndex) => (
+                        <td key={columnIndex}>
+                          {column === 'selected' ? (
+                            <input
+                              type="checkbox"
+                              className={styles.checkboxInput}
+                              onChange={() => handleCheckboxSelectedVehiculo(index)}
+                              checked={checkStateSelectedVehiculo(column, index)}
+                            />
+                          ) : column.startsWith('prioridad') ? (
+                            <input
+                              className={styles.checkboxInput}
+                              type="checkbox"
+                              readOnly
+                              checked={checkState(index, 'veh')}
+                            />
+                          ) : (
+                            <>
+                              {ifNotArrayNotObject(row, column)}
+                              {ifNotExist(row[column])}
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           <div className={styles.btnContainer}>
             <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
             <Button text="Cancelar" clickAction={cancelForm} />
           </div>
         </form>
-        <div className={styles.rightTable}>
-          <FormTable
-            data={inspeccionSiniestros}
-            columnTitleArray={columnTitleArray}
-            columns={columns}
-            handleClick={tableClick}
-            deleteButton={deleteButton}
-          />
-        </div>
       </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />

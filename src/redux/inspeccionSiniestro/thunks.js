@@ -64,15 +64,28 @@ export const deleteInspeccionSiniestro = (inspeccionSiniestroID) => {
   };
 };
 
-export const postInspeccionSiniestro = async (dispatch, inspeccionSiniestroData) => {
+export const postInspeccionSiniestro = async (
+  dispatch,
+  inspeccionSiniestroData,
+  selectedInvolucrados,
+  selectedVehiculos,
+  siniestroId
+) => {
   try {
+    const requestBody = {
+      ...inspeccionSiniestroData,
+      involucrado: selectedInvolucrados,
+      vehiculo: selectedVehiculos,
+      siniestro: [siniestroId.id]
+    };
+    console.log(requestBody);
     dispatch(postInspeccionSiniestroPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionSiniestro`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(inspeccionSiniestroData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();
