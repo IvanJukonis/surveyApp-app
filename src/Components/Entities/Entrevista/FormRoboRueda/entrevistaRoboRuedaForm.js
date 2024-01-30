@@ -539,6 +539,11 @@ const EntrevistaRoboRuedasForm = () => {
     setRedirectEntity('vehiculo');
   };
 
+  const ruedaRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('rueda');
+  };
+
   useEffect(() => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
@@ -936,7 +941,7 @@ const EntrevistaRoboRuedasForm = () => {
         <div className={styles.entityButtons}>
           <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
           <Button clickAction={() => vehiculoRedirect()} text="Vehiculos" />
-          <Button clickAction={() => involucradoRedirect()} text="Ruedas" />
+          <Button clickAction={() => ruedaRedirect()} text="Ruedas" />
           <Button clickAction={() => involucradoRedirect()} text="Eventos" />
         </div>
         <div className={styles.bottomTable}>

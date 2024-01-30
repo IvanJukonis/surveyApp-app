@@ -284,7 +284,6 @@ const InspeccionSiniestrosForm = () => {
       setSelectedVehiculos(newListSelectedVehiculos);
     } else {
       setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
-      console.log(selectedVehiculos);
     }
   };
 

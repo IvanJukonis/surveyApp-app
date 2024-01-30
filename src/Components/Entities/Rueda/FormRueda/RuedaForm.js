@@ -9,6 +9,8 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
+import { getAllVehiculos } from 'redux/vehiculo/thunks';
+import { getAllInvolucrado } from 'redux/involucrado/thunks';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
@@ -22,16 +24,34 @@ import Joi from 'joi';
 const RuedasForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const ruedas = useSelector((state) => state.rueda.list);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [rueda, setRueda] = useState({});
-  const [buttonType, setButtonType] = useState(false);
   const data = useParams();
   const location = useLocation();
   const { params } = location.state || {};
   const { createdEntity } = params || {};
+
+  const [toastError, setToastErroOpen] = useState(false);
+  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
+  const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [rueda, setRueda] = useState({});
+  const [buttonType, setButtonType] = useState(false);
+  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
+  const [selectedVehiculos, setSelectedVehiculos] = useState([]);
+
+  const currentRueda = useSelector((state) => state.rueda.list);
+  const involucrados = useSelector((state) => state.involucrado.list);
+  const vehiculos = useSelector((state) => state.vehiculo.list);
+
+  const columnTitleInvolucrado = [
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columnInvolucrado = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
+  const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
+  const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
   const schema = Joi.object({
     descripcion: Joi.string()
@@ -193,9 +213,15 @@ const RuedasForm = () => {
   });
 
   const onConfirmFunction = async () => {
-    if (!buttonType) {
-      const ruedaConSiniestro = { ...rueda, siniestro: data.id };
-      const addRuedaResponse = await postRueda(dispatch, ruedaConSiniestro);
+    const formType = 'create';
+    if (formType == 'create') {
+      const addRuedaResponse = await postRueda(
+        dispatch,
+        rueda,
+        selectedInvolucrados,
+        selectedVehiculos,
+        data.id
+      );
       if (addRuedaResponse.type === 'POST_RUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -269,12 +295,8 @@ const RuedasForm = () => {
 
   const deleteButton = deleteRueda;
 
-  const tableClick = (index) => {
-    const formattedData = {
-      ...ruedas[index],
-      fechaNacimiento: formatDate(ruedas[index].fechaNacimiento),
-      licenciaVencimiento: formatDate(ruedas[index].licenciaVencimiento)
-    };
+  const tableClick = () => {
+    const formattedData = {};
     reset({ ...formattedData });
     setButtonType(true);
   };
@@ -292,9 +314,120 @@ const RuedasForm = () => {
     }
   };
 
+  const checkStateSelectedVehiculo = (column, index) => {
+    if (column === 'selected' && currentRueda && currentRueda.vehiculo) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    if (currentRueda) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedVehiculo = (index) => {
+    const isSelectedVehiculo = selectedVehiculos.find(
+      (vehiculo) => vehiculos[index]._id === vehiculo
+    );
+    if (isSelectedVehiculo) {
+      const newListSelectedVehiculos = selectedVehiculos.filter(
+        (vehiculo) => vehiculos[index]._id !== vehiculo
+      );
+      setSelectedVehiculos(newListSelectedVehiculos);
+    } else {
+      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+      console.log(selectedVehiculos);
+    }
+  };
+
+  const checkStateSelected = (column, index) => {
+    if (column === 'selected' && currentRueda) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (!currentRueda) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelected = (index) => {
+    const isSelectedInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+      console.log(selectedInvolucrados);
+    }
+  };
+
+  const checkState = (index, entity) => {
+    if (entity === 'inv') {
+      if (involucrados[index].prioridad) {
+        if (involucrados.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (entity === 'veh') {
+      if (vehiculos[index].prioridad) {
+        if (vehiculos.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
   useEffect(() => {
     getAllRueda(dispatch, data.id);
+    getAllVehiculos(dispatch, data.id);
+    getAllInvolucrado(dispatch, data.id);
   }, []);
+
+  useEffect(() => {
+    if (currentRueda?.involucrado) {
+      setSelectedInvolucrados(currentRueda.involucrado);
+    }
+  }, [currentRueda?.involucrado?.length]);
+
+  useEffect(() => {
+    if (currentRueda?.vehiculo) {
+      setSelectedVehiculos(currentRueda.vehiculo);
+    }
+  }, [currentRueda?.vehiculo?.length]);
 
   return (
     <div className={styles.container}>
@@ -494,6 +627,94 @@ const RuedasForm = () => {
               </div>
             </div>
           </section>
+          <div className={styles.bottomTable}>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.tableContent}>
+                  {columnTitleInvolucrado.map((column, index) => (
+                    <th key={index}>{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {involucrados.map((row, index) => {
+                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                  return (
+                    <tr className={rowClass} key={index}>
+                      {columnInvolucrado.map((column, columnIndex) => (
+                        <td key={columnIndex}>
+                          {column === 'selected' ? (
+                            <input
+                              type="checkbox"
+                              className={styles.checkboxInput}
+                              onChange={() => handleCheckboxSelected(index)}
+                              checked={checkStateSelected(column, index)}
+                            />
+                          ) : column.startsWith('prioridad') ? (
+                            <input
+                              className={styles.checkboxInput}
+                              type="checkbox"
+                              readOnly
+                              checked={checkState(index, 'inv')}
+                            />
+                          ) : (
+                            <>
+                              {ifNotArrayNotObject(row, column)}
+                              {ifNotExist(row[column])}
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.tableContent}>
+                  {columnTitleVehiculo.map((column, index) => (
+                    <th key={index}>{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {vehiculos.map((row, index) => {
+                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                  return (
+                    <tr className={rowClass} key={index}>
+                      {columnVehiculo.map((column, columnIndex) => (
+                        <td key={columnIndex}>
+                          {column === 'selected' ? (
+                            <input
+                              type="checkbox"
+                              className={styles.checkboxInput}
+                              onChange={() => handleCheckboxSelectedVehiculo(index)}
+                              checked={checkStateSelectedVehiculo(column, index)}
+                            />
+                          ) : column.startsWith('prioridad') ? (
+                            <input
+                              className={styles.checkboxInput}
+                              type="checkbox"
+                              readOnly
+                              checked={checkState(index, 'veh')}
+                            />
+                          ) : (
+                            <>
+                              {ifNotArrayNotObject(row, column)}
+                              {ifNotExist(row[column])}
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           <div className={styles.btnContainer}>
             <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
             <Button clickAction={resetForm} text="Reiniciar" />
@@ -502,7 +723,7 @@ const RuedasForm = () => {
         </form>
         <div className={styles.rightTable}>
           <FormTable
-            data={ruedas}
+            data={currentRueda}
             columnTitleArray={columnTitleArray}
             columns={columns}
             handleClick={tableClick}

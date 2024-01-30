@@ -27,6 +27,11 @@ const ModalSuccess = ({
         pathname: `/controlador/siniestros/vehiculo/form/${sinId}`,
         state: { params: { mode: 'create', createdEntity: createdEntity } }
       });
+    } else if (redirectEntity === 'rueda') {
+      history.push({
+        pathname: `/controlador/siniestros/rueda/form/${sinId}`,
+        state: { params: { mode: 'create', createdEntity: createdEntity } }
+      });
     }
   };
 
