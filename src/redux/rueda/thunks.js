@@ -2,6 +2,9 @@ import {
   getRuedaPending,
   getRuedaSuccess,
   getRuedaError,
+  getRuedasPending,
+  getRuedasSuccess,
+  getRuedasError,
   deleteRuedaPending,
   deleteRuedaSuccess,
   deleteRuedaError,
@@ -30,15 +33,16 @@ export const getAllRueda = async (dispatch, sinId) => {
 
 export const getRueda = async (dispatch) => {
   try {
-    dispatch(getRuedaPending(true));
+    dispatch(getRuedasPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`);
     const data = await response.json();
     const ruedasListAll = data.data;
-    dispatch(getRuedaPending(false));
-    dispatch(getRuedaSuccess(ruedasListAll));
+    dispatch(getRuedasPending(false));
+    console.log(ruedasListAll, 'lista completa que llega del thunk');
+    dispatch(getRuedasSuccess(ruedasListAll));
   } catch (error) {
-    dispatch(getRuedaPending(false));
-    dispatch(getRuedaError(true));
+    dispatch(getRuedasPending(false));
+    dispatch(getRuedasError(true));
   }
 };
 

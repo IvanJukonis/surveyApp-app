@@ -2,6 +2,9 @@ import {
   GET_RUEDA_PENDING,
   GET_RUEDA_SUCCESS,
   GET_RUEDA_ERROR,
+  GET_RUEDAS_PENDING,
+  GET_RUEDAS_SUCCESS,
+  GET_RUEDAS_ERROR,
   DELETE_RUEDA_PENDING,
   DELETE_RUEDA_SUCCESS,
   DELETE_RUEDA_ERROR,
@@ -30,6 +33,27 @@ export const getRuedaSuccess = (list) => {
 export const getRuedaError = (error) => {
   return {
     type: GET_RUEDA_ERROR,
+    payload: error
+  };
+};
+
+export const getRuedasPending = (pending) => {
+  return {
+    type: GET_RUEDAS_PENDING,
+    payload: pending
+  };
+};
+
+export const getRuedasSuccess = (list) => {
+  return {
+    type: GET_RUEDAS_SUCCESS,
+    payload: list
+  };
+};
+
+export const getRuedasError = (error) => {
+  return {
+    type: GET_RUEDAS_ERROR,
     payload: error
   };
 };

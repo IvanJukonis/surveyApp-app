@@ -2,6 +2,9 @@ import {
   GET_RUEDA_PENDING,
   GET_RUEDA_SUCCESS,
   GET_RUEDA_ERROR,
+  GET_RUEDAS_PENDING,
+  GET_RUEDAS_SUCCESS,
+  GET_RUEDAS_ERROR,
   POST_RUEDA_PENDING,
   POST_RUEDA_SUCCESS,
   POST_RUEDA_ERROR,
@@ -14,7 +17,8 @@ import {
 } from './constants';
 
 const INITIAL_STATE = {
-  list: []
+  list: [],
+  completeList: []
 };
 
 const ruedaReducer = (state = INITIAL_STATE, action) => {
@@ -34,6 +38,27 @@ const ruedaReducer = (state = INITIAL_STATE, action) => {
     }
 
     case GET_RUEDA_ERROR: {
+      return {
+        ...state,
+        error: action.payload
+      };
+    }
+
+    case GET_RUEDAS_PENDING: {
+      return {
+        ...state,
+        pending: action.payload
+      };
+    }
+
+    case GET_RUEDAS_SUCCESS: {
+      return {
+        ...state,
+        completeList: action.payload
+      };
+    }
+
+    case GET_RUEDAS_ERROR: {
       return {
         ...state,
         error: action.payload

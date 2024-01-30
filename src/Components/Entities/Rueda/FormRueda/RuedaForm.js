@@ -15,7 +15,7 @@ import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateRueda, postRueda, getAllRueda, deleteRueda } from 'redux/rueda/thunks';
+import { updateRueda, postRueda, getAllRueda, getRueda, deleteRueda } from 'redux/rueda/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -40,6 +40,7 @@ const RuedasForm = () => {
   const currentRueda = useSelector((state) => state.rueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
+  const ruedas = useSelector((state) => state.rueda.completeList);
 
   const columnTitleInvolucrado = [
     'Seleccionar',
@@ -266,8 +267,8 @@ const RuedasForm = () => {
   const arrayAporteFoto = ['Se aportan fotos previas', 'No se aportan fotos previas'];
   const arrayMetadatosFoto = ['Metadatos presentes', 'Sin metadatos presentes'];
 
-  const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
-  const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
+  const columnTitleArray = ['Marca', 'Dot', 'Estado'];
+  const columns = ['marca', 'dot', 'estado'];
 
   const resetForm = () => {
     setButtonType(false);
@@ -339,7 +340,6 @@ const RuedasForm = () => {
       setSelectedVehiculos(newListSelectedVehiculos);
     } else {
       setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
-      console.log(selectedVehiculos);
     }
   };
 
@@ -413,6 +413,7 @@ const RuedasForm = () => {
 
   useEffect(() => {
     getAllRueda(dispatch, data.id);
+    getRueda(dispatch);
     getAllVehiculos(dispatch, data.id);
     getAllInvolucrado(dispatch, data.id);
   }, []);
@@ -723,7 +724,7 @@ const RuedasForm = () => {
         </form>
         <div className={styles.rightTable}>
           <FormTable
-            data={currentRueda}
+            data={ruedas}
             columnTitleArray={columnTitleArray}
             columns={columns}
             handleClick={tableClick}
