@@ -25,6 +25,10 @@
   margin: 0;
 }
 
+.tableTop {
+  width: 70%;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -34,7 +38,8 @@
 
 .innerContainer {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  flex-direction: column;
   justify-content: space-evenly;
 }
 

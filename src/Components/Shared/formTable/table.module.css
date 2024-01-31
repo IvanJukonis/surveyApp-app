@@ -18,12 +18,13 @@
 
 .table tr td,
 .table tr th {
-  padding: 15px 10px 15px 20px;
+  padding: 10px 5px 10px 5px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   max-width: 100px;
   transition: all 0.1s;
+  font-size: 15px;
 }
 
 .table tr:hover {
@@ -46,14 +47,14 @@
 }
 
 .checkboxInput {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   margin-left: 22px;
 }
 
 .trash_edit {
-  width: 15px;
-  height: 15px;
+  width: 10px;
+  height: 10px;
   display: flex;
   justify-content: center;
   align-items: center;

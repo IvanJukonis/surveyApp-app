@@ -9,6 +9,7 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
+import FormTable from 'Components/Shared/formTable';
 import { getAllInvolucrado } from 'redux/involucrado/thunks';
 import { getAllVehiculos } from 'redux/vehiculo/thunks';
 import DateInput from 'Components/Shared/Inputs/DateInput';
@@ -17,7 +18,8 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import {
   updateInspeccionSiniestro,
   postInspeccionSiniestro,
-  getAllInspeccionSiniestro
+  getAllInspeccionSiniestro,
+  deleteInspeccionSiniestro
 } from 'redux/inspeccionSiniestro/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -45,6 +47,8 @@ const InspeccionSiniestrosForm = () => {
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
 
+  const columnTitleArray = ['Fecha', 'Hora', 'Permiso', 'Programada'];
+  const columns = ['fecha', 'hora', 'permiso', 'programada'];
   const columnTitleInvolucrado = [
     'Seleccionar',
     'Nombre',
@@ -355,6 +359,18 @@ const InspeccionSiniestrosForm = () => {
     }
   };
 
+  const tableClick = (index) => {
+    const formattedData = {
+      ...involucrados[index],
+      fechaNacimiento: formatDate(involucrados[index].fechaNacimiento),
+      licenciaVencimiento: formatDate(involucrados[index].licenciaVencimiento)
+    };
+    reset({ ...formattedData });
+    setButtonType(true);
+  };
+
+  const deleteButton = deleteInspeccionSiniestro;
+
   useEffect(() => {
     getAllInspeccionSiniestro(dispatch, data.id);
     getAllVehiculos(dispatch, data.id || siniestroId);
@@ -401,6 +417,15 @@ const InspeccionSiniestrosForm = () => {
         <h3 className={styles.title}>{data.id ? 'InspeccionSiniestro' : 'InspeccionSiniestro'}</h3>
       </div>
       <div className={styles.innerContainer}>
+        <div className={styles.tableTop}>
+          <FormTable
+            data={currentInspeccionSiniestro}
+            columnTitleArray={columnTitleArray}
+            columns={columns}
+            handleClick={tableClick}
+            deleteButton={deleteButton}
+          />
+        </div>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
             <div className={styles.inputColumn}>

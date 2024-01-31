@@ -7,7 +7,8 @@ import {
   ToastError,
   Inputs,
   Button,
-  OptionInput
+  OptionInput,
+  TableComponent
 } from 'Components/Shared';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
@@ -23,19 +24,31 @@ import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 
-const InspeccionRoboInspeccionRoboRuedasForm = () => {
+const InspeccionRoboRuedasForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const inspeccionRoboRuedas = useSelector((state) => state.inspeccionRoboRueda.list);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
-  const [buttonType, setButtonType] = useState(false);
   const data = useParams();
   const location = useLocation();
   const { params } = location.state || {};
   const { createdEntity } = params || {};
+
+  const [toastError, setToastErroOpen] = useState(false);
+  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
+  const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
+  const [buttonType, setButtonType] = useState(false);
+
+  const currentInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
+
+  const arrayFotos = ['Se toman fotografias del VH', 'No se toman fotografias del VH'];
+  const arrayPermisos = [
+    'Inspeccion permitida',
+    'Inspeccion no permitida',
+    'Inspeccion dificultada'
+  ];
+  const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
+  const columnTitleArray = ['Fecha', 'Hora', 'Permiso', 'Programada'];
+  const columns = ['fecha', 'hora', 'permiso', 'programada'];
 
   const schema = Joi.object({
     fotos: Joi.string()
@@ -164,16 +177,6 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
     }
   };
 
-  const arrayFotos = ['Se toman fotografias del VH', 'No se toman fotografias del VH'];
-  const arrayPermisos = [
-    'Inspeccion permitida',
-    'Inspeccion no permitida',
-    'Inspeccion dificultada'
-  ];
-  const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
-  const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
-  const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
-
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
@@ -188,14 +191,13 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
     };
     reset({ ...emptyData });
   };
-
   const deleteButton = deleteInspeccionRoboRueda;
 
   const tableClick = (index) => {
     const formattedData = {
-      ...inspeccionRoboRuedas[index],
-      fechaNacimiento: formatDate(inspeccionRoboRuedas[index].fechaNacimiento),
-      licenciaVencimiento: formatDate(inspeccionRoboRuedas[index].licenciaVencimiento)
+      ...currentInspeccionRoboRueda[index],
+      fechaNacimiento: formatDate(currentInspeccionRoboRueda[index].fechaNacimiento),
+      licenciaVencimiento: formatDate(currentInspeccionRoboRueda[index].licenciaVencimiento)
     };
     reset({ ...formattedData });
     setButtonType(true);
@@ -246,6 +248,12 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
         <h3 className={styles.title}>{data.id ? 'InspeccionRoboRueda' : 'InspeccionRoboRueda'}</h3>
       </div>
       <div className={styles.innerContainer}>
+        <TableComponent
+          columnTitleArray={columnTitleArray}
+          data={currentInspeccionRoboRueda}
+          columns={columns}
+          deleteButton={deleteInspeccionRoboRueda}
+        />
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
             <div className={styles.inputColumn}>
@@ -335,7 +343,7 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
         </form>
         <div className={styles.rightTable}>
           <FormTable
-            data={inspeccionRoboRuedas}
+            data={currentInspeccionRoboRueda}
             columnTitleArray={columnTitleArray}
             columns={columns}
             handleClick={tableClick}
@@ -350,4 +358,4 @@ const InspeccionRoboInspeccionRoboRuedasForm = () => {
   );
 };
 
-export default InspeccionRoboInspeccionRoboRuedasForm;
+export default InspeccionRoboRuedasForm;

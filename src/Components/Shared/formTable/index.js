@@ -129,7 +129,7 @@ const FormTable = ({
                           readOnly
                           checked={checkState(index)}
                         />
-                      ) : column.startsWith('fecha') ? (
+                      ) : column.startsWith('fecha') || column.startsWith('hora') ? (
                         formatDate(row[column])
                       ) : (
                         <>
