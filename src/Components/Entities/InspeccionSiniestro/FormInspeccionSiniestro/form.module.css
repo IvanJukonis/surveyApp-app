@@ -14,11 +14,6 @@
   background-color: #3C3C3C;
 }
 
-.personalDataBoolean {
-  display: flex;
-  justify-content: space-evenly;
-}
-
 .title {
   color: #fafafa;
   margin: 0;
@@ -76,28 +71,11 @@
   box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
 }
 
-.personalDataText {
-  display: flex;
-  flex-direction: row;
-}
-
 .inputGroups {
   display: flex;
   justify-content: center;
   padding-left: 15px;
   padding-top: 10px;
-}
-
-.licenceDataOption {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-}
-
-.licenceDataBoolean {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
 }
 
 .inputContainer {
