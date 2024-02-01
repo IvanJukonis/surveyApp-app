@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: #98A0A6;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 label, div, p, input, textarea {
@@ -16,10 +20,6 @@ input, textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url('../../../public/assets/images/pexels-pixabay-313563.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   height: 100%;
 }
 

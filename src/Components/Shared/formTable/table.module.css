@@ -2,18 +2,18 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  padding: 15px 17px 15px 17px;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: #3C3C3C;
+  background: #252440;
   color: #FAFAFA;
-  border-radius: 3px;
+  border: 3px solid #ECECEC;
   overflow: hidden;
-  box-shadow: 0px 6px 30px -7px rgba(0, 0, 0, 0.75);
-  margin: 10px 0;
 }
 
 .table tr td,
@@ -35,13 +35,13 @@
 }
 
 .rowBackground1 {
-  background-color: #FAFAFA;
+  background-color: #f0f0f1;
   color: #3C3C3C;
   font-weight: bold;
 }
 
 .rowBackground2 {
-  background-color: #ffffffc4;
+  background-color: #FFFFFF;
   color: #3C3C3C;
   font-weight: bold;
 }

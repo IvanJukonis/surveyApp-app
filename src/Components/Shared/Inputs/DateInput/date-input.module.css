@@ -1,6 +1,6 @@
 .wrapper {
   width: 203px;
-  padding: 20px 20px 2px 0px;
+  padding: 20px 20px 8px 0px;
   background-color: transparent;
 }
 
@@ -14,7 +14,7 @@ input::-moz-focus-inner {
 
 .wrapper .inputData {
   position: relative;
-  height: 21px;
+  height: 26px;
   width: 100%;
 }
 
@@ -27,16 +27,18 @@ input::-moz-focus-inner {
   height: 100%;
   width: 100%;
   border: none;
-  border-bottom: 2px solid silver;
+  margin-top: 4px;
+  border: 3px solid #ECECEC;
 }
 
 .inputData input:focus ~ label,
 .inputData input:not(:placeholder-shown) ~ label {
-  transform: translateY(-20px);
-  color: #3c3c3c;
+  transform: translateY(-25px);
+  color: #BFBFBF;
   font-weight: bold;
   padding: 5px;
   outline: none;
+  font-size: 14px
 }
 
 .wrapper .inputData label{
@@ -57,7 +59,7 @@ input::-moz-focus-inner {
   color: rgb(240, 8, 8);
   font-size: 12px;
   width: 100%;
-  margin: 5px 0 5px 0;
+  margin: 15px 0 5px 0;
 }
 
 .errorInput {

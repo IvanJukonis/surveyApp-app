@@ -413,231 +413,244 @@ const InspeccionSiniestrosForm = () => {
           )}
         </div>
       }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{data.id ? 'InspeccionSiniestro' : 'InspeccionSiniestro'}</h3>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>INSPECCION SINIESTRO</p>
       </div>
       <div className={styles.innerContainer}>
         <div className={styles.tableTop}>
-          <FormTable
-            data={currentInspeccionSiniestro}
-            columnTitleArray={columnTitleArray}
-            columns={columns}
-            handleClick={tableClick}
-            deleteButton={deleteButton}
-          />
+          <div className={styles.tableContainer}>
+            <FormTable
+              data={currentInspeccionSiniestro}
+              columnTitleArray={columnTitleArray}
+              columns={columns}
+              handleClick={tableClick}
+              deleteButton={deleteButton}
+            />
+          </div>
         </div>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-          <section className={styles.inputGroups}>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayFotos}
-                  dataLabel="Fotos"
-                  name="fotos"
-                  register={register}
-                  error={errors.fotos?.message}
-                />
+          <div className={styles.formContainer}>
+            <section className={styles.inputGroups}>
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayFotos}
+                    dataLabel="Fotos"
+                    name="fotos"
+                    register={register}
+                    error={errors.fotos?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.fecha?.message}
+                    register={register}
+                    nameTitle="Fecha"
+                    type="date"
+                    nameInput="fecha"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.hora?.message}
+                    register={register}
+                    nameTitle="Hora"
+                    type="date"
+                    nameInput="hora"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayPermisos}
+                    dataLabel="Permiso"
+                    name="permiso"
+                    register={register}
+                    error={errors.permiso?.message}
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fecha?.message}
-                  register={register}
-                  nameTitle="Fecha"
-                  type="date"
-                  nameInput="fecha"
-                  required
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayProgramada}
+                    dataLabel="Programada"
+                    name="programada"
+                    register={register}
+                    error={errors.programada?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.daños?.message}
+                    register={register}
+                    nameTitle="Daños"
+                    type="text"
+                    nameInput="daños"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayTipoDaños}
+                    dataLabel="Tipo Daños"
+                    name="tipoDaños"
+                    register={register}
+                    error={errors.tipoDaños?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.descripcionDaños?.message}
+                    register={register}
+                    nameTitle="Descripcion Daños"
+                    type="text"
+                    nameInput="descripcionDaños"
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hora?.message}
-                  register={register}
-                  nameTitle="Hora"
-                  type="date"
-                  nameInput="hora"
-                  required
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.numChasis?.message}
+                    register={register}
+                    nameTitle="Chasis"
+                    type="text"
+                    nameInput="numChasis"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.conclusion?.message}
+                    register={register}
+                    nameTitle="Conclusion"
+                    type="text"
+                    nameInput="conclusion"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayCoincidenciaDaños}
+                    dataLabel="Coincidencia Daños"
+                    name="coincidenciaDaños"
+                    register={register}
+                    error={errors.coincidenciaDaños?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.reparacion?.message}
+                    register={register}
+                    nameTitle="Reparacion"
+                    type="checkbox"
+                    nameInput="reparacion"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayPermisos}
-                  dataLabel="Permiso"
-                  name="permiso"
-                  register={register}
-                  error={errors.permiso?.message}
-                />
-              </div>
+            </section>
+            <div className={styles.btnContainer}>
+              <Button
+                clickAction={handleSubmit(onSubmit)}
+                text={buttonType ? 'Editar' : 'Agregar'}
+              />
+              <Button clickAction={resetForm} text="Reiniciar" />
+              <Button text="Cancelar" clickAction={cancelForm} />
             </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayProgramada}
-                  dataLabel="Programada"
-                  name="programada"
-                  register={register}
-                  error={errors.programada?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.daños?.message}
-                  register={register}
-                  nameTitle="Daños"
-                  type="text"
-                  nameInput="daños"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayTipoDaños}
-                  dataLabel="Tipo Daños"
-                  name="tipoDaños"
-                  register={register}
-                  error={errors.tipoDaños?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descripcionDaños?.message}
-                  register={register}
-                  nameTitle="Descripcion Daños"
-                  type="text"
-                  nameInput="descripcionDaños"
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.numChasis?.message}
-                  register={register}
-                  nameTitle="Chasis"
-                  type="text"
-                  nameInput="numChasis"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.reparacion?.message}
-                  register={register}
-                  nameTitle="Reparacion"
-                  type="checkbox"
-                  nameInput="reparacion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayCoincidenciaDaños}
-                  dataLabel="Coincidencia Daños"
-                  name="coincidenciaDaños"
-                  register={register}
-                  error={errors.coincidenciaDaños?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.conclusion?.message}
-                  register={register}
-                  nameTitle="Conclusion"
-                  type="text"
-                  nameInput="conclusion"
-                />
-              </div>
-            </div>
-          </section>
-          <div className={styles.bottomTable}>
-            <table className={styles.table}>
-              <thead>
-                <tr className={styles.tableContent}>
-                  {columnTitleInvolucrado.map((column, index) => (
-                    <th key={index}>{column}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {involucrados.map((row, index) => {
-                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                  return (
-                    <tr className={rowClass} key={index}>
-                      {columnInvolucrado.map((column, columnIndex) => (
-                        <td key={columnIndex}>
-                          {column === 'selected' ? (
-                            <input
-                              type="checkbox"
-                              className={styles.checkboxInput}
-                              onChange={() => handleCheckboxSelected(index)}
-                              checked={checkStateSelected(column, index)}
-                            />
-                          ) : column.startsWith('prioridad') ? (
-                            <input
-                              className={styles.checkboxInput}
-                              type="checkbox"
-                              readOnly
-                              checked={checkState(index, 'inv')}
-                            />
-                          ) : (
-                            <>
-                              {ifNotArrayNotObject(row, column)}
-                              {ifNotExist(row[column])}
-                            </>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <table className={styles.table}>
-              <thead>
-                <tr className={styles.tableContent}>
-                  {columnTitleVehiculo.map((column, index) => (
-                    <th key={index}>{column}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {vehiculos.map((row, index) => {
-                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                  return (
-                    <tr className={rowClass} key={index}>
-                      {columnVehiculo.map((column, columnIndex) => (
-                        <td key={columnIndex}>
-                          {column === 'selected' ? (
-                            <input
-                              type="checkbox"
-                              className={styles.checkboxInput}
-                              onChange={() => handleCheckboxSelectedVehiculo(index)}
-                              checked={checkStateSelectedVehiculo(column, index)}
-                            />
-                          ) : column.startsWith('prioridad') ? (
-                            <input
-                              className={styles.checkboxInput}
-                              type="checkbox"
-                              readOnly
-                              checked={checkState(index, 'veh')}
-                            />
-                          ) : (
-                            <>
-                              {ifNotArrayNotObject(row, column)}
-                              {ifNotExist(row[column])}
-                            </>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
           </div>
-          <div className={styles.btnContainer}>
-            <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={cancelForm} />
+          <div className={styles.rightTables}>
+            <div className={styles.tableContainer}>
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleInvolucrado.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {involucrados.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnInvolucrado.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelected(index)}
+                                checked={checkStateSelected(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'inv')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className={styles.tableContainer}>
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleVehiculo.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {vehiculos.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnVehiculo.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelectedVehiculo(index)}
+                                checked={checkStateSelectedVehiculo(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'veh')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </form>
       </div>
