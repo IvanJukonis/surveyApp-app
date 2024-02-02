@@ -3,10 +3,11 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  width: 500px;
+  width: 450px;
   height: 200px;
   border: none;
   border-bottom: 2px solid #3C3C3C;
+  border: 3px solid #ECECEC;
 }
 
 .medium {

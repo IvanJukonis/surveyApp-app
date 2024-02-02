@@ -33,8 +33,16 @@ const NovedadesForm = () => {
   const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
   const arrayRelaciones = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
 
-  const columnTitleArray = ['Fecha', 'Titulo', 'Tipo', 'Relacion'];
-  const columns = ['fecha', 'titulo', 'tipo', 'relacion'];
+  const columnTitleArray = [
+    'Fecha',
+    'Relacion',
+    'Tipo',
+    'Titulo',
+    'Visibilidad',
+    'Informe',
+    'Respuesta'
+  ];
+  const columns = ['fecha', 'relacion', 'tipo', 'titulo', 'visibilidad', 'informe', 'respuesta'];
 
   const schema = Joi.object({
     fecha: Joi.date()
@@ -46,8 +54,8 @@ const NovedadesForm = () => {
 
     hora: Joi.date()
       .messages({
-        'date.base': 'El campo "hora" de nacimiento debe ser una fecha válida',
-        'date.empty': 'El campo "hora" de nacimiento es un campo requerido'
+        'date.base': 'El campo "hora" debe ser una fecha válida',
+        'date.empty': 'El campo "hora" es un campo requerido'
       })
       .required(),
 
@@ -89,17 +97,25 @@ const NovedadesForm = () => {
 
     visibilidad: Joi.boolean()
       .messages({
-        'boolean.base': 'El campo "Presencial" es un campo booleano',
-        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
+        'boolean.base': 'El campo "Visibilidad" es un campo booleano',
+        'boolean.empty': 'El campo "Visibilidad" debe tener un valor determinado'
+      })
+      .required(),
+
+    informe: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Informe" es un campo booleano',
+        'boolean.empty': 'El campo "Informe" debe tener un valor determinado'
       })
       .required(),
 
     respuesta: Joi.boolean()
       .messages({
-        'boolean.base': 'El campo "Presencial" es un campo booleano',
-        'boolean.empty': 'El campo "Presencial" debe tener un valor determinado'
+        'boolean.base': 'El campo "Respuesta" es un campo booleano',
+        'boolean.empty': 'El campo "Respuesta" debe tener un valor determinado'
       })
       .required(),
+
     siniestro: Joi.any(),
     __v: Joi.any(),
     _id: Joi.any()
@@ -176,6 +192,7 @@ const NovedadesForm = () => {
       respuesta: false,
       tipo: 'Pick tipo',
       visibilidad: false,
+      informe: false,
       titulo: '',
       descripcion: ''
     };
@@ -221,15 +238,15 @@ const NovedadesForm = () => {
           )}
         </div>
       }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Novedad' : 'Novedad'}</h3>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>NOVEDADES</p>
       </div>
       <div className={styles.innerContainer}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
             <div className={styles.leftGroup}>
               <div className={styles.topGroup}>
-                <div className={styles.leftLeftGroup}>
+                <div className={styles.inputColumnPad}>
                   <div className={styles.inputContainer}>
                     <DateInput
                       error={errors.fecha?.message}
@@ -260,8 +277,18 @@ const NovedadesForm = () => {
                       error={errors.tipo?.message}
                     />
                   </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.informe?.message}
+                      register={register}
+                      nameTitle="Informe"
+                      type="checkbox"
+                      nameInput="informe"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className={styles.leftRightGroup}>
+                <div className={styles.inputColumn}>
                   <div className={styles.inputContainer}>
                     <DateInput
                       error={errors.hora?.message}
@@ -317,12 +344,12 @@ const NovedadesForm = () => {
                 </div>
               </div>
             </div>
+            <div className={styles.btnContainer}>
+              <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
+              <Button clickAction={resetForm} text="Reiniciar" />
+              <Button text="Cancelar" clickAction={() => history.goBack()} />
+            </div>
           </section>
-          <div className={styles.btnContainer}>
-            <Button clickAction={() => {}} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={() => history.goBack()} />
-          </div>
         </form>
         <div className={styles.rightTable}>
           <div className={styles.rightTable}>

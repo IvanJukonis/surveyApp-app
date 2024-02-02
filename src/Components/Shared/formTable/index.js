@@ -84,14 +84,19 @@ const FormTable = ({
     }
   };
 
-  const checkState = (index) => {
-    if (data[index].prioridad) {
-      if (data.find((singleData) => singleData.prioridad === true)) {
+  const checkState = (index, property) => {
+    if (data[index][property]) {
+      if (data.find((singleData) => singleData[property] === true)) {
         return true;
       }
     }
     return false;
   };
+
+  const checkStatePrioridad = (index) => checkState(index, 'prioridad');
+  const checkStateVisibilidad = (index) => checkState(index, 'visibilidad');
+  const checkStateInforme = (index) => checkState(index, 'informe');
+  const checkStateRespuesta = (index) => checkState(index, 'respuesta');
 
   return (
     <section className={styles.container}>
@@ -127,10 +132,31 @@ const FormTable = ({
                           className={styles.checkboxInput}
                           type="checkbox"
                           readOnly
-                          checked={checkState(index)}
+                          checked={checkStatePrioridad(index)}
                         />
                       ) : column.startsWith('fecha') || column.startsWith('hora') ? (
                         formatDate(row[column])
+                      ) : column.startsWith('visibilidad') ? (
+                        <input
+                          className={styles.checkboxInput}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateVisibilidad(index)}
+                        />
+                      ) : column.startsWith('informe') ? (
+                        <input
+                          className={styles.checkboxInput}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateInforme(index)}
+                        />
+                      ) : column.startsWith('respuesta') ? (
+                        <input
+                          className={styles.checkboxInput}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateRespuesta(index)}
+                        />
                       ) : (
                         <>
                           {ifArray(row[column])}

@@ -2,10 +2,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #c5c5c5c2;
-  width: 55%;
-  max-height: 670px;
-  margin: 30px;
+  width: 100%;
+}
+
+.imgTop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('../../../../../public/assets/images/wallpaperbetter.com_1920x1080\ \(2\).jpg');
+  background-size: cover;
+  width: 100%;
+  height: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.imgText {
+  font-size: 25px;
+  color: white;
+  font-weight: bold;
 }
 
 .titleContainer {
@@ -19,9 +34,26 @@
 }
 
 .innerContainer {
+  color: rgba(0, 0, 0, 0.87);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   display: flex;
   flex-direction: row;
-  align-content: space-between;
+  justify-content: space-evenly;
+  width: 95%;
+  position: relative;
+  min-width: 0px;
+  overflow-wrap: break-word;
+  background-clip: border-box;
+  border: 0px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.75rem;
+  overflow: visible;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-top: -64px;
+  margin-bottom: 32px;
+  background-color: #F2F2F2;
+  backdrop-filter: saturate(200%) blur(30px);
+  box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
 }
 
 .title {
@@ -32,17 +64,18 @@
 .form {
   display: flex;
   flex-direction: column;
-  width: 70%;
-  margin-bottom: 20px;
   align-items: center;
 }
 
 .inputGroups {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 10px;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 10px;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
 }
+
 
 .leftGroup {
   display: flex;
@@ -54,21 +87,12 @@
   flex-direction: column;
 }
 
-.leftRightGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.leftLeftGroup {
-  display: flex;
-  flex-direction: column;
-}
-
 .botGroup {
   display: flex;
   flex-direction: column;
   align-content: center;
   flex-direction: center;
+  padding-left: 20px;
 }
 
 .topGroup {
@@ -98,10 +122,14 @@
   color: white;
 }
 
+.inputColumnPad {
+  padding-left: 20px;
+}
+
 .btnContainer {
   display: flex;
-  justify-content: space-around;
-  max-width: 460px;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
 .btnGroup {
@@ -111,52 +139,6 @@
   justify-content: center;
 }
 
-.buttonForm{
+.buttonForm {
   margin: 20px
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #3C3C3C;
-  color: #FAFAFA;
-  border-radius: 3px;
-  overflow: hidden;
-  box-shadow: 0px 6px 30px -7px rgba(0, 0, 0, 0.75);
-  margin: 50px;
-}
-
-.table tr td,
-.table tr th {
-  padding: 5px 3px 5px 15px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 100px;
-  transition: all 0.1s;
-}
-
-.table tr td:nth-last-child(-n + 2):hover {
-  background-color: #3C3C3C;
-  transform: scale(1.2);
-}
-
-.table tr td:hover {
-  transform: scale(1.1);
-  max-width: 280px;
-  background-color: #3C3C3C;
-  color: #fff;
-  cursor: pointer;
-}
-
-.rowBackground1 {
-  background-color: #FAFAFA;
-  color: #3C3C3C;
-  font-weight: bold;
-}
-
-.rowBackground2 {
-  background-color: #ffffffc4;
-  color: #3C3C3C;
-  font-weight: bold;
 }
