@@ -10,6 +10,18 @@
   border: 3px solid #ECECEC;
 }
 
+.threeInputs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 200px;
+  height: 173px;
+  border: none;
+  border-bottom: 2px solid #3C3C3C;
+  border: 3px solid #ECECEC;
+}
+
 .medium {
   width: 300px;
   height: 200px;
