@@ -21,7 +21,7 @@
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 100px;
+  min-width: 80px;
   transition: all 0.1s;
   font-size: 15px;
 }

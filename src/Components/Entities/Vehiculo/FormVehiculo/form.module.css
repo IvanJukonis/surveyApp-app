@@ -1,10 +1,30 @@
 .container {
   display: flex;
   flex-direction: column;
-  background-color: #c5c5c5c2;
-  width: 65%;
-  margin: 30px;
-  height: 600px;
+  align-items: center;
+  width: 100%;
+}
+
+.imgTop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('../../../../../public/assets/images/menuVehiculo7.jpg');
+  background-size: cover;
+  width: 100%;
+  height: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.imgText {
+  font-size: 25px;
+  color: white;
+  font-weight: bold;
+}
+
+.tableTop {
+  margin-bottom: 10px;
 }
 
 .titleContainer {
@@ -25,40 +45,40 @@
 .form {
   display: flex;
   flex-direction: column;
+  margin-top: 10px;
   align-items: center;
-  gap: 20px;
-}
-
-.inputGroups {
-  display: flex;
-  flex-direction: row;
-}
-
-.inputColumn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
 }
 
 .innerContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-}
-
-.leftGroup {
+  color: rgba(0, 0, 0, 0.87);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 95%;
+  position: relative;
+  min-width: 0px;
+  overflow-wrap: break-word;
+  background-clip: border-box;
+  border: 0px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.75rem;
+  overflow: visible;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-top: -64px;
+  margin-bottom: 32px;
+  background-color: #F2F2F2;
+  backdrop-filter: saturate(200%) blur(30px);
+  box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
 }
 
 .inputGroups {
   display: flex;
-  flex-direction: row;
-}
-
-.inputGroup {
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
+  padding-left: 25px;
+  padding-top: 10px;
 }
 
 .submitButton {
@@ -76,25 +96,15 @@
   color: white;
 }
 
-.inputContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 5px 0;
-}
-
 .buttonContainer {
   display: flex;
   gap: 20px;
 }
 
-.buttonContainer {
-  display: flex;
-}
-
 .btnContainer {
   display: flex;
   flex-direction: row;
+  margin: 20px 0 10px 0;
 }
 
 .nameLabel {
@@ -116,47 +126,3 @@
  font-size: 15px;
 }
 
-.table {
-  border-collapse: collapse;
-  background: #3C3C3C;
-  color: #FAFAFA;
-  border-radius: 3px;
-  overflow: hidden;
-  box-shadow: 0px 6px 30px -7px rgba(0, 0, 0, 0.75);
-  margin: 20px 0px 0px 0px;
-}
-
-.table tr td,
-.table tr th {
-  padding: 5px 3px 5px 15px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 100px;
-  transition: all 0.1s;
-}
-
-.table tr td:nth-last-child(-n + 2):hover {
-  background-color: #3C3C3C;
-  transform: scale(1.2);
-}
-
-.table tr td:hover {
-  transform: scale(1.1);
-  max-width: 280px;
-  background-color: #3C3C3C;
-  color: #fff;
-  cursor: pointer;
-}
-
-.rowBackground1 {
-  background-color: #FAFAFA;
-  color: #3C3C3C;
-  font-weight: bold;
-}
-
-.rowBackground2 {
-  background-color: #ffffffc4;
-  color: #3C3C3C;
-  font-weight: bold;
-}

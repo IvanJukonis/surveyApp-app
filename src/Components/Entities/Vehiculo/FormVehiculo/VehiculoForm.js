@@ -17,6 +17,7 @@ import {
   getAllVehiculos,
   deleteVehiculo
 } from 'redux/vehiculo/thunks';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,8 +55,8 @@ const VehiculosForm = () => {
   const arrayAlarma = ['Con alarma (Activada)', 'Con alarma (Desactivada)', 'Sin alarma'];
   const arrayCierre = ['Con cierre (Activado)', 'Con cierre (Desactivado)', 'Sin cierre'];
 
-  const columnTitleArray = ['Rol', 'Modelo', 'Dominio', 'Marca', 'Prioridad'];
-  const columns = ['rol', 'modelo', 'dominio', 'marca', 'prioridad'];
+  const columnTitleArray = ['Dominio', 'Modelo', 'Marca', 'Color', 'Rol', 'Tipo', 'Prioridad'];
+  const columns = ['dominio', 'modelo', 'marca', 'color', 'rol', 'tipo', 'prioridad'];
 
   const schema = Joi.object({
     rol: Joi.string()
@@ -152,10 +153,10 @@ const VehiculosForm = () => {
       .min(3)
       .max(15)
       .messages({
-        'string.base': 'El campo "Descripcion Daños" debe ser una cadena de texto',
-        'string.empty': 'El campo "Descripcion Daños" es un campo requerido',
-        'string.min': 'El campo "Descripcion Daños" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Descripcion Daños" debe tener como máximo 15 caracteres'
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'El campo es requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 15 caracteres'
       })
       .required(),
     alarma: Joi.string()
@@ -217,7 +218,6 @@ const VehiculosForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log('entre');
     if (buttonType) {
       const formattedData = {
         ...data,
@@ -312,14 +312,34 @@ const VehiculosForm = () => {
           )}
         </div>
       }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{data.id ? 'Vehiculo' : 'Vehiculo'}</h3>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>VEHICULOS</p>
       </div>
       <div className={styles.innerContainer}>
+        <div className={styles.tableTop}>
+          <div className={styles.tableContainer}>
+            <FormTable
+              data={vehiculos}
+              columnTitleArray={columnTitleArray}
+              columns={columns}
+              handleClick={tableClick}
+              deleteButton={deleteButton}
+            />
+          </div>
+        </div>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <section className={styles.inputGroups}>
             <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.dominio?.message}
+                    register={register}
+                    nameTitle="Dominio"
+                    type="text"
+                    nameInput="dominio"
+                  />
+                </div>
                 <OptionInput
                   data={arrayRol}
                   dataLabel="Rol"
@@ -328,6 +348,17 @@ const VehiculosForm = () => {
                   error={errors.rol?.message}
                 />
               </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayCierre}
+                  dataLabel="Cierre Centralizado"
+                  name="cierreCentralizado"
+                  register={register}
+                  error={errors.cierreCentralizado?.message}
+                />
+              </div>
+            </div>
+            <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
                 <Inputs
                   error={errors.modelo?.message}
@@ -347,69 +378,12 @@ const VehiculosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayAlarma}
-                  dataLabel="Alarma"
-                  name="alarma"
-                  register={register}
-                  error={errors.alarma?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayCierre}
-                  dataLabel="Cierre Centralizado"
-                  name="cierreCentralizado"
-                  register={register}
-                  error={errors.cierreCentralizado?.message}
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.dominio?.message}
-                  register={register}
-                  nameTitle="Dominio"
-                  type="text"
-                  nameInput="dominio"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.color?.message}
-                  register={register}
-                  nameTitle="Color"
-                  type="text"
-                  nameInput="color"
-                />
-              </div>
-              <div className={styles.inputContainer}>
                 <DateInput
-                  error={errors.fabricacion?.message}
+                  error={errors.fechaAdquisicion?.message}
                   register={register}
-                  nameTitle="Fabricacion"
+                  nameTitle="Fecha de Adquisicion"
                   type="date"
-                  nameInput="fabricacion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayDanos}
-                  dataLabel="Daños"
-                  name="danos"
-                  register={register}
-                  error={errors.danos?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.prioridad?.message}
-                  register={register}
-                  nameTitle="Prioridad"
-                  type="checkbox"
-                  nameInput="prioridad"
+                  nameInput="fechaAdquisicion"
                   required
                 />
               </div>
@@ -426,6 +400,57 @@ const VehiculosForm = () => {
               </div>
               <div className={styles.inputContainer}>
                 <OptionInput
+                  data={arrayDanos}
+                  dataLabel="Daños"
+                  name="danos"
+                  register={register}
+                  error={errors.danos?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.fabricacion?.message}
+                  register={register}
+                  nameTitle="Fabricacion"
+                  type="date"
+                  nameInput="fabricacion"
+                  required
+                />
+              </div>
+            </div>
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <Inputs
+                  error={errors.color?.message}
+                  register={register}
+                  nameTitle="Color"
+                  type="text"
+                  nameInput="color"
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayAlarma}
+                  dataLabel="Alarma"
+                  name="alarma"
+                  register={register}
+                  error={errors.alarma?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.prioridad?.message}
+                  register={register}
+                  nameTitle="Prioridad"
+                  type="checkbox"
+                  nameInput="prioridad"
+                  required
+                />
+              </div>
+            </div>
+            <div className={styles.inputColumn}>
+              <div className={styles.inputContainer}>
+                <OptionInput
                   data={arrayUso}
                   dataLabel="Uso"
                   name="uso"
@@ -434,22 +459,14 @@ const VehiculosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fechaAdquisicion?.message}
-                  register={register}
-                  nameTitle="Fecha de Adquisicion"
-                  type="date"
-                  nameInput="fechaAdquisicion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
+                <TextArea
                   error={errors.descripcionDanos?.message}
                   register={register}
-                  nameTitle="Descripcion Daños"
+                  nameTitle="Descripción Daños"
                   type="text"
                   nameInput="descripcionDanos"
+                  styleInput="small"
+                  required
                 />
               </div>
             </div>
@@ -460,17 +477,6 @@ const VehiculosForm = () => {
             <Button text="Cancelar" clickAction={cancelForm} />
           </div>
         </form>
-        <div className={styles.rightTable}>
-          <div className={styles.rightTable}>
-            <FormTable
-              data={vehiculos}
-              columnTitleArray={columnTitleArray}
-              columns={columns}
-              handleClick={tableClick}
-              deleteButton={deleteButton}
-            />
-          </div>
-        </div>
       </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />

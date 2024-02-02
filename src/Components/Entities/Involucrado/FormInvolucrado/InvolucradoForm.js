@@ -172,9 +172,9 @@ const InvolucradosForm = () => {
     descLesiones: Joi.string()
       .min(3)
       .messages({
-        'string.base': 'La descripcion de lesiones debe ser una cadena de texto',
-        'string.empty': 'La descripcion de lesiones de CUIT es un campo requerido',
-        'string.min': 'La descripcion de lesiones debe tener al menos 10 dígitos'
+        'string.base': 'La descripcion debe ser una cadena de texto',
+        'string.empty': 'La descripcion es un campo requerido',
+        'string.min': 'La descripcion debe tener al menos 10 dígitos'
       })
       .required(),
     lesiones: Joi.string()
@@ -331,11 +331,11 @@ const InvolucradosForm = () => {
     'Apellido',
     'Dni',
     'Domicilio',
-    'Telefono',
     'Rol',
+    'Telefono',
     'Prioridad'
   ];
-  const columns = ['nombre', 'apellido', 'dni', 'domicilio', 'telefono', 'rol', 'prioridad'];
+  const columns = ['nombre', 'apellido', 'dni', 'domicilio', 'rol', 'telefono', 'prioridad'];
 
   const resetForm = () => {
     setButtonType(false);
@@ -653,7 +653,7 @@ const InvolucradosForm = () => {
                 />
               </div>
             </div>
-            <div className={styles.inputColumn}>
+            <div className={styles.inputColumnPad}>
               <div className={styles.inputContainer}>
                 <Inputs
                   error={errors.email?.message}

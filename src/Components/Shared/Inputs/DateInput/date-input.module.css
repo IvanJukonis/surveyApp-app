@@ -34,10 +34,10 @@ input::-moz-focus-inner {
 .inputData input:focus ~ label,
 .inputData input:not(:placeholder-shown) ~ label {
   transform: translateY(-25px);
-  color: #BFBFBF;
-  font-weight: bold;
   padding: 5px;
   outline: none;
+  color: #BFBFBF;
+  font-weight: bold;
   font-size: 14px
 }
 
