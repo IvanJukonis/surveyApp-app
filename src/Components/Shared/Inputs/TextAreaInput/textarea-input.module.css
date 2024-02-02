@@ -18,9 +18,9 @@
 
 .small {
   width: 200px;
-  height: 100px;
+  height: 93px;
   border: none;
-  border-bottom: 2px solid #3C3C3C;
+  border: 3px solid #ECECEC;
 }
 
 .inputData {
@@ -45,10 +45,10 @@
 .inputLabel{
   display: flex;
   flex-direction: column;
-  font-size: 15px;
   margin-bottom: 5px;
-  color: #3c3c3c;
+  color: #BFBFBF;
   font-weight: bold;
+  font-size: 14px
 }
 
 .error {
@@ -64,5 +64,6 @@
 
 .spaceErrorMsg{
   margin-top: 0;
+  margin-bottom: 15px;
 }
 

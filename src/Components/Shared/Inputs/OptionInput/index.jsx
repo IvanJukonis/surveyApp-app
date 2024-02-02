@@ -20,16 +20,21 @@ const SelectInput = ({ data, dataLabel, name, register, error }) => {
     }
   };
 
+  const handleSelectChange = () => {
+    console.log('holi');
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.inputData}>
         <select
           className={error ? `${styles.errorInput} ${styles.optionInput}` : styles.optionInput}
           name={name}
+          onChange={handleSelectChange}
           {...register(name, { required: { value: true, message: 'This field is required' } })}
         >
           <option className={styles.optionText} value="">
-            Seleccionar {name}
+            Seleccionar {dataLabel}
           </option>
           {data.map((item, index) => {
             return (

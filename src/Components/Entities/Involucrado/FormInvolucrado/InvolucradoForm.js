@@ -23,20 +23,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 
 const InvolucradosForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const involucrados = useSelector((state) => state.involucrado.list);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [involucrado, setInvolucrado] = useState({});
-  const [buttonType, setButtonType] = useState(false);
   const data = useParams();
   const location = useLocation();
   const { params } = location.state || {};
   const { createdEntity } = params || {};
+
+  const [toastError, setToastErroOpen] = useState(false);
+  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
+  const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [involucrado, setInvolucrado] = useState({});
+  const [buttonType, setButtonType] = useState(false);
+
+  const involucrados = useSelector((state) => state.involucrado.list);
 
   const schema = Joi.object({
     prioridad: Joi.boolean()
@@ -166,12 +169,12 @@ const InvolucradosForm = () => {
         'string.min': 'El número de teléfono debe tener al menos 10 dígitos'
       })
       .required(),
-    cuit: Joi.string()
-      .min(10)
+    descLesiones: Joi.string()
+      .min(3)
       .messages({
-        'string.base': 'El número de CUIT debe ser una cadena de texto',
-        'string.empty': 'El número de CUIT es un campo requerido',
-        'string.min': 'El número de CUIT debe tener al menos 10 dígitos'
+        'string.base': 'La descripcion de lesiones debe ser una cadena de texto',
+        'string.empty': 'La descripcion de lesiones de CUIT es un campo requerido',
+        'string.min': 'La descripcion de lesiones debe tener al menos 10 dígitos'
       })
       .required(),
     lesiones: Joi.string()
@@ -210,6 +213,12 @@ const InvolucradosForm = () => {
       .messages({
         'boolean.base': 'El campo "Licencia Aportada" es un campo booleano',
         'boolean.empty': 'El campo "Licencia Aportada" debe tener un valor determinado'
+      })
+      .required(),
+    licenciaPosesion: Joi.string()
+      .valid('Posee', 'Renovacion', 'Perdida sin denuncia', 'Perdida con denuncia')
+      .messages({
+        'any.only': 'Ingrese una posesion permitida'
       })
       .required(),
     licenciaVencimiento: Joi.date()
@@ -316,8 +325,17 @@ const InvolucradosForm = () => {
     'D4',
     'E1'
   ];
-  const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
-  const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
+  const arrayPosesion = ['Posee', 'Renovacion', 'Perdida sin denuncia', 'Perdida con denuncia'];
+  const columnTitleArray = [
+    'Nombre',
+    'Apellido',
+    'Dni',
+    'Domicilio',
+    'Telefono',
+    'Rol',
+    'Prioridad'
+  ];
+  const columns = ['nombre', 'apellido', 'dni', 'domicilio', 'telefono', 'rol', 'prioridad'];
 
   const resetForm = () => {
     setButtonType(false);
@@ -332,18 +350,19 @@ const InvolucradosForm = () => {
       email: '',
       pais: '',
       codigoPostal: '',
-      cuit: '',
+      descLesiones: '',
       entrevistado: false,
       ocupacion: '',
       direccionOcupacion: '',
       licenciaAportada: false,
+      licenciaPosesion: 'Seleccionar posesion',
       licenciaVencimiento: 'dd / mm / aaaa',
       licenciaHabilitada: false,
       licenciaCategoria: '',
       nombre: '',
       apellido: '',
-      rol: 'Pick tipo',
-      lesiones: 'Pick lesiones',
+      rol: 'Seleccionar rol',
+      lesiones: 'Seleccionar lesiones',
       fechaNacimiento: 'dd / mm / aaaa'
     };
     reset({ ...emptyData });
@@ -465,11 +484,11 @@ const InvolucradosForm = () => {
               </div>
               <div className={styles.inputContainer}>
                 <Checkbox
-                  error={errors.prioridad?.message}
+                  error={errors.licenciaAportada?.message}
                   register={register}
-                  nameTitle="Prioridad"
+                  nameTitle="Licencia Aportada"
                   type="checkbox"
-                  nameInput="prioridad"
+                  nameInput="licenciaAportada"
                   required
                 />
               </div>
@@ -507,23 +526,24 @@ const InvolucradosForm = () => {
                   required
                 />
               </div>
+
               <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayRoles}
-                  dataLabel="Rol"
-                  name="rol"
+                <Checkbox
+                  error={errors.prioridad?.message}
                   register={register}
-                  error={errors.rol?.message}
+                  nameTitle="Prioridad"
+                  type="checkbox"
+                  nameInput="prioridad"
+                  required
                 />
               </div>
               <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.licenciaHabilitada?.message}
+                <OptionInput
+                  data={arrayPosesion}
+                  dataLabel="Posesion de Licencia"
+                  name="licenciaPosesion"
                   register={register}
-                  nameTitle="Licencia Habilitada"
-                  type="checkbox"
-                  nameInput="licenciaHabilitada"
-                  required
+                  error={errors.licenciaPosesion?.message}
                 />
               </div>
             </div>
@@ -561,23 +581,23 @@ const InvolucradosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.cuit?.message}
-                  register={register}
-                  nameTitle="Cuit"
-                  type="number"
-                  styleInput="normalInput"
-                  nameInput="cuit"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
                 <Checkbox
                   error={errors.entrevistado?.message}
                   register={register}
                   nameTitle="Entrevistado"
                   type="checkbox"
                   nameInput="entrevistado"
+                  required
+                />
+              </div>
+
+              <div className={styles.inputContainer}>
+                <DateInput
+                  error={errors.licenciaVencimiento?.message}
+                  register={register}
+                  nameTitle="Fecha de Vencimiento"
+                  type="date"
+                  nameInput="licenciaVencimiento"
                   required
                 />
               </div>
@@ -623,6 +643,15 @@ const InvolucradosForm = () => {
                   required
                 />
               </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayCategorias}
+                  dataLabel="Categoria de Licencias"
+                  name="licenciaCategoria"
+                  register={register}
+                  error={errors.licenciaCategoria?.message}
+                />
+              </div>
             </div>
             <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
@@ -637,31 +666,32 @@ const InvolucradosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayCategorias}
-                  dataLabel="Categoria de Licencias"
-                  name="licenciaCategoria"
+                <TextArea
+                  error={errors.descLesiones?.message}
                   register={register}
-                  error={errors.licenciaCategoria?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.licenciaVencimiento?.message}
-                  register={register}
-                  nameTitle="Fecha de Vencimiento"
-                  type="date"
-                  nameInput="licenciaVencimiento"
+                  nameTitle="Descripción Lesiones"
+                  type="text"
+                  nameInput="descLesiones"
+                  styleInput="small"
                   required
                 />
               </div>
               <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.licenciaAportada?.message}
+                <OptionInput
+                  data={arrayRoles}
+                  dataLabel="Rol"
+                  name="rol"
                   register={register}
-                  nameTitle="Licencia Aportada"
+                  error={errors.rol?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.licenciaHabilitada?.message}
+                  register={register}
+                  nameTitle="Licencia Habilitada"
                   type="checkbox"
-                  nameInput="licenciaAportada"
+                  nameInput="licenciaHabilitada"
                   required
                 />
               </div>
