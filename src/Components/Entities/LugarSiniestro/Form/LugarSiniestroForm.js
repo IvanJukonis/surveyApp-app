@@ -239,54 +239,24 @@ const LugarSiniestrosForm = () => {
     _id: Joi.any()
   });
 
-  let updatedSiniestro;
-
-  if (lugarSiniestros.length > 0) {
-    updatedSiniestro = {
-      prioridad: lugarSiniestro[0].prioridad,
-      calleVa: lugarSiniestros[0].calleVa,
-      orientacionCalleVa: lugarSiniestros[0].orientacionCalleVa,
-      direccionCalleVa: lugarSiniestros[0].direccionCalleVa,
-      estadoCalleVa: lugarSiniestros[0].estadoCalleVa,
-      tipoCalleVa: lugarSiniestros[0].tipoCalleVa,
-      badenCalleVa: lugarSiniestros[0].badenCalleVa,
-      semaforoCalleVa: lugarSiniestros[0].semaforoCalleVa,
-      cartelPareCalleVa: lugarSiniestros[0].cartelPareCalleVa,
-      camaraCalleVa: lugarSiniestros[0].camaraCalleVa,
-      calleVt: lugarSiniestros[0].calleVt,
-      orientacionCalleVt: lugarSiniestros[0].orientacionCalleVt,
-      direccionCalleVt: lugarSiniestros[0].direccionCalleVt,
-      estadoCalleVt: lugarSiniestros[0].estadoCalleVt,
-      tipoCalleVt: lugarSiniestros[0].tipoCalleVt,
-      badenCalleVt: lugarSiniestros[0].badenCalleVt,
-      semaforoCalleVt: lugarSiniestros[0].semaforoCalleVt,
-      cartelPareCalleVt: lugarSiniestros[0].cartelPareCalleVt,
-      camaraCalleVt: lugarSiniestros[0].camaraCalleVt,
-      calleAd: lugarSiniestros[0].calleAd,
-      ciudad: lugarSiniestros[0].ciudad,
-      provincia: lugarSiniestros[0].provincia,
-      descripcion: lugarSiniestros[0].descripcion
-    };
-  }
-
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
       prioridad: false,
       calleVa: '',
-      orientacionCalleVa: 'Seleccionar Orientacion',
-      direccionCalleVa: 'Seleccionar Direccion',
-      estadoCalleVa: 'Seleccionar Estado',
-      tipoCalleVa: 'Seleccionar Tipo',
+      orientacionCalleVa: '',
+      direccionCalleVa: '',
+      estadoCalleVa: '',
+      tipoCalleVa: '',
       badenCalleVa: false,
       semaforoCalleVa: false,
       cartelPareCalleVa: false,
       camaraCalleVa: false,
       calleVt: '',
-      orientacionCalleVt: 'Seleccionar Orientacion',
-      direccionCalleVt: 'Seleccionar Direccion',
-      estadoCalleVt: 'Seleccionar Estado',
-      tipoCalleVt: 'Seleccionar Tipo',
+      orientacionCalleVt: '',
+      direccionCalleVt: '',
+      estadoCalleVt: '',
+      tipoCalleVt: '',
       badenCalleVt: false,
       semaforoCalleVt: false,
       cartelPareCalleVt: false,
@@ -307,7 +277,7 @@ const LugarSiniestrosForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...updatedSiniestro }
+    defaultValues: { ...lugarSiniestros }
   });
 
   const deleteButton = deleteLugarSiniestro;

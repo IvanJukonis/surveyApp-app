@@ -232,15 +232,15 @@ const InspeccionSiniestrosForm = () => {
     const emptyData = {
       fecha: 'dd / mm / aaaa',
       hora: 'dd / mm / aaaa',
-      fotos: 'Pick foto',
-      permiso: 'Pick permiso',
-      programada: 'Pick programada',
+      fotos: '',
+      permiso: '',
+      programada: '',
       daños: '',
-      tipoDaños: 'Pick tipo daño',
+      tipoDaños: '',
       descripcionDaños: '',
       numChasis: '',
       reparacion: '',
-      coincidenciaDaños: 'Pick coincidencia',
+      coincidenciaDaños: '',
       conclusion: ''
     };
     reset({ ...emptyData });

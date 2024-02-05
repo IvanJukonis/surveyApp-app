@@ -7,9 +7,9 @@ import {
   ToastError,
   Inputs,
   Button,
-  OptionInput,
-  TableComponent
+  OptionInput
 } from 'Components/Shared';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
@@ -37,10 +37,14 @@ const InspeccionRoboRuedasForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
   const [buttonType, setButtonType] = useState(false);
+  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
+  const [selectedVehiculos, setSelectedVehiculos] = useState([]);
 
   const currentInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
+  const involucrados = useSelector((state) => state.involucrado.list);
+  const vehiculos = useSelector((state) => state.vehiculo.list);
 
-  const arrayFotos = ['Se toman fotografias del VH', 'No se toman fotografias del VH'];
+  const arrayResultado = ['Inconsistencias', 'Sin inconsistencias', 'Fraudulencia'];
   const arrayPermisos = [
     'Inspeccion permitida',
     'Inspeccion no permitida',
@@ -49,18 +53,30 @@ const InspeccionRoboRuedasForm = () => {
   const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
   const columnTitleArray = ['Fecha', 'Hora', 'Permiso', 'Programada'];
   const columns = ['fecha', 'hora', 'permiso', 'programada'];
+  const columnTitleInvolucrado = [
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columnInvolucrado = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
+  const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
+  const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
   const schema = Joi.object({
-    fotos: Joi.string()
-      .valid('Se toman fotografias del VH', 'No se toman fotografias del VH')
-      .messages({
-        'any.only': 'Seleccione una opción valida'
-      }),
     fecha: Joi.date()
       .empty('')
       .messages({
         'date.base': 'El campo "Fecha" debe ser una fecha valida.',
         'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
+      })
+      .required(),
+    presencia: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Presencia" es un campo booleano',
+        'boolean.empty': 'El campo "Presencia" debe tener un valor determinado'
       })
       .required(),
     hora: Joi.date()
@@ -70,17 +86,44 @@ const InspeccionRoboRuedasForm = () => {
         'date.empty': 'El campo "Hora" no puede permanecer vacio.'
       })
       .required(),
-    permisos: Joi.string()
+    direccion: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    ciudad: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    permiso: Joi.string()
       .valid('Inspeccion permitida', 'Inspeccion no permitida', 'Inspeccion dificultada')
       .messages({
         'any.only': 'Seleccione una opción valida'
       }),
-    programada: Joi.string().valid('Inspeccion programada', 'Inspeccion no programada').messages({
-      'any.only': 'Seleccione una opción valida'
-    }),
+    programada: Joi.string()
+      .valid('Inspeccion programada', 'Inspeccion no programada', 'Inspeccion neutra')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+    resultado: Joi.string()
+      .valid('Inconsistencias', 'Sin inconsistencias', 'Fraudulencia')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
     disposicion: Joi.string()
       .min(3)
-      .max(500)
+      .max(100)
       .messages({
         'string.base': 'El campo "Disposicion" debe ser una cadena de texto',
         'string.empty': 'El campo "Disposicion" es un campo requerido',
@@ -89,7 +132,7 @@ const InspeccionRoboRuedasForm = () => {
       .required(),
     daños: Joi.string()
       .min(3)
-      .max(500)
+      .max(100)
       .messages({
         'string.base': 'El campo "Daños" debe ser una cadena de texto',
         'string.empty': 'El campo "Daños" es un campo requerido',
@@ -98,7 +141,7 @@ const InspeccionRoboRuedasForm = () => {
       .required(),
     conclusion: Joi.string()
       .min(3)
-      .max(500)
+      .max(200)
       .messages({
         'string.base': 'El campo "Conclusion" debe ser una cadena de texto',
         'string.empty': 'El campo "Conclusion" es un campo requerido',
@@ -193,6 +236,106 @@ const InspeccionRoboRuedasForm = () => {
   };
   const deleteButton = deleteInspeccionRoboRueda;
 
+  const checkStateSelectedVehiculo = (column, index) => {
+    if (
+      column === 'selected' &&
+      currentInspeccionRoboRueda &&
+      currentInspeccionRoboRueda.vehiculo
+    ) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    if (currentInspeccionRoboRueda) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedVehiculo = (index) => {
+    const isSelectedVehiculo = selectedVehiculos.find(
+      (vehiculo) => vehiculos[index]._id === vehiculo
+    );
+    if (isSelectedVehiculo) {
+      const newListSelectedVehiculos = selectedVehiculos.filter(
+        (vehiculo) => vehiculos[index]._id !== vehiculo
+      );
+      setSelectedVehiculos(newListSelectedVehiculos);
+    } else {
+      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+    }
+  };
+
+  const checkStateSelected = (column, index) => {
+    if (column === 'selected' && currentInspeccionRoboRueda) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (!currentInspeccionRoboRueda) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelected = (index) => {
+    const isSelectedInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+      console.log(selectedInvolucrados);
+    }
+  };
+
+  const checkState = (index, entity) => {
+    if (entity === 'inv') {
+      if (involucrados[index].prioridad) {
+        if (involucrados.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (entity === 'veh') {
+      if (vehiculos[index].prioridad) {
+        if (vehiculos.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
   const tableClick = (index) => {
     const formattedData = {
       ...currentInspeccionRoboRueda[index],
@@ -244,112 +387,244 @@ const InspeccionRoboRuedasForm = () => {
           )}
         </div>
       }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{data.id ? 'InspeccionRoboRueda' : 'InspeccionRoboRueda'}</h3>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>INSPECCION ROBO RUEDA</p>
       </div>
       <div className={styles.innerContainer}>
-        <TableComponent
-          columnTitleArray={columnTitleArray}
-          data={currentInspeccionRoboRueda}
-          columns={columns}
-          deleteButton={deleteInspeccionRoboRueda}
-        />
+        <div className={styles.tableTop}>
+          <div className={styles.tableContainer}>
+            <FormTable
+              data={currentInspeccionRoboRueda}
+              columnTitleArray={columnTitleArray}
+              columns={columns}
+              handleClick={tableClick}
+              deleteButton={deleteButton}
+            />
+          </div>
+        </div>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-          <section className={styles.inputGroups}>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayFotos}
-                  dataLabel="Fotos"
-                  name="fotos"
-                  register={register}
-                  error={errors.fotos?.message}
-                />
+          <div className={styles.formContainer}>
+            <section className={styles.inputGroups}>
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.fecha?.message}
+                    register={register}
+                    nameTitle="Fecha"
+                    type="date"
+                    nameInput="fecha"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayProgramada}
+                    dataLabel="Programada"
+                    name="programada"
+                    register={register}
+                    error={errors.programada?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayResultado}
+                    dataLabel="Resultado"
+                    name="resultado"
+                    register={register}
+                    error={errors.resultado?.message}
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fecha?.message}
-                  register={register}
-                  nameTitle="Fecha"
-                  type="date"
-                  nameInput="fecha"
-                  required
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.hora?.message}
+                    register={register}
+                    nameTitle="Hora"
+                    type="date"
+                    nameInput="hora"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayPermisos}
+                    dataLabel="Permiso"
+                    name="permiso"
+                    register={register}
+                    error={errors.permiso?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.disposicion?.message}
+                    register={register}
+                    nameTitle="Disposición"
+                    type="text"
+                    nameInput="disposicion"
+                    styleInput="small"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hora?.message}
-                  register={register}
-                  nameTitle="Hora"
-                  type="date"
-                  nameInput="hora"
-                  required
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.direccion?.message}
+                    register={register}
+                    nameTitle="Direccion"
+                    type="text"
+                    nameInput="direccion"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayProgramada}
+                    dataLabel="Programada"
+                    name="programada"
+                    register={register}
+                    error={errors.programada?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.daños?.message}
+                    register={register}
+                    nameTitle="Daños"
+                    type="text"
+                    nameInput="daños"
+                    styleInput="small"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayPermisos}
-                  dataLabel="Permisos"
-                  name="permisos"
-                  register={register}
-                  error={errors.permisos?.message}
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.ciudad?.message}
+                    register={register}
+                    nameTitle="Ciudad"
+                    type="text"
+                    nameInput="ciudad"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.conclusion?.message}
+                    register={register}
+                    nameTitle="Conclusión"
+                    type="text"
+                    nameInput="conclusion"
+                    styleInput="threeInputs"
+                    required
+                  />
+                </div>
               </div>
+            </section>
+            <div className={styles.btnContainer}>
+              <Button
+                clickAction={handleSubmit(onSubmit)}
+                text={buttonType ? 'Editar' : 'Agregar'}
+              />
+              <Button clickAction={resetForm} text="Reiniciar" />
+              <Button text="Cancelar" clickAction={cancelForm} />
             </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayProgramada}
-                  dataLabel="Programada"
-                  name="programada"
-                  register={register}
-                  error={errors.programada?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.disposicion?.message}
-                  register={register}
-                  nameTitle="Disposicion"
-                  type="text"
-                  nameInput="disposicion"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.daños?.message}
-                  register={register}
-                  nameTitle="Daños"
-                  type="text"
-                  nameInput="daños"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.conclusion?.message}
-                  register={register}
-                  nameTitle="Conclusion"
-                  type="text"
-                  nameInput="conclusion"
-                />
-              </div>
+          </div>
+          <div className={styles.rightTables}>
+            <div className={styles.tableContainer}>
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleInvolucrado.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {involucrados.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnInvolucrado.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelected(index)}
+                                checked={checkStateSelected(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'inv')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          </section>
-          <div className={styles.btnContainer}>
-            <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={cancelForm} />
+            <div className={styles.tableContainer}>
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleVehiculo.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {vehiculos.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnVehiculo.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelectedVehiculo(index)}
+                                checked={checkStateSelectedVehiculo(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'veh')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </form>
-        <div className={styles.rightTable}>
-          <FormTable
-            data={currentInspeccionRoboRueda}
-            columnTitleArray={columnTitleArray}
-            columns={columns}
-            handleClick={tableClick}
-            deleteButton={deleteButton}
-          />
-        </div>
       </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
