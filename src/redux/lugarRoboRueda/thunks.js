@@ -13,15 +13,17 @@ import {
   updateLugarRoboRuedaError
 } from './actions';
 
-export const getAllLugarRoboRueda = async (dispatch) => {
+export const getAllLugarRoboRueda = async (dispatch, siniestroId) => {
   try {
     dispatch(getLugarRoboRuedaPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/lugarRoboRueda`);
-    const data = await reponse.json();
-    const lugaresRoboRuedaList = data.data;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/lugarRoboRueda`);
+    const data = await response.json();
+    const lugarRoboRuedasListAll = data.data;
+    const lugarRoboRuedasList = lugarRoboRuedasListAll.filter((lugarRoboRueda) =>
+      lugarRoboRueda.siniestro.includes(siniestroId)
+    );
     dispatch(getLugarRoboRuedaPending(false));
-    dispatch(getLugarRoboRuedaSuccess(lugaresRoboRuedaList));
-    console.log(lugaresRoboRuedaList);
+    dispatch(getLugarRoboRuedaSuccess(lugarRoboRuedasList));
   } catch (error) {
     dispatch(getLugarRoboRuedaPending(false));
     dispatch(getLugarRoboRuedaError(true));
@@ -58,15 +60,18 @@ export const postLugarRoboRueda = async (dispatch, lugarRoboRuedaData) => {
       },
       body: JSON.stringify(lugarRoboRuedaData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(postLugarRoboRuedaPending(false));
-      throw new Error(data.message);
+      return dispatch(postLugarRoboRuedaSuccess(newData.data));
+    } else {
+      dispatch(postLugarRoboRuedaPending(false));
+      return dispatch(postLugarRoboRuedaError(true));
     }
-    dispatch(postLugarRoboRuedaSuccess(data.result));
   } catch (error) {
     dispatch(postLugarRoboRuedaPending(false));
-    dispatch(postLugarRoboRuedaError(error.message));
+    return dispatch(postLugarRoboRuedaError(true));
   }
 };
 

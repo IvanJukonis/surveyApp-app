@@ -243,6 +243,7 @@ const LugarSiniestrosForm = () => {
 
   if (lugarSiniestros.length > 0) {
     updatedSiniestro = {
+      prioridad: lugarSiniestro[0].prioridad,
       calleVa: lugarSiniestros[0].calleVa,
       orientacionCalleVa: lugarSiniestros[0].orientacionCalleVa,
       direccionCalleVa: lugarSiniestros[0].direccionCalleVa,
@@ -267,6 +268,36 @@ const LugarSiniestrosForm = () => {
       descripcion: lugarSiniestros[0].descripcion
     };
   }
+
+  const resetForm = () => {
+    setButtonType(false);
+    const emptyData = {
+      prioridad: false,
+      calleVa: '',
+      orientacionCalleVa: 'Seleccionar Orientacion',
+      direccionCalleVa: 'Seleccionar Direccion',
+      estadoCalleVa: 'Seleccionar Estado',
+      tipoCalleVa: 'Seleccionar Tipo',
+      badenCalleVa: false,
+      semaforoCalleVa: false,
+      cartelPareCalleVa: false,
+      camaraCalleVa: false,
+      calleVt: '',
+      orientacionCalleVt: 'Seleccionar Orientacion',
+      direccionCalleVt: 'Seleccionar Direccion',
+      estadoCalleVt: 'Seleccionar Estado',
+      tipoCalleVt: 'Seleccionar Tipo',
+      badenCalleVt: false,
+      semaforoCalleVt: false,
+      cartelPareCalleVt: false,
+      camaraCalleVt: false,
+      calleAd: '',
+      ciudad: '',
+      provincia: '',
+      descripcion: ''
+    };
+    reset({ ...emptyData });
+  };
 
   const {
     register,
@@ -615,7 +646,7 @@ const LugarSiniestrosForm = () => {
           </section>
           <div className={styles.btnContainer}>
             <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={() => {}} text={'Actualizar'} />
+            <Button clickAction={resetForm} text={'Actualizar'} />
             <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
         </form>

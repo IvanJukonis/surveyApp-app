@@ -207,31 +207,6 @@ const LugarRoboRuedaForm = () => {
     _id: Joi.any()
   });
 
-  let updatedLugarRoboRueda;
-
-  if (lugarRoboRuedas?.length > 0) {
-    updatedLugarRoboRueda = {
-      siniestro: lugarRoboRuedas[0].siniestro,
-      entrevistaRoboRueda: lugarRoboRuedas[0].entrevistaRoboRueda,
-      prioridad: lugarRoboRuedas[0].prioridad,
-      direccion: lugarRoboRuedas[0].direccion,
-      ciudad: lugarRoboRuedas[0].ciudad,
-      provincia: lugarRoboRuedas[0].provincia,
-      evidenciaDanos: lugarRoboRuedas[0].evidenciaDanos,
-      daños: lugarRoboRuedas[0].daños,
-      inspeccion: lugarRoboRuedas[0].inspeccion,
-      permiso: lugarRoboRuedas[0].permiso,
-      mascotas: lugarRoboRuedas[0].mascotas,
-      zona: lugarRoboRuedas[0].zona,
-      testigos: lugarRoboRuedas[0].testigos,
-      alarma: lugarRoboRuedas[0].alarma,
-      presencia: lugarRoboRuedas[0].presencia,
-      disposicionVehiculo: lugarRoboRuedas[0].disposicionVehiculo,
-      usoEntorno: lugarRoboRuedas[0].usoEntorno,
-      descripcion: lugarRoboRuedas[0].descripcion
-    };
-  }
-
   const {
     register,
     reset,
@@ -240,8 +215,31 @@ const LugarRoboRuedaForm = () => {
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...updatedLugarRoboRueda }
+    defaultValues: { ...lugarRoboRueda }
   });
+
+  const resetForm = () => {
+    setButtonType(false);
+    const emptyData = {
+      prioridad: false,
+      direccion: '',
+      ciudad: '',
+      provincia: '',
+      evidenciaDanos: '',
+      daños: '',
+      inspeccion: false,
+      permiso: '',
+      mascotas: '',
+      zona: '',
+      testigos: '',
+      alarma: '',
+      presencia: false,
+      disposicionVehiculo: '',
+      usoEntorno: '',
+      descripcion: ''
+    };
+    reset({ ...emptyData });
+  };
 
   const deleteButton = deleteLugarRoboRueda;
 
@@ -403,6 +401,15 @@ const LugarRoboRuedaForm = () => {
                   error={errors.testigos?.message}
                 />
               </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayAlarma}
+                  dataLabel="Alarma"
+                  name="alarma"
+                  register={register}
+                  error={errors.alarma?.message}
+                />
+              </div>
             </div>
             <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
@@ -431,6 +438,16 @@ const LugarRoboRuedaForm = () => {
                   name="disposicionVehiculo"
                   register={register}
                   error={errors.disposicionVehiculo?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <Checkbox
+                  error={errors.prioridad?.message}
+                  register={register}
+                  nameTitle="Prioridad"
+                  type="checkbox"
+                  nameInput="prioridad"
+                  required
                 />
               </div>
             </div>
@@ -476,15 +493,6 @@ const LugarRoboRuedaForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayAlarma}
-                  dataLabel="Alarma"
-                  name="alarma"
-                  register={register}
-                  error={errors.alarma?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
                 <TextArea
                   error={errors.descripcion?.message}
                   register={register}
@@ -499,7 +507,7 @@ const LugarRoboRuedaForm = () => {
           </section>
           <div className={styles.btnContainer}>
             <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={() => {}} text={'Actualizar'} />
+            <Button clickAction={resetForm} text={'Reiniciar'} />
             <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
         </form>

@@ -355,14 +355,14 @@ const InvolucradosForm = () => {
       ocupacion: '',
       direccionOcupacion: '',
       licenciaAportada: false,
-      licenciaPosesion: 'Seleccionar posesion',
+      licenciaPosesion: '',
       licenciaVencimiento: 'dd / mm / aaaa',
       licenciaHabilitada: false,
       licenciaCategoria: '',
       nombre: '',
       apellido: '',
-      rol: 'Seleccionar rol',
-      lesiones: 'Seleccionar lesiones',
+      rol: '',
+      lesiones: '',
       fechaNacimiento: 'dd / mm / aaaa'
     };
     reset({ ...emptyData });
