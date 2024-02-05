@@ -13,7 +13,9 @@ const ControladorController = React.lazy(() => import('../Users/Administrativo/C
 const VehiculoController = React.lazy(() => import('../Entities/Vehiculo'));
 const InvolucradoController = React.lazy(() => import('../Entities/Involucrado'));
 const LugarSiniestroController = React.lazy(() => import('../Entities/LugarSiniestro'));
-const LugarRoboRuedaController = React.lazy(() => import('../Entities/LugarRoboRueda'));
+const LugarRoboRuedaController = React.lazy(() =>
+  import('../Entities/LugarRoboRueda/Form/LugarRoboRuedaForm')
+);
 const EntrevistaController = React.lazy(() => import('../Entities/Entrevista/index'));
 
 //FORMS

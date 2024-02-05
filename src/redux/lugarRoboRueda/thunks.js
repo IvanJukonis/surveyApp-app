@@ -21,6 +21,7 @@ export const getAllLugarRoboRueda = async (dispatch) => {
     const lugaresRoboRuedaList = data.data;
     dispatch(getLugarRoboRuedaPending(false));
     dispatch(getLugarRoboRuedaSuccess(lugaresRoboRuedaList));
+    console.log(lugaresRoboRuedaList);
   } catch (error) {
     dispatch(getLugarRoboRuedaPending(false));
     dispatch(getLugarRoboRuedaError(true));
