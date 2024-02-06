@@ -13,13 +13,15 @@ import {
   updateEventoError
 } from './actions';
 
-export const getAllEvento = async (dispatch, sinId) => {
+export const getEventoSiniestro = async (dispatch, siniestroId) => {
   try {
     dispatch(getEventoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/evento`);
     const data = await response.json();
     const eventosList = data.data;
-    const eventosSiniestroList = eventosList.filter((evento) => evento.siniestro[0] === sinId);
+    const eventosSiniestroList = eventosList.filter(
+      (evento) => evento.siniestro[0] === siniestroId
+    );
     dispatch(getEventoPending(false));
     dispatch(getEventoSuccess(eventosSiniestroList));
   } catch (error) {

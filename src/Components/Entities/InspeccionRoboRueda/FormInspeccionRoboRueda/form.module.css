@@ -61,7 +61,7 @@
 .inputGroups {
   display: flex;
   justify-content: center;
-  padding-left: 15px;
+  padding-left: 20px;
   padding-top: 10px;
 }
 
@@ -81,15 +81,25 @@
 .rightTables {
   display: flex;
   flex-direction: column;
-  padding-right: 5px;
+  padding-right: 10px;
+  padding-bottom: 10px;
 }
 
 .tableContainer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  text-align: center;
   border-radius: 2px;
   border: 3px;
   margin: 10px;
+}
+
+.tableTitle {
+  outline: none;
+  color: #BFBFBF;
+  font-weight: bold;
+  font-size: 18px
 }
 
 .checkboxInput {
@@ -132,6 +142,7 @@
   overflow: hidden;
   border: 3px solid #ECECEC;
   font-size: 14px;
+  width: 100%;
 }
 
 .table tr td,
@@ -167,5 +178,18 @@
   background-color: #FFFFFF;
   color: #3C3C3C;
   font-weight: bold;
+}
+
+.btnContainerEvento {
+  margin: 10px;
+}
+
+.formEvento {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  margin: 10px;
 }
 

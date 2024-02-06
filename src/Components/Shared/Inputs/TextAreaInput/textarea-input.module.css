@@ -16,9 +16,10 @@
   align-items: flex-start;
   justify-content: flex-start;
   width: 200px;
-  height: 173px;
+  height: 166px;
   border: none;
   border-bottom: 2px solid #3C3C3C;
+  margin-top: 2px;
   border: 3px solid #ECECEC;
 }
 

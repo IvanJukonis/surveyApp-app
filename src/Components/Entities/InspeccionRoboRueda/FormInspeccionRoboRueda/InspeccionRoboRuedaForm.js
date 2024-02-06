@@ -20,7 +20,7 @@ import {
   getAllInspeccionRoboRueda,
   deleteInspeccionRoboRueda
 } from 'redux/inspeccionRoboRueda/thunks';
-import { updateEvento, postEvento } from 'redux/evento/thunks';
+import { updateEvento, postEvento, getEventoSiniestro } from 'redux/evento/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -41,12 +41,14 @@ const InspeccionRoboRuedasForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [modalAddConfirmOpenForm2, setModalAddConfirmOpenForm2] = useState(false);
   const [modalSuccessForm2, setModalSuccessOpenForm2] = useState(false);
+  const [openFormStatus, setOpenFormStatus] = useState(false);
   const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
   const [evento, setEvento] = useState({});
   const [buttonType, setButtonType] = useState(false);
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
 
+  const currentEvento = useSelector((state) => state.evento.list);
   const currentInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
@@ -414,7 +416,13 @@ const InspeccionRoboRuedasForm = () => {
     reset2({ ...emptyData });
   };
 
-  console.log(errorsForm2);
+  const openForm = () => {
+    if (openFormStatus) {
+      setOpenFormStatus(false);
+    } else {
+      setOpenFormStatus(true);
+    }
+  };
 
   const deleteButton = deleteInspeccionRoboRueda;
 
@@ -544,6 +552,7 @@ const InspeccionRoboRuedasForm = () => {
     getAllInspeccionRoboRueda(dispatch, data.id);
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);
+    getEventoSiniestro(dispatch, data.id);
   }, []);
 
   return (
@@ -639,6 +648,17 @@ const InspeccionRoboRuedasForm = () => {
                     error={errors.resultado?.message}
                   />
                 </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.disposicion?.message}
+                    register={register}
+                    nameTitle="Disposición"
+                    type="text"
+                    nameInput="disposicion"
+                    styleInput="small"
+                    required
+                  />
+                </div>
               </div>
               <div className={styles.inputColumn}>
                 <div className={styles.inputContainer}>
@@ -658,28 +678,6 @@ const InspeccionRoboRuedasForm = () => {
                     name="permiso"
                     register={register}
                     error={errors.permiso?.message}
-                  />
-                </div>
-                <div className={styles.inputContainer}>
-                  <TextArea
-                    error={errors.disposicion?.message}
-                    register={register}
-                    nameTitle="Disposición"
-                    type="text"
-                    nameInput="disposicion"
-                    styleInput="small"
-                    required
-                  />
-                </div>
-              </div>
-              <div className={styles.inputColumn}>
-                <div className={styles.inputContainer}>
-                  <Inputs
-                    error={errors.direccion?.message}
-                    register={register}
-                    nameTitle="Direccion"
-                    type="text"
-                    nameInput="direccion"
                   />
                 </div>
                 <div className={styles.inputContainer}>
@@ -704,6 +702,15 @@ const InspeccionRoboRuedasForm = () => {
                 </div>
               </div>
               <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.direccion?.message}
+                    register={register}
+                    nameTitle="Direccion"
+                    type="text"
+                    nameInput="direccion"
+                  />
+                </div>
                 <div className={styles.inputContainer}>
                   <Inputs
                     error={errors.ciudad?.message}
@@ -737,6 +744,7 @@ const InspeccionRoboRuedasForm = () => {
           </div>
           <div className={styles.rightTables}>
             <div className={styles.tableContainer}>
+              <h1 className={styles.tableTitle}>Involucrados</h1>
               <table className={styles.table}>
                 <thead>
                   <tr className={styles.tableContent}>
@@ -783,6 +791,7 @@ const InspeccionRoboRuedasForm = () => {
               </table>
             </div>
             <div className={styles.tableContainer}>
+              <h1 className={styles.tableTitle}>Vehiculos</h1>
               <table className={styles.table}>
                 <thead>
                   <tr className={styles.tableContent}>
@@ -830,136 +839,157 @@ const InspeccionRoboRuedasForm = () => {
             </div>
           </div>
         </form>
-        <div className={styles.formContainer}>
-          <form className={styles.form} onSubmit={handleSubmitForm2(onSubmit)}>
-            <div className={styles.formContainer}>
-              <section className={styles.inputGroups}>
-                <div className={styles.inputColumn}>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      error={errorsForm2.visibilidadEntrevista?.message}
-                      register={registerForm2}
-                      nameTitle="Visibilidad Entrevista"
-                      type="checkbox"
-                      nameInput="visibilidadEntrevista"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errorsForm2.fecha?.message}
-                      register={registerForm2}
-                      nameTitle="Fecha"
-                      type="date"
-                      nameInput="fecha"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={arrayPredisposicion}
-                      dataLabel="Predisposicion"
-                      name="predisposicion"
-                      register={registerForm2}
-                      error={errorsForm2.predisposicion?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={arrayComprobable}
-                      dataLabel="Comprobable"
-                      name="comprobable"
-                      register={registerForm2}
-                      error={errorsForm2.comprobable?.message}
-                    />
-                  </div>
-                </div>
-                <div className={styles.inputColumn}>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      error={errorsForm2.visibilidadInforme?.message}
-                      register={registerForm2}
-                      nameTitle="Visibilidad Informe"
-                      type="checkbox"
-                      nameInput="visibilidadInforme"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errorsForm2.hora?.message}
-                      register={registerForm2}
-                      nameTitle="Hora"
-                      type="date"
-                      nameInput="hora"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      error={errorsForm2.comprobado?.message}
-                      register={registerForm2}
-                      nameTitle="Comprobado"
-                      type="checkbox"
-                      nameInput="comprobado"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errorsForm2.descripcion?.message}
-                      register={registerForm2}
-                      nameTitle="Descripcion"
-                      type="text"
-                      nameInput="descripcion"
-                      styleInput="small"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.inputColumn}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={arrayTipo}
-                      dataLabel="Tipo"
-                      name="tipo"
-                      register={registerForm2}
-                      error={errorsForm2.tipo?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={arrayComprobar}
-                      dataLabel="Comprobar"
-                      name="comprobar"
-                      register={registerForm2}
-                      error={errorsForm2.comprobar?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errorsForm2.resolucion?.message}
-                      register={registerForm2}
-                      nameTitle="Resolucion"
-                      type="text"
-                      nameInput="resolucion"
-                      styleInput="small"
-                      required
-                    />
-                  </div>
-                </div>
-              </section>
-              <div className={styles.btnContainer}>
-                <Button
-                  clickAction={handleSubmitForm2(onSubmit2)}
-                  text={buttonType ? 'Editar' : 'Agregar'}
-                />
-                <Button clickAction={resetForm2} text="Reiniciar" />
-                <Button text="Cancelar" clickAction={cancelForm} />
-              </div>
-            </div>
-          </form>
+        <div className={styles.formEvento}>
+          <div className={styles.btnContainerEvento}>
+            <Button
+              clickAction={openForm}
+              text={openFormStatus ? 'Cerrar Evento' : 'Agregar Evento'}
+            />
+          </div>
         </div>
+        {openFormStatus && (
+          <div className={styles.formContainer}>
+            <form className={styles.form} onSubmit={handleSubmitForm2(onSubmit)}>
+              <div className={styles.formContainer}>
+                <section className={styles.inputGroups}>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsForm2.visibilidadEntrevista?.message}
+                        register={registerForm2}
+                        nameTitle="Visibilidad Entrevista"
+                        type="checkbox"
+                        nameInput="visibilidadEntrevista"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errorsForm2.fecha?.message}
+                        register={registerForm2}
+                        nameTitle="Fecha"
+                        type="date"
+                        nameInput="fecha"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayPredisposicion}
+                        dataLabel="Predisposicion"
+                        name="predisposicion"
+                        register={registerForm2}
+                        error={errorsForm2.predisposicion?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayComprobable}
+                        dataLabel="Comprobable"
+                        name="comprobable"
+                        register={registerForm2}
+                        error={errorsForm2.comprobable?.message}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsForm2.visibilidadInforme?.message}
+                        register={registerForm2}
+                        nameTitle="Visibilidad Informe"
+                        type="checkbox"
+                        nameInput="visibilidadInforme"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errorsForm2.hora?.message}
+                        register={registerForm2}
+                        nameTitle="Hora"
+                        type="date"
+                        nameInput="hora"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsForm2.comprobado?.message}
+                        register={registerForm2}
+                        nameTitle="Comprobado"
+                        type="checkbox"
+                        nameInput="comprobado"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errorsForm2.descripcion?.message}
+                        register={registerForm2}
+                        nameTitle="Descripcion"
+                        type="text"
+                        nameInput="descripcion"
+                        styleInput="small"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayTipo}
+                        dataLabel="Tipo"
+                        name="tipo"
+                        register={registerForm2}
+                        error={errorsForm2.tipo?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayComprobar}
+                        dataLabel="Comprobar"
+                        name="comprobar"
+                        register={registerForm2}
+                        error={errorsForm2.comprobar?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errorsForm2.resolucion?.message}
+                        register={registerForm2}
+                        nameTitle="Resolucion"
+                        type="text"
+                        nameInput="resolucion"
+                        styleInput="small"
+                        required
+                      />
+                    </div>
+                  </div>
+                </section>
+                <div className={styles.btnContainer}>
+                  <Button
+                    clickAction={handleSubmitForm2(onSubmit2)}
+                    text={buttonType ? 'Editar' : 'Agregar'}
+                  />
+                  <Button clickAction={resetForm2} text="Reiniciar" />
+                  <Button text="Cancelar" clickAction={cancelForm} />
+                </div>
+              </div>
+              <div className={styles.tableTop}>
+                <div className={styles.tableContainer}>
+                  <FormTable
+                    data={currentEvento}
+                    columnTitleArray={columnTitleArray}
+                    columns={columns}
+                    handleClick={tableClick}
+                    deleteButton={deleteButton}
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
