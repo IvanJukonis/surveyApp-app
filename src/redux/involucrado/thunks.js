@@ -13,14 +13,14 @@ import {
   updateInvolucradoError
 } from './actions';
 
-export const getAllInvolucrado = async (dispatch, sinId) => {
+export const getInvolucradoSiniestro = async (dispatch, siniestroId) => {
   try {
     dispatch(getInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
     const data = await response.json();
     const involucradosList = data.data;
     const involucradosSiniestroList = involucradosList.filter(
-      (involucrado) => involucrado.siniestro[0] === sinId
+      (involucrado) => involucrado.siniestro[0] === siniestroId
     );
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoSuccess(involucradosSiniestroList));
@@ -30,14 +30,14 @@ export const getAllInvolucrado = async (dispatch, sinId) => {
   }
 };
 
-export const getInvolucrado = async (dispatch) => {
+export const getAllInvolucrado = async (dispatch) => {
   try {
     dispatch(getInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
     const data = await response.json();
-    const involucradosListAll = data.data;
+    const involucradosData = data.data;
     dispatch(getInvolucradoPending(false));
-    dispatch(getInvolucradoSuccess(involucradosListAll));
+    dispatch(getInvolucradoSuccess(involucradosData));
   } catch (error) {
     dispatch(getInvolucradoPending(false));
     dispatch(getInvolucradoError(true));

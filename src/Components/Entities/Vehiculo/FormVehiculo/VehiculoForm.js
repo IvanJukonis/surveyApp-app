@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
+import DateInput from 'Components/Shared/Inputs/DateInput';
+import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
+import FormTable from 'Components/Shared/formTable';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   ModalConfirm,
   ModalSuccess,
@@ -9,21 +18,12 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import FormTable from 'Components/Shared/formTable';
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   updateVehiculo,
   postVehiculo,
-  getAllVehiculos,
+  getVehiculoSiniestro,
   deleteVehiculo
 } from 'redux/vehiculo/thunks';
-import TextArea from 'Components/Shared/Inputs/TextAreaInput';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import DateInput from 'Components/Shared/Inputs/DateInput';
-import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { joiResolver } from '@hookform/resolvers/joi';
-import Joi from 'joi';
 
 const VehiculosForm = () => {
   const dispatch = useDispatch();
@@ -33,12 +33,13 @@ const VehiculosForm = () => {
   const { params } = location.state || {};
   const { createdEntity } = params || {};
 
-  const vehiculos = useSelector((state) => state.vehiculo.list);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [vehiculo, setVehiculo] = useState({});
   const [buttonType, setButtonType] = useState(false);
+
+  const vehiculos = useSelector((state) => state.vehiculo.list);
 
   const arrayRol = ['VA', 'VT', 'VT2', 'VT3', 'VAd'];
   const arrayUso = ['Particular', 'Profesional', 'Servicio', 'Otro'];
@@ -285,7 +286,7 @@ const VehiculosForm = () => {
   };
 
   useEffect(() => {
-    getAllVehiculos(dispatch, data.id);
+    getVehiculoSiniestro(dispatch, data.id);
   }, []);
 
   return (

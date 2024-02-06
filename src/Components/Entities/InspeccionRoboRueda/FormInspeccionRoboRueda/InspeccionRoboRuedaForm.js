@@ -9,6 +9,7 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
@@ -19,10 +20,13 @@ import {
   getAllInspeccionRoboRueda,
   deleteInspeccionRoboRueda
 } from 'redux/inspeccionRoboRueda/thunks';
+import { updateEvento, postEvento } from 'redux/evento/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
+import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
+import { getInvolucradoSiniestro } from 'redux/involucrado/thunks';
 
 const InspeccionRoboRuedasForm = () => {
   const dispatch = useDispatch();
@@ -35,7 +39,10 @@ const InspeccionRoboRuedasForm = () => {
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [modalAddConfirmOpenForm2, setModalAddConfirmOpenForm2] = useState(false);
+  const [modalSuccessForm2, setModalSuccessOpenForm2] = useState(false);
   const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
+  const [evento, setEvento] = useState({});
   const [buttonType, setButtonType] = useState(false);
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
@@ -44,6 +51,15 @@ const InspeccionRoboRuedasForm = () => {
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
 
+  const arrayTipo = ['Acontesimiento', 'Sospecha'];
+  const arrayComprobar = ['A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado'];
+  const arrayComprobable = [
+    'Totalmente comprobable',
+    'Comprobable',
+    'Parcialmente comprobable',
+    'No comprobable'
+  ];
+  const arrayPredisposicion = ['Buena', 'Media', 'Mala', 'Negacion'];
   const arrayResultado = ['Inconsistencias', 'Sin inconsistencias', 'Fraudulencia'];
   const arrayPermisos = [
     'Inspeccion permitida',
@@ -64,6 +80,89 @@ const InspeccionRoboRuedasForm = () => {
   const columnInvolucrado = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
   const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
   const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
+
+  const schemaFormulario2 = Joi.object({
+    visibilidadEntrevista: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Visibilidad Entrevista" es un campo booleano',
+        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
+      })
+      .required(),
+    visibilidadInforme: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Visibilidad Informe" es un campo booleano',
+        'boolean.empty': 'El campo "Visibilidad Informe" debe tener un valor determinado'
+      })
+      .required(),
+    tipo: Joi.string()
+      .valid('Acontesimiento', 'Sospecha')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    fecha: Joi.date()
+      .empty('')
+      .messages({
+        'date.base': 'El campo "Fecha" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
+      })
+      .required(),
+    hora: Joi.date()
+      .empty('')
+      .messages({
+        'date.base': 'El campo "Hora" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora" no puede permanecer vacio.'
+      })
+      .required(),
+    descripcion: Joi.string()
+      .min(3)
+      .max(200)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 50 caracteres'
+      })
+      .required(),
+    comprobar: Joi.string()
+      .valid('A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    comprobado: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Comprobado" es un campo booleano',
+        'boolean.empty': 'El campo "Comprobado" debe tener un valor determinado'
+      })
+      .required(),
+    comprobable: Joi.string()
+      .valid('Totalmente comprobable', 'Comprobable', 'Parcialmente comprobable', 'No comprobable')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    predisposicion: Joi.string()
+      .valid('Buena', 'Media', 'Mala', 'Negacion')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    resolucion: Joi.string()
+      .min(3)
+      .max(200)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 50 caracteres'
+      })
+      .required(),
+    siniestro: Joi.any(),
+    evento: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any()
+  });
 
   const schema = Joi.object({
     fecha: Joi.date()
@@ -174,6 +273,17 @@ const InspeccionRoboRuedasForm = () => {
     defaultValues: { ...inspeccionRoboRueda }
   });
 
+  const {
+    register: registerForm2,
+    handleSubmit: handleSubmitForm2,
+    reset: reset2,
+    formState: { errors: errorsForm2 }
+  } = useForm({
+    mode: 'onBlur',
+    resolver: joiResolver(schemaFormulario2),
+    defaultValues: { ...evento }
+  });
+
   const onConfirmFunction = async () => {
     if (!buttonType) {
       const inspeccionRoboRuedaConSiniestro = { ...inspeccionRoboRueda, siniestro: data.id };
@@ -202,38 +312,110 @@ const InspeccionRoboRuedasForm = () => {
     }
   };
 
+  const onConfirmFunction2 = async () => {
+    if (!buttonType) {
+      const eventoConSiniestro = { ...evento, siniestro: data.id };
+      const addEventoResponse = await postEvento(dispatch, eventoConSiniestro);
+      if (addEventoResponse.type === 'POST_EVENTO_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpenForm2(true);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
+    } else {
+      const editInspeccionRoboRuedaResponse = await updateEvento(
+        dispatch,
+        inspeccionRoboRueda._id,
+        inspeccionRoboRueda
+      );
+      if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpenForm2(true);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
+    }
+  };
+
   const onSubmit = async (data) => {
     if (buttonType) {
       const formattedData = {
         ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
       };
       setInspeccionRoboRueda(formattedData);
       setModalAddConfirmOpen(true);
     } else {
       const formattedData = {
         ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
       };
       setInspeccionRoboRueda(formattedData);
       setModalAddConfirmOpen(true);
     }
   };
 
+  const onSubmit2 = async (data) => {
+    if (buttonType) {
+      const formattedData = {
+        ...data,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setEvento(formattedData);
+      setModalAddConfirmOpenForm2(true);
+    } else {
+      const formattedData = {
+        ...data,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setEvento(formattedData);
+      setModalAddConfirmOpenForm2(true);
+    }
+  };
+
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
+      presencia: false,
+      direccion: '',
+      ciudad: '',
       fecha: 'dd / mm / aaaa',
       hora: 'dd / mm / aaaa',
-      fotos: 'Pick foto',
-      permiso: 'Pick permiso',
-      programada: 'Pick programada',
-      daños: '',
+      resultado: '',
+      permiso: '',
+      programada: '',
+      fotos: '',
       disposicion: '',
+      daños: '',
       conclusion: ''
     };
     reset({ ...emptyData });
   };
+
+  const resetForm2 = () => {
+    setButtonType(false);
+    const emptyData = {
+      visibilidadEntrevista: false,
+      visibilidadInforme: false,
+      tipo: '',
+      fecha: 'dd / mm / aaaa',
+      hora: 'dd / mm / aaaa',
+      descripcion: '',
+      comprobar: '',
+      comprobado: false,
+      comprobable: '',
+      predisposicion: '',
+      resolucion: ''
+    };
+    reset2({ ...emptyData });
+  };
+
+  console.log(errorsForm2);
+
   const deleteButton = deleteInspeccionRoboRueda;
 
   const checkStateSelectedVehiculo = (column, index) => {
@@ -293,7 +475,6 @@ const InspeccionRoboRuedasForm = () => {
       setSelectedInvolucrados(newListSelectedInvolucrados);
     } else {
       setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
-      console.log(selectedInvolucrados);
     }
   };
 
@@ -361,6 +542,8 @@ const InspeccionRoboRuedasForm = () => {
 
   useEffect(() => {
     getAllInspeccionRoboRueda(dispatch, data.id);
+    getVehiculoSiniestro(dispatch, data.id);
+    getInvolucradoSiniestro(dispatch, data.id);
   }, []);
 
   return (
@@ -369,7 +552,7 @@ const InspeccionRoboRuedasForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={buttonType ? 'Update' : 'Add'}
+              method={buttonType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
@@ -383,6 +566,28 @@ const InspeccionRoboRuedasForm = () => {
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
               message={buttonType ? 'InspeccionRoboRueda editado' : 'InspeccionRoboRueda agregado'}
+            />
+          )}
+        </div>
+      }
+      {
+        <div>
+          {modalAddConfirmOpenForm2 && (
+            <ModalConfirm
+              method={buttonType ? 'Actualizar' : 'Agregar'}
+              onConfirm={() => onConfirmFunction2()}
+              setModalConfirmOpen={setModalAddConfirmOpen}
+              message={
+                buttonType
+                  ? '¿Estás seguro de que quieres actualizar este evento?'
+                  : '¿Estás seguro de que quieres agregar este evento?'
+              }
+            />
+          )}
+          {modalSuccessForm2 && (
+            <ModalSuccess
+              setModalSuccessOpen={setModalSuccessOpen}
+              message={buttonType ? 'Evento editado' : 'Evento agregado'}
             />
           )}
         </div>
@@ -625,6 +830,136 @@ const InspeccionRoboRuedasForm = () => {
             </div>
           </div>
         </form>
+        <div className={styles.formContainer}>
+          <form className={styles.form} onSubmit={handleSubmitForm2(onSubmit)}>
+            <div className={styles.formContainer}>
+              <section className={styles.inputGroups}>
+                <div className={styles.inputColumn}>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errorsForm2.visibilidadEntrevista?.message}
+                      register={registerForm2}
+                      nameTitle="Visibilidad Entrevista"
+                      type="checkbox"
+                      nameInput="visibilidadEntrevista"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errorsForm2.fecha?.message}
+                      register={registerForm2}
+                      nameTitle="Fecha"
+                      type="date"
+                      nameInput="fecha"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={arrayPredisposicion}
+                      dataLabel="Predisposicion"
+                      name="predisposicion"
+                      register={registerForm2}
+                      error={errorsForm2.predisposicion?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={arrayComprobable}
+                      dataLabel="Comprobable"
+                      name="comprobable"
+                      register={registerForm2}
+                      error={errorsForm2.comprobable?.message}
+                    />
+                  </div>
+                </div>
+                <div className={styles.inputColumn}>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errorsForm2.visibilidadInforme?.message}
+                      register={registerForm2}
+                      nameTitle="Visibilidad Informe"
+                      type="checkbox"
+                      nameInput="visibilidadInforme"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errorsForm2.hora?.message}
+                      register={registerForm2}
+                      nameTitle="Hora"
+                      type="date"
+                      nameInput="hora"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errorsForm2.comprobado?.message}
+                      register={registerForm2}
+                      nameTitle="Comprobado"
+                      type="checkbox"
+                      nameInput="comprobado"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <TextArea
+                      error={errorsForm2.descripcion?.message}
+                      register={registerForm2}
+                      nameTitle="Descripcion"
+                      type="text"
+                      nameInput="descripcion"
+                      styleInput="small"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className={styles.inputColumn}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={arrayTipo}
+                      dataLabel="Tipo"
+                      name="tipo"
+                      register={registerForm2}
+                      error={errorsForm2.tipo?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={arrayComprobar}
+                      dataLabel="Comprobar"
+                      name="comprobar"
+                      register={registerForm2}
+                      error={errorsForm2.comprobar?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <TextArea
+                      error={errorsForm2.resolucion?.message}
+                      register={registerForm2}
+                      nameTitle="Resolucion"
+                      type="text"
+                      nameInput="resolucion"
+                      styleInput="small"
+                      required
+                    />
+                  </div>
+                </div>
+              </section>
+              <div className={styles.btnContainer}>
+                <Button
+                  clickAction={handleSubmitForm2(onSubmit2)}
+                  text={buttonType ? 'Editar' : 'Agregar'}
+                />
+                <Button clickAction={resetForm2} text="Reiniciar" />
+                <Button text="Cancelar" clickAction={cancelForm} />
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />

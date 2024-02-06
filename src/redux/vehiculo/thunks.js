@@ -13,7 +13,7 @@ import {
   updateVehiculoError
 } from './actions';
 
-export const getAllVehiculos = async (dispatch, siniestroId) => {
+export const getVehiculoSiniestro = async (dispatch, siniestroId) => {
   try {
     dispatch(getVehiculoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`);
@@ -24,6 +24,20 @@ export const getAllVehiculos = async (dispatch, siniestroId) => {
     );
     dispatch(getVehiculoPending(false));
     dispatch(getVehiculoSuccess(vehiculosSiniestroList));
+  } catch (error) {
+    dispatch(getVehiculoPending(false));
+    dispatch(getVehiculoError(true));
+  }
+};
+
+export const getAllVehiculo = async (dispatch) => {
+  try {
+    dispatch(getVehiculoPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`);
+    const data = await response.json();
+    const vehiculosData = data.data;
+    dispatch(getVehiculoPending(false));
+    dispatch(getVehiculoSuccess(vehiculosData));
   } catch (error) {
     dispatch(getVehiculoPending(false));
     dispatch(getVehiculoError(true));

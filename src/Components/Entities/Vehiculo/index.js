@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllVehiculos, deleteVehiculo } from 'redux/vehiculo/thunks';
+import { getVehiculoSiniestro, deleteVehiculo } from 'redux/vehiculo/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ function Vehiculo() {
   };
 
   useEffect(() => {
-    getAllVehiculos(dispatch);
+    getVehiculoSiniestro(dispatch);
   }, []);
 
   return (

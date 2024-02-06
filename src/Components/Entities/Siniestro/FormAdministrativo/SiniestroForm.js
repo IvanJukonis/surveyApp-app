@@ -290,7 +290,6 @@ const SiniestrosForm = () => {
     getSiniestro(dispatch);
   }, []);
 
-  console.log(errors);
   return (
     <div className={styles.container}>
       {

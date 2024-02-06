@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
+import FormTable from 'Components/Shared/formTable';
+import { getInvolucradoSiniestro } from 'redux/involucrado/thunks';
+import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
+import DateInput from 'Components/Shared/Inputs/DateInput';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   ModalConfirm,
   ModalSuccess,
@@ -9,22 +19,12 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import FormTable from 'Components/Shared/formTable';
-import { getAllInvolucrado } from 'redux/involucrado/thunks';
-import { getAllVehiculos } from 'redux/vehiculo/thunks';
-import DateInput from 'Components/Shared/Inputs/DateInput';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   updateInspeccionSiniestro,
   postInspeccionSiniestro,
   getAllInspeccionSiniestro,
   deleteInspeccionSiniestro
 } from 'redux/inspeccionSiniestro/thunks';
-import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { joiResolver } from '@hookform/resolvers/joi';
-import Joi from 'joi';
 
 const InspeccionSiniestrosForm = () => {
   const dispatch = useDispatch();
@@ -373,8 +373,8 @@ const InspeccionSiniestrosForm = () => {
 
   useEffect(() => {
     getAllInspeccionSiniestro(dispatch, data.id);
-    getAllVehiculos(dispatch, data.id || siniestroId);
-    getAllInvolucrado(dispatch, data.id || siniestroId);
+    getInvolucradoSiniestro(dispatch, data.id || siniestroId);
+    getVehiculoSiniestro(dispatch, data.id || siniestroId);
   }, []);
 
   useEffect(() => {

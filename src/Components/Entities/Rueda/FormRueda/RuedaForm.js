@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
-import {
-  ModalConfirm,
-  ModalSuccess,
-  ToastError,
-  Inputs,
-  Button,
-  OptionInput
-} from 'Components/Shared';
-import { getAllVehiculos } from 'redux/vehiculo/thunks';
-import { getAllInvolucrado } from 'redux/involucrado/thunks';
+import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
+import { getInvolucradoSiniestro } from 'redux/involucrado/thunks';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
@@ -20,6 +12,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
+import {
+  ModalConfirm,
+  ModalSuccess,
+  ToastError,
+  Inputs,
+  Button,
+  OptionInput
+} from 'Components/Shared';
 
 const RuedasForm = () => {
   const dispatch = useDispatch();
@@ -414,8 +414,8 @@ const RuedasForm = () => {
   useEffect(() => {
     getAllRueda(dispatch, data.id);
     getRueda(dispatch);
-    getAllVehiculos(dispatch, data.id);
-    getAllInvolucrado(dispatch, data.id);
+    getVehiculoSiniestro(dispatch, data.id);
+    getInvolucradoSiniestro(dispatch, data.id);
   }, []);
 
   useEffect(() => {

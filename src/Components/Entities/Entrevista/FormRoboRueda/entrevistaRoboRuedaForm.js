@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './form.module.css';
+import { getInvolucradoSiniestro } from 'redux/involucrado/thunks';
+import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
+import DateInput from 'Components/Shared/Inputs/DateInput';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
+import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
+import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   ModalConfirm,
   ModalSuccess,
@@ -8,21 +18,11 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   updateEntrevistaRoboRueda,
   postEntrevistaRoboRueda,
   getByIdEntrevistaRoboRueda
 } from 'redux/entrevistaRoboRueda/thunks';
-import { getAllInvolucrado } from 'redux/involucrado/thunks';
-import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { joiResolver } from '@hookform/resolvers/joi';
-import Joi from 'joi';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import DateInput from 'Components/Shared/Inputs/DateInput';
-import TextArea from 'Components/Shared/Inputs/TextAreaInput';
-import { getAllVehiculos } from 'redux/vehiculo/thunks';
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
@@ -504,7 +504,7 @@ const EntrevistaRoboRuedasForm = () => {
 
   const onSubmit = async (data) => {
     setEntrevistaRoboRueda(data);
-    getAllInvolucrado(dispatch, siniestroId.id);
+    getInvolucradoSiniestro(dispatch, siniestroId.id);
     setModalAddConfirmOpen(true);
   };
 
@@ -548,8 +548,8 @@ const EntrevistaRoboRuedasForm = () => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
     }
-    getAllVehiculos(dispatch, siniestroId.id || siniestroId);
-    getAllInvolucrado(dispatch, siniestroId.id || siniestroId);
+    getVehiculoSiniestro(dispatch, siniestroId.id || siniestroId);
+    getInvolucradoSiniestro(dispatch, siniestroId.id || siniestroId);
   }, []);
 
   const createdEntrevistaIdRef = useRef(createdEntrevista);

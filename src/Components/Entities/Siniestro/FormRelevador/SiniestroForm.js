@@ -417,6 +417,20 @@ const SiniestrosForm = () => {
     });
   };
 
+  const handleRueda = () => {
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/rueda/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
+    });
+  };
+
+  const handleEvento = () => {
+    const pathPrefix = getPathPrefix();
+    history.push(`${pathPrefix}/siniestros/evento/${siniestroActual._id}`, {
+      params: { ...siniestroActual, mode: 'create' }
+    });
+  };
+
   const relevadorPath = /\/relevador\/siniestro/.test(location.pathname);
   const controladorPath = /\/controlador\/siniestro/.test(location.pathname);
 
@@ -657,6 +671,8 @@ const SiniestrosForm = () => {
             <Button clickAction={handleLugarR} text="LugarR" />
             <Button clickAction={handleInspeccionO} text="InspeccionO" />
             <Button clickAction={handleInspeccionR} text="InspeccionR" />
+            <Button clickAction={handleRueda} text="Rueda" />
+            <Button clickAction={handleEvento} text="Evento" />
           </div>
           <div className={styles.textAreasGroup}>
             <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>
