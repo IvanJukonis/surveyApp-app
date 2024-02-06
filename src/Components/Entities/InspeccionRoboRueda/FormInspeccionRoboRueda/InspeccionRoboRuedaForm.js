@@ -69,8 +69,11 @@ const InspeccionRoboRuedasForm = () => {
     'Inspeccion dificultada'
   ];
   const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
-  const columnTitleArray = ['Fecha', 'Hora', 'Permiso', 'Programada'];
-  const columns = ['fecha', 'hora', 'permiso', 'programada'];
+
+  const columnTitleInspeccion = ['Fecha', 'Hora', 'Direccion', 'Permiso', 'Presencia'];
+  const columnsInspeccion = ['fecha', 'hora', 'direccion', 'permiso', 'presencia'];
+  const columnTitleArray = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
+  const columns = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
   const columnTitleInvolucrado = [
     'Seleccionar',
     'Nombre',
@@ -286,6 +289,8 @@ const InspeccionRoboRuedasForm = () => {
     defaultValues: { ...evento }
   });
 
+  console.log(errors);
+
   const onConfirmFunction = async () => {
     if (!buttonType) {
       const inspeccionRoboRuedaConSiniestro = { ...inspeccionRoboRueda, siniestro: data.id };
@@ -390,7 +395,6 @@ const InspeccionRoboRuedasForm = () => {
       resultado: '',
       permiso: '',
       programada: '',
-      fotos: '',
       disposicion: '',
       daños: '',
       conclusion: ''
@@ -454,7 +458,7 @@ const InspeccionRoboRuedasForm = () => {
       );
       setSelectedVehiculos(newListSelectedVehiculos);
     } else {
-      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+      setSelectedVehiculos([vehiculos[index]._id]);
     }
   };
 
@@ -566,15 +570,15 @@ const InspeccionRoboRuedasForm = () => {
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 buttonType
-                  ? '¿Estás seguro de que quieres actualizar este inspeccionRoboRueda?'
-                  : '¿Estás seguro de que quieres agregar este inspeccionRoboRueda?'
+                  ? '¿Estás seguro de que quieres actualizar esta inspeccion?'
+                  : '¿Estás seguro de que quieres agregar esta inspeccion?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'InspeccionRoboRueda editado' : 'InspeccionRoboRueda agregado'}
+              message={buttonType ? 'Inspeccion editada' : 'Inspeccion agregada'}
             />
           )}
         </div>
@@ -609,8 +613,8 @@ const InspeccionRoboRuedasForm = () => {
           <div className={styles.tableContainer}>
             <FormTable
               data={currentInspeccionRoboRueda}
-              columnTitleArray={columnTitleArray}
-              columns={columns}
+              columnTitleArray={columnTitleInspeccion}
+              columns={columnsInspeccion}
               handleClick={tableClick}
               deleteButton={deleteButton}
             />
@@ -681,12 +685,13 @@ const InspeccionRoboRuedasForm = () => {
                   />
                 </div>
                 <div className={styles.inputContainer}>
-                  <OptionInput
-                    data={arrayProgramada}
-                    dataLabel="Programada"
-                    name="programada"
+                  <Checkbox
+                    error={errors.presencia?.message}
                     register={register}
-                    error={errors.programada?.message}
+                    nameTitle="Presencia"
+                    type="checkbox"
+                    nameInput="presencia"
+                    required
                   />
                 </div>
                 <div className={styles.inputContainer}>
@@ -854,16 +859,6 @@ const InspeccionRoboRuedasForm = () => {
                 <section className={styles.inputGroups}>
                   <div className={styles.inputColumn}>
                     <div className={styles.inputContainer}>
-                      <Checkbox
-                        error={errorsForm2.visibilidadEntrevista?.message}
-                        register={registerForm2}
-                        nameTitle="Visibilidad Entrevista"
-                        type="checkbox"
-                        nameInput="visibilidadEntrevista"
-                        required
-                      />
-                    </div>
-                    <div className={styles.inputContainer}>
                       <DateInput
                         error={errorsForm2.fecha?.message}
                         register={registerForm2}
@@ -875,6 +870,15 @@ const InspeccionRoboRuedasForm = () => {
                     </div>
                     <div className={styles.inputContainer}>
                       <OptionInput
+                        data={arrayComprobar}
+                        dataLabel="Comprobar"
+                        name="comprobar"
+                        register={registerForm2}
+                        error={errorsForm2.comprobar?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainerPredisposicion}>
+                      <OptionInput
                         data={arrayPredisposicion}
                         dataLabel="Predisposicion"
                         name="predisposicion"
@@ -882,17 +886,16 @@ const InspeccionRoboRuedasForm = () => {
                         error={errorsForm2.predisposicion?.message}
                       />
                     </div>
-                    <div className={styles.inputContainer}>
-                      <OptionInput
-                        data={arrayComprobable}
-                        dataLabel="Comprobable"
-                        name="comprobable"
+                    <div className={styles.inputContainerCheck}>
+                      <Checkbox
+                        error={errorsForm2.visibilidadEntrevista?.message}
                         register={registerForm2}
-                        error={errorsForm2.comprobable?.message}
+                        nameTitle="Visibilidad Entrevista"
+                        type="checkbox"
+                        nameInput="visibilidadEntrevista"
+                        required
                       />
                     </div>
-                  </div>
-                  <div className={styles.inputColumn}>
                     <div className={styles.inputContainer}>
                       <Checkbox
                         error={errorsForm2.visibilidadInforme?.message}
@@ -903,6 +906,8 @@ const InspeccionRoboRuedasForm = () => {
                         required
                       />
                     </div>
+                  </div>
+                  <div className={styles.inputColumn}>
                     <div className={styles.inputContainer}>
                       <DateInput
                         error={errorsForm2.hora?.message}
@@ -914,13 +919,12 @@ const InspeccionRoboRuedasForm = () => {
                       />
                     </div>
                     <div className={styles.inputContainer}>
-                      <Checkbox
-                        error={errorsForm2.comprobado?.message}
+                      <OptionInput
+                        data={arrayComprobable}
+                        dataLabel="Comprobable"
+                        name="comprobable"
                         register={registerForm2}
-                        nameTitle="Comprobado"
-                        type="checkbox"
-                        nameInput="comprobado"
-                        required
+                        error={errorsForm2.comprobable?.message}
                       />
                     </div>
                     <div className={styles.inputContainer}>
@@ -946,12 +950,13 @@ const InspeccionRoboRuedasForm = () => {
                       />
                     </div>
                     <div className={styles.inputContainer}>
-                      <OptionInput
-                        data={arrayComprobar}
-                        dataLabel="Comprobar"
-                        name="comprobar"
+                      <Checkbox
+                        error={errorsForm2.comprobado?.message}
                         register={registerForm2}
-                        error={errorsForm2.comprobar?.message}
+                        nameTitle="Comprobado"
+                        type="checkbox"
+                        nameInput="comprobado"
+                        required
                       />
                     </div>
                     <div className={styles.inputContainer}>

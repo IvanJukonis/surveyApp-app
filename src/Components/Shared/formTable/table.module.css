@@ -51,6 +51,12 @@
   margin-left: 22px;
 }
 
+.checkboxInputComprobado {
+  width: 15px;
+  height: 15px;
+  margin-left: 32px;
+}
+
 .trash_edit {
   width: 10px;
   height: 10px;

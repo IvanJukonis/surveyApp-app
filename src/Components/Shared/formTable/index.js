@@ -97,6 +97,7 @@ const FormTable = ({
   const checkStateVisibilidad = (index) => checkState(index, 'visibilidad');
   const checkStateInforme = (index) => checkState(index, 'informe');
   const checkStateRespuesta = (index) => checkState(index, 'respuesta');
+  const checkStateComprobado = (index) => checkState(index, 'comprobado');
 
   return (
     <section className={styles.container}>
@@ -142,6 +143,13 @@ const FormTable = ({
                           type="checkbox"
                           readOnly
                           checked={checkStateVisibilidad(index)}
+                        />
+                      ) : column.startsWith('comprobado') ? (
+                        <input
+                          className={styles.checkboxInputComprobado}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateComprobado(index)}
                         />
                       ) : column.startsWith('informe') ? (
                         <input

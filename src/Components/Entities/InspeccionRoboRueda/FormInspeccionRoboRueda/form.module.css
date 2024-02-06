@@ -72,6 +72,18 @@
   margin: 5px 0;
 }
 
+.inputContainerCheck {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.inputContainerPredisposicion {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px
+}
+
 .formContainer {
   display: flex;
   flex-direction: column;
