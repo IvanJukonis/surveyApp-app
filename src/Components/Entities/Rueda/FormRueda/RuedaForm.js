@@ -7,7 +7,13 @@ import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateRueda, postRueda, getAllRueda, getRueda, deleteRueda } from 'redux/rueda/thunks';
+import {
+  updateRueda,
+  postRueda,
+  getRuedaSiniestro,
+  getRueda,
+  deleteRueda
+} from 'redux/rueda/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -412,7 +418,7 @@ const RuedasForm = () => {
   };
 
   useEffect(() => {
-    getAllRueda(dispatch, data.id);
+    getRuedaSiniestro(dispatch, data.id);
     getRueda(dispatch);
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);

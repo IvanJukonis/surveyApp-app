@@ -6,7 +6,24 @@
   padding: 15px 17px 15px 17px;
 }
 
+.containerForm {
+  display: flex;
+  flex-direction: column;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  padding: 10px 12px 10px 12px;
+}
+
 .table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #252440;
+  color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  overflow: hidden;
+}
+
+.tableForm {
   width: 100%;
   border-collapse: collapse;
   background: #252440;
@@ -26,8 +43,26 @@
   font-size: 15px;
 }
 
+.tableForm tr td,
+.tableForm tr th {
+  padding: 10px 5px 10px 5px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 40px;
+  transition: all 0.1s;
+  font-size: 12px;
+}
+
 .table tr:hover {
   max-width: 280px;
+  background-color: #3C3C3C;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tableForm tr:hover {
+  max-width: 200px;
   background-color: #3C3C3C;
   color: #fff;
   cursor: pointer;

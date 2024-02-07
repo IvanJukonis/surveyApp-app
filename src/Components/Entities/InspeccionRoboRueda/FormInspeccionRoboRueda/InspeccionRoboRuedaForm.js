@@ -21,6 +21,7 @@ import {
   deleteInspeccionRoboRueda
 } from 'redux/inspeccionRoboRueda/thunks';
 import { updateEvento, postEvento, getEventoSiniestro } from 'redux/evento/thunks';
+import { postRueda, getRuedaSiniestro } from 'redux/rueda/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -39,20 +40,27 @@ const InspeccionRoboRuedasForm = () => {
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [modalAddConfirmOpenForm2, setModalAddConfirmOpenForm2] = useState(false);
-  const [modalSuccessForm2, setModalSuccessOpenForm2] = useState(false);
-  const [openFormStatus, setOpenFormStatus] = useState(false);
+  const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
+  const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
+  const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
+  const [openFormRueda, setOpenFormRueda] = useState(false);
+  const [openFormEvento, setOpenFormEvento] = useState(false);
+  const [rueda, setRueda] = useState({});
   const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
   const [evento, setEvento] = useState({});
   const [buttonType, setButtonType] = useState(false);
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
+  const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
+  const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
 
+  const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
   const currentInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
 
+  //Array Eventos
   const arrayTipo = ['Acontesimiento', 'Sospecha'];
   const arrayComprobar = ['A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado'];
   const arrayComprobable = [
@@ -69,11 +77,24 @@ const InspeccionRoboRuedasForm = () => {
     'Inspeccion dificultada'
   ];
   const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
-
-  const columnTitleInspeccion = ['Fecha', 'Hora', 'Direccion', 'Permiso', 'Presencia'];
-  const columnsInspeccion = ['fecha', 'hora', 'direccion', 'permiso', 'presencia'];
   const columnTitleArray = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
   const columns = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
+
+  //Array Ruedas
+  const arrayTipoRueda = ['Original', 'Suplente', 'Prestada'];
+  const arrayTipoLlanta = ['Aleacion', 'Chapa', 'Otro'];
+  const arrayPosicionActual = ['DI', 'DD', 'TI', 'TD', 'AUX', 'N/N'];
+  const arrayPosicionPrevia = ['DI', 'DD', 'TI', 'TD', 'AUX', 'N/N'];
+  const arrayPosicionTransitoria = ['DI', 'DD', 'TI', 'TD', 'AUX', 'N/N'];
+  const arrayEstado = ['Nuevo', 'Medio desgastado', 'Desgastado'];
+  const arrayAporteFoto = ['Se aportan fotos previas', 'No se aportan fotos previas'];
+  const arrayMetadatosFoto = ['Metadatos presentes', 'Sin metadatos presentes'];
+  const columnTitleRueda = ['DOT', 'Llanta', 'Tipo', 'Marca', 'Actual', 'Sustraida'];
+  const columnsRueda = ['numDot', 'numLlanta', 'tipo', 'marca', 'posicionActual', 'sustraida'];
+
+  //Array Inspecciones
+  const columnTitleInspeccion = ['Fecha', 'Hora', 'Direccion', 'Permiso', 'Presencia'];
+  const columnsInspeccion = ['fecha', 'hora', 'direccion', 'permiso', 'presencia'];
   const columnTitleInvolucrado = [
     'Seleccionar',
     'Nombre',
@@ -86,7 +107,7 @@ const InspeccionRoboRuedasForm = () => {
   const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
   const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
-  const schemaFormulario2 = Joi.object({
+  const schemaFormEvento = Joi.object({
     visibilidadEntrevista: Joi.boolean()
       .messages({
         'boolean.base': 'El campo "Visibilidad Entrevista" es un campo booleano',
@@ -169,7 +190,7 @@ const InspeccionRoboRuedasForm = () => {
     _id: Joi.any()
   });
 
-  const schema = Joi.object({
+  const schemaFormInspeccion = Joi.object({
     fecha: Joi.date()
       .empty('')
       .messages({
@@ -259,13 +280,111 @@ const InspeccionRoboRuedasForm = () => {
     _id: Joi.any()
   });
 
-  const formatDate = (dateString) => {
-    const dateObject = new Date(dateString);
-    const year = dateObject.getFullYear();
-    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObject.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const schemaFormRueda = Joi.object({
+    descripcion: Joi.string()
+      .min(3)
+      .max(100)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 100 caracteres'
+      })
+      .required(),
+    marca: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    numDot: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    numLlanta: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    tipo: Joi.string().valid('Original', 'Suplente', 'Prestada').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    tipoLlanta: Joi.string().valid('Aleacion', 'Chapa', 'Otro').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    posicionActual: Joi.string().valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    fechaColocacion: Joi.date()
+      .empty('')
+      .messages({
+        'date.base': 'El campo "Fecha" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
+      })
+      .required(),
+    posicionPrevia: Joi.string().valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    posicionTransitoria: Joi.string().valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    sustraida: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Sustraida" es un campo booleano',
+        'boolean.empty': 'El campo "Sustraida" debe tener un valor determinado'
+      })
+      .required(),
+    estado: Joi.string().valid('Nuevo', 'Medio desgastado', 'Desgastado').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    aporteFoto: Joi.string()
+      .valid('Se aportan fotos previas', 'No se aportan fotos previas')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+    metadatosFoto: Joi.string().valid('Metadatos presentes', 'Sin metadatos presentes').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    factura: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Factura" es un campo booleano',
+        'boolean.empty': 'El campo "Factura" debe tener un valor determinado'
+      })
+      .required(),
+    aporteFactura: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporte Factura" es un campo booleano',
+        'boolean.empty': 'El campo "Aporte Factura" debe tener un valor determinado'
+      })
+      .required(),
+    anotaciones: Joi.string()
+      .min(3)
+      .max(200)
+      .messages({
+        'string.base': 'El campo "Anotaciones" debe ser una cadena de texto',
+        'string.empty': 'El campo "Anotaciones" es un campo requerido',
+        'string.min': 'El campo "Anotaciones" debe tener al menos 3 caracteres'
+      })
+      .required(),
+    siniestro: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any()
+  });
 
   const {
     register,
@@ -274,31 +393,128 @@ const InspeccionRoboRuedasForm = () => {
     formState: { errors }
   } = useForm({
     mode: 'onBlur',
-    resolver: joiResolver(schema),
+    resolver: joiResolver(schemaFormInspeccion),
     defaultValues: { ...inspeccionRoboRueda }
   });
 
   const {
-    register: registerForm2,
-    handleSubmit: handleSubmitForm2,
-    reset: reset2,
-    formState: { errors: errorsForm2 }
+    register: registerEvento,
+    handleSubmit: handleSubmitEvento,
+    reset: resetEvento,
+    formState: { errors: errorsEvento }
   } = useForm({
     mode: 'onBlur',
-    resolver: joiResolver(schemaFormulario2),
+    resolver: joiResolver(schemaFormEvento),
     defaultValues: { ...evento }
   });
 
-  console.log(errors);
+  const {
+    register: registerRueda,
+    handleSubmit: handleSubmitRueda,
+    reset: resetRueda,
+    formState: { errors: errorsRueda }
+  } = useForm({
+    mode: 'onBlur',
+    resolver: joiResolver(schemaFormRueda),
+    defaultValues: { ...rueda }
+  });
 
-  const onConfirmFunction = async () => {
+  const resetFormInspeccion = () => {
+    setButtonType(false);
+    const emptyData = {
+      presencia: false,
+      direccion: '',
+      ciudad: '',
+      fecha: 'dd / mm / aaaa',
+      hora: 'dd / mm / aaaa',
+      resultado: '',
+      permiso: '',
+      programada: '',
+      disposicion: '',
+      daños: '',
+      conclusion: ''
+    };
+    reset({ ...emptyData });
+  };
+
+  const resetFormEvento = () => {
+    setButtonType(false);
+    const emptyData = {
+      visibilidadEntrevista: false,
+      visibilidadInforme: false,
+      tipo: '',
+      fecha: 'dd / mm / aaaa',
+      hora: 'dd / mm / aaaa',
+      descripcion: '',
+      comprobar: '',
+      comprobado: false,
+      comprobable: '',
+      predisposicion: '',
+      resolucion: ''
+    };
+    resetEvento({ ...emptyData });
+  };
+
+  const resetFormRueda = () => {
+    setButtonType(false);
+    const emptyData = {
+      descripcion: '',
+      marca: '',
+      numDot: '',
+      numLlanta: '',
+      tipo: '',
+      tipoLlanta: '',
+      posicionActual: '',
+      fechaColocacion: 'dd / mm / aaaa',
+      posicionPrevia: '',
+      posicionTransitoria: '',
+      sustraida: false,
+      estado: '',
+      aporteFoto: '',
+      metadatosFoto: '',
+      factura: false,
+      aporteFactura: false,
+      anotaciones: ''
+    };
+    resetRueda({ ...emptyData });
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const onConfirmInspeccion = async () => {
     if (!buttonType) {
-      const inspeccionRoboRuedaConSiniestro = { ...inspeccionRoboRueda, siniestro: data.id };
-      const addInspeccionRoboRuedaResponse = await postInspeccionRoboRueda(
+      const inspeccionRoboRuedaSiniestro = { ...inspeccionRoboRueda, siniestro: data.id };
+      const postInspeccionRoboRuedaFetch = await postInspeccionRoboRueda(
         dispatch,
-        inspeccionRoboRuedaConSiniestro
+        inspeccionRoboRuedaSiniestro
       );
-      if (addInspeccionRoboRuedaResponse.type === 'POST_INSPECCIONROBORUEDA_SUCCESS') {
+      if (postInspeccionRoboRuedaFetch.type === 'POST_INSPECCIONROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
         return setTimeout(() => {}, 1000);
@@ -319,13 +535,13 @@ const InspeccionRoboRuedasForm = () => {
     }
   };
 
-  const onConfirmFunction2 = async () => {
+  const onConfirmEvento = async () => {
     if (!buttonType) {
-      const eventoConSiniestro = { ...evento, siniestro: data.id };
-      const addEventoResponse = await postEvento(dispatch, eventoConSiniestro);
-      if (addEventoResponse.type === 'POST_EVENTO_SUCCESS') {
+      const eventoSiniestro = { ...evento, siniestro: data.id };
+      const postEventoFetch = await postEvento(dispatch, eventoSiniestro);
+      if (postEventoFetch.type === 'POST_EVENTO_SUCCESS') {
         setToastErroOpen(false);
-        setModalSuccessOpenForm2(true);
+        setModalSuccessOpenEvento(true);
         return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
@@ -337,7 +553,36 @@ const InspeccionRoboRuedasForm = () => {
       );
       if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
-        setModalSuccessOpenForm2(true);
+        setModalSuccessOpenEvento(true);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
+    }
+  };
+
+  const onConfirmRueda = async () => {
+    if (!buttonType) {
+      const ruedaSiniestro = { ...rueda };
+      const postRuedaFetch = await postRueda(
+        dispatch,
+        ruedaSiniestro,
+        selectedInvolucradosRueda,
+        selectedVehiculosRueda,
+        data.id
+      );
+      if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
+        setToastErroOpen(false);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
+    } else {
+      const editInspeccionRoboRuedaResponse = await updateEvento(
+        dispatch,
+        inspeccionRoboRueda._id,
+        inspeccionRoboRueda
+      );
+      if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
+        setToastErroOpen(false);
         return setTimeout(() => {}, 1000);
       }
       return setToastErroOpen(true);
@@ -364,7 +609,7 @@ const InspeccionRoboRuedasForm = () => {
     }
   };
 
-  const onSubmit2 = async (data) => {
+  const onSubmitEvento = async (data) => {
     if (buttonType) {
       const formattedData = {
         ...data,
@@ -372,7 +617,7 @@ const InspeccionRoboRuedasForm = () => {
         hora: formatDate(data.hora)
       };
       setEvento(formattedData);
-      setModalAddConfirmOpenForm2(true);
+      setModalAddConfirmOpenEvento(true);
     } else {
       const formattedData = {
         ...data,
@@ -380,55 +625,109 @@ const InspeccionRoboRuedasForm = () => {
         hora: formatDate(data.hora)
       };
       setEvento(formattedData);
-      setModalAddConfirmOpenForm2(true);
+      setModalAddConfirmOpenEvento(true);
     }
   };
 
-  const resetForm = () => {
-    setButtonType(false);
-    const emptyData = {
-      presencia: false,
-      direccion: '',
-      ciudad: '',
-      fecha: 'dd / mm / aaaa',
-      hora: 'dd / mm / aaaa',
-      resultado: '',
-      permiso: '',
-      programada: '',
-      disposicion: '',
-      daños: '',
-      conclusion: ''
-    };
-    reset({ ...emptyData });
-  };
-
-  const resetForm2 = () => {
-    setButtonType(false);
-    const emptyData = {
-      visibilidadEntrevista: false,
-      visibilidadInforme: false,
-      tipo: '',
-      fecha: 'dd / mm / aaaa',
-      hora: 'dd / mm / aaaa',
-      descripcion: '',
-      comprobar: '',
-      comprobado: false,
-      comprobable: '',
-      predisposicion: '',
-      resolucion: ''
-    };
-    reset2({ ...emptyData });
-  };
-
-  const openForm = () => {
-    if (openFormStatus) {
-      setOpenFormStatus(false);
+  const onSubmitRueda = async (data) => {
+    if (buttonType) {
+      const formattedData = {
+        ...data,
+        fechaColocacion: formatDate(data.fechaColocacion)
+      };
+      setRueda(formattedData);
+      setModalAddConfirmOpenRueda(true);
     } else {
-      setOpenFormStatus(true);
+      const formattedData = {
+        ...data,
+        fechaColocacion: formatDate(data.fechaColocacion)
+      };
+      setRueda(formattedData);
+      setModalAddConfirmOpenRueda(true);
+    }
+  };
+
+  const openFormEventos = () => {
+    if (openFormEvento) {
+      setOpenFormRueda(true);
+      setOpenFormEvento(false);
+    } else {
+      setOpenFormEvento(true);
+      setOpenFormRueda(false);
+    }
+  };
+
+  const openFormRuedas = () => {
+    if (openFormRueda) {
+      setOpenFormRueda(false);
+      setOpenFormEvento(true);
+    } else {
+      setOpenFormEvento(false);
+      setOpenFormRueda(true);
     }
   };
 
   const deleteButton = deleteInspeccionRoboRueda;
+
+  const checkStateSelectedVehiculoRueda = (column, index) => {
+    if (column === 'selected' && currentRueda && currentRueda.vehiculo) {
+      if (selectedVehiculosRueda.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    if (currentRueda) {
+      if (selectedVehiculosRueda.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedVehiculoRueda = (index) => {
+    const isSelectedVehiculoRueda = selectedVehiculosRueda.find(
+      (vehiculo) => vehiculos[index]._id === vehiculo
+    );
+    if (isSelectedVehiculoRueda) {
+      const newListSelectedVehiculosRueda = selectedVehiculosRueda.filter(
+        (vehiculo) => vehiculos[index]._id !== vehiculo
+      );
+      setSelectedVehiculosRueda(newListSelectedVehiculosRueda);
+    } else {
+      setSelectedVehiculosRueda([vehiculos[index]._id]);
+    }
+  };
+
+  const checkStateSelectedRueda = (column, index) => {
+    if (column === 'selected' && currentRueda) {
+      if (
+        selectedInvolucradosRueda.find((involucrado) => involucrado === involucrados[index]._id)
+      ) {
+        return true;
+      }
+    }
+    if (!currentRueda) {
+      if (
+        selectedInvolucradosRueda.find((involucrado) => involucrado === involucrados[index]._id)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedRueda = (index) => {
+    const isSelectedInvolucradoRueda = selectedInvolucradosRueda.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucradoRueda) {
+      const newListSelectedInvolucradosRueda = selectedInvolucradosRueda.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucradosRueda(newListSelectedInvolucradosRueda);
+    } else {
+      setSelectedInvolucradosRueda((prevState) => [...prevState, involucrados[index]._id]);
+    }
+  };
 
   const checkStateSelectedVehiculo = (column, index) => {
     if (
@@ -509,26 +808,6 @@ const InspeccionRoboRuedasForm = () => {
     }
   };
 
-  const ifNotArrayNotObject = (item, itemContent) => {
-    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
-      if (itemContent === 'firstName') {
-        return (
-          <span>
-            {item?.firstName} {item?.lastName}
-          </span>
-        );
-      } else {
-        return item[itemContent];
-      }
-    }
-  };
-
-  const ifNotExist = (item) => {
-    if (item?.length === 0) {
-      return <span>This element Was Deleted. Edit to add</span>;
-    }
-  };
-
   const tableClick = (index) => {
     const formattedData = {
       ...currentInspeccionRoboRueda[index],
@@ -557,6 +836,7 @@ const InspeccionRoboRuedasForm = () => {
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);
     getEventoSiniestro(dispatch, data.id);
+    getRuedaSiniestro(dispatch, data.id);
   }, []);
 
   return (
@@ -566,7 +846,7 @@ const InspeccionRoboRuedasForm = () => {
           {modalAddConfirmOpen && (
             <ModalConfirm
               method={buttonType ? 'Actualizar' : 'Agregar'}
-              onConfirm={() => onConfirmFunction()}
+              onConfirm={() => onConfirmInspeccion()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 buttonType
@@ -585,10 +865,10 @@ const InspeccionRoboRuedasForm = () => {
       }
       {
         <div>
-          {modalAddConfirmOpenForm2 && (
+          {modalAddConfirmOpenEvento && (
             <ModalConfirm
               method={buttonType ? 'Actualizar' : 'Agregar'}
-              onConfirm={() => onConfirmFunction2()}
+              onConfirm={() => onConfirmEvento()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 buttonType
@@ -597,10 +877,26 @@ const InspeccionRoboRuedasForm = () => {
               }
             />
           )}
-          {modalSuccessForm2 && (
+          {modalSuccessEvento && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
               message={buttonType ? 'Evento editado' : 'Evento agregado'}
+            />
+          )}
+        </div>
+      }
+      {
+        <div>
+          {modalAddConfirmOpenRueda && (
+            <ModalConfirm
+              method={buttonType ? 'Actualizar' : 'Agregar'}
+              onConfirm={() => onConfirmRueda()}
+              setModalConfirmOpen={setModalAddConfirmOpenRueda}
+              message={
+                buttonType
+                  ? '¿Estás seguro de que quieres actualizar esta rueda?'
+                  : '¿Estás seguro de que quieres agregar esta rueda?'
+              }
             />
           )}
         </div>
@@ -743,13 +1039,13 @@ const InspeccionRoboRuedasForm = () => {
                 clickAction={handleSubmit(onSubmit)}
                 text={buttonType ? 'Editar' : 'Agregar'}
               />
-              <Button clickAction={resetForm} text="Reiniciar" />
+              <Button clickAction={resetFormInspeccion} text="Reiniciar" />
               <Button text="Cancelar" clickAction={cancelForm} />
             </div>
           </div>
           <div className={styles.rightTables}>
             <div className={styles.tableContainer}>
-              <h1 className={styles.tableTitle}>Involucrados</h1>
+              <Button clickAction={openFormRuedas} text={'Involucrados'} />
               <table className={styles.table}>
                 <thead>
                   <tr className={styles.tableContent}>
@@ -796,7 +1092,7 @@ const InspeccionRoboRuedasForm = () => {
               </table>
             </div>
             <div className={styles.tableContainer}>
-              <h1 className={styles.tableTitle}>Vehiculos</h1>
+              <Button clickAction={openFormRuedas} text={'Vehiculos'} />
               <table className={styles.table}>
                 <thead>
                   <tr className={styles.tableContent}>
@@ -846,22 +1142,20 @@ const InspeccionRoboRuedasForm = () => {
         </form>
         <div className={styles.formEvento}>
           <div className={styles.btnContainerEvento}>
-            <Button
-              clickAction={openForm}
-              text={openFormStatus ? 'Cerrar Evento' : 'Agregar Evento'}
-            />
+            <Button clickAction={openFormEventos} text={openFormEvento ? 'Eventos' : 'Eventos'} />
+            <Button clickAction={openFormRuedas} text={openFormRueda ? 'Ruedas' : 'Ruedas'} />
           </div>
         </div>
-        {openFormStatus && (
+        {openFormEvento && (
           <div className={styles.formContainer}>
-            <form className={styles.form} onSubmit={handleSubmitForm2(onSubmit)}>
+            <form className={styles.form} onSubmit={handleSubmitEvento(onSubmitEvento)}>
               <div className={styles.formContainer}>
                 <section className={styles.inputGroups}>
                   <div className={styles.inputColumn}>
                     <div className={styles.inputContainer}>
                       <DateInput
-                        error={errorsForm2.fecha?.message}
-                        register={registerForm2}
+                        error={errorsEvento.fecha?.message}
+                        register={registerEvento}
                         nameTitle="Fecha"
                         type="date"
                         nameInput="fecha"
@@ -873,8 +1167,8 @@ const InspeccionRoboRuedasForm = () => {
                         data={arrayComprobar}
                         dataLabel="Comprobar"
                         name="comprobar"
-                        register={registerForm2}
-                        error={errorsForm2.comprobar?.message}
+                        register={registerEvento}
+                        error={errorsEvento.comprobar?.message}
                       />
                     </div>
                     <div className={styles.inputContainerPredisposicion}>
@@ -882,14 +1176,14 @@ const InspeccionRoboRuedasForm = () => {
                         data={arrayPredisposicion}
                         dataLabel="Predisposicion"
                         name="predisposicion"
-                        register={registerForm2}
-                        error={errorsForm2.predisposicion?.message}
+                        register={registerEvento}
+                        error={errorsEvento.predisposicion?.message}
                       />
                     </div>
                     <div className={styles.inputContainerCheck}>
                       <Checkbox
-                        error={errorsForm2.visibilidadEntrevista?.message}
-                        register={registerForm2}
+                        error={errorsEvento.visibilidadEntrevista?.message}
+                        register={registerEvento}
                         nameTitle="Visibilidad Entrevista"
                         type="checkbox"
                         nameInput="visibilidadEntrevista"
@@ -898,8 +1192,8 @@ const InspeccionRoboRuedasForm = () => {
                     </div>
                     <div className={styles.inputContainer}>
                       <Checkbox
-                        error={errorsForm2.visibilidadInforme?.message}
-                        register={registerForm2}
+                        error={errorsEvento.visibilidadInforme?.message}
+                        register={registerEvento}
                         nameTitle="Visibilidad Informe"
                         type="checkbox"
                         nameInput="visibilidadInforme"
@@ -910,8 +1204,8 @@ const InspeccionRoboRuedasForm = () => {
                   <div className={styles.inputColumn}>
                     <div className={styles.inputContainer}>
                       <DateInput
-                        error={errorsForm2.hora?.message}
-                        register={registerForm2}
+                        error={errorsEvento.hora?.message}
+                        register={registerEvento}
                         nameTitle="Hora"
                         type="date"
                         nameInput="hora"
@@ -923,14 +1217,14 @@ const InspeccionRoboRuedasForm = () => {
                         data={arrayComprobable}
                         dataLabel="Comprobable"
                         name="comprobable"
-                        register={registerForm2}
-                        error={errorsForm2.comprobable?.message}
+                        register={registerEvento}
+                        error={errorsEvento.comprobable?.message}
                       />
                     </div>
                     <div className={styles.inputContainer}>
                       <TextArea
-                        error={errorsForm2.descripcion?.message}
-                        register={registerForm2}
+                        error={errorsEvento.descripcion?.message}
+                        register={registerEvento}
                         nameTitle="Descripcion"
                         type="text"
                         nameInput="descripcion"
@@ -945,14 +1239,14 @@ const InspeccionRoboRuedasForm = () => {
                         data={arrayTipo}
                         dataLabel="Tipo"
                         name="tipo"
-                        register={registerForm2}
-                        error={errorsForm2.tipo?.message}
+                        register={registerEvento}
+                        error={errorsEvento.tipo?.message}
                       />
                     </div>
                     <div className={styles.inputContainer}>
                       <Checkbox
-                        error={errorsForm2.comprobado?.message}
-                        register={registerForm2}
+                        error={errorsEvento.comprobado?.message}
+                        register={registerEvento}
                         nameTitle="Comprobado"
                         type="checkbox"
                         nameInput="comprobado"
@@ -961,8 +1255,8 @@ const InspeccionRoboRuedasForm = () => {
                     </div>
                     <div className={styles.inputContainer}>
                       <TextArea
-                        error={errorsForm2.resolucion?.message}
-                        register={registerForm2}
+                        error={errorsEvento.resolucion?.message}
+                        register={registerEvento}
                         nameTitle="Resolucion"
                         type="text"
                         nameInput="resolucion"
@@ -974,10 +1268,10 @@ const InspeccionRoboRuedasForm = () => {
                 </section>
                 <div className={styles.btnContainer}>
                   <Button
-                    clickAction={handleSubmitForm2(onSubmit2)}
+                    clickAction={handleSubmitEvento(onSubmitEvento)}
                     text={buttonType ? 'Editar' : 'Agregar'}
                   />
-                  <Button clickAction={resetForm2} text="Reiniciar" />
+                  <Button clickAction={resetFormEvento} text="Reiniciar" />
                   <Button text="Cancelar" clickAction={cancelForm} />
                 </div>
               </div>
@@ -989,7 +1283,301 @@ const InspeccionRoboRuedasForm = () => {
                     columns={columns}
                     handleClick={tableClick}
                     deleteButton={deleteButton}
+                    type={true}
                   />
+                </div>
+              </div>
+            </form>
+          </div>
+        )}
+        {openFormRueda && (
+          <div className={styles.formContainer}>
+            <form className={styles.form} onSubmit={handleSubmitRueda(onSubmitRueda)}>
+              <div className={styles.formContainer}>
+                <section className={styles.inputGroups}>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainerRueda}>
+                      <TextArea
+                        error={errorsRueda.descripcion?.message}
+                        register={registerRueda}
+                        nameTitle="Descripción"
+                        type="text"
+                        nameInput="descripcion"
+                        styleInput="small"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayPosicionActual}
+                        dataLabel="Posicion Actual"
+                        name="posicionActual"
+                        register={registerRueda}
+                        error={errorsRueda.posicionActual?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Inputs
+                        error={errorsRueda.numLlanta?.message}
+                        register={registerRueda}
+                        nameTitle="Numero Llanta"
+                        type="text"
+                        nameInput="numLlanta"
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errorsRueda.anotaciones?.message}
+                        register={registerRueda}
+                        nameTitle="Anotaciones"
+                        type="text"
+                        nameInput="anotaciones"
+                        styleInput="threeInputs"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <Inputs
+                        error={errorsRueda.marca?.message}
+                        register={registerRueda}
+                        nameTitle="Marca"
+                        type="text"
+                        nameInput="marca"
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayTipoRueda}
+                        dataLabel="Tipo"
+                        name="tipo"
+                        register={registerRueda}
+                        error={errorsRueda.tipo?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayPosicionPrevia}
+                        dataLabel="Posición Previa"
+                        name="posicionPrevia"
+                        register={registerRueda}
+                        error={errorsRueda.posicionPrevia?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errorsRueda.fechaColocacion?.message}
+                        register={registerRueda}
+                        nameTitle="Fecha Colocación"
+                        type="date"
+                        nameInput="fechaColocacion"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayMetadatosFoto}
+                        dataLabel="Metadatos Fotos"
+                        name="metadatosFoto"
+                        register={registerRueda}
+                        error={errorsRueda.metadatosFoto?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsRueda.aporteFactura?.message}
+                        register={registerRueda}
+                        nameTitle="Aporte Factura"
+                        type="checkbox"
+                        nameInput="aporteFactura"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsRueda.sustraida?.message}
+                        register={registerRueda}
+                        nameTitle="Sustraida"
+                        type="checkbox"
+                        nameInput="sustraida"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <Inputs
+                        error={errorsRueda.numDot?.message}
+                        register={registerRueda}
+                        nameTitle="Dot"
+                        type="text"
+                        nameInput="numDot"
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayTipoLlanta}
+                        dataLabel="Tipo Llanta"
+                        name="tipoLlanta"
+                        register={registerRueda}
+                        error={errorsRueda.tipoLlanta?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayPosicionTransitoria}
+                        dataLabel="Posición Transitoria"
+                        name="posicionTransitoria"
+                        register={registerRueda}
+                        error={errorsRueda.posicionTransitoria?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayAporteFoto}
+                        dataLabel="Aporte Fotos"
+                        name="aporteFoto"
+                        register={registerRueda}
+                        error={errorsRueda.aporteFoto?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayEstado}
+                        dataLabel="Estado"
+                        name="estado"
+                        register={registerRueda}
+                        error={errorsRueda.estado?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsRueda.factura?.message}
+                        register={registerRueda}
+                        nameTitle="Factura"
+                        type="checkbox"
+                        nameInput="factura"
+                        required
+                      />
+                    </div>
+                  </div>
+                </section>
+                <div className={styles.btnContainer}>
+                  <Button
+                    clickAction={handleSubmitRueda(onSubmitRueda)}
+                    text={buttonType ? 'Editar' : 'Agregar'}
+                  />
+                  <Button clickAction={resetFormRueda} text="Reiniciar" />
+                  <Button text="Cancelar" clickAction={cancelForm} />
+                </div>
+              </div>
+              <div className={styles.tableTop}>
+                <div className={styles.tableContainer}>
+                  <FormTable
+                    data={currentRueda}
+                    columnTitleArray={columnTitleRueda}
+                    columns={columnsRueda}
+                    handleClick={tableClick}
+                    deleteButton={deleteButton}
+                    type={true}
+                  />
+                </div>
+                <div className={styles.rightTables}>
+                  <div className={styles.tableContainer}>
+                    <Button clickAction={openFormRuedas} text={'Involucrados'} />
+                    <table className={styles.table}>
+                      <thead>
+                        <tr className={styles.tableContent}>
+                          {columnTitleInvolucrado.map((column, index) => (
+                            <th key={index}>{column}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {involucrados.map((row, index) => {
+                          const rowClass =
+                            index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                          return (
+                            <tr className={rowClass} key={index}>
+                              {columnInvolucrado.map((column, columnIndex) => (
+                                <td key={columnIndex}>
+                                  {column === 'selected' ? (
+                                    <input
+                                      type="checkbox"
+                                      className={styles.checkboxInput}
+                                      onChange={() => handleCheckboxSelectedRueda(index)}
+                                      checked={checkStateSelectedRueda(column, index)}
+                                    />
+                                  ) : column.startsWith('prioridad') ? (
+                                    <input
+                                      className={styles.checkboxInput}
+                                      type="checkbox"
+                                      readOnly
+                                      checked={checkState(index, 'inv')}
+                                    />
+                                  ) : (
+                                    <>
+                                      {ifNotArrayNotObject(row, column)}
+                                      {ifNotExist(row[column])}
+                                    </>
+                                  )}
+                                </td>
+                              ))}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className={styles.tableContainer}>
+                    <Button clickAction={openFormRuedas} text={'Vehiculos'} />
+                    <table className={styles.table}>
+                      <thead>
+                        <tr className={styles.tableContent}>
+                          {columnTitleVehiculo.map((column, index) => (
+                            <th key={index}>{column}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {vehiculos.map((row, index) => {
+                          const rowClass =
+                            index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                          return (
+                            <tr className={rowClass} key={index}>
+                              {columnVehiculo.map((column, columnIndex) => (
+                                <td key={columnIndex}>
+                                  {column === 'selected' ? (
+                                    <input
+                                      type="checkbox"
+                                      className={styles.checkboxInput}
+                                      onChange={() => handleCheckboxSelectedVehiculoRueda(index)}
+                                      checked={checkStateSelectedVehiculoRueda(column, index)}
+                                    />
+                                  ) : column.startsWith('prioridad') ? (
+                                    <input
+                                      className={styles.checkboxInput}
+                                      type="checkbox"
+                                      readOnly
+                                      checked={checkState(index, 'veh')}
+                                    />
+                                  ) : (
+                                    <>
+                                      {ifNotArrayNotObject(row, column)}
+                                      {ifNotExist(row[column])}
+                                    </>
+                                  )}
+                                </td>
+                              ))}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </form>

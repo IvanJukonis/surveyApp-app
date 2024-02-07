@@ -11,7 +11,8 @@ const FormTable = ({
   deleteButton,
   columns,
   valueField,
-  classes
+  classes,
+  type
 }) => {
   const fieldValue = valueField;
   const [successModal, setModalSuccess] = useState(false);
@@ -100,13 +101,13 @@ const FormTable = ({
   const checkStateComprobado = (index) => checkState(index, 'comprobado');
 
   return (
-    <section className={styles.container}>
+    <section className={type ? `${styles.containerForm}` : `${styles.container}`}>
       {data?.length === 0 ? (
         <div className={styles.noneTrainer}>
           <h3>The list is empty</h3>
         </div>
       ) : (
-        <table className={styles.table}>
+        <table className={type ? `${styles.tableForm}` : `${styles.table}`}>
           <thead>
             <tr className={styles.tableContent}>
               {columnTitleArray.map((column, index) => (

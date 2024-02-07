@@ -33,6 +33,7 @@
   align-items: center;
   background-color: #FAFAFA;
   border: 3px solid #ECECEC;
+  align-items: flex-start
 }
 
 
@@ -70,6 +71,14 @@
   flex-direction: column;
   justify-content: center;
   margin: 5px 0;
+}
+
+.inputContainerRueda {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 7px;
+  margin-bottom: 8px;
 }
 
 .inputContainerCheck {
@@ -172,14 +181,6 @@
   transform: scale(1.2);
 }
 
-.table tr td:hover {
-  transform: scale(1.1);
-  max-width: 280px;
-  background-color: #3C3C3C;
-  color: #fff;
-  cursor: pointer;
-}
-
 .rowBackground1 {
   background-color: #f0f0f1;
   color: #3C3C3C;
@@ -194,6 +195,8 @@
 
 .btnContainerEvento {
   margin: 10px;
+  display: flex;
+  flex-direction: row;
 }
 
 .formEvento {
