@@ -56,14 +56,14 @@
 
 .table tr:hover {
   max-width: 280px;
-  background-color: #3C3C3C;
+  background-color: #252440;
   color: #fff;
   cursor: pointer;
 }
 
 .tableForm tr:hover {
   max-width: 200px;
-  background-color: #3C3C3C;
+  background-color: #252440;
   color: #fff;
   cursor: pointer;
 }

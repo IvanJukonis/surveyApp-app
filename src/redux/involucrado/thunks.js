@@ -23,6 +23,7 @@ export const getInvolucradoSiniestro = async (dispatch, siniestroId) => {
       (involucrado) => involucrado.siniestro[0] === siniestroId
     );
     dispatch(getInvolucradoPending(false));
+    console.log(involucradosSiniestroList);
     dispatch(getInvolucradoSuccess(involucradosSiniestroList));
   } catch (error) {
     dispatch(getInvolucradoPending(false));

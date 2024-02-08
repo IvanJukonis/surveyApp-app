@@ -16,7 +16,7 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import {
   updateInvolucrado,
   postInvolucrado,
-  getAllInvolucrado,
+  getInvolucradoSiniestro,
   deleteInvolucrado
 } from 'redux/involucrado/thunks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -239,9 +239,9 @@ const InvolucradosForm = () => {
         'any.only': 'Ingrese una categoria permitida'
       })
       .required(),
-
+    siniestroData: Joi.any(),
+    cuit: Joi.any(),
     siniestro: Joi.any(),
-
     __v: Joi.any(),
     _id: Joi.any()
   });
@@ -394,8 +394,12 @@ const InvolucradosForm = () => {
   };
 
   useEffect(() => {
-    getAllInvolucrado(dispatch, data.id);
+    getInvolucradoSiniestro(dispatch, data.id);
   }, []);
+
+  useEffect(() => {
+    resetForm();
+  }, [involucrados]);
 
   return (
     <div className={styles.container}>
@@ -403,7 +407,7 @@ const InvolucradosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={buttonType ? 'Update' : 'Add'}
+              method={buttonType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
@@ -509,7 +513,7 @@ const InvolucradosForm = () => {
                   error={errors.codigoPostal?.message}
                   register={register}
                   nameTitle="Codigo Postal"
-                  type="number"
+                  type="text"
                   styleInput="normalInput"
                   nameInput="codigoPostal"
                   required
