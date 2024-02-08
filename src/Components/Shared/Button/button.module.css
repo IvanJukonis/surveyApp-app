@@ -36,9 +36,17 @@
   font-weight: bold;
 }
 
-.btnCancel:hover,
 .btnAccept:hover {
   background-color: #fafaface;
+  border: solid #3C3C3C 1.5px;
+  color: #3C3C3C;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+  font-size: 14px;
+}
+
+.btnCancel:hover {
+  background-color: #e0e0e0;
   border: solid #3C3C3C 1.5px;
   color: #3C3C3C;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
