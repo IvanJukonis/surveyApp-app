@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -14,7 +14,7 @@ import {
   postEntrevistaSiniestro,
   getAllEntrevistaSiniestro
 } from 'redux/entrevistaSiniestro/thunks';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
@@ -25,14 +25,49 @@ import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 const EntrevistaSiniestrosForm = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const location = useLocation();
+  const history = useHistory();
+  const data = location.state.params;
+  const siniestroId = location.state.params.siniestroId;
+  const formType = data.mode;
+
+  const [errorMessage, setErrorMessage] = useState('Error');
+  const [redirect, setRedirect] = useState(false);
+  const [redirectEntity, setRedirectEntity] = useState('');
+  const [dataEntrevistado, setDataEntrevistado] = useState();
+  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
+  const [selectedVehiculos, setSelectedVehiculos] = useState([]);
+  const [selectedEntrevistado, setSelectedEntrevistado] = useState([]);
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [entrevistaSiniestro, setEntrevistaSiniestro] = useState();
-  const location = useLocation();
-  const history = useHistory();
-  const data = location.state.params;
-  const formType = data.mode;
+
+  const involucrados = useSelector((state) => state.involucrado.list);
+  const vehiculos = useSelector((state) => state.vehiculo.list);
+  const currentEntrevista = useSelector((state) => state.entrevistaSiniestro.list);
+  const createdEntrevista = useSelector((state) => state.entrevistaSiniestro.createdEntrevista);
+
+  const columnTitleArray = [
+    'Entrevistado',
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columns = [
+    'entrevistado',
+    'selected',
+    'nombre',
+    'apellido',
+    'rol',
+    'telefono',
+    'prioridad'
+  ];
+  const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
+  const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
   const schema = Joi.object({
     fechaEntrevista: Joi.date()
@@ -318,32 +353,64 @@ const EntrevistaSiniestrosForm = () => {
   });
 
   const onConfirmFunction = async () => {
-    if (!id) {
-      const addEntrevistaSiniestroResponse = await postEntrevistaSiniestro(
-        dispatch,
-        entrevistaSiniestro
-      );
-      if (addEntrevistaSiniestroResponse.type === 'POST_ENTREVISTASINIESTRO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+    if (selectedEntrevistado.length > 0) {
+      let entrevistaCompleta = {};
+      if (dataEntrevistado?.nombre) {
+        entrevistaCompleta = {
+          ...entrevistaSiniestro,
+          nombreEntrevistado: dataEntrevistado.nombre,
+          apellidoEntrevistado: dataEntrevistado.apellido
+        };
+      } else {
+        entrevistaCompleta = entrevistaSiniestro;
       }
-      return setToastErroOpen(true);
+
+      const entrevistaSinPropiedadesVacias = Object.keys(entrevistaCompleta)
+        .filter(
+          (key) =>
+            entrevistaCompleta[key] !== null &&
+            entrevistaCompleta[key] !== undefined &&
+            entrevistaCompleta[key] !== ''
+        )
+        .reduce((obj, key) => {
+          obj[key] = entrevistaCompleta[key];
+          return obj;
+        }, {});
+      console.log(entrevistaSinPropiedadesVacias);
+      if (formType == 'create') {
+        const addEntrevistaSiniestroResponse = await postEntrevistaSiniestro(
+          dispatch,
+          entrevistaCompleta,
+          selectedInvolucrados,
+          selectedVehiculos,
+          siniestroId,
+          selectedEntrevistado
+        );
+        if (addEntrevistaSiniestroResponse.type === 'POST_ENTREVISTASINIESTRO_SUCCESS') {
+          setToastErroOpen(false);
+          setModalSuccessOpen(true);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
+      } else {
+        const editEntrevistaSiniestroResponse = await updateEntrevistaSiniestro(
+          dispatch,
+          id,
+          entrevistaCompleta,
+          selectedInvolucrados,
+          selectedVehiculos,
+          siniestroId,
+          selectedEntrevistado
+        );
+        if (editEntrevistaSiniestroResponse.type === 'UPDATE_ENTREVISTASINIESTRO_SUCCESS') {
+          setToastErroOpen(false);
+          setModalSuccessOpen(true);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
+      }
     } else {
-      const editEntrevistaSiniestroResponse = await updateEntrevistaSiniestro(
-        dispatch,
-        id,
-        entrevistaSiniestro
-      );
-      if (editEntrevistaSiniestroResponse.type === 'UPDATE_ENTREVISTASINIESTRO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
-      }
+      setErrorMessage('Seleccione al entrevistado');
       return setToastErroOpen(true);
     }
   };
@@ -364,9 +431,175 @@ const EntrevistaSiniestrosForm = () => {
   const lesiones = ['Hubo lesionados', 'No hubo lesionados'];
   const tipoLesiones = ['Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES'];
 
+  const involucradoRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('involucrado');
+  };
+
+  const checkStateSelectedVehiculo = (column, index) => {
+    if (column === 'selected' && currentEntrevista && currentEntrevista.vehiculo) {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    if (data.mode === 'create') {
+      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelectedVehiculo = (index) => {
+    const isSelectedVehiculo = selectedVehiculos.find(
+      (vehiculo) => vehiculos[index]._id === vehiculo
+    );
+    if (isSelectedVehiculo) {
+      const newListSelectedVehiculos = selectedVehiculos.filter(
+        (vehiculo) => vehiculos[index]._id !== vehiculo
+      );
+      setSelectedVehiculos(newListSelectedVehiculos);
+    } else {
+      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+    }
+  };
+
+  const checkStateSelected = (column, index) => {
+    if (column === 'selected' && currentEntrevista && currentEntrevista.involucrado) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (data.mode === 'create') {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleCheckboxSelected = (index) => {
+    const isSelectedInvolucrado = selectedInvolucrados.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedInvolucrado) {
+      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedInvolucrados(newListSelectedInvolucrados);
+    } else {
+      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
+    }
+  };
+
+  const checkStateEntrevistado = (column, index) => {
+    if (column === 'entrevistado' && currentEntrevista && currentEntrevista.entrevistado) {
+      if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (data.mode === 'create') {
+      if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkState = (index, entity) => {
+    if (entity === 'inv') {
+      if (involucrados[index].prioridad) {
+        if (involucrados.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (entity === 'veh') {
+      if (vehiculos[index].prioridad) {
+        if (vehiculos.find((singleData) => singleData.prioridad === true)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
+  const handleCheckboxEntrevistado = (index) => {
+    const isSelectedEntrevistado = selectedEntrevistado.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedEntrevistado) {
+      const newListSelectedEntrevistado = selectedEntrevistado.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedEntrevistado(newListSelectedEntrevistado);
+    } else {
+      setSelectedEntrevistado([involucrados[index]._id]);
+    }
+  };
+
+  const ifNotArrayNotObject = (item, itemContent) => {
+    if (typeof item[itemContent] !== 'object' && !Array.isArray(item[itemContent])) {
+      if (itemContent === 'firstName') {
+        return (
+          <span>
+            {item?.firstName} {item?.lastName}
+          </span>
+        );
+      } else {
+        return item[itemContent];
+      }
+    }
+  };
+
+  const ifNotExist = (item) => {
+    if (item?.length === 0) {
+      return <span>This element Was Deleted. Edit to add</span>;
+    }
+  };
+
+  const vehiculoRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('vehiculo');
+  };
+
+  const createdEntrevistaIdRef = useRef(createdEntrevista);
+  const [entrevista, setEntrevista] = useState([]);
+
   useEffect(() => {
     getAllEntrevistaSiniestro(dispatch);
   }, []);
+
+  useEffect(() => {
+    createdEntrevistaIdRef.current = createdEntrevista;
+    setEntrevista(createdEntrevistaIdRef.current);
+  }, [createdEntrevista]);
+
+  useEffect(() => {
+    if (currentEntrevista?.involucrado) {
+      setSelectedInvolucrados(currentEntrevista.involucrado);
+    }
+  }, [currentEntrevista?.involucrado?.length]);
+
+  useEffect(() => {
+    if (currentEntrevista?.entrevistado) {
+      setSelectedEntrevistado(currentEntrevista.entrevistado);
+    }
+  }, [currentEntrevista?.entrevistado?.length]);
+
+  useEffect(() => {
+    if (selectedEntrevistado.length > 0) {
+      const entrevistado = involucrados.find(
+        (involucrado) => involucrado._id === selectedEntrevistado[0]
+      );
+      const nuevaEntrevistaSiniestro = {
+        nombre: entrevistado.nombre,
+        apellido: entrevistado.apellido
+      };
+      setDataEntrevistado(nuevaEntrevistaSiniestro);
+    }
+  }, [selectedEntrevistado]);
 
   return (
     <div className={styles.container}>
@@ -388,362 +621,471 @@ const EntrevistaSiniestrosForm = () => {
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
               message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              redirect={redirect}
+              redirectEntity={redirectEntity}
+              createdEntity={entrevista}
+              sinId={siniestroId.id}
             />
           )}
         </div>
       }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>
-          {formType == 'edit' ? 'Editar Entrevista' : 'Agregar Entrevista'}
-        </h3>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>ENTREVISTA ROBO RUEDA</p>
       </div>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <section className={styles.inputGroups}>
-          <div className={styles.topRow}>
-            <div className={styles.firstColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={rol}
-                  dataLabel="Rol"
-                  name="rol"
-                  register={register}
-                  error={errors.rol?.message}
-                />
+      <div className={styles.innerContainer}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <div className={styles.formContainer}>
+            <section className={styles.inputGroupsTop}>
+              <div className={styles.topRow}>
+                <div className={styles.firstColumn}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={rol}
+                      dataLabel="Rol"
+                      name="rol"
+                      register={register}
+                      error={errors.rol?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={firma}
+                      dataLabel="Firma"
+                      name="firma"
+                      register={register}
+                      error={errors.firma?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={tipoEntrevista}
+                      dataLabel="Tipo"
+                      name="tipoEntrevista"
+                      register={register}
+                      error={errors.tipoEntrevista?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.fechaSiniestro?.message}
+                      register={register}
+                      nameTitle="Fecha de Siniestro"
+                      type="date"
+                      nameInput="fechaSiniestro"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.hrAproximada?.message}
+                      register={register}
+                      nameTitle="Hora Siniestro"
+                      type="date"
+                      nameInput="hrAproximada"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Inputs
+                      error={errors.descLesiones?.message}
+                      register={register}
+                      nameTitle="Lesiones"
+                      type="text"
+                      nameInput="descLesiones"
+                      styleInput="normalInput"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.aportaDni?.message}
+                      register={register}
+                      nameTitle="Aporta DNI"
+                      type="checkbox"
+                      nameInput="aportaDni"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.aportaLc?.message}
+                      register={register}
+                      nameTitle="Aporta LC"
+                      type="checkbox"
+                      nameInput="aportaLc"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className={styles.secondColumn}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={relacionVh}
+                      dataLabel="Relacion VH"
+                      name="relacionVh"
+                      register={register}
+                      error={errors.relacionVh?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={habilitacionDni}
+                      dataLabel="Habilitacion DNI"
+                      name="habilitacionDni"
+                      register={register}
+                      error={errors.habilitacionDni?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={habilitacionLc}
+                      dataLabel="Habilitacion LC"
+                      name="habilitacionLc"
+                      register={register}
+                      error={errors.habilitacionLc?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.hrNotificacion?.message}
+                      register={register}
+                      nameTitle="Hora Notificacion"
+                      type="date"
+                      nameInput="hrNotificacion"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Inputs
+                      error={errors.descGastos?.message}
+                      register={register}
+                      nameTitle="Gastos"
+                      type="text"
+                      nameInput="descGastos"
+                      styleInput="normalInput"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.aportaTv?.message}
+                      register={register}
+                      nameTitle="Aporta TV"
+                      type="checkbox"
+                      nameInput="aportaTv"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.aportaTa?.message}
+                      register={register}
+                      nameTitle="Aporta TA"
+                      type="checkbox"
+                      nameInput="aportaTa"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.comprobantesGastos?.message}
+                      register={register}
+                      nameTitle="Comprobantes Gastos"
+                      type="checkbox"
+                      nameInput="comprobantesGastos"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className={styles.thirdColumn}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={habilitacionTv}
+                      dataLabel="Habilitacion TV"
+                      name="habilitacionTv"
+                      register={register}
+                      error={errors.habilitacionTv?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={habilitacionTa}
+                      dataLabel="Habilitacion TA"
+                      name="habilitacionTa"
+                      register={register}
+                      error={errors.habilitacionTa?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.hrConfirmacion?.message}
+                      register={register}
+                      nameTitle="Hora Confirmación"
+                      type="date"
+                      nameInput="hrConfirmacion"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.hrReclamo?.message}
+                      register={register}
+                      nameTitle="Hora Reclamo"
+                      type="date"
+                      nameInput="hrReclamo"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Inputs
+                      error={errors.zonaImpactoVa?.message}
+                      register={register}
+                      nameTitle="Zona Impacto VA"
+                      type="text"
+                      nameInput="zonaImpactoVa"
+                      styleInput="normalInput"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.reparaciones?.message}
+                      register={register}
+                      nameTitle="Reparaciones"
+                      type="checkbox"
+                      nameInput="reparaciones"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.comprobantesDaños?.message}
+                      register={register}
+                      nameTitle="Comprobantes Daños"
+                      type="checkbox"
+                      nameInput="comprobantesDaños"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.comprobantesLesiones?.message}
+                      register={register}
+                      nameTitle="Comprobantes Lesiones"
+                      type="checkbox"
+                      nameInput="comprobantesLesiones"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className={styles.fourthColumn}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={lesiones}
+                      dataLabel="Lesiones"
+                      name="lesiones"
+                      register={register}
+                      error={errors.lesiones?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={tipoLesiones}
+                      dataLabel="Tipo de Lesiones"
+                      name="tipoLesiones"
+                      register={register}
+                      error={errors.tipoLesiones?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.hrEntrevista?.message}
+                      register={register}
+                      nameTitle="Hora Entrevista"
+                      type="date"
+                      nameInput="hrEntrevista"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <DateInput
+                      error={errors.fechaEntrevista?.message}
+                      register={register}
+                      nameTitle="Fecha Entrevista"
+                      type="date"
+                      nameInput="fechaEntrevista"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Inputs
+                      error={errors.zonaImpactoVt?.message}
+                      register={register}
+                      nameTitle="Zona Impacto VT"
+                      type="text"
+                      nameInput="zonaImpactoVt"
+                      styleInput="normalInput"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.aporteLesiones?.message}
+                      register={register}
+                      nameTitle="Aporte Lesiones"
+                      type="checkbox"
+                      nameInput="aporteLesiones"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.fotosLesiones?.message}
+                      register={register}
+                      nameTitle="Fotos Lesiones"
+                      type="checkbox"
+                      nameInput="fotosLesiones"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <Checkbox
+                      error={errors.gastos?.message}
+                      register={register}
+                      nameTitle="Gastos"
+                      type="checkbox"
+                      nameInput="gastos"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={firma}
-                  dataLabel="Firma"
-                  name="firma"
-                  register={register}
-                  error={errors.firma?.message}
-                />
+              <div className={styles.bottomRow}>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.relato?.message}
+                    register={register}
+                    nameTitle="Relato"
+                    type="text"
+                    nameInput="relato"
+                    styleInput="big"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={tipoEntrevista}
-                  dataLabel="Tipo"
-                  name="tipoEntrevista"
-                  register={register}
-                  error={errors.tipoEntrevista?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fechaSiniestro?.message}
-                  register={register}
-                  nameTitle="Fecha de Siniestro"
-                  type="date"
-                  nameInput="fechaSiniestro"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hrAproximada?.message}
-                  register={register}
-                  nameTitle="Hora Siniestro"
-                  type="date"
-                  nameInput="hrAproximada"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descLesiones?.message}
-                  register={register}
-                  nameTitle="Lesiones"
-                  type="text"
-                  nameInput="descLesiones"
-                  styleInput="normalInput"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.aportaDni?.message}
-                  register={register}
-                  nameTitle="Aporta DNI"
-                  type="checkbox"
-                  nameInput="aportaDni"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.aportaLc?.message}
-                  register={register}
-                  nameTitle="Aporta LC"
-                  type="checkbox"
-                  nameInput="aportaLc"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.secondColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={relacionVh}
-                  dataLabel="Relacion VH"
-                  name="relacionVh"
-                  register={register}
-                  error={errors.relacionVh?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={habilitacionDni}
-                  dataLabel="Habilitacion DNI"
-                  name="habilitacionDni"
-                  register={register}
-                  error={errors.habilitacionDni?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={habilitacionLc}
-                  dataLabel="Habilitacion LC"
-                  name="habilitacionLc"
-                  register={register}
-                  error={errors.habilitacionLc?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hrNotificacion?.message}
-                  register={register}
-                  nameTitle="Hora Notificacion"
-                  type="date"
-                  nameInput="hrNotificacion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descGastos?.message}
-                  register={register}
-                  nameTitle="Gastos"
-                  type="text"
-                  nameInput="descGastos"
-                  styleInput="normalInput"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.aportaTv?.message}
-                  register={register}
-                  nameTitle="Aporta TV"
-                  type="checkbox"
-                  nameInput="aportaTv"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.aportaTa?.message}
-                  register={register}
-                  nameTitle="Aporta TA"
-                  type="checkbox"
-                  nameInput="aportaTa"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.comprobantesGastos?.message}
-                  register={register}
-                  nameTitle="Comprobantes Gastos"
-                  type="checkbox"
-                  nameInput="comprobantesGastos"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.thirdColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={habilitacionTv}
-                  dataLabel="Habilitacion TV"
-                  name="habilitacionTv"
-                  register={register}
-                  error={errors.habilitacionTv?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={habilitacionTa}
-                  dataLabel="Habilitacion TA"
-                  name="habilitacionTa"
-                  register={register}
-                  error={errors.habilitacionTa?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hrConfirmacion?.message}
-                  register={register}
-                  nameTitle="Hora Confirmación"
-                  type="date"
-                  nameInput="hrConfirmacion"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hrReclamo?.message}
-                  register={register}
-                  nameTitle="Hora Reclamo"
-                  type="date"
-                  nameInput="hrReclamo"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.zonaImpactoVa?.message}
-                  register={register}
-                  nameTitle="Zona Impacto VA"
-                  type="text"
-                  nameInput="zonaImpactoVa"
-                  styleInput="normalInput"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.reparaciones?.message}
-                  register={register}
-                  nameTitle="Reparaciones"
-                  type="checkbox"
-                  nameInput="reparaciones"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.comprobantesDaños?.message}
-                  register={register}
-                  nameTitle="Comprobantes Daños"
-                  type="checkbox"
-                  nameInput="comprobantesDaños"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.comprobantesLesiones?.message}
-                  register={register}
-                  nameTitle="Comprobantes Lesiones"
-                  type="checkbox"
-                  nameInput="comprobantesLesiones"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.fourthColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={lesiones}
-                  dataLabel="Lesiones"
-                  name="lesiones"
-                  register={register}
-                  error={errors.lesiones?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={tipoLesiones}
-                  dataLabel="Tipo de Lesiones"
-                  name="tipoLesiones"
-                  register={register}
-                  error={errors.tipoLesiones?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hrEntrevista?.message}
-                  register={register}
-                  nameTitle="Hora Entrevista"
-                  type="date"
-                  nameInput="hrEntrevista"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fechaEntrevista?.message}
-                  register={register}
-                  nameTitle="Fecha Entrevista"
-                  type="date"
-                  nameInput="fechaEntrevista"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.zonaImpactoVt?.message}
-                  register={register}
-                  nameTitle="Zona Impacto VT"
-                  type="text"
-                  nameInput="zonaImpactoVt"
-                  styleInput="normalInput"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.aporteLesiones?.message}
-                  register={register}
-                  nameTitle="Aporte Lesiones"
-                  type="checkbox"
-                  nameInput="aporteLesiones"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.fotosLesiones?.message}
-                  register={register}
-                  nameTitle="Fotos Lesiones"
-                  type="checkbox"
-                  nameInput="fotosLesiones"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.gastos?.message}
-                  register={register}
-                  nameTitle="Gastos"
-                  type="checkbox"
-                  nameInput="gastos"
-                  required
-                />
-              </div>
+            </section>
+            <div className={styles.btnGroup}>
+              <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
+              <Button clickAction={() => reset()} text="Reset" />
+              <Button text="Cancelar" clickAction={() => history.goBack()} />
             </div>
           </div>
-          <div className={styles.bottomRow}>
-            <div className={styles.inputContainer}>
-              <TextArea
-                error={errors.relato?.message}
-                register={register}
-                nameTitle="Relato"
-                type="text"
-                nameInput="relato"
-                styleInput="big"
-                required
-              />
+          <div className={styles.bottomTable}>
+            <div className={styles.tableContainer}>
+              <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleArray.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {involucrados.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columns.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelected(index)}
+                                checked={checkStateSelected(column, index)}
+                              />
+                            ) : column === 'entrevistado' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxEntrevistado(index)}
+                                checked={checkStateEntrevistado(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'inv')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className={styles.tableContainer}>
+              <Button clickAction={() => vehiculoRedirect()} text="Vehiculos" />
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleVehiculo.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {vehiculos.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnVehiculo.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelectedVehiculo(index)}
+                                checked={checkStateSelectedVehiculo(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'veh')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
-        </section>
-        <div className={styles.btnGroup}>
-          <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
-          <Button clickAction={() => reset()} text="Reset" />
-          <Button text="Cancelar" clickAction={() => history.goBack()} />
-        </div>
-      </form>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
+        </form>
+      </div>
+      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={errorMessage} />}
     </div>
   );
 };

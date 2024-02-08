@@ -58,6 +58,7 @@ const EntrevistaRoboRuedasForm = () => {
   const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
   const [openFormRueda, setOpenFormRueda] = useState(false);
   const [openFormEvento, setOpenFormEvento] = useState(false);
+  const [redirectEntity, setRedirectEntity] = useState('');
 
   const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
@@ -983,8 +984,6 @@ const EntrevistaRoboRuedasForm = () => {
       return false;
     }
   };
-
-  const [redirectEntity, setRedirectEntity] = useState('');
 
   const involucradoRedirect = () => {
     setRedirect(true);
