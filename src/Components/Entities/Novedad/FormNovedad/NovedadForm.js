@@ -23,16 +23,17 @@ const NovedadesForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
-  const novedades = useSelector((state) => state.novedad.list);
+
   const [toastError, setToastErroOpen] = useState(false);
   const [buttonType, setButtonType] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [novedad, setNovedad] = useState({});
 
+  const novedades = useSelector((state) => state.novedad.list);
+
   const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
   const arrayRelaciones = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
-
   const columnTitleArray = [
     'Fecha',
     'Relacion',
@@ -210,9 +211,12 @@ const NovedadesForm = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect');
     getAllNovedad(dispatch, id);
   }, []);
+
+  useEffect(() => {
+    resetForm();
+  }, [novedades]);
 
   return (
     <div className={styles.container}>
