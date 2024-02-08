@@ -92,6 +92,12 @@
   margin-left: 32px;
 }
 
+.checkboxInputInspeccion {
+  width: 15px;
+  height: 15px;
+  margin-left: 27px;
+}
+
 .trash_edit {
   width: 10px;
   height: 10px;

@@ -38,6 +38,7 @@ const InvolucradosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [involucrado, setInvolucrado] = useState({});
   const [buttonType, setButtonType] = useState(false);
+  const [methodType, setMethodType] = useState(false);
 
   const involucrados = useSelector((state) => state.involucrado.list);
 
@@ -267,6 +268,7 @@ const InvolucradosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
+      setMethodType(false);
       const involucradoConSiniestro = { ...involucrado, siniestro: data.id };
       const addInvolucradoResponse = await postInvolucrado(dispatch, involucradoConSiniestro);
       if (addInvolucradoResponse.type === 'POST_INVOLUCRADO_SUCCESS') {
@@ -276,6 +278,7 @@ const InvolucradosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
+      setMethodType(true);
       const editInvolucradoResponse = await updateInvolucrado(
         dispatch,
         involucrado._id,
@@ -420,7 +423,7 @@ const InvolucradosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Involucrado editado' : 'Involucrado agregado'}
+              message={methodType ? 'Involucrado editado.' : 'Involucrado agregado.'}
             />
           )}
         </div>

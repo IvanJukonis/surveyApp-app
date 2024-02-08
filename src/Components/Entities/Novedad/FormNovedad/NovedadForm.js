@@ -29,6 +29,7 @@ const NovedadesForm = () => {
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [novedad, setNovedad] = useState({});
+  const [methodType, setMethodType] = useState(false);
 
   const novedades = useSelector((state) => state.novedad.list);
 
@@ -142,6 +143,7 @@ const NovedadesForm = () => {
   });
 
   const onConfirmFunction = async () => {
+    setMethodType(false);
     if (!buttonType) {
       const novedadConSiniestro = { ...novedad, siniestro: id };
       const addNovedadResponse = await postNovedad(dispatch, novedadConSiniestro);
@@ -152,6 +154,7 @@ const NovedadesForm = () => {
       }
       return setToastErroOpen(true);
     } else {
+      setMethodType(true);
       const editNovedadResponse = await updateNovedad(dispatch, novedad._id, novedad);
       if (editNovedadResponse.type === 'UPDATE_NOVEDAD_SUCCESS') {
         setToastErroOpen(false);
@@ -189,9 +192,9 @@ const NovedadesForm = () => {
     const emptyData = {
       hora: 'dd / mm / aaaa',
       fecha: 'dd / mm / aaaa',
-      relacion: 'Pick relacion',
+      relacion: '',
       respuesta: false,
-      tipo: 'Pick tipo',
+      tipo: '',
       visibilidad: false,
       informe: false,
       titulo: '',
@@ -237,7 +240,7 @@ const NovedadesForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Novedad actualizada' : 'Novedad agregada'}
+              message={methodType ? 'Novedad actualizada.' : 'Novedad agregada.'}
             />
           )}
         </div>

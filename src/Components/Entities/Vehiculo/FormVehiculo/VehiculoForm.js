@@ -38,6 +38,7 @@ const VehiculosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [vehiculo, setVehiculo] = useState({});
   const [buttonType, setButtonType] = useState(false);
+  const [methodType, setMethodType] = useState(false);
 
   const vehiculos = useSelector((state) => state.vehiculo.list);
 
@@ -199,6 +200,7 @@ const VehiculosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
+      setMethodType(false);
       const vehiculoConSiniestro = { ...vehiculo, siniestro: data.id };
       const addVehiculoResponse = await postVehiculo(dispatch, vehiculoConSiniestro);
       if (addVehiculoResponse.type === 'POST_VEHICULO_SUCCESS') {
@@ -208,6 +210,7 @@ const VehiculosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
+      setMethodType(true);
       const editVehiculoResponse = await updateVehiculo(dispatch, vehiculo._id, vehiculo);
       if (editVehiculoResponse.type === 'UPDATE_VEHICULO_SUCCESS') {
         setToastErroOpen(false);
@@ -243,20 +246,20 @@ const VehiculosForm = () => {
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
-      rol: 'Pick rol',
+      rol: '',
       prioridad: '',
       dominio: '',
       marca: '',
       modelo: '',
       color: '',
-      uso: 'Pick uso',
+      uso: '',
       fabricacion: 'dd / mm / aaaa',
-      tipo: 'Pick tipo',
+      tipo: '',
       fechaAdquisicion: 'dd / mm / aaaa',
-      danos: 'Pick daños',
+      danos: '',
       descripcionDanos: '',
-      alarma: 'Pick cierre',
-      cierreCentralizado: 'Pick cierre'
+      alarma: '',
+      cierreCentralizado: ''
     };
     reset({ ...emptyData });
   };
@@ -289,26 +292,30 @@ const VehiculosForm = () => {
     getVehiculoSiniestro(dispatch, data.id);
   }, []);
 
+  useEffect(() => {
+    resetForm();
+  }, [vehiculos]);
+
   return (
     <div className={styles.container}>
       {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={buttonType ? 'Update' : 'Add'}
+              method={buttonType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
                 buttonType
-                  ? 'Estas seguro que quieres editar este vehiculo?'
-                  : 'Estas seguro que quieres agregar este vehiculo?'
+                  ? 'Estás seguro que quieres editar este vehículo?'
+                  : 'Estás seguro que quieres agregar este vehículo?'
               }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Vehiculo editado' : 'Vehiculo agregado'}
+              message={methodType ? 'Vehículo editado.' : 'Vehículo agregado.'}
             />
           )}
         </div>

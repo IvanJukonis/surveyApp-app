@@ -33,6 +33,7 @@ const LugarRoboRuedaForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [lugarRoboRueda, setLugarRoboRueda] = useState();
   const [buttonType, setButtonType] = useState(false);
+  const [methodType, setMethodType] = useState(false);
 
   const lugarRoboRuedas = useSelector((state) => state.lugarRoboRueda.list ?? []);
 
@@ -63,18 +64,18 @@ const LugarRoboRuedaForm = () => {
     'Direccion',
     'Ciudad',
     'Provincia',
-    'Inspeccion',
     'Permiso',
     'Testigos',
+    'Inspeccion',
     'Prioridad'
   ];
   const columns = [
     'direccion',
     'ciudad',
     'provincia',
-    'inspeccion',
     'permiso',
     'testigos',
+    'inspeccion',
     'prioridad'
   ];
 
@@ -201,7 +202,7 @@ const LugarRoboRuedaForm = () => {
         'string.max': 'El campo debe tener como máximo 50 caracteres'
       })
       .required(),
-
+    entrevistaRoboRueda: Joi.any(),
     siniestro: Joi.any(),
     __v: Joi.any(),
     _id: Joi.any()
@@ -252,6 +253,7 @@ const LugarRoboRuedaForm = () => {
   };
 
   const onConfirmFunction = async () => {
+    setMethodType(false);
     if (!buttonType) {
       const lugarRoboRuedaConSiniestro = { ...lugarRoboRueda, siniestro: id };
       const addLugarRoboRuedaResponse = await postLugarRoboRueda(
@@ -265,6 +267,7 @@ const LugarRoboRuedaForm = () => {
       }
       return setToastErroOpen(true);
     } else {
+      setMethodType(true);
       const editLugarRoboRuedaResponse = await updateLugarRoboRueda(
         dispatch,
         lugarRoboRueda._id,
@@ -299,6 +302,10 @@ const LugarRoboRuedaForm = () => {
     getAllLugarRoboRueda(dispatch, id);
   }, []);
 
+  useEffect(() => {
+    resetForm();
+  }, [lugarRoboRuedas]);
+
   return (
     <div className={styles.container}>
       {
@@ -318,7 +325,7 @@ const LugarRoboRuedaForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Lugar robo rueda actualizado' : 'Lugar robo rueda agregado'}
+              message={methodType ? 'Lugar robo rueda actualizado.' : 'Lugar robo rueda agregado.'}
             />
           )}
         </div>

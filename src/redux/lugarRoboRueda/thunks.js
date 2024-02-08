@@ -85,15 +85,17 @@ export const updateLugarRoboRueda = async (dispatch, id, lugarRoboRuedaData) => 
       },
       body: JSON.stringify(lugarRoboRuedaData)
     });
-    const data = await response.json();
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
       dispatch(updateLugarRoboRuedaPending(false));
-      throw new Error(data.message);
+      return dispatch(updateLugarRoboRuedaSuccess(newData.data));
+    } else {
+      dispatch(updateLugarRoboRuedaPending(false));
+      return dispatch(updateLugarRoboRuedaError(true));
     }
-
-    dispatch(updateLugarRoboRuedaSuccess(data));
   } catch (error) {
     dispatch(updateLugarRoboRuedaPending(false));
-    dispatch(updateLugarRoboRuedaError(error.message));
+    return dispatch(updateLugarRoboRuedaError(error.message));
   }
 };

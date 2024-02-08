@@ -99,6 +99,7 @@ const FormTable = ({
   const checkStateInforme = (index) => checkState(index, 'informe');
   const checkStateRespuesta = (index) => checkState(index, 'respuesta');
   const checkStateComprobado = (index) => checkState(index, 'comprobado');
+  const checkStateInspeccion = (index) => checkState(index, 'inspeccion');
 
   return (
     <section className={type ? `${styles.containerForm}` : `${styles.container}`}>
@@ -165,6 +166,13 @@ const FormTable = ({
                           type="checkbox"
                           readOnly
                           checked={checkStateRespuesta(index)}
+                        />
+                      ) : column.startsWith('inspeccion') ? (
+                        <input
+                          className={styles.checkboxInputInspeccion}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateInspeccion(index)}
                         />
                       ) : (
                         <>

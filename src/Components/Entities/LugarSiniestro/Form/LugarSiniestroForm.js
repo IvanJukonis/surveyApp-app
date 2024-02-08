@@ -33,6 +33,7 @@ const LugarSiniestrosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [lugarSiniestro, setLugarSiniestro] = useState();
   const [buttonType, setButtonType] = useState(false);
+  const [methodType, setMethodType] = useState(false);
 
   const lugarSiniestros = useSelector((state) => state.lugarSiniestro.list);
 
@@ -70,6 +71,7 @@ const LugarSiniestrosForm = () => {
     'provincia',
     'prioridad'
   ];
+
   const schema = Joi.object({
     prioridad: Joi.boolean()
       .messages({
@@ -292,6 +294,7 @@ const LugarSiniestrosForm = () => {
 
   const onConfirmFunction = async () => {
     if (!buttonType) {
+      setMethodType(false);
       const lugarSiniestroConSiniestro = { ...lugarSiniestro, siniestro: id };
       const addLugarSiniestroResponse = await postLugarSiniestro(
         dispatch,
@@ -304,12 +307,12 @@ const LugarSiniestrosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
+      setMethodType(true);
       const editLugarSiniestroResponse = await updateLugarSiniestro(
         dispatch,
         lugarSiniestro._id,
         lugarSiniestro
       );
-      console.log(editLugarSiniestroResponse);
       if (editLugarSiniestroResponse.type === 'UPDATE_LUGARSINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -339,13 +342,17 @@ const LugarSiniestrosForm = () => {
     getAllLugarSiniestro(dispatch, id);
   }, []);
 
+  useEffect(() => {
+    resetForm();
+  }, [lugarSiniestros]);
+
   return (
     <div className={styles.container}>
       {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={buttonType ? 'Actualizar' : 'Agregar'}
+              method={buttonType ? 'Editar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
@@ -358,7 +365,9 @@ const LugarSiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'LugarSiniestro edited' : 'LugarSiniestro added'}
+              message={
+                methodType ? 'Lugar de siniestro actualizado.' : 'Lugar de siniestro agregado.'
+              }
             />
           )}
         </div>
@@ -616,7 +625,7 @@ const LugarSiniestrosForm = () => {
           </section>
           <div className={styles.btnContainer}>
             <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={resetForm} text={'Actualizar'} />
+            <Button clickAction={resetForm} text={'Reiniciar'} />
             <Button text="Cancelar" clickAction={() => history.goBack()} />
           </div>
         </form>
