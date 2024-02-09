@@ -60,6 +60,7 @@ const EntrevistaRoboRuedasForm = () => {
   const [openFormRueda, setOpenFormRueda] = useState(false);
   const [openFormEvento, setOpenFormEvento] = useState(false);
   const [redirectEntity, setRedirectEntity] = useState('');
+  const [idEntrevista, setIdEntrevista] = useState('');
 
   const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
@@ -637,8 +638,21 @@ const EntrevistaRoboRuedasForm = () => {
       }
     }
     if (formType === true) {
-      console.log(selectedVehiculos);
       if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkStateSelected = (column, index) => {
+    if (column === 'selected' && currentEntrevista) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (formType === true) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
     }
@@ -659,20 +673,6 @@ const EntrevistaRoboRuedasForm = () => {
     }
   };
 
-  const checkStateSelected = (column, index) => {
-    if (column === 'selected' && currentEntrevista && currentEntrevista.involucrado) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
-        return true;
-      }
-    }
-    if (formType === true) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   const handleCheckboxSelected = (index) => {
     const isSelectedInvolucrado = selectedInvolucrados.find(
       (involucrado) => involucrados[index]._id === involucrado
@@ -688,7 +688,7 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const checkStateEntrevistado = (column, index) => {
-    if (column === 'entrevistado' && currentEntrevista && currentEntrevista.entrevistado) {
+    if (column === 'entrevistado' && currentEntrevista) {
       if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
@@ -857,13 +857,20 @@ const EntrevistaRoboRuedasForm = () => {
           setToastErroOpen(false);
           setModalSuccessOpen(true);
           setFormType(true);
+          setIdEntrevista(addEntrevistaRoboRuedaResponse.payload._id);
           return setTimeout(() => {}, 1000);
         }
         return setToastErroOpen(true);
       } else {
+        let idEntrevistaUpdate;
+        if (idEntrevista === '') {
+          idEntrevistaUpdate = id;
+        } else {
+          idEntrevistaUpdate = idEntrevista;
+        }
         const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
           dispatch,
-          id,
+          idEntrevistaUpdate,
           entrevistaRoboRueda,
           selectedInvolucrados,
           selectedVehiculos,
@@ -1447,7 +1454,6 @@ const EntrevistaRoboRuedasForm = () => {
             </section>
             <div className={styles.btnGroup}>
               <Button clickAction={() => {}} text={formType ? 'Editar' : 'Agregar'} />
-              <Button clickAction={() => reset()} text="Reset" />
               <Button text="Cancelar" clickAction={() => history.goBack()} />
             </div>
           </div>
