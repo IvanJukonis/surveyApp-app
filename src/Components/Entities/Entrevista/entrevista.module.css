@@ -1,15 +1,78 @@
 .container {
   display: flex;
-  width: 100%;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  width: 100%;
+}
+
+.imgTop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('../../../../public/assets/images/wallpaperbetter.com_1920x1080\ \(2\).jpg');
+  background-size: cover;
+  width: 100%;
+  height: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .innerContainer {
+  color: rgba(0, 0, 0, 0.87);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   display: flex;
   flex-direction: row;
-  width: 60%;
+  justify-content: space-evenly;
+  width: 75%;
+  position: relative;
+  min-width: 0px;
+  overflow-wrap: break-word;
+  background-clip: border-box;
+  border: 0px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.75rem;
+  overflow: visible;
+  padding-bottom: 30px;
+  margin-top: -64px;
+  margin-bottom: 32px;
+  background-color: #F2F2F2;
+  backdrop-filter: saturate(200%) blur(30px);
+  box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+}
+
+.imgText {
+  font-size: 25px;
+  color: white;
+  font-weight: bold;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.inputGroups {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 10px;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+}
+
+.inputGroupsForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputContainer {
+  margin-left: 21px;
 }
 
 .leftContainer {
@@ -22,7 +85,9 @@
   align-items: center;
   width: 30%;
   margin-top: 55px;
-  background-color: #c5c5c5c2;
+  margin-left: 30px;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
 }
 
 .exportacionSpace {

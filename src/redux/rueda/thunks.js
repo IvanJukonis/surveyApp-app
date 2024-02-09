@@ -24,7 +24,6 @@ export const getRuedaSiniestro = async (dispatch, siniestroId) => {
     const ruedasList = data.data;
     const ruedasSiniestroList = ruedasList.filter((rueda) => rueda.siniestro[0] === siniestroId);
     dispatch(getRuedaPending(false));
-    console.log(ruedasSiniestroList, 'filtrada');
     dispatch(getRuedaSuccess(ruedasSiniestroList));
   } catch (error) {
     dispatch(getRuedaPending(false));
@@ -39,7 +38,6 @@ export const getRueda = async (dispatch) => {
     const data = await response.json();
     const ruedasListAll = data.data;
     dispatch(getRuedasPending(false));
-    console.log(ruedasListAll, 'lista completa que llega del thunk');
     dispatch(getRuedasSuccess(ruedasListAll));
   } catch (error) {
     dispatch(getRuedasPending(false));

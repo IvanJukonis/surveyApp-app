@@ -87,13 +87,16 @@ const TableComponent = ({
 
   return (
     <section className={styles.container}>
-      <input
-        type="text"
-        className={styles.filter}
-        placeholder="Filter..."
-        value={filterValue}
-        onChange={(e) => setFilterValue(e.target.value)}
-      />
+      <div className={styles.filterContainer}>
+        <label className={styles.filterText}>Buscador</label>
+        <input
+          type="text"
+          className={styles.filter}
+          placeholder=""
+          value={filterValue}
+          onChange={(e) => setFilterValue(e.target.value)}
+        />
+      </div>
       {data?.length === 0 ? (
         <div className={styles.noneTrainer}>
           <h3>The list is empty</h3>

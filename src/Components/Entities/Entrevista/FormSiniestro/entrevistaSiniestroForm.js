@@ -90,11 +90,11 @@ const EntrevistaSiniestrosForm = () => {
         'any.only': 'Seleccione una opción valida'
       }),
 
-    firma: Joi.string().valid('SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA').messages({
+    firma: Joi.string().valid('Sin Firma', 'Firmado', 'Negado', 'Espera').messages({
       'any.only': 'Seleccione una opción valida'
     }),
 
-    tipoEntrevista: Joi.string().valid('PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA').messages({
+    tipoEntrevista: Joi.string().valid('Presencial', 'Telefonica', 'Videollamada').messages({
       'any.only': 'Seleccione una opción valida'
     }),
 
@@ -630,7 +630,7 @@ const EntrevistaSiniestrosForm = () => {
         </div>
       }
       <div className={styles.imgTop}>
-        <p className={styles.imgText}>ENTREVISTA ROBO RUEDA</p>
+        <p className={styles.imgText}>ENTREVISTA SINIESTRO</p>
       </div>
       <div className={styles.innerContainer}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>

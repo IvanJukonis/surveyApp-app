@@ -14,7 +14,8 @@ import {
 } from './constants';
 
 const INITIAL_STATE = {
-  list: []
+  list: [],
+  createdEntrevista: []
 };
 
 const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
@@ -27,6 +28,7 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     }
 
     case GET_ENTREVISTAROBORUEDA_SUCCESS: {
+      console.log(action.payload);
       return {
         ...state,
         list: action.payload,

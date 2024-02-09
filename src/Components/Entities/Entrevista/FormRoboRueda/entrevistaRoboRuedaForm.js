@@ -36,8 +36,9 @@ const EntrevistaRoboRuedasForm = () => {
   const siniestroId = location.state.params.siniestroId;
   const { params } = location.state || {};
   const { createdEntity } = params || {};
-  const formType = data.mode;
+  const type = data.mode;
 
+  const [formType, setFormType] = useState(type);
   const [errorMessage, setErrorMessage] = useState('Error');
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
@@ -92,8 +93,8 @@ const EntrevistaRoboRuedasForm = () => {
 
   //Array Entrevista
   const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
-  const firma = ['SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA'];
-  const tipoEntrevista = ['PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA'];
+  const firma = ['Sin Firma', 'Firmado', 'Negado', 'Espera'];
+  const tipoEntrevista = ['Presencial', 'Telefonica', 'Videollamada'];
   const relacionVh = ['Titular', 'Autorizado', 'Pasajero', 'No autorizado'];
   const habilitacionDni = ['DNI habilitado', 'DNI no habilitado'];
   const habilitacionLc = ['Licencia de conducir habilitada', 'Licencia de conducir no habilitada'];
@@ -142,11 +143,11 @@ const EntrevistaRoboRuedasForm = () => {
         'any.only': 'Seleccione una opción valida'
       }),
 
-    firma: Joi.string().valid('SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA').messages({
+    firma: Joi.string().valid('Sin Firma', 'Firmado', 'Negado', 'Espera').messages({
       'any.only': 'Seleccione una opción valida'
     }),
 
-    tipoEntrevista: Joi.string().valid('PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA').messages({
+    tipoEntrevista: Joi.string().valid('Presencial', 'Telefonica', 'Videollamada').messages({
       'any.only': 'Seleccione una opción valida'
     }),
 
@@ -217,7 +218,7 @@ const EntrevistaRoboRuedasForm = () => {
 
     habilitacionTa: Joi.string()
       .empty('')
-      .valid('Tarjeta azul habilitada', 'Tarjeta verde no habilitada')
+      .valid('Tarjeta azul habilitada', 'Tarjeta azul no habilitada')
       .messages({
         'any.only': 'Seleccione una opción valida'
       }),
@@ -630,12 +631,13 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const checkStateSelectedVehiculo = (column, index) => {
-    if (column === 'selected' && currentEntrevista && currentEntrevista.vehiculo) {
+    if (column === 'selected' && currentEntrevista) {
       if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
         return true;
       }
     }
-    if (data.mode === 'create') {
+    if (formType === true) {
+      console.log(selectedVehiculos);
       if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
         return true;
       }
@@ -663,7 +665,7 @@ const EntrevistaRoboRuedasForm = () => {
         return true;
       }
     }
-    if (data.mode === 'create') {
+    if (formType === true) {
       if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
@@ -691,7 +693,7 @@ const EntrevistaRoboRuedasForm = () => {
         return true;
       }
     }
-    if (data.mode === 'create') {
+    if (formType === true) {
       if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
@@ -802,6 +804,7 @@ const EntrevistaRoboRuedasForm = () => {
         setModalSuccessOpenEvento(true);
         return setTimeout(() => {}, 1000);
       }
+      setFormType(true);
       return setToastErroOpen(true);
     } else {
       const editInspeccionRoboRuedaResponse = await updateEvento(dispatch);
@@ -841,33 +844,10 @@ const EntrevistaRoboRuedasForm = () => {
 
   const onConfirmFunction = async () => {
     if (selectedEntrevistado.length > 0) {
-      let entrevistaCompleta = {};
-      if (dataEntrevistado?.nombre) {
-        entrevistaCompleta = {
-          ...entrevistaRoboRueda,
-          nombreEntrevistado: dataEntrevistado.nombre,
-          apellidoEntrevistado: dataEntrevistado.apellido
-        };
-      } else {
-        entrevistaCompleta = entrevistaRoboRueda;
-      }
-
-      const entrevistaSinPropiedadesVacias = Object.keys(entrevistaCompleta)
-        .filter(
-          (key) =>
-            entrevistaCompleta[key] !== null &&
-            entrevistaCompleta[key] !== undefined &&
-            entrevistaCompleta[key] !== ''
-        )
-        .reduce((obj, key) => {
-          obj[key] = entrevistaCompleta[key];
-          return obj;
-        }, {});
-      console.log(entrevistaSinPropiedadesVacias);
-      if (formType == 'create') {
+      if (formType === false) {
         const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
           dispatch,
-          entrevistaCompleta,
+          entrevistaRoboRueda,
           selectedInvolucrados,
           selectedVehiculos,
           siniestroId,
@@ -876,6 +856,7 @@ const EntrevistaRoboRuedasForm = () => {
         if (addEntrevistaRoboRuedaResponse.type === 'POST_ENTREVISTAROBORUEDA_SUCCESS') {
           setToastErroOpen(false);
           setModalSuccessOpen(true);
+          setFormType(true);
           return setTimeout(() => {}, 1000);
         }
         return setToastErroOpen(true);
@@ -883,7 +864,7 @@ const EntrevistaRoboRuedasForm = () => {
         const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
           dispatch,
           id,
-          entrevistaCompleta,
+          entrevistaRoboRueda,
           selectedInvolucrados,
           selectedVehiculos,
           siniestroId,
@@ -894,6 +875,7 @@ const EntrevistaRoboRuedasForm = () => {
           setModalSuccessOpen(true);
           return setTimeout(() => {}, 1000);
         }
+        setFormType(true);
         return setToastErroOpen(true);
       }
     } else {
@@ -961,7 +943,12 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const onSubmit = async (data) => {
-    setEntrevistaRoboRueda(data);
+    const formattedData = {
+      ...data,
+      nombreEntrevistado: dataEntrevistado?.nombre,
+      apellidoEntrevistado: dataEntrevistado?.apellido
+    };
+    setEntrevistaRoboRueda(formattedData);
     getInvolucradoSiniestro(dispatch, siniestroId.id);
     setModalAddConfirmOpen(true);
   };
@@ -1026,13 +1013,16 @@ const EntrevistaRoboRuedasForm = () => {
     getRuedaSiniestro(dispatch, siniestroId.id || siniestroId);
   }, []);
 
-  const createdEntrevistaIdRef = useRef(createdEntrevista);
-  const [entrevista, setEntrevista] = useState([]);
-
   useEffect(() => {
     createdEntrevistaIdRef.current = createdEntrevista;
     setEntrevista(createdEntrevistaIdRef.current);
   }, [createdEntrevista]);
+
+  useEffect(() => {
+    if (currentEntrevista?.vehiculo) {
+      setSelectedVehiculos(currentEntrevista.vehiculo);
+    }
+  }, [currentEntrevista?.vehiculo?.length]);
 
   useEffect(() => {
     if (currentEntrevista?.involucrado) {
@@ -1047,17 +1037,22 @@ const EntrevistaRoboRuedasForm = () => {
   }, [currentEntrevista?.entrevistado?.length]);
 
   useEffect(() => {
-    if (selectedEntrevistado.length > 0) {
-      const entrevistado = involucrados.find(
-        (involucrado) => involucrado._id === selectedEntrevistado[0]
-      );
-      const nuevaEntrevistaRoboRueda = {
-        nombre: entrevistado.nombre,
-        apellido: entrevistado.apellido
-      };
-      setDataEntrevistado(nuevaEntrevistaRoboRueda);
+    if (involucrados.length > 0) {
+      if (selectedEntrevistado.length > 0) {
+        const entrevistado = involucrados.find(
+          (involucrado) => involucrado._id === selectedEntrevistado[0]
+        );
+        const nuevaEntrevistaRoboRueda = {
+          nombre: entrevistado?.nombre,
+          apellido: entrevistado?.apellido
+        };
+        setDataEntrevistado(nuevaEntrevistaRoboRueda);
+      }
     }
   }, [selectedEntrevistado]);
+
+  const createdEntrevistaIdRef = useRef(createdEntrevista);
+  const [entrevista, setEntrevista] = useState([]);
 
   return (
     <div className={styles.container}>
@@ -1065,11 +1060,11 @@ const EntrevistaRoboRuedasForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={formType == 'edit' ? 'Actualizar' : 'Agregar'}
+              method={formType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                formType == 'edit'
+                formType
                   ? 'Esta seguro que quiere actualizar esta entrevista?'
                   : 'Esta seguro que quiere añadir esta entrevista?'
               }
@@ -1082,7 +1077,7 @@ const EntrevistaRoboRuedasForm = () => {
               redirectEntity={redirectEntity}
               createdEntity={entrevista}
               sinId={siniestroId.id}
-              message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              message={formType ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
         </div>
@@ -1451,7 +1446,7 @@ const EntrevistaRoboRuedasForm = () => {
               </div>
             </section>
             <div className={styles.btnGroup}>
-              <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
+              <Button clickAction={() => {}} text={formType ? 'Editar' : 'Agregar'} />
               <Button clickAction={() => reset()} text="Reset" />
               <Button text="Cancelar" clickAction={() => history.goBack()} />
             </div>

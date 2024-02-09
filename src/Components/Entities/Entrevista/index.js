@@ -22,10 +22,15 @@ function Entrevista() {
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
   const [toastErroOpen, setToastErroOpen] = useState(isError);
+
   let entrevistas = [];
 
   if (Array.isArray(entrevistaSiniestro) && Array.isArray(entrevistaRoboRueda)) {
     entrevistas = [...entrevistaSiniestro, ...entrevistaRoboRueda];
+  } else if (Array.isArray(entrevistaSiniestro)) {
+    entrevistas = [...entrevistaSiniestro];
+  } else if (Array.isArray(entrevistaRoboRueda)) {
+    entrevistas = [...entrevistaRoboRueda];
   }
 
   const columnTitleArray = ['Nombre', 'Apellido', 'Fecha', 'Rol', 'Tipo', 'Firma'];
@@ -38,7 +43,7 @@ function Entrevista() {
     'firma'
   ];
   const rolArray = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
-  const tipoArray = ['Accidente', 'Robo ruedas', 'Generica'];
+  const tipoArray = ['Fraude', 'Siniestro'];
   const tipoExportacion = ['PDF', 'Word'];
 
   const schema = Joi.object({
@@ -47,7 +52,7 @@ function Entrevista() {
       .messages({
         'any.only': 'Selecciona un tipo de rol permitido'
       }),
-    tipo: Joi.string().valid('Relevamiento', 'Generica', 'Robo ruedas').messages({
+    tipo: Joi.string().valid('Fraude', 'Siniestro').messages({
       'any.only': 'Selecciona un tipo de siniestro permitido'
     }),
     exportacion: Joi.any()
@@ -63,13 +68,13 @@ function Entrevista() {
   });
 
   const handleAddClick = (rol, tipo) => {
-    if (tipo == 'Robo ruedas') {
+    if (tipo == 'Fraude') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
-        params: { mode: 'create', siniestroId: id }
+        params: { mode: false, siniestroId: id }
       });
     } else {
       history.push(`entrevistasiniestro/${rol}/${id.id}`, {
-        params: { mode: 'create', siniestroId: id }
+        params: { mode: false, siniestroId: id }
       });
     }
   };
@@ -77,11 +82,11 @@ function Entrevista() {
   const handleEditClick = (item) => {
     if (item.alarmaActiva == undefined) {
       history.push(`entrevistasiniestro/${item.rol}/${item._id}`, {
-        params: { ...item, mode: 'edit', siniestroId: id }
+        params: { ...item, mode: true, siniestroId: id }
       });
     } else {
       history.push(`entrevistaroborueda/${item.rol}/${item._id}`, {
-        params: { ...item, mode: 'edit', siniestroId: id }
+        params: { ...item, mode: true, siniestroId: id }
       });
     }
   };
@@ -96,71 +101,78 @@ function Entrevista() {
   }, []);
 
   return (
-    <section className={styles.container}>
-      <div className={styles.innerContainer}>
-        <div className={styles.leftContainer}>
-          {isPending ? (
-            <Loader />
-          ) : (
-            <TableComponent
-              columnTitleArray={columnTitleArray}
-              data={entrevistas}
-              columns={columns}
-              handleClick={handleEditClick}
-              deleteButton={deleteEntrevistaRoboRueda}
-            />
-          )}
-        </div>
-        <div className={styles.rightContainer}>
-          <div className={styles.topContainer}>
-            <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={rolArray}
-                  dataLabel="Seleccionar Rol"
-                  name="rol"
-                  register={register}
-                  error={errors.rol?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={tipoArray}
-                  dataLabel="Seleccionar Tipo"
-                  name="tipo"
-                  register={register}
-                  error={errors.tipo?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Button clickAction={() => {}} text="AGREGAR" />
-              </div>
-              <div className={`${styles.inputContainer} ${styles.exportacionSpace}`}>
-                <OptionInput
-                  data={tipoExportacion}
-                  dataLabel="Exportaciones"
-                  name="exportacion"
-                  register={register}
-                  error={errors.exportacion?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Button clickAction={() => {}} text="EXPORTAR" />
-              </div>
-            </form>
+    <div className={styles.container}>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>ENTREVISTAS</p>
+      </div>
+      <section className={styles.innerContainer}>
+        <div className={styles.formContainer}>
+          <div className={styles.inputGroups}>
+            {isPending ? (
+              <Loader />
+            ) : (
+              <TableComponent
+                columnTitleArray={columnTitleArray}
+                data={entrevistas}
+                columns={columns}
+                handleClick={handleEditClick}
+                deleteButton={deleteEntrevistaRoboRueda}
+              />
+            )}
           </div>
-          <div className={styles.bottomContainer}>
-            <div className={styles.inputContainer}>
-              <Button text="Cancelar" clickAction={() => history.goBack()} />
+          <div className={styles.rightContainer}>
+            <div className={styles.topContainer}>
+              <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+                <section className={styles.inputGroupsForm}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={rolArray}
+                      dataLabel="Seleccionar Rol"
+                      name="rol"
+                      register={register}
+                      error={errors.rol?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={tipoArray}
+                      dataLabel="Seleccionar Tipo"
+                      name="tipo"
+                      register={register}
+                      error={errors.tipo?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainerBtn}>
+                    <Button clickAction={() => {}} text="AGREGAR" />
+                  </div>
+                  <div className={`${styles.inputContainer} ${styles.exportacionSpace}`}>
+                    <OptionInput
+                      data={tipoExportacion}
+                      dataLabel="Exportaciones"
+                      name="exportacion"
+                      register={register}
+                      error={errors.exportacion?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainerBtn}>
+                    <Button clickAction={() => {}} text="EXPORTAR" />
+                  </div>
+                </section>
+              </form>
+            </div>
+            <div className={styles.bottomContainer}>
+              <div className={styles.inputContainerBtn}>
+                <Button text="Cancelar" clickAction={() => history.goBack()} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {toastErroOpen && (
-        <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
-      )}
-    </section>
+        {toastErroOpen && (
+          <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
+        )}
+      </section>
+    </div>
   );
 }
 export default Entrevista;
