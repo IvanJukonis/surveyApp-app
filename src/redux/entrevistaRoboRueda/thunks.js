@@ -79,7 +79,7 @@ export const postEntrevistaRoboRueda = async (
       ...entrevistaRoboRuedaData,
       involucrado: involucradoIdList,
       vehiculo: vehiculoIdList,
-      siniestro: siniestroId.id,
+      siniestro: siniestroId || siniestroId.id,
       entrevistado: entrevistadoId
     };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaRoboRueda`, {
@@ -117,9 +117,10 @@ export const updateEntrevistaRoboRueda = async (
     dispatch(updateEntrevistaRoboRuedaPending(true));
     const requestBody = {
       ...entrevistaRoboRuedaData,
+      _id: id,
       involucrado: involucradoIdList,
       vehiculo: vehiculoIdList,
-      siniestro: [siniestroId.id],
+      siniestro: siniestroId,
       entrevistado: entrevistadoId
     };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaroborueda/${id}`, {

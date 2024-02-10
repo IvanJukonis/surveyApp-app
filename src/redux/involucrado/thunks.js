@@ -15,6 +15,7 @@ import {
 
 export const getInvolucradoSiniestro = async (dispatch, siniestroId) => {
   try {
+    console.log(siniestroId);
     dispatch(getInvolucradoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/involucrado`);
     const data = await response.json();

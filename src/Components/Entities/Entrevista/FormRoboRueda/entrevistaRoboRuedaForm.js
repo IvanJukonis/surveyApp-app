@@ -12,7 +12,7 @@ import FormTable from 'Components/Shared/formTable';
 import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
 import { postRueda, getRuedaSiniestro } from 'redux/rueda/thunks';
 import { updateEvento, postEvento, getEventoSiniestro, deleteEvento } from 'redux/evento/thunks';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useLocation, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   ModalConfirm,
   ModalSuccess,
@@ -29,7 +29,6 @@ import {
 
 const EntrevistaRoboRuedasForm = () => {
   const dispatch = useDispatch();
-  const { id } = useParams();
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -845,6 +844,7 @@ const EntrevistaRoboRuedasForm = () => {
   const onConfirmFunction = async () => {
     if (selectedEntrevistado.length > 0) {
       if (formType === false) {
+        console.log(siniestroId, ' QUE ENVIO');
         const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
           dispatch,
           entrevistaRoboRueda,
@@ -862,15 +862,9 @@ const EntrevistaRoboRuedasForm = () => {
         }
         return setToastErroOpen(true);
       } else {
-        let idEntrevistaUpdate;
-        if (idEntrevista === '') {
-          idEntrevistaUpdate = id;
-        } else {
-          idEntrevistaUpdate = idEntrevista;
-        }
         const editEntrevistaRoboRuedaResponse = await updateEntrevistaRoboRueda(
           dispatch,
-          idEntrevistaUpdate,
+          idEntrevista,
           entrevistaRoboRueda,
           selectedInvolucrados,
           selectedVehiculos,
@@ -956,7 +950,7 @@ const EntrevistaRoboRuedasForm = () => {
       apellidoEntrevistado: dataEntrevistado?.apellido
     };
     setEntrevistaRoboRueda(formattedData);
-    getInvolucradoSiniestro(dispatch, siniestroId.id);
+    getInvolucradoSiniestro(dispatch, siniestroId);
     setModalAddConfirmOpen(true);
   };
 
@@ -1009,15 +1003,15 @@ const EntrevistaRoboRuedasForm = () => {
       history.goBack();
     }
   };
-
   useEffect(() => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
     }
-    getVehiculoSiniestro(dispatch, siniestroId.id || siniestroId);
-    getInvolucradoSiniestro(dispatch, siniestroId.id || siniestroId);
-    getEventoSiniestro(dispatch, siniestroId.id || siniestroId);
-    getRuedaSiniestro(dispatch, siniestroId.id || siniestroId);
+    getVehiculoSiniestro(dispatch, siniestroId);
+    getInvolucradoSiniestro(dispatch, siniestroId);
+    getEventoSiniestro(dispatch, siniestroId);
+    getRuedaSiniestro(dispatch, siniestroId);
+    setIdEntrevista(data._id);
   }, []);
 
   useEffect(() => {
@@ -1083,8 +1077,8 @@ const EntrevistaRoboRuedasForm = () => {
               redirect={redirect}
               redirectEntity={redirectEntity}
               createdEntity={entrevista}
-              sinId={siniestroId.id}
-              message={formType ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              sinId={siniestroId}
+              message={buttonType ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
         </div>

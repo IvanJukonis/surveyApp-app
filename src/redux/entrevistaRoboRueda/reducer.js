@@ -28,7 +28,6 @@ const entrevistaRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     }
 
     case GET_ENTREVISTAROBORUEDA_SUCCESS: {
-      console.log(action.payload);
       return {
         ...state,
         list: action.payload,

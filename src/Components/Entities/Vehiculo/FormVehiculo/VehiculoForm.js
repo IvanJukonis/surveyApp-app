@@ -30,8 +30,7 @@ const VehiculosForm = () => {
   const history = useHistory();
   const data = useParams();
   const location = useLocation();
-  const { params } = location.state || {};
-  const { createdEntity } = params || {};
+  const item = location.state.params.item;
 
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
@@ -241,8 +240,6 @@ const VehiculosForm = () => {
     }
   };
 
-  console.log(errors);
-
   const resetForm = () => {
     setButtonType(false);
     const emptyData = {
@@ -276,13 +273,22 @@ const VehiculosForm = () => {
   };
 
   const cancelForm = () => {
-    if (createdEntity) {
-      history.push({
-        pathname: `/controlador/siniestros/entrevista/entrevistaroborueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
-        state: {
-          params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
-        }
-      });
+    if (item) {
+      if (item.alarmaActiva == undefined) {
+        history.push(
+          `/controlador/siniestros/entrevista/entrevistasiniestro/${item.rol}/${item.siniestro[0]}`,
+          {
+            params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+          }
+        );
+      } else {
+        history.push(
+          `/controlador/siniestros/entrevista/entrevistaroborueda/${item.rol}/${item.siniestro[0]}`,
+          {
+            params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+          }
+        );
+      }
     } else {
       history.goBack();
     }

@@ -15,6 +15,7 @@ import {
 
 export const getVehiculoSiniestro = async (dispatch, siniestroId) => {
   try {
+    console.log(siniestroId);
     dispatch(getVehiculoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/vehiculo`);
     const data = await response.json();

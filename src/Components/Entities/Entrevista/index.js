@@ -70,23 +70,24 @@ function Entrevista() {
   const handleAddClick = (rol, tipo) => {
     if (tipo == 'Fraude') {
       history.push(`entrevistaroborueda/${rol}/${id.id}`, {
-        params: { mode: false, siniestroId: id }
+        params: { mode: false, siniestroId: id.id }
       });
     } else {
       history.push(`entrevistasiniestro/${rol}/${id.id}`, {
-        params: { mode: false, siniestroId: id }
+        params: { mode: false, siniestroId: id.id }
       });
     }
   };
 
+  console.log(id);
   const handleEditClick = (item) => {
     if (item.alarmaActiva == undefined) {
       history.push(`entrevistasiniestro/${item.rol}/${item._id}`, {
-        params: { ...item, mode: true, siniestroId: id }
+        params: { ...item, mode: true, siniestroId: id.id }
       });
     } else {
       history.push(`entrevistaroborueda/${item.rol}/${item._id}`, {
-        params: { ...item, mode: true, siniestroId: id }
+        params: { ...item, mode: true, siniestroId: id.id }
       });
     }
   };
