@@ -28,6 +28,21 @@ export const getSiniestro = async (dispatch) => {
   }
 };
 
+export const getByIdSiniestro = async (dispatch, id) => {
+  try {
+    dispatch(getSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro/${id}`);
+    const data = await response.json();
+    const siniestroById = data.data;
+    dispatch(getSiniestroPending(false));
+    dispatch(getSiniestroSuccess(siniestroById));
+  } catch (error) {
+    console.error(error);
+    dispatch(getSiniestroPending(false));
+    dispatch(getSiniestroError(true));
+  }
+};
+
 export const deleteSiniestro = (siniestroID) => {
   return async (dispatch) => {
     try {

@@ -28,6 +28,21 @@ export const getAllEntrevistaSiniestro = async (dispatch) => {
   }
 };
 
+export const getByIdEntrevistaSiniestro = async (dispatch, id) => {
+  try {
+    dispatch(getEntrevistaSiniestroPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro/${id}`);
+    const data = await response.json();
+    const entrevistaSiniestroById = data.data;
+    dispatch(getEntrevistaSiniestroPending(false));
+    dispatch(getEntrevistaSiniestroSuccess(entrevistaSiniestroById));
+  } catch (error) {
+    console.error(error);
+    dispatch(getEntrevistaSiniestroPending(false));
+    dispatch(getEntrevistaSiniestroError(true));
+  }
+};
+
 export const getSinEntrevistaSiniestro = async (dispatch, sinId) => {
   try {
     dispatch(getEntrevistaSiniestroPending(true));
@@ -66,15 +81,29 @@ export const deleteEntrevistaSiniestro = (entrevistaSiniestroID) => {
   };
 };
 
-export const postEntrevistaSiniestro = async (dispatch, entrevistaSiniestroData) => {
+export const postEntrevistaSiniestro = async (
+  dispatch,
+  entrevistaSiniestroData,
+  involucradoIdList,
+  vehiculoIdList,
+  siniestroId,
+  entrevistadoId
+) => {
   try {
     dispatch(postEntrevistaSiniestroPending(true));
+    const requestBody = {
+      ...entrevistaSiniestroData,
+      involucrado: involucradoIdList,
+      vehiculo: vehiculoIdList,
+      siniestro: siniestroId || siniestroId.id,
+      entrevistado: entrevistadoId
+    };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(entrevistaSiniestroData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();
@@ -91,15 +120,31 @@ export const postEntrevistaSiniestro = async (dispatch, entrevistaSiniestroData)
   }
 };
 
-export const updateEntrevistaSiniestro = async (dispatch, id, entrevistaSiniestroData) => {
+export const updateEntrevistaSiniestro = async (
+  dispatch,
+  id,
+  entrevistaSiniestroData,
+  involucradoIdList,
+  vehiculoIdList,
+  siniestroId,
+  entrevistadoId
+) => {
   try {
     dispatch(updateEntrevistaSiniestroPending(true));
+    const requestBody = {
+      ...entrevistaSiniestroData,
+      _id: id,
+      involucrado: involucradoIdList,
+      vehiculo: vehiculoIdList,
+      siniestro: siniestroId,
+      entrevistado: entrevistadoId
+    };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/entrevistaSiniestro/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(entrevistaSiniestroData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();

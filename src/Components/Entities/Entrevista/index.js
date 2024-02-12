@@ -79,7 +79,6 @@ function Entrevista() {
     }
   };
 
-  console.log(id);
   const handleEditClick = (item) => {
     if (item.alarmaActiva == undefined) {
       history.push(`entrevistasiniestro/${item.rol}/${item._id}`, {

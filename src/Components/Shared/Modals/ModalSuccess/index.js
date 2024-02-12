@@ -23,12 +23,6 @@ const ModalSuccess = ({
         state: { params: { mode: 'create', item: createdEntity } }
       });
     } else if (redirectEntity === 'vehiculo') {
-      history.push(
-        `/controlador/siniestros/entrevista/entrevistasiniestro/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
-        {
-          params: { item: createdEntity, mode: true, siniestroId: createdEntity.siniestro[0] }
-        }
-      );
       history.push({
         pathname: `/controlador/siniestros/vehiculo/form/${sinId}`,
         state: { params: { mode: 'create', item: createdEntity } }

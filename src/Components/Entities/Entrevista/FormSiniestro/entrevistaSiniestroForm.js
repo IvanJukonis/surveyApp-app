@@ -8,11 +8,11 @@ import {
   Button,
   OptionInput
 } from 'Components/Shared';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useLocation, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import {
   updateEntrevistaSiniestro,
   postEntrevistaSiniestro,
-  getAllEntrevistaSiniestro
+  getByIdEntrevistaSiniestro
 } from 'redux/entrevistaSiniestro/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -21,19 +21,24 @@ import Joi from 'joi';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
+import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
+import { getInvolucradoSiniestro } from 'redux/involucrado/thunks';
+import { getEventoSiniestro, deleteEvento, postEvento, updateEvento } from 'redux/evento/thunks';
+import FormTable from 'Components/Shared/formTable';
+import { getByIdSiniestro } from 'redux/siniestro/thunks';
 
 const EntrevistaSiniestrosForm = () => {
   const dispatch = useDispatch();
-  const { id } = useParams();
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
   const siniestroId = location.state.params.siniestroId;
-  const formType = data.mode;
+  const type = data.mode;
 
+  const siniestro = useSelector((state) => state.siniestro.list);
+  const [formType, setFormType] = useState(type);
   const [errorMessage, setErrorMessage] = useState('Error');
   const [redirect, setRedirect] = useState(false);
-  const [redirectEntity, setRedirectEntity] = useState('');
   const [dataEntrevistado, setDataEntrevistado] = useState();
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
@@ -41,13 +46,43 @@ const EntrevistaSiniestrosForm = () => {
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [evento, setEvento] = useState({});
   const [entrevistaSiniestro, setEntrevistaSiniestro] = useState();
+  const [buttonType, setButtonType] = useState(false);
+  const [openFormEvento, setOpenFormEvento] = useState(false);
+  const [redirectEntity, setRedirectEntity] = useState('');
+  const [idEntrevista, setIdEntrevista] = useState('');
+  const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
+  const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
 
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
+  const currentEvento = useSelector((state) => state.evento.list);
   const currentEntrevista = useSelector((state) => state.entrevistaSiniestro.list);
   const createdEntrevista = useSelector((state) => state.entrevistaSiniestro.createdEntrevista);
 
+  //Array Eventos
+  const arrayTipo = ['Acontesimiento', 'Sospecha'];
+  const arrayComprobar = ['A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado'];
+  const arrayComprobable = [
+    'Totalmente comprobable',
+    'Comprobable',
+    'Parcialmente comprobable',
+    'No comprobable'
+  ];
+  const arrayPredisposicion = ['Buena', 'Media', 'Mala', 'Negacion'];
+
+  //Array Entrevistas
+  const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
+  const firma = ['Sin Firma', 'Firmado', 'Negado', 'Espera'];
+  const tipoEntrevista = ['Presencial', 'Telefonica', 'Videollamada'];
+  const relacionVh = ['Titular', 'Autorizado', 'Pasajero', 'No autorizado'];
+  const habilitacionDni = ['DNI habilitado', 'DNI no habilitado'];
+  const habilitacionLc = ['Licencia de conducir habilitada', 'Licencia de conducir no habilitada'];
+  const habilitacionTv = ['Tarjeta verde habilitada', 'Tarjeta verde no habilitada'];
+  const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
+  const lesiones = ['Hubo lesionados', 'No hubo lesionados'];
+  const tipoLesiones = ['Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES'];
   const columnTitleArray = [
     'Entrevistado',
     'Seleccionar',
@@ -154,7 +189,7 @@ const EntrevistaSiniestrosForm = () => {
       }),
 
     habilitacionTa: Joi.string()
-      .valid('Tarjeta azul habilitada', 'Tarjeta verde no habilitada')
+      .valid('Tarjeta azul habilitada', 'Tarjeta azul no habilitada')
       .messages({
         'any.only': 'Seleccione una opción valida'
       }),
@@ -211,15 +246,11 @@ const EntrevistaSiniestrosForm = () => {
         'any.only': 'Seleccione una opción valida'
       }),
 
-    descLesiones: Joi.string()
-      .min(3)
-      .max(500)
-      .messages({
-        'string.base': 'El campo "Descripción Lesiones" debe ser una cadena de texto',
-        'string.empty': 'El campo "Descripción Lesiones" es un campo requerido',
-        'string.min': 'El campo "Descripción Lesiones" debe tener al menos 3 caracteres'
-      })
-      .required(),
+    descLesiones: Joi.string().min(3).max(500).messages({
+      'string.base': 'El campo "Descripción Lesiones" debe ser una cadena de texto',
+      'string.empty': 'El campo "Descripción Lesiones" es un campo requerido',
+      'string.min': 'El campo "Descripción Lesiones" debe tener al menos 3 caracteres'
+    }),
 
     comprobantesLesiones: Joi.boolean()
       .messages({
@@ -266,35 +297,106 @@ const EntrevistaSiniestrosForm = () => {
       })
       .required(),
 
-    zonaImpactoVa: Joi.string()
-      .min(3)
-      .max(500)
+    zonaImpactoVa: Joi.string().min(3).max(500).messages({
+      'string.base': 'El campo "Zona Impacto VA" debe ser una cadena de texto',
+      'string.empty': 'El campo "Zona Impacto VA" es un campo requerido',
+      'string.min': 'El campo "Zona Impacto VA" debe tener al menos 3 caracteres'
+    }),
+
+    zonaImpactoVt: Joi.string().min(3).max(500).messages({
+      'string.base': 'El campo "Zona Impacto VT" debe ser una cadena de texto',
+      'string.empty': 'El campo "Zona Impacto VT" es un campo requerido',
+      'string.min': 'El campo "Zona Impacto VT" debe tener al menos 3 caracteres'
+    }),
+
+    relato: Joi.string().min(3).max(500).messages({
+      'string.base': 'El campo "Relato" debe ser una cadena de texto',
+      'string.empty': 'El campo "Relato" es un campo requerido',
+      'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
+    })
+  });
+
+  const schemaFormEvento = Joi.object({
+    visibilidadEntrevista: Joi.boolean()
       .messages({
-        'string.base': 'El campo "Zona Impacto VA" debe ser una cadena de texto',
-        'string.empty': 'El campo "Zona Impacto VA" es un campo requerido',
-        'string.min': 'El campo "Zona Impacto VA" debe tener al menos 3 caracteres'
+        'boolean.base': 'El campo "Visibilidad Entrevista" es un campo booleano',
+        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
       })
       .required(),
-
-    zonaImpactoVt: Joi.string()
-      .min(3)
-      .max(500)
+    visibilidadInforme: Joi.boolean()
       .messages({
-        'string.base': 'El campo "Zona Impacto VT" debe ser una cadena de texto',
-        'string.empty': 'El campo "Zona Impacto VT" es un campo requerido',
-        'string.min': 'El campo "Zona Impacto VT" debe tener al menos 3 caracteres'
+        'boolean.base': 'El campo "Visibilidad Informe" es un campo booleano',
+        'boolean.empty': 'El campo "Visibilidad Informe" debe tener un valor determinado'
       })
       .required(),
-
-    relato: Joi.string()
-      .min(3)
-      .max(500)
+    tipo: Joi.string()
+      .valid('Acontesimiento', 'Sospecha')
       .messages({
-        'string.base': 'El campo "Relato" debe ser una cadena de texto',
-        'string.empty': 'El campo "Relato" es un campo requerido',
-        'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
+        'any.only': 'Ingrese un valor permitido'
       })
-      .required()
+      .required(),
+    fecha: Joi.date()
+      .empty('')
+      .messages({
+        'date.base': 'El campo "Fecha" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
+      })
+      .required(),
+    hora: Joi.date()
+      .empty('')
+      .messages({
+        'date.base': 'El campo "Hora" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora" no puede permanecer vacio.'
+      })
+      .required(),
+    descripcion: Joi.string()
+      .min(3)
+      .max(200)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 50 caracteres'
+      })
+      .required(),
+    comprobar: Joi.string()
+      .valid('A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    comprobado: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Comprobado" es un campo booleano',
+        'boolean.empty': 'El campo "Comprobado" debe tener un valor determinado'
+      })
+      .required(),
+    comprobable: Joi.string()
+      .valid('Totalmente comprobable', 'Comprobable', 'Parcialmente comprobable', 'No comprobable')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    predisposicion: Joi.string()
+      .valid('Buena', 'Media', 'Mala', 'Negacion')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    resolucion: Joi.string()
+      .min(3)
+      .max(200)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 50 caracteres'
+      })
+      .required(),
+    siniestro: Joi.any(),
+    evento: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any()
   });
 
   const formatDate = (dateString) => {
@@ -352,98 +454,39 @@ const EntrevistaSiniestrosForm = () => {
     defaultValues: { ...entrevistaUpdate }
   });
 
-  const onConfirmFunction = async () => {
-    if (selectedEntrevistado.length > 0) {
-      let entrevistaCompleta = {};
-      if (dataEntrevistado?.nombre) {
-        entrevistaCompleta = {
-          ...entrevistaSiniestro,
-          nombreEntrevistado: dataEntrevistado.nombre,
-          apellidoEntrevistado: dataEntrevistado.apellido
-        };
-      } else {
-        entrevistaCompleta = entrevistaSiniestro;
-      }
-
-      const entrevistaSinPropiedadesVacias = Object.keys(entrevistaCompleta)
-        .filter(
-          (key) =>
-            entrevistaCompleta[key] !== null &&
-            entrevistaCompleta[key] !== undefined &&
-            entrevistaCompleta[key] !== ''
-        )
-        .reduce((obj, key) => {
-          obj[key] = entrevistaCompleta[key];
-          return obj;
-        }, {});
-      console.log(entrevistaSinPropiedadesVacias);
-      if (formType == 'create') {
-        const addEntrevistaSiniestroResponse = await postEntrevistaSiniestro(
-          dispatch,
-          entrevistaCompleta,
-          selectedInvolucrados,
-          selectedVehiculos,
-          siniestroId,
-          selectedEntrevistado
-        );
-        if (addEntrevistaSiniestroResponse.type === 'POST_ENTREVISTASINIESTRO_SUCCESS') {
-          setToastErroOpen(false);
-          setModalSuccessOpen(true);
-          return setTimeout(() => {}, 1000);
-        }
-        return setToastErroOpen(true);
-      } else {
-        const editEntrevistaSiniestroResponse = await updateEntrevistaSiniestro(
-          dispatch,
-          id,
-          entrevistaCompleta,
-          selectedInvolucrados,
-          selectedVehiculos,
-          siniestroId,
-          selectedEntrevistado
-        );
-        if (editEntrevistaSiniestroResponse.type === 'UPDATE_ENTREVISTASINIESTRO_SUCCESS') {
-          setToastErroOpen(false);
-          setModalSuccessOpen(true);
-          return setTimeout(() => {}, 1000);
-        }
-        return setToastErroOpen(true);
-      }
-    } else {
-      setErrorMessage('Seleccione al entrevistado');
-      return setToastErroOpen(true);
-    }
-  };
-
-  const onSubmit = async (data) => {
-    setEntrevistaSiniestro(data);
-    setModalAddConfirmOpen(true);
-  };
-
-  const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
-  const firma = ['SIN FIRMA', 'FIRMADO', 'NEGADO', 'ESPERA'];
-  const tipoEntrevista = ['PRESENCIAL', 'TELEFONICA', 'VIDEOLLAMADA'];
-  const relacionVh = ['Titular', 'Autorizado', 'Pasajero', 'No autorizado'];
-  const habilitacionDni = ['DNI habilitado', 'DNI no habilitado'];
-  const habilitacionLc = ['Licencia de conducir habilitada', 'Licencia de conducir no habilitada'];
-  const habilitacionTv = ['Tarjeta verde habilitada', 'Tarjeta verde no habilitada'];
-  const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
-  const lesiones = ['Hubo lesionados', 'No hubo lesionados'];
-  const tipoLesiones = ['Lesiones GRAVES', 'Lesiones LEVES', 'Lesiones REGULARES'];
-
-  const involucradoRedirect = () => {
-    setRedirect(true);
-    setRedirectEntity('involucrado');
-  };
+  const {
+    register: registerEvento,
+    handleSubmit: handleSubmitEvento,
+    reset: resetEvento,
+    formState: { errors: errorsEvento }
+  } = useForm({
+    mode: 'onBlur',
+    resolver: joiResolver(schemaFormEvento),
+    defaultValues: { ...evento }
+  });
 
   const checkStateSelectedVehiculo = (column, index) => {
-    if (column === 'selected' && currentEntrevista && currentEntrevista.vehiculo) {
+    if (column === 'selected' && currentEntrevista) {
       if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
         return true;
       }
     }
-    if (data.mode === 'create') {
+    if (formType === true) {
       if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkStateSelected = (column, index) => {
+    if (column === 'selected' && currentEntrevista) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+        return true;
+      }
+    }
+    if (formType === true) {
+      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
     }
@@ -464,20 +507,6 @@ const EntrevistaSiniestrosForm = () => {
     }
   };
 
-  const checkStateSelected = (column, index) => {
-    if (column === 'selected' && currentEntrevista && currentEntrevista.involucrado) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
-        return true;
-      }
-    }
-    if (data.mode === 'create') {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   const handleCheckboxSelected = (index) => {
     const isSelectedInvolucrado = selectedInvolucrados.find(
       (involucrado) => involucrados[index]._id === involucrado
@@ -493,17 +522,99 @@ const EntrevistaSiniestrosForm = () => {
   };
 
   const checkStateEntrevistado = (column, index) => {
-    if (column === 'entrevistado' && currentEntrevista && currentEntrevista.entrevistado) {
+    if (column === 'entrevistado' && currentEntrevista) {
       if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
     }
-    if (data.mode === 'create') {
+    if (formType === true) {
       if (selectedEntrevistado.find((involucrado) => involucrado === involucrados[index]._id)) {
         return true;
       }
     }
     return false;
+  };
+
+  const handleCheckboxEntrevistado = (index) => {
+    const isSelectedEntrevistado = selectedEntrevistado.find(
+      (involucrado) => involucrados[index]._id === involucrado
+    );
+    if (isSelectedEntrevistado) {
+      const newListSelectedEntrevistado = selectedEntrevistado.filter(
+        (involucrado) => involucrados[index]._id !== involucrado
+      );
+      setSelectedEntrevistado(newListSelectedEntrevistado);
+    } else {
+      setSelectedEntrevistado([involucrados[index]._id]);
+    }
+  };
+
+  const onConfirmFunction = async () => {
+    if (selectedEntrevistado.length > 0) {
+      if (formType === false) {
+        const addEntrevistaSiniestroResponse = await postEntrevistaSiniestro(
+          dispatch,
+          entrevistaSiniestro,
+          selectedInvolucrados,
+          selectedVehiculos,
+          siniestroId,
+          selectedEntrevistado
+        );
+        if (addEntrevistaSiniestroResponse.type === 'POST_ENTREVISTASINIESTRO_SUCCESS') {
+          setToastErroOpen(false);
+          setFormType(true);
+          setModalSuccessOpen(true);
+          setIdEntrevista(addEntrevistaSiniestroResponse.payload._id);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
+      } else {
+        const editEntrevistaSiniestroResponse = await updateEntrevistaSiniestro(
+          dispatch,
+          idEntrevista,
+          entrevistaSiniestro,
+          selectedInvolucrados,
+          selectedVehiculos,
+          siniestroId,
+          selectedEntrevistado
+        );
+        console.log(editEntrevistaSiniestroResponse);
+        if (editEntrevistaSiniestroResponse.type === 'UPDATE_ENTREVISTASINIESTRO_SUCCESS') {
+          console.log('entro?', editEntrevistaSiniestroResponse);
+          setToastErroOpen(false);
+          setModalSuccessOpen(true);
+          return setTimeout(() => {}, 1000);
+        }
+        console.log('es por aca');
+        setFormType(true);
+        return setToastErroOpen(true);
+      }
+    } else {
+      setErrorMessage('Seleccione al entrevistado');
+      return setToastErroOpen(true);
+    }
+  };
+
+  const onConfirmEvento = async () => {
+    if (!buttonType) {
+      const eventoSiniestro = { ...evento, siniestro: data.id };
+      const postEventoFetch = await postEvento(dispatch, eventoSiniestro);
+      if (postEventoFetch.type === 'POST_EVENTO_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpenEvento(true);
+        return setTimeout(() => {}, 1000);
+      }
+      setFormType(true);
+      return setToastErroOpen(true);
+    } else {
+      const editInspeccionRoboRuedaResponse = await updateEvento(dispatch);
+      if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpenEvento(true);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
+    }
   };
 
   const checkState = (index, entity) => {
@@ -525,18 +636,80 @@ const EntrevistaSiniestrosForm = () => {
     }
   };
 
-  const handleCheckboxEntrevistado = (index) => {
-    const isSelectedEntrevistado = selectedEntrevistado.find(
-      (involucrado) => involucrados[index]._id === involucrado
-    );
-    if (isSelectedEntrevistado) {
-      const newListSelectedEntrevistado = selectedEntrevistado.filter(
-        (involucrado) => involucrados[index]._id !== involucrado
-      );
-      setSelectedEntrevistado(newListSelectedEntrevistado);
+  const resetFormEvento = () => {
+    setButtonType(false);
+    const emptyData = {
+      visibilidadEntrevista: false,
+      visibilidadInforme: false,
+      tipo: '',
+      fecha: 'dd / mm / aaaa',
+      hora: 'dd / mm / aaaa',
+      descripcion: '',
+      comprobar: '',
+      comprobado: false,
+      comprobable: '',
+      predisposicion: '',
+      resolucion: ''
+    };
+    resetEvento({ ...emptyData });
+  };
+
+  const onSubmitEvento = async (data) => {
+    if (buttonType) {
+      const formattedData = {
+        ...data,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setEvento(formattedData);
+      setModalAddConfirmOpenEvento(true);
     } else {
-      setSelectedEntrevistado([involucrados[index]._id]);
+      const formattedData = {
+        ...data,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setEvento(formattedData);
+      setModalAddConfirmOpenEvento(true);
     }
+  };
+
+  const tableClick = (index) => {
+    const formattedData = {};
+    reset({ ...formattedData, index });
+    setButtonType(true);
+  };
+
+  const deleteButton = deleteEvento;
+
+  const openFormEventos = () => {
+    if (openFormEvento) {
+      setOpenFormEvento(false);
+    } else {
+      setOpenFormEvento(true);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    const formattedData = {
+      ...data,
+      nombreEntrevistado: dataEntrevistado?.nombre,
+      apellidoEntrevistado: dataEntrevistado?.apellido
+    };
+    setEntrevistaSiniestro(formattedData);
+    getInvolucradoSiniestro(dispatch, siniestroId);
+    setModalAddConfirmOpen(true);
+  };
+
+  const involucradoRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('involucrado');
+  };
+
+  const cancelForm = () => {
+    history.push(`/controlador/siniestros/entrevista/${siniestro._id}`, {
+      params: { ...siniestro, mode: 'create' }
+    });
   };
 
   const ifNotArrayNotObject = (item, itemContent) => {
@@ -568,7 +741,14 @@ const EntrevistaSiniestrosForm = () => {
   const [entrevista, setEntrevista] = useState([]);
 
   useEffect(() => {
-    getAllEntrevistaSiniestro(dispatch);
+    if (data._id) {
+      getByIdEntrevistaSiniestro(dispatch, data._id);
+    }
+    getVehiculoSiniestro(dispatch, siniestroId);
+    getInvolucradoSiniestro(dispatch, siniestroId);
+    getEventoSiniestro(dispatch, siniestroId);
+    getByIdSiniestro(dispatch, siniestroId);
+    setIdEntrevista(data._id);
   }, []);
 
   useEffect(() => {
@@ -577,27 +757,37 @@ const EntrevistaSiniestrosForm = () => {
   }, [createdEntrevista]);
 
   useEffect(() => {
+    if (currentEntrevista?.vehiculo) {
+      setSelectedVehiculos(currentEntrevista.vehiculo);
+    }
+  }, [currentEntrevista?.vehiculo?.length]);
+
+  useEffect(() => {
     if (currentEntrevista?.involucrado) {
       setSelectedInvolucrados(currentEntrevista.involucrado);
     }
   }, [currentEntrevista?.involucrado?.length]);
 
   useEffect(() => {
+    console.log(currentEntrevista);
     if (currentEntrevista?.entrevistado) {
+      console.log(currentEntrevista.entrevistado, 'entrevistado');
       setSelectedEntrevistado(currentEntrevista.entrevistado);
     }
   }, [currentEntrevista?.entrevistado?.length]);
 
   useEffect(() => {
-    if (selectedEntrevistado.length > 0) {
-      const entrevistado = involucrados.find(
-        (involucrado) => involucrado._id === selectedEntrevistado[0]
-      );
-      const nuevaEntrevistaSiniestro = {
-        nombre: entrevistado.nombre,
-        apellido: entrevistado.apellido
-      };
-      setDataEntrevistado(nuevaEntrevistaSiniestro);
+    if (involucrados.length > 0) {
+      if (selectedEntrevistado.length > 0) {
+        const entrevistado = involucrados.find(
+          (involucrado) => involucrado._id === selectedEntrevistado[0]
+        );
+        const nuevaEntrevistaSiniestro = {
+          nombre: entrevistado?.nombre,
+          apellido: entrevistado?.apellido
+        };
+        setDataEntrevistado(nuevaEntrevistaSiniestro);
+      }
     }
   }, [selectedEntrevistado]);
 
@@ -607,11 +797,11 @@ const EntrevistaSiniestrosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={formType == 'edit' ? 'Actualizar' : 'Agregar'}
+              method={formType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                formType == 'edit'
+                formType
                   ? 'Esta seguro que quiere actualizar esta entrevista?'
                   : 'Esta seguro que quiere añadir esta entrevista?'
               }
@@ -620,11 +810,33 @@ const EntrevistaSiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={formType == 'edit' ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              message={buttonType ? 'Entrevista actualizada' : 'Entrevista agregada'}
               redirect={redirect}
               redirectEntity={redirectEntity}
               createdEntity={entrevista}
-              sinId={siniestroId.id}
+              sinId={siniestroId}
+            />
+          )}
+        </div>
+      }
+      {
+        <div>
+          {modalAddConfirmOpenEvento && (
+            <ModalConfirm
+              method={buttonType ? 'Actualizar' : 'Agregar'}
+              onConfirm={() => onConfirmEvento()}
+              setModalConfirmOpen={setModalAddConfirmOpen}
+              message={
+                buttonType
+                  ? '¿Estás seguro de que quieres actualizar este evento?'
+                  : '¿Estás seguro de que quieres agregar este evento?'
+              }
+            />
+          )}
+          {modalSuccessEvento && (
+            <ModalSuccess
+              setModalSuccessOpen={setModalSuccessOpen}
+              message={buttonType ? 'Evento editado' : 'Evento agregado'}
             />
           )}
         </div>
@@ -975,9 +1187,8 @@ const EntrevistaSiniestrosForm = () => {
               </div>
             </section>
             <div className={styles.btnGroup}>
-              <Button clickAction={() => {}} text={formType == 'edit' ? 'Actualizar' : 'Agregar'} />
-              <Button clickAction={() => reset()} text="Reset" />
-              <Button text="Cancelar" clickAction={() => history.goBack()} />
+              <Button clickAction={handleSubmit(onSubmit)} text={formType ? 'Editar' : 'Agregar'} />
+              <Button text="Cancelar" clickAction={cancelForm} />
             </div>
           </div>
           <div className={styles.bottomTable}>
@@ -1084,6 +1295,163 @@ const EntrevistaSiniestrosForm = () => {
             </div>
           </div>
         </form>
+        <div className={styles.formEvento}>
+          <div className={styles.btnContainerEvento}>
+            <Button clickAction={openFormEventos} text={openFormEvento ? 'Eventos' : 'Eventos'} />
+          </div>
+        </div>
+        {openFormEvento && (
+          <div className={styles.formContainer}>
+            <form className={styles.form} onSubmit={handleSubmitEvento(onSubmitEvento)}>
+              <div className={styles.formContainer}>
+                <section className={styles.inputGroups}>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errorsEvento.fecha?.message}
+                        register={registerEvento}
+                        nameTitle="Fecha"
+                        type="date"
+                        nameInput="fecha"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayComprobar}
+                        dataLabel="Comprobar"
+                        name="comprobar"
+                        register={registerEvento}
+                        error={errorsEvento.comprobar?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainerPredisposicion}>
+                      <OptionInput
+                        data={arrayPredisposicion}
+                        dataLabel="Predisposicion"
+                        name="predisposicion"
+                        register={registerEvento}
+                        error={errorsEvento.predisposicion?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainerCheck}>
+                      <Checkbox
+                        error={errorsEvento.visibilidadEntrevista?.message}
+                        register={registerEvento}
+                        nameTitle="Visibilidad Entrevista"
+                        type="checkbox"
+                        nameInput="visibilidadEntrevista"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsEvento.visibilidadInforme?.message}
+                        register={registerEvento}
+                        nameTitle="Visibilidad Informe"
+                        type="checkbox"
+                        nameInput="visibilidadInforme"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errorsEvento.hora?.message}
+                        register={registerEvento}
+                        nameTitle="Hora"
+                        type="date"
+                        nameInput="hora"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayComprobable}
+                        dataLabel="Comprobable"
+                        name="comprobable"
+                        register={registerEvento}
+                        error={errorsEvento.comprobable?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errorsEvento.descripcion?.message}
+                        register={registerEvento}
+                        nameTitle="Descripcion"
+                        type="text"
+                        nameInput="descripcion"
+                        styleInput="small"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={arrayTipo}
+                        dataLabel="Tipo"
+                        name="tipo"
+                        register={registerEvento}
+                        error={errorsEvento.tipo?.message}
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <Checkbox
+                        error={errorsEvento.comprobado?.message}
+                        register={registerEvento}
+                        nameTitle="Comprobado"
+                        type="checkbox"
+                        nameInput="comprobado"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errorsEvento.resolucion?.message}
+                        register={registerEvento}
+                        nameTitle="Resolucion"
+                        type="text"
+                        nameInput="resolucion"
+                        styleInput="small"
+                        required
+                      />
+                    </div>
+                  </div>
+                </section>
+                <div className={styles.btnContainer}>
+                  <Button
+                    clickAction={handleSubmitEvento(onSubmitEvento)}
+                    text={buttonType ? 'Editar' : 'Agregar'}
+                  />
+                  <Button clickAction={resetFormEvento} text="Reiniciar" />
+                  <Button text="Cancelar" clickAction={cancelForm} />
+                </div>
+              </div>
+              <div className={styles.tableTop}>
+                <div className={styles.tableContainer}>
+                  <FormTable
+                    data={currentEvento}
+                    columnTitleArray={columnTitleArray}
+                    columns={columns}
+                    handleClick={tableClick}
+                    deleteButton={deleteButton}
+                    type={true}
+                  />
+                </div>
+              </div>
+            </form>
+            <div className={styles.formEvento}>
+              <div className={styles.btnContainerEvento}>
+                <Button
+                  clickAction={openFormEventos}
+                  text={openFormEvento ? 'Eventos' : 'Eventos'}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={errorMessage} />}
     </div>

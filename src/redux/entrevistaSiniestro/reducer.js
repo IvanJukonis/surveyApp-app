@@ -14,7 +14,8 @@ import {
 } from './constants';
 
 const INITIAL_STATE = {
-  list: []
+  list: [],
+  createdEntrevista: []
 };
 
 const entrevistaSiniestroReducer = (state = INITIAL_STATE, action) => {
@@ -29,7 +30,8 @@ const entrevistaSiniestroReducer = (state = INITIAL_STATE, action) => {
     case GET_ENTREVISTASINIESTRO_SUCCESS: {
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        createdEntrevista: action.payload
       };
     }
 
@@ -69,15 +71,15 @@ const entrevistaSiniestroReducer = (state = INITIAL_STATE, action) => {
     }
 
     case UPDATE_ENTREVISTASINIESTRO_SUCCESS: {
-      // const entrevistaSiniestroUpdated = action.payload;
-      const updatedEntrevistaSiniestro = state.list.map((entrevistaSiniestro) => {
-        return entrevistaSiniestro._id === action.payload._id
-          ? { ...entrevistaSiniestro, ...action.payload }
-          : entrevistaSiniestro;
+      const updatedInvolucrado = Object.values(state.list).map((involucrado) => {
+        return involucrado._id === action.payload._id
+          ? { ...involucrado, ...action.payload }
+          : involucrado;
       });
+
       return {
         ...state,
-        list: [...updatedEntrevistaSiniestro]
+        list: [...updatedInvolucrado]
       };
     }
 

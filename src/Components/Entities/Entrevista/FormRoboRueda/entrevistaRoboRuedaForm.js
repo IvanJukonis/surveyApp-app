@@ -10,6 +10,7 @@ import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import FormTable from 'Components/Shared/formTable';
 import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
+import { getByIdSiniestro } from 'redux/siniestro/thunks';
 import { postRueda, getRuedaSiniestro } from 'redux/rueda/thunks';
 import { updateEvento, postEvento, getEventoSiniestro, deleteEvento } from 'redux/evento/thunks';
 import { useLocation, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
@@ -33,8 +34,6 @@ const EntrevistaRoboRuedasForm = () => {
   const history = useHistory();
   const data = location.state.params;
   const siniestroId = location.state.params.siniestroId;
-  const { params } = location.state || {};
-  const { createdEntity } = params || {};
   const type = data.mode;
 
   const [formType, setFormType] = useState(type);
@@ -61,6 +60,7 @@ const EntrevistaRoboRuedasForm = () => {
   const [redirectEntity, setRedirectEntity] = useState('');
   const [idEntrevista, setIdEntrevista] = useState('');
 
+  const siniestro = useSelector((state) => state.siniestro.list);
   const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
   const involucrados = useSelector((state) => state.involucrado.list);
@@ -844,7 +844,6 @@ const EntrevistaRoboRuedasForm = () => {
   const onConfirmFunction = async () => {
     if (selectedEntrevistado.length > 0) {
       if (formType === false) {
-        console.log(siniestroId, ' QUE ENVIO');
         const addEntrevistaRoboRuedaResponse = await postEntrevistaRoboRueda(
           dispatch,
           entrevistaRoboRueda,
@@ -944,14 +943,25 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const onSubmit = async (data) => {
-    const formattedData = {
-      ...data,
-      nombreEntrevistado: dataEntrevistado?.nombre,
-      apellidoEntrevistado: dataEntrevistado?.apellido
-    };
-    setEntrevistaRoboRueda(formattedData);
-    getInvolucradoSiniestro(dispatch, siniestroId);
-    setModalAddConfirmOpen(true);
+    if (formType) {
+      const formattedData = {
+        ...data,
+        nombreEntrevistado: dataEntrevistado?.nombre,
+        apellidoEntrevistado: dataEntrevistado?.apellido
+      };
+      setEntrevistaRoboRueda(formattedData);
+      getInvolucradoSiniestro(dispatch, siniestroId);
+      setModalAddConfirmOpen(true);
+    } else {
+      const formattedData = {
+        ...data,
+        nombreEntrevistado: dataEntrevistado?.nombre,
+        apellidoEntrevistado: dataEntrevistado?.apellido
+      };
+      setEntrevistaRoboRueda(formattedData);
+      getInvolucradoSiniestro(dispatch, siniestroId);
+      setModalAddConfirmOpen(true);
+    }
   };
 
   const checkState = (index, entity) => {
@@ -992,17 +1002,11 @@ const EntrevistaRoboRuedasForm = () => {
   const deleteButton = deleteEvento;
 
   const cancelForm = () => {
-    if (createdEntity) {
-      history.push({
-        pathname: `/controlador/siniestros/entrevista/entrevistaroboinspeccionRoboRueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
-        state: {
-          params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
-        }
-      });
-    } else {
-      history.goBack();
-    }
+    history.push(`/controlador/siniestros/entrevista/${siniestro._id}`, {
+      params: { ...siniestro, mode: 'create' }
+    });
   };
+
   useEffect(() => {
     if (data._id) {
       getByIdEntrevistaRoboRueda(dispatch, data._id);
@@ -1011,6 +1015,7 @@ const EntrevistaRoboRuedasForm = () => {
     getInvolucradoSiniestro(dispatch, siniestroId);
     getEventoSiniestro(dispatch, siniestroId);
     getRuedaSiniestro(dispatch, siniestroId);
+    getByIdSiniestro(dispatch, siniestroId);
     setIdEntrevista(data._id);
   }, []);
 
@@ -1078,7 +1083,7 @@ const EntrevistaRoboRuedasForm = () => {
               redirectEntity={redirectEntity}
               createdEntity={entrevista}
               sinId={siniestroId}
-              message={buttonType ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              message={formType ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
         </div>
@@ -1087,11 +1092,11 @@ const EntrevistaRoboRuedasForm = () => {
         <div>
           {modalAddConfirmOpenEvento && (
             <ModalConfirm
-              method={buttonType ? 'Actualizar' : 'Agregar'}
+              method={formType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmEvento()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                buttonType
+                formType
                   ? '¿Estás seguro de que quieres actualizar este evento?'
                   : '¿Estás seguro de que quieres agregar este evento?'
               }
@@ -1447,8 +1452,8 @@ const EntrevistaRoboRuedasForm = () => {
               </div>
             </section>
             <div className={styles.btnGroup}>
-              <Button clickAction={() => {}} text={formType ? 'Editar' : 'Agregar'} />
-              <Button text="Cancelar" clickAction={() => history.goBack()} />
+              <Button clickAction={handleSubmit(onSubmit)} text={formType ? 'Editar' : 'Agregar'} />
+              <Button text="Cancelar" clickAction={cancelForm} />
             </div>
           </div>
           <div className={styles.bottomTable}>

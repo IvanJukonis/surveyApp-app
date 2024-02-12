@@ -32,6 +32,8 @@ const InvolucradosForm = () => {
   const location = useLocation();
   const item = location.state.params.item;
 
+  console.log(item);
+
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
@@ -384,6 +386,7 @@ const InvolucradosForm = () => {
 
   const cancelForm = () => {
     if (item) {
+      console.log(item);
       if (item.alarmaActiva == undefined) {
         history.push(
           `/controlador/siniestros/entrevista/entrevistasiniestro/${item.rol}/${item.siniestro[0]}`,
