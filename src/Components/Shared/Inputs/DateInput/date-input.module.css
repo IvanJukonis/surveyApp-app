@@ -18,9 +18,42 @@ input::-moz-focus-inner {
   width: 100%;
 }
 
-.inputLabel {
-  font-weight: bold;
-  padding: 5px;
+.wrapper .inputData .normalInput {
+  height: 100%;
+  width: 100%;
+  border: none;
+  margin-top: 4px;
+  border: 3px solid #ECECEC;
+}
+
+.wrapper .inputData .normalInputRed {
+  height: 100%;
+  width: 100%;
+  border: none;
+  margin-top: 4px;
+  color: #FAFAFA;
+  background-color: #ff3737;
+  border: 3px solid #ff0808;
+}
+
+.wrapper .inputData .normalInputYellow {
+  height: 100%;
+  width: 100%;
+  border: none;
+  margin-top: 4px;
+  color: #000000;
+  background-color: #ffaa3b;
+  border: 3px solid #ff7b00;
+}
+
+.wrapper .inputData .normalInputGreen {
+  height: 100%;
+  width: 100%;
+  border: none;
+  margin-top: 4px;
+  color: #000000;
+  background-color: rgb(93, 165, 86);
+  border: 3px solid #00a716;
 }
 
 .wrapper .inputData input {
@@ -31,8 +64,8 @@ input::-moz-focus-inner {
   border: 3px solid #ECECEC;
 }
 
-.inputData input:focus ~ label,
-.inputData input:not(:placeholder-shown) ~ label {
+.inputData input:focus ~ .dateLabel,
+.inputData input:not(:placeholder-shown) ~ .dateLabel {
   transform: translateY(-25px);
   padding: 5px;
   outline: none;
@@ -41,7 +74,37 @@ input::-moz-focus-inner {
   font-size: 14px
 }
 
-.wrapper .inputData label{
+.inputData input:focus ~ .dateLabelRed,
+.inputData input:not(:placeholder-shown) ~ .dateLabelRed {
+  transform: translateY(-25px);
+  padding: 5px;
+  outline: none;
+  color: #ff3333;
+  font-weight: bold;
+  font-size: 14px
+}
+
+.inputData input:focus ~ .dateLabelYellow,
+.inputData input:not(:placeholder-shown) ~ .dateLabelYellow {
+  transform: translateY(-25px);
+  padding: 5px;
+  outline: none;
+  color: #ff9100;
+  font-weight: bold;
+  font-size: 14px
+}
+
+.inputData input:focus ~ .dateLabelGreen,
+.inputData input:not(:placeholder-shown) ~ .dateLabelGreen {
+  transform: translateY(-25px);
+  padding: 5px;
+  outline: none;
+  color: #00a716;
+  font-weight: bold;
+  font-size: 14px
+}
+
+.wrapper .inputData label {
   position: absolute;
   bottom: 0px;
   left: 0;

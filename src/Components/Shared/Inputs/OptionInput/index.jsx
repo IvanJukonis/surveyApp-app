@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './option-input.module.css';
 
-const SelectInput = ({ data, dataLabel, name, register, error }) => {
+const SelectInput = ({ data, dataLabel, name, isDisabled, register, error }) => {
   const ifFirstName = (item) => {
     if (item.nombre && item.apellido) {
       return `${item.nombre} ${item.apellido}`;
@@ -30,6 +30,7 @@ const SelectInput = ({ data, dataLabel, name, register, error }) => {
         <select
           className={error ? `${styles.errorInput} ${styles.optionInput}` : styles.optionInput}
           name={name}
+          disabled={isDisabled}
           onChange={handleSelectChange}
           {...register(name, { required: { value: true, message: 'This field is required' } })}
         >
