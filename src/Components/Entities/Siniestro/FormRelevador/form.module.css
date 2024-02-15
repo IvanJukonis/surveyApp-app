@@ -177,6 +177,14 @@
   padding-top: 8px;
 }
 
+.entitiesStats {
+  display: flex;
+  border: 3px solid #ECECEC;
+  padding-left: 25px;
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
 .submitButton {
   display: inline;
   background-color: var(--Green);
@@ -221,4 +229,23 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.inputColumnStatsRight {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  padding-right: 5px;
+}
+
+.inputColumnStats {
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }

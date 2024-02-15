@@ -19,6 +19,20 @@ import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import { getControlador } from 'redux/controlador/thunks';
 import { getRelevador } from 'redux/relevador/thunks';
+import ModalInfo from 'Components/Shared/Modals/ModalInfo';
+
+const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
+const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
+const estadoArray = ['Sin asignar', 'Asignado', 'Activo', 'Finalizado', 'Controlado', 'Completado'];
+const requeridoArray = [
+  'Relevamiento completo',
+  'Relevamiento sin cierre',
+  'Investigacion de fraude',
+  'Relevamiento y comprobacion',
+  'Relevamiento y comprobacion, sin cierre'
+];
+const statsArray = ['Muy alto', 'Alto', 'Moderado', 'Bajo ', 'Nulo'];
+const demorasArray = ['Si', 'No', 'Moderado'];
 
 const SiniestrosForm = () => {
   const dispatch = useDispatch();
@@ -26,6 +40,7 @@ const SiniestrosForm = () => {
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
+  const [modalInfo, setModalInfo] = useState(false);
   const [siniestro, setSiniestro] = useState();
   const siniestros = useSelector((state) => state.siniestro.list);
   const relevador = useSelector((state) => state.relevador.list);
@@ -262,6 +277,35 @@ const SiniestrosForm = () => {
     fechaContactoTercero: Joi.date().messages({
       'date.base': 'El campo "Fecha de Contacto Tercero" debe ser una fecha valida.',
       'date.empty': 'El campo "Fecha de  Contacto Tercero" no puede permanecer vacio.'
+    }),
+
+    statsSolicitudCorreccion: Joi.string()
+      .valid('Muy alto', 'Alto', 'Moderado', 'Bajo ', 'Nulo')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    statsGramaticaProlijidad: Joi.string()
+      .valid('Muy alto', 'Alto', 'Moderado', 'Bajo', 'Nulo')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    statsDesarrolloSiniestro: Joi.string()
+      .valid('Muy alto', 'Alto', 'Moderado', 'Bajo', 'Nulo')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+
+    statsJustificacionDemoras: Joi.string().valid('No', 'Si', 'Moderado').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+
+    conclusionSiniestro: Joi.string().min(3).max(500).messages({
+      'string.base': 'El campo "Conclusion Siniestro" debe ser una cadena de texto',
+      'string.empty': 'El campo "Conclusion Siniestro" es un campo requerido',
+      'string.min': 'El campo "Conclusion Siniestro" debe tener al menos 3 caracteres',
+      'string.max': 'El campo "Conclusion Siniestro" debe tener como máximo 500 caracteres'
     })
   });
 
@@ -329,7 +373,12 @@ const SiniestrosForm = () => {
     conclusionResponsabilidad: data.conclusionResponsabilidad,
     conclusionDaños: data.conclusionDaños,
     conclusionLesiones: data.conclusionLesiones,
-    conclusionDescripcion: data.conclusionDescripcion
+    conclusionDescripcion: data.conclusionDescripcion,
+    statsSolicitudCorreccion: data.statsSolicitudCorreccion,
+    statsGramaticaProlijidad: data.statsGramaticaProlijidad,
+    statsDesarrolloSiniestro: data.statsDesarrolloSiniestro,
+    statsJustificacionDemoras: data.statsJustificacionDemoras,
+    conclusionSiniestro: data.conclusionSiniestro
   };
 
   const {
@@ -370,24 +419,6 @@ const SiniestrosForm = () => {
     setSiniestro(data);
     setModalAddConfirmOpen(true);
   };
-
-  const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
-  const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
-  const estadoArray = [
-    'Sin asignar',
-    'Asignado',
-    'Activo',
-    'Finalizado',
-    'Controlado',
-    'Completado'
-  ];
-  const requeridoArray = [
-    'Relevamiento completo',
-    'Relevamiento sin cierre',
-    'Investigacion de fraude',
-    'Relevamiento y comprobacion',
-    'Relevamiento y comprobacion, sin cierre'
-  ];
 
   const getPathPrefix = () => {
     if (relevadorPath) {
@@ -472,6 +503,10 @@ const SiniestrosForm = () => {
   const relevadorPath = /\/relevador\/siniestro/.test(location.pathname);
   const controladorPath = /\/controlador\/siniestro/.test(location.pathname);
 
+  const infoButton = () => {
+    setModalInfo(true);
+  };
+
   useEffect(() => {
     getControlador(dispatch);
     getRelevador(dispatch);
@@ -480,6 +515,7 @@ const SiniestrosForm = () => {
 
   return (
     <div className={styles.container}>
+      {<div>{modalInfo && <ModalInfo setModalInfo={setModalInfo} />}</div>}
       {
         <div>
           {modalAddConfirmOpen && (
@@ -883,6 +919,68 @@ const SiniestrosForm = () => {
                     nameInput="fechaContactoTercero"
                     required
                   />
+                </div>
+              </div>
+              <div className={styles.entitiesStats}>
+                <div className={styles.inputColumnStats}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={statsArray}
+                      dataLabel="Correcciones"
+                      name="statsSolicitudCorreccion"
+                      register={register}
+                      error={errors.statsSolicitudCorreccion?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={statsArray}
+                      dataLabel="Gramatica y Prolijidad"
+                      name="statsGramaticaProlijidad"
+                      register={register}
+                      error={errors.statsGramaticaProlijidad?.message}
+                    />
+                  </div>
+                </div>
+                <div className={styles.inputColumnStats}>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={statsArray}
+                      dataLabel="Desarrollo"
+                      name="statsDesarrolloSiniestro"
+                      register={register}
+                      error={errors.statsDesarrolloSiniestro?.message}
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={demorasArray}
+                      dataLabel="Demoras"
+                      name="statsJustificacionDemoras"
+                      register={register}
+                      error={errors.statsJustificacionDemoras?.message}
+                    />
+                  </div>
+                </div>
+                <div className={styles.inputColumnStatsRight}>
+                  <div className={styles.inputContainer}>
+                    <TextArea
+                      error={errors.conclusionSiniestro?.message}
+                      register={register}
+                      nameTitle="Conclusion Siniestro"
+                      type="text"
+                      styleInput="small"
+                      nameInput="conclusionSiniestro"
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputColumn}>
+                    <img
+                      className={styles.icon}
+                      onClick={infoButton}
+                      src={`${process.env.PUBLIC_URL}/assets/images/imgInfo.jpg`}
+                    />
+                  </div>
                 </div>
               </div>
             </section>
