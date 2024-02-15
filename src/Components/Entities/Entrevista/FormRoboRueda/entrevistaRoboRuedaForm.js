@@ -1558,16 +1558,27 @@ const EntrevistaRoboRuedasForm = () => {
                 </tbody>
               </table>
             </div>
+            <div className={styles.formEvento}>
+              <div className={styles.btnContainerEvento}>
+                <Button
+                  submition={true}
+                  clickAction={openFormEventos}
+                  text={openFormEvento ? 'Eventos' : 'Eventos'}
+                />
+                <Button
+                  submition={true}
+                  clickAction={openFormRuedas}
+                  text={openFormRueda ? 'Ruedas' : 'Ruedas'}
+                />
+              </div>
+            </div>
           </div>
         </form>
-        <div className={styles.formEvento}>
-          <div className={styles.btnContainerEvento}>
-            <Button clickAction={openFormEventos} text={openFormEvento ? 'Eventos' : 'Eventos'} />
-            <Button clickAction={openFormRuedas} text={openFormRueda ? 'Ruedas' : 'Ruedas'} />
-          </div>
-        </div>
         {openFormEvento && (
-          <div className={styles.formContainer}>
+          <div>
+            <div className={styles.titleContainer}>
+              <p className={styles.title}>FORMULARIO EVENTOS</p>
+            </div>
             <form className={styles.form} onSubmit={handleSubmitEvento(onSubmitEvento)}>
               <div className={styles.formContainer}>
                 <section className={styles.inputGroups}>
@@ -1696,7 +1707,7 @@ const EntrevistaRoboRuedasForm = () => {
                 </div>
               </div>
               <div className={styles.tableTop}>
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainerRueda}>
                   <FormTable
                     data={currentEvento}
                     columnTitleArray={columnTitleArray}
@@ -1708,19 +1719,13 @@ const EntrevistaRoboRuedasForm = () => {
                 </div>
               </div>
             </form>
-            <div className={styles.formEvento}>
-              <div className={styles.btnContainerEvento}>
-                <Button
-                  clickAction={openFormEventos}
-                  text={openFormEvento ? 'Eventos' : 'Eventos'}
-                />
-                <Button clickAction={openFormRuedas} text={openFormRueda ? 'Ruedas' : 'Ruedas'} />
-              </div>
-            </div>
           </div>
         )}
         {openFormRueda && (
-          <div className={styles.formContainer}>
+          <div>
+            <div className={styles.titleContainer}>
+              <p className={styles.title}>FORMULARIO RUEDAS</p>
+            </div>
             <form className={styles.form} onSubmit={handleSubmitRueda(onSubmitRueda)}>
               <div className={styles.formContainer}>
                 <section className={styles.inputGroups}>
@@ -1898,11 +1903,10 @@ const EntrevistaRoboRuedasForm = () => {
                     text={buttonType ? 'Editar' : 'Agregar'}
                   />
                   <Button clickAction={resetFormRueda} text="Reiniciar" />
-                  <Button text="Cancelar" clickAction={cancelForm} />
                 </div>
               </div>
               <div className={styles.tableTop}>
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainerRueda}>
                   <FormTable
                     data={currentRueda}
                     columnTitleArray={columnTitleRueda}
@@ -1913,7 +1917,7 @@ const EntrevistaRoboRuedasForm = () => {
                   />
                 </div>
                 <div className={styles.rightTables}>
-                  <div className={styles.tableContainer}>
+                  <div className={styles.tableContainerBottom}>
                     <Button clickAction={openFormRuedas} text={'Involucrados'} />
                     <table className={styles.table}>
                       <thead>
@@ -1960,7 +1964,7 @@ const EntrevistaRoboRuedasForm = () => {
                       </tbody>
                     </table>
                   </div>
-                  <div className={styles.tableContainer}>
+                  <div className={styles.tableContainerBottom}>
                     <Button clickAction={openFormRuedas} text={'Vehiculos'} />
                     <table className={styles.table}>
                       <thead>
