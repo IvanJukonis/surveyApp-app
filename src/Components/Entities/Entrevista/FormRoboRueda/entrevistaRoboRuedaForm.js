@@ -50,6 +50,7 @@ const EntrevistaRoboRuedasForm = () => {
   const [rueda, setRueda] = useState({});
   const [evento, setEvento] = useState({});
   const [redirect, setRedirect] = useState(false);
+  const [formTypeEvento, setFormTypeEvento] = useState(false);
   const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
   const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
   const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
@@ -101,6 +102,8 @@ const EntrevistaRoboRuedasForm = () => {
   const habilitacionTv = ['Tarjeta verde habilitada', 'Tarjeta verde no habilitada'];
   const habilitacionTa = ['Tarjeta azul habilitada', 'Tarjeta azul no habilitada'];
   const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
+  const columnTitleArrayEvento = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
+  const columnsEvento = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
   const columnTitleArray = [
     'Entrevistado',
     'Seleccionar',
@@ -321,7 +324,8 @@ const EntrevistaRoboRuedasForm = () => {
       'string.base': 'El campo "Relato" debe ser una cadena de texto',
       'string.empty': 'El campo "Relato" es un campo requerido',
       'string.min': 'El campo "Relato" debe tener al menos 3 caracteres'
-    })
+    }),
+    index: Joi.any()
   });
 
   const schemaFormEvento = Joi.object({
@@ -589,7 +593,7 @@ const EntrevistaRoboRuedasForm = () => {
   });
 
   const resetFormEvento = () => {
-    setButtonType(false);
+    setFormTypeEvento(false);
     const emptyData = {
       visibilidadEntrevista: false,
       visibilidadInforme: false,
@@ -796,14 +800,14 @@ const EntrevistaRoboRuedasForm = () => {
 
   const onConfirmEvento = async () => {
     if (!buttonType) {
-      const eventoSiniestro = { ...evento, siniestro: data.id };
+      const eventoSiniestro = { ...evento, siniestro: siniestroId };
       const postEventoFetch = await postEvento(dispatch, eventoSiniestro);
       if (postEventoFetch.type === 'POST_EVENTO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpenEvento(true);
         return setTimeout(() => {}, 1000);
       }
-      setFormType(true);
+      setFormTypeEvento(true);
       return setToastErroOpen(true);
     } else {
       const editInspeccionRoboRuedaResponse = await updateEvento(dispatch);
@@ -996,7 +1000,7 @@ const EntrevistaRoboRuedasForm = () => {
   const tableClick = (index) => {
     const formattedData = {};
     reset({ ...formattedData, index });
-    setButtonType(true);
+    setFormTypeEvento(true);
   };
 
   const deleteButton = deleteEvento;
@@ -1018,6 +1022,11 @@ const EntrevistaRoboRuedasForm = () => {
     getByIdSiniestro(dispatch, siniestroId);
     setIdEntrevista(data._id);
   }, []);
+
+  useEffect(() => {
+    getEventoSiniestro(dispatch, siniestroId);
+    getRuedaSiniestro(dispatch, siniestroId);
+  }, [openFormEvento, openFormRueda]);
 
   useEffect(() => {
     createdEntrevistaIdRef.current = createdEntrevista;
@@ -1092,11 +1101,11 @@ const EntrevistaRoboRuedasForm = () => {
         <div>
           {modalAddConfirmOpenEvento && (
             <ModalConfirm
-              method={formType ? 'Actualizar' : 'Agregar'}
+              method={formTypeEvento ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmEvento()}
-              setModalConfirmOpen={setModalAddConfirmOpen}
+              setModalAddConfirmOpenEvento={setModalAddConfirmOpenEvento}
               message={
-                formType
+                formTypeEvento
                   ? '¿Estás seguro de que quieres actualizar este evento?'
                   : '¿Estás seguro de que quieres agregar este evento?'
               }
@@ -1104,8 +1113,8 @@ const EntrevistaRoboRuedasForm = () => {
           )}
           {modalSuccessEvento && (
             <ModalSuccess
-              setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Evento editado' : 'Evento agregado'}
+              setModalSuccessOpen={setModalSuccessOpenEvento}
+              message={formTypeEvento ? 'Se ha modificado un evento.' : 'Se ha agregado un evento.'}
             />
           )}
         </div>
@@ -1700,18 +1709,17 @@ const EntrevistaRoboRuedasForm = () => {
                 <div className={styles.btnContainer}>
                   <Button
                     clickAction={handleSubmitEvento(onSubmitEvento)}
-                    text={buttonType ? 'Editar' : 'Agregar'}
+                    text={formTypeEvento ? 'Editar' : 'Agregar'}
                   />
                   <Button clickAction={resetFormEvento} text="Reiniciar" />
-                  <Button text="Cancelar" clickAction={cancelForm} />
                 </div>
               </div>
               <div className={styles.tableTop}>
                 <div className={styles.tableContainerRueda}>
                   <FormTable
                     data={currentEvento}
-                    columnTitleArray={columnTitleArray}
-                    columns={columns}
+                    columnTitleArray={columnTitleArrayEvento}
+                    columns={columnsEvento}
                     handleClick={tableClick}
                     deleteButton={deleteButton}
                     type={true}

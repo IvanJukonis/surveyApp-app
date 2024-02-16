@@ -1,9 +1,32 @@
 import React from 'react';
 import styles from './modalConfirm.module.css';
 
-const ModalConfirm = ({ message, method, onConfirm, setModalConfirmOpen }) => {
+const ModalConfirm = ({
+  message,
+  method,
+  onConfirm,
+  setModalConfirmOpen,
+  setModalAddConfirmOpenEvento,
+  setModalAddConfirmOpenRueda
+}) => {
   const onConfirmFunction = () => {
-    onConfirm(), setTimeout(() => setModalConfirmOpen(false), 800);
+    if (setModalConfirmOpen) {
+      onConfirm(), setTimeout(() => setModalConfirmOpen(false), 800);
+    } else if (setModalAddConfirmOpenEvento) {
+      onConfirm(), setTimeout(() => setModalAddConfirmOpenEvento(false), 800);
+    } else {
+      onConfirm(), setTimeout(() => setModalAddConfirmOpenRueda(false), 800);
+    }
+  };
+
+  const cancelFunction = () => {
+    if (setModalConfirmOpen) {
+      setModalConfirmOpen(false);
+    } else if (setModalAddConfirmOpenEvento) {
+      setModalAddConfirmOpenEvento(false);
+    } else {
+      setModalAddConfirmOpenRueda(false);
+    }
   };
 
   return (
@@ -11,9 +34,7 @@ const ModalConfirm = ({ message, method, onConfirm, setModalConfirmOpen }) => {
       <div className={styles.modalStyles}>
         <img
           className={styles.close_icon}
-          onClick={() => {
-            setModalConfirmOpen(false);
-          }}
+          onClick={cancelFunction}
           src={`${process.env.PUBLIC_URL}/assets/images/Delete.svg`}
           alt="cancel icon"
         />
@@ -25,12 +46,7 @@ const ModalConfirm = ({ message, method, onConfirm, setModalConfirmOpen }) => {
         </p>
         <p className={styles.textModal}>{message}</p>
         <div className={styles.buttons}>
-          <button
-            className={styles.btnCancel}
-            onClick={() => {
-              setModalConfirmOpen(false);
-            }}
-          >
+          <button className={styles.btnCancel} onClick={cancelFunction}>
             Cancelar
           </button>
           <button
