@@ -520,7 +520,6 @@ const InspeccionRoboRuedasForm = () => {
   const onConfirmInspeccion = async () => {
     if (!buttonType) {
       const inspeccionRoboRuedaSiniestro = { ...inspeccionRoboRueda };
-      console.log(data.id);
       const postInspeccionRoboRuedaFetch = await postInspeccionRoboRueda(
         dispatch,
         inspeccionRoboRuedaSiniestro,

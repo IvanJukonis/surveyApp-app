@@ -808,31 +808,37 @@ const EntrevistaRoboRuedasForm = () => {
   };
 
   const onConfirmRueda = async () => {
-    if (!formTypeRueda) {
-      const ruedaSiniestro = { ...rueda };
-      const postRuedaFetch = await postRueda(
-        dispatch,
-        ruedaSiniestro,
-        selectedInvolucradosRueda,
-        selectedVehiculosRueda,
-        siniestroId
-      );
-      if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        return setTimeout(() => {}, 1000);
+    if (formType) {
+      if (!formTypeRueda) {
+        const ruedaSiniestro = { ...rueda };
+        const postRuedaFetch = await postRueda(
+          dispatch,
+          ruedaSiniestro,
+          selectedInvolucradosRueda,
+          selectedVehiculosRueda,
+          idEntrevista,
+          siniestroId
+        );
+        if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
+          setToastErroOpen(false);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
+      } else {
+        const editRuedaFetch = await updateRueda(
+          dispatch,
+          rueda,
+          selectedInvolucradosRueda,
+          selectedVehiculosRueda,
+          idEntrevista
+        );
+        if (editRuedaFetch.type === 'UPDATE_RUEDA_SUCCESS') {
+          setToastErroOpen(false);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
       }
-      return setToastErroOpen(true);
     } else {
-      const editRuedaFetch = await updateRueda(
-        dispatch,
-        rueda,
-        selectedInvolucradosRueda,
-        selectedVehiculosRueda
-      );
-      if (editRuedaFetch.type === 'UPDATE_RUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        return setTimeout(() => {}, 1000);
-      }
       return setToastErroOpen(true);
     }
   };
@@ -904,14 +910,18 @@ const EntrevistaRoboRuedasForm = () => {
     if (formTypeRueda) {
       const formattedData = {
         ...data,
-        fechaColocacion: formatDate(data.fechaColocacion)
+        fechaColocacion: formatDate(data.fechaColocacion),
+        ruedaEntrevista: true,
+        ruedaInspeccion: false
       };
       setRueda(formattedData);
       setModalAddConfirmOpenRueda(true);
     } else {
       const formattedData = {
         ...data,
-        fechaColocacion: formatDate(data.fechaColocacion)
+        fechaColocacion: formatDate(data.fechaColocacion),
+        ruedaEntrevista: true,
+        ruedaInspeccion: false
       };
       setRueda(formattedData);
       setModalAddConfirmOpenRueda(true);
@@ -1023,14 +1033,14 @@ const EntrevistaRoboRuedasForm = () => {
     getVehiculoSiniestro(dispatch, siniestroId);
     getInvolucradoSiniestro(dispatch, siniestroId);
     getEventoSiniestro(dispatch, siniestroId);
-    getRuedaSiniestro(dispatch, siniestroId);
-    getByIdSiniestro(dispatch, siniestroId);
     setIdEntrevista(data._id);
+    getRuedaSiniestro(dispatch, siniestroId, idEntrevista);
+    getByIdSiniestro(dispatch, siniestroId);
   }, []);
 
   useEffect(() => {
     getEventoSiniestro(dispatch, siniestroId);
-    getRuedaSiniestro(dispatch, siniestroId);
+    getRuedaSiniestro(dispatch, siniestroId, idEntrevista);
   }, [openFormEvento, openFormRueda]);
 
   useEffect(() => {

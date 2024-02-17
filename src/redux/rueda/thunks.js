@@ -16,15 +16,22 @@ import {
   updateRuedaError
 } from './actions';
 
-export const getRuedaSiniestro = async (dispatch, siniestroId) => {
+export const getRuedaSiniestro = async (dispatch, siniestroId, idEntidad) => {
   try {
+    console.log(idEntidad);
     dispatch(getRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`);
     const data = await response.json();
     const ruedasList = data.data;
     const ruedasSiniestroList = ruedasList.filter((rueda) => rueda.siniestro[0] === siniestroId);
+    const ruedaEntidadInspeccion = ruedasSiniestroList.filter(
+      (rueda) => rueda.inspeccionRoboRueda && rueda.inspeccionRoboRueda[0] === idEntidad
+    );
+    const ruedaEntidadEntrevista = ruedasSiniestroList.filter(
+      (rueda) => rueda.entrevistaRoboRueda && rueda.entrevistaRoboRueda[0] === idEntidad
+    );
     dispatch(getRuedaPending(false));
-    dispatch(getRuedaSuccess(ruedasSiniestroList));
+    dispatch(getRuedaSuccess([...ruedaEntidadEntrevista, ...ruedaEntidadInspeccion]));
   } catch (error) {
     dispatch(getRuedaPending(false));
     dispatch(getRuedaError(true));
@@ -67,13 +74,16 @@ export const postRueda = async (
   ruedaData,
   selectedInvolucrados,
   selectedVehiculos,
+  entrevistaId,
   siniestroId
 ) => {
+  console.log(entrevistaId);
   try {
     const requestBody = {
       ...ruedaData,
       involucrado: selectedInvolucrados,
       vehiculo: selectedVehiculos,
+      entrevistaRoboRueda: [entrevistaId],
       siniestro: [siniestroId]
     };
     dispatch(postRuedaPending(true));
