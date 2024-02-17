@@ -13,7 +13,6 @@ const ModalSuccess = ({
   const history = useHistory();
 
   const handleClose = () => {
-    console.log('asd');
     setModalSuccessOpen(false);
   };
 

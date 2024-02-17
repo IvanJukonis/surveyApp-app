@@ -89,10 +89,10 @@ export const postEvento = async (dispatch, eventoData) => {
   }
 };
 
-export const updateEvento = async (dispatch, id, eventoData) => {
+export const updateEvento = async (dispatch, eventoData) => {
   try {
     dispatch(updateEventoPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/evento/${id}`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/evento/${eventoData._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
