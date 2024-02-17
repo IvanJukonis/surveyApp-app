@@ -46,20 +46,22 @@ const EntrevistaRoboRuedasForm = () => {
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
   const [selectedEntrevistado, setSelectedEntrevistado] = useState([]);
-  const [rueda, setRueda] = useState({});
-  const [evento, setEvento] = useState({});
   const [redirect, setRedirect] = useState(false);
-  const [formTypeEvento, setFormTypeEvento] = useState(false);
-  const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
-  const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
-  const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
-  const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
-  const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
-  const [openFormRueda, setOpenFormRueda] = useState(false);
-  const [openFormEvento, setOpenFormEvento] = useState(false);
-  const [formTypeRueda, setFormTypeRueda] = useState(false);
   const [redirectEntity, setRedirectEntity] = useState('');
   const [idEntrevista, setIdEntrevista] = useState('');
+
+  const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
+  const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
+  const [openFormEvento, setOpenFormEvento] = useState(false);
+  const [formTypeEvento, setFormTypeEvento] = useState(false);
+  const [evento, setEvento] = useState({});
+
+  const [rueda, setRueda] = useState({});
+  const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
+  const [formTypeRueda, setFormTypeRueda] = useState(false);
+  const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
+  const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
+  const [openFormRueda, setOpenFormRueda] = useState(false);
 
   const siniestro = useSelector((state) => state.siniestro.list);
   const currentRueda = useSelector((state) => state.rueda.list);
@@ -104,24 +106,8 @@ const EntrevistaRoboRuedasForm = () => {
   const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
   const columnTitleArrayEvento = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
   const columnsEvento = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
-  const columnTitleArray = [
-    'Entrevistado',
-    'Seleccionar',
-    'Nombre',
-    'Apellido',
-    'Rol',
-    'Telefono',
-    'Prioridad'
-  ];
-  const columns = [
-    'entrevistado',
-    'selected',
-    'nombre',
-    'apellido',
-    'rol',
-    'telefono',
-    'prioridad'
-  ];
+  const columnTitleArray = ['Seleccionar', 'Nombre', 'Apellido', 'Rol', 'Telefono', 'Prioridad'];
+  const columns = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
   const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
   const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
@@ -829,7 +815,7 @@ const EntrevistaRoboRuedasForm = () => {
         ruedaSiniestro,
         selectedInvolucradosRueda,
         selectedVehiculosRueda,
-        data.id
+        siniestroId
       );
       if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
         setToastErroOpen(false);
@@ -1012,6 +998,8 @@ const EntrevistaRoboRuedasForm = () => {
       ...currentRueda[index]
     };
     resetRueda({ ...resetDataRueda });
+    setSelectedInvolucradosRueda(resetDataRueda.involucrado);
+    setSelectedVehiculosRueda(resetDataRueda.vehiculo);
     if (openFormRueda) {
       setFormTypeRueda(true);
     } else {

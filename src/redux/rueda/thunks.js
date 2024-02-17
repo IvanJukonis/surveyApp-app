@@ -99,15 +99,20 @@ export const postRueda = async (
   }
 };
 
-export const updateRueda = async (dispatch, ruedaData) => {
+export const updateRueda = async (dispatch, ruedaData, selectedInvolucrados, selectedVehiculos) => {
   try {
+    const requestBody = {
+      ...ruedaData,
+      involucrado: selectedInvolucrados,
+      vehiculo: selectedVehiculos
+    };
     dispatch(updateRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda/${ruedaData._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(ruedaData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();
