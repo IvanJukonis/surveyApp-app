@@ -18,18 +18,20 @@ import {
 
 export const getRuedaSiniestro = async (dispatch, siniestroId, idEntidad) => {
   try {
-    console.log(idEntidad);
     dispatch(getRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`);
     const data = await response.json();
     const ruedasList = data.data;
     const ruedasSiniestroList = ruedasList.filter((rueda) => rueda.siniestro[0] === siniestroId);
+    console.log(idEntidad);
     const ruedaEntidadInspeccion = ruedasSiniestroList.filter(
       (rueda) => rueda.inspeccionRoboRueda && rueda.inspeccionRoboRueda[0] === idEntidad
     );
     const ruedaEntidadEntrevista = ruedasSiniestroList.filter(
       (rueda) => rueda.entrevistaRoboRueda && rueda.entrevistaRoboRueda[0] === idEntidad
     );
+    console.log(ruedasSiniestroList, 'getruedaAll');
+    console.log(ruedaEntidadInspeccion, 'getrueda');
     dispatch(getRuedaPending(false));
     dispatch(getRuedaSuccess([...ruedaEntidadEntrevista, ...ruedaEntidadInspeccion]));
   } catch (error) {
@@ -77,15 +79,25 @@ export const postRueda = async (
   entrevistaId,
   siniestroId
 ) => {
-  console.log(entrevistaId);
   try {
-    const requestBody = {
-      ...ruedaData,
-      involucrado: selectedInvolucrados,
-      vehiculo: selectedVehiculos,
-      entrevistaRoboRueda: [entrevistaId],
-      siniestro: [siniestroId]
-    };
+    let requestBody;
+    if (ruedaData.ruedaEntrevista == true) {
+      requestBody = {
+        ...ruedaData,
+        involucrado: selectedInvolucrados,
+        vehiculo: selectedVehiculos,
+        entrevistaRoboRueda: [entrevistaId],
+        siniestro: [siniestroId]
+      };
+    } else {
+      requestBody = {
+        ...ruedaData,
+        involucrado: selectedInvolucrados,
+        vehiculo: selectedVehiculos,
+        inspeccionRoboRueda: [entrevistaId],
+        siniestro: [siniestroId]
+      };
+    }
     dispatch(postRuedaPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`, {
       method: 'POST',

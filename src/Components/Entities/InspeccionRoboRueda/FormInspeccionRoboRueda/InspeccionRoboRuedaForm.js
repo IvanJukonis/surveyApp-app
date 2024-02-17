@@ -47,6 +47,7 @@ const InspeccionRoboRuedasForm = () => {
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
   const [redirect, setRedirect] = useState(false);
   const [redirectEntity, setRedirectEntity] = useState('');
+  const [idInspeccion, setIdInspeccion] = useState([]);
 
   const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
   const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
@@ -572,33 +573,38 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const onConfirmRueda = async () => {
-    if (!formTypeRueda) {
-      const ruedaSiniestro = { ...rueda };
-      const postRuedaFetch = await postRueda(
-        dispatch,
-        ruedaSiniestro,
-        selectedInvolucradosRueda,
-        selectedVehiculosRueda,
-        siniestroId
-      );
-      if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        return setTimeout(() => {}, 1000);
+    if (buttonType) {
+      if (!formTypeRueda) {
+        const ruedaSiniestro = { ...rueda };
+        const postRuedaFetch = await postRueda(
+          dispatch,
+          ruedaSiniestro,
+          selectedInvolucradosRueda,
+          selectedVehiculosRueda,
+          idInspeccion,
+          siniestroId
+        );
+        if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
+          setToastErroOpen(false);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
+      } else {
+        const editRuedaFetch = await updateRueda(
+          dispatch,
+          rueda,
+          selectedInvolucradosRueda,
+          selectedVehiculosRueda,
+          idInspeccion
+        );
+        if (editRuedaFetch.type === 'UPDATE_RUEDA_SUCCESS') {
+          setToastErroOpen(false);
+          return setTimeout(() => {}, 1000);
+        }
+        return setToastErroOpen(true);
       }
-      return setToastErroOpen(true);
-    } else {
-      const editRuedaFetch = await updateRueda(
-        dispatch,
-        rueda,
-        selectedInvolucradosRueda,
-        selectedVehiculosRueda
-      );
-      if (editRuedaFetch.type === 'UPDATE_RUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        return setTimeout(() => {}, 1000);
-      }
-      return setToastErroOpen(true);
     }
+    return setToastErroOpen(true);
   };
 
   const onSubmit = async (data) => {
@@ -645,14 +651,18 @@ const InspeccionRoboRuedasForm = () => {
     if (formTypeRueda) {
       const formattedData = {
         ...data,
-        fechaColocacion: formatDate(data.fechaColocacion)
+        fechaColocacion: formatDate(data.fechaColocacion),
+        ruedaEntrevista: false,
+        ruedaInspeccion: true
       };
       setRueda(formattedData);
       setModalAddConfirmOpenRueda(true);
     } else {
       const formattedData = {
         ...data,
-        fechaColocacion: formatDate(data.fechaColocacion)
+        fechaColocacion: formatDate(data.fechaColocacion),
+        ruedaEntrevista: false,
+        ruedaInspeccion: true
       };
       setRueda(formattedData);
       setModalAddConfirmOpenRueda(true);
@@ -826,6 +836,7 @@ const InspeccionRoboRuedasForm = () => {
       fechaNacimiento: formatDate(currentInspeccionRoboRueda[index].fechaNacimiento),
       licenciaVencimiento: formatDate(currentInspeccionRoboRueda[index].licenciaVencimiento)
     };
+    setIdInspeccion(currentInspeccionRoboRueda[index]._id);
     reset({ ...formattedData });
     setButtonType(true);
   };
@@ -893,14 +904,14 @@ const InspeccionRoboRuedasForm = () => {
 
   useEffect(() => {
     getEventoSiniestro(dispatch, siniestroId);
-    getRuedaSiniestro(dispatch, siniestroId);
-  }, [openFormEvento, openFormRueda]);
+    getRuedaSiniestro(dispatch, siniestroId, idInspeccion);
+  }, [openFormEvento, openFormRueda, idInspeccion]);
 
   useEffect(() => {
     getAllInspeccionRoboRueda(dispatch, data.id);
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);
-    getEventoSiniestro(dispatch, data.id);
+    getEventoSiniestro(dispatch, data.id, idInspeccion);
     getRuedaSiniestro(dispatch, data.id);
   }, []);
 
@@ -1253,12 +1264,6 @@ const InspeccionRoboRuedasForm = () => {
             </div>
           </div>
         </form>
-        <div className={styles.formEvento}>
-          <div className={styles.btnContainerEvento}>
-            <Button clickAction={openFormEventos} text={openFormEvento ? 'Eventos' : 'Eventos'} />
-            <Button clickAction={openFormRuedas} text={openFormRueda ? 'Ruedas' : 'Ruedas'} />
-          </div>
-        </div>
         {openFormEvento && (
           <div>
             <div className={styles.titleContainer}>
@@ -1705,9 +1710,7 @@ const InspeccionRoboRuedasForm = () => {
           </div>
         )}
       </div>
-      {toastError && (
-        <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
-      )}
+      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={'Error'} />}
     </div>
   );
 };
