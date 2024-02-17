@@ -31,9 +31,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #FAFAFA;
-  border: 3px solid #ECECEC;
-  align-items: flex-start
+  align-items: flex-start;
 }
 
 
@@ -61,6 +59,14 @@
 
 .inputGroups {
   display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-top: 10px;
+}
+
+.inputGroupsTop {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   padding-left: 20px;
   padding-top: 10px;
@@ -97,6 +103,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  margin-top: 10px;
 }
 
 .rightTables {
@@ -114,6 +123,27 @@
   border-radius: 2px;
   border: 3px;
   margin: 10px;
+}
+
+.tableContainerRueda {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.tableContainerBottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  padding: 10px 20px 10px 20px;
+  margin-bottom: 20px;
+  margin-left: 10px
 }
 
 .tableTitle {
@@ -154,6 +184,7 @@
   display: flex;
   justify-content: space-around;
   max-width: 460px;
+  margin-bottom: 10px;
 }
 
 .table {
@@ -190,6 +221,32 @@
 .rowBackground2 {
   background-color: #FFFFFF;
   color: #3C3C3C;
+  font-weight: bold;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.trash_edit {
+  width: 15px;
+  height: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.title {
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  font: 150% sans-serif;
+  color: #252440;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  font-size: 20px;
   font-weight: bold;
 }
 

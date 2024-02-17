@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
 import {
@@ -20,8 +20,8 @@ import {
   getAllInspeccionRoboRueda,
   deleteInspeccionRoboRueda
 } from 'redux/inspeccionRoboRueda/thunks';
-import { updateEvento, postEvento, getEventoSiniestro } from 'redux/evento/thunks';
-import { postRueda, getRuedaSiniestro } from 'redux/rueda/thunks';
+import { updateEvento, postEvento, getEventoSiniestro, deleteEvento } from 'redux/evento/thunks';
+import { postRueda, getRuedaSiniestro, updateRueda, deleteRueda } from 'redux/rueda/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -34,28 +34,36 @@ const InspeccionRoboRuedasForm = () => {
   const history = useHistory();
   const data = useParams();
   const location = useLocation();
+  const siniestroId = data.id;
   const { params } = location.state || {};
   const { createdEntity } = params || {};
 
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
-  const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
-  const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
-  const [openFormRueda, setOpenFormRueda] = useState(false);
-  const [openFormEvento, setOpenFormEvento] = useState(false);
-  const [rueda, setRueda] = useState({});
   const [inspeccionRoboRueda, setInspeccionRoboRueda] = useState({});
-  const [evento, setEvento] = useState({});
   const [buttonType, setButtonType] = useState(false);
   const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
   const [selectedVehiculos, setSelectedVehiculos] = useState([]);
+  const [redirect, setRedirect] = useState(false);
+  const [redirectEntity, setRedirectEntity] = useState('');
+
+  const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
+  const [modalSuccessEvento, setModalSuccessOpenEvento] = useState(false);
+  const [openFormEvento, setOpenFormEvento] = useState(false);
+  const [formTypeEvento, setFormTypeEvento] = useState(false);
+  const [evento, setEvento] = useState({});
+
+  const [rueda, setRueda] = useState({});
+  const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
+  const [formTypeRueda, setFormTypeRueda] = useState(false);
   const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
   const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
+  const [openFormRueda, setOpenFormRueda] = useState(false);
 
   const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
+  const createdInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
   const currentInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
@@ -77,8 +85,8 @@ const InspeccionRoboRuedasForm = () => {
     'Inspeccion dificultada'
   ];
   const arrayProgramada = ['Inspeccion programada', 'Inspeccion no programada'];
-  const columnTitleArray = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
-  const columns = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
+  const columnTitleArrayEvento = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
+  const columnsEvento = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
 
   //Array Ruedas
   const arrayTipoRueda = ['Original', 'Suplente', 'Prestada'];
@@ -383,7 +391,9 @@ const InspeccionRoboRuedasForm = () => {
       .required(),
     siniestro: Joi.any(),
     __v: Joi.any(),
-    _id: Joi.any()
+    _id: Joi.any(),
+    vehiculo: Joi.any(),
+    involucrado: Joi.any()
   });
 
   const {
@@ -509,10 +519,15 @@ const InspeccionRoboRuedasForm = () => {
 
   const onConfirmInspeccion = async () => {
     if (!buttonType) {
-      const inspeccionRoboRuedaSiniestro = { ...inspeccionRoboRueda, siniestro: data.id };
+      const inspeccionRoboRuedaSiniestro = { ...inspeccionRoboRueda };
+      console.log(data.id);
       const postInspeccionRoboRuedaFetch = await postInspeccionRoboRueda(
         dispatch,
-        inspeccionRoboRuedaSiniestro
+        inspeccionRoboRuedaSiniestro,
+        selectedInvolucrados,
+        selectedVehiculos,
+        currentRueda,
+        data.id
       );
       if (postInspeccionRoboRuedaFetch.type === 'POST_INSPECCIONROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
@@ -536,22 +551,19 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const onConfirmEvento = async () => {
-    if (!buttonType) {
-      const eventoSiniestro = { ...evento, siniestro: data.id };
+    if (!formTypeEvento) {
+      const eventoSiniestro = { ...evento, siniestro: siniestroId };
       const postEventoFetch = await postEvento(dispatch, eventoSiniestro);
       if (postEventoFetch.type === 'POST_EVENTO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpenEvento(true);
         return setTimeout(() => {}, 1000);
       }
+      setFormTypeEvento(true);
       return setToastErroOpen(true);
     } else {
-      const editInspeccionRoboRuedaResponse = await updateEvento(
-        dispatch,
-        inspeccionRoboRueda._id,
-        inspeccionRoboRueda
-      );
-      if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
+      const fetchUpdateEventoResponse = await updateEvento(dispatch, evento);
+      if (fetchUpdateEventoResponse.type === 'UPDATE_EVENTO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpenEvento(true);
         return setTimeout(() => {}, 1000);
@@ -561,14 +573,14 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const onConfirmRueda = async () => {
-    if (!buttonType) {
+    if (!formTypeRueda) {
       const ruedaSiniestro = { ...rueda };
       const postRuedaFetch = await postRueda(
         dispatch,
         ruedaSiniestro,
         selectedInvolucradosRueda,
         selectedVehiculosRueda,
-        data.id
+        siniestroId
       );
       if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
         setToastErroOpen(false);
@@ -576,12 +588,13 @@ const InspeccionRoboRuedasForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editInspeccionRoboRuedaResponse = await updateEvento(
+      const editRuedaFetch = await updateRueda(
         dispatch,
-        inspeccionRoboRueda._id,
-        inspeccionRoboRueda
+        rueda,
+        selectedInvolucradosRueda,
+        selectedVehiculosRueda
       );
-      if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
+      if (editRuedaFetch.type === 'UPDATE_RUEDA_SUCCESS') {
         setToastErroOpen(false);
         return setTimeout(() => {}, 1000);
       }
@@ -610,7 +623,7 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const onSubmitEvento = async (data) => {
-    if (buttonType) {
+    if (formTypeEvento) {
       const formattedData = {
         ...data,
         fecha: formatDate(data.fecha),
@@ -630,7 +643,7 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const onSubmitRueda = async (data) => {
-    if (buttonType) {
+    if (formTypeRueda) {
       const formattedData = {
         ...data,
         fechaColocacion: formatDate(data.fechaColocacion)
@@ -818,6 +831,37 @@ const InspeccionRoboRuedasForm = () => {
     setButtonType(true);
   };
 
+  const tableClickForm = (index) => {
+    const resetDataEvento = {
+      ...currentEvento[index]
+    };
+    resetEvento({ ...resetDataEvento });
+    const resetDataRueda = {
+      ...currentRueda[index]
+    };
+    resetRueda({ ...resetDataRueda });
+    setSelectedInvolucradosRueda(resetDataRueda.involucrado);
+    setSelectedVehiculosRueda(resetDataRueda.vehiculo);
+    if (openFormRueda) {
+      setFormTypeRueda(true);
+    } else {
+      setFormTypeEvento(true);
+    }
+  };
+
+  const involucradoRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('involucrado');
+  };
+
+  const vehiculoRedirect = () => {
+    setRedirect(true);
+    setRedirectEntity('vehiculo');
+  };
+
+  const deleteButtonEvento = deleteEvento;
+  const deleteButtonRueda = deleteRueda;
+
   const cancelForm = () => {
     if (createdEntity) {
       history.push({
@@ -832,6 +876,28 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   useEffect(() => {
+    resetFormRueda();
+    resetFormEvento();
+  }, [currentRueda, currentEvento]);
+
+  useEffect(() => {
+    if (currentInspeccionRoboRueda?.vehiculo) {
+      setSelectedVehiculos(currentInspeccionRoboRueda.vehiculo);
+    }
+  }, [currentInspeccionRoboRueda?.vehiculo?.length]);
+
+  useEffect(() => {
+    if (currentInspeccionRoboRueda?.involucrado) {
+      setSelectedInvolucrados(currentInspeccionRoboRueda.involucrado);
+    }
+  }, [currentInspeccionRoboRueda?.involucrado?.length]);
+
+  useEffect(() => {
+    getEventoSiniestro(dispatch, siniestroId);
+    getRuedaSiniestro(dispatch, siniestroId);
+  }, [openFormEvento, openFormRueda]);
+
+  useEffect(() => {
     getAllInspeccionRoboRueda(dispatch, data.id);
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);
@@ -839,8 +905,42 @@ const InspeccionRoboRuedasForm = () => {
     getRuedaSiniestro(dispatch, data.id);
   }, []);
 
+  useEffect(() => {
+    createdInspeccionIdRef.current = createdInspeccionRoboRueda;
+    setInspeccion(createdInspeccionIdRef.current);
+  }, [createdInspeccionRoboRueda]);
+
+  const createdInspeccionIdRef = useRef(createdInspeccionRoboRueda);
+  const [inspeccion, setInspeccion] = useState([]);
+
   return (
     <div className={styles.container}>
+      {
+        <div>
+          {modalAddConfirmOpen && (
+            <ModalConfirm
+              method={buttonType ? 'Actualizar' : 'Agregar'}
+              onConfirm={() => onConfirmInspeccion()}
+              setModalConfirmOpen={setModalAddConfirmOpen}
+              message={
+                buttonType
+                  ? '¿Estás seguro de que quieres actualizar esta inspeccion?'
+                  : '¿Estás seguro de que quieres agregar esta inspeccion?'
+              }
+            />
+          )}
+          {modalSuccess && (
+            <ModalSuccess
+              setModalSuccessOpen={setModalSuccessOpen}
+              redirect={redirect}
+              redirectEntity={redirectEntity}
+              createdEntity={inspeccion}
+              sinId={siniestroId}
+              message={buttonType ? 'Inspeccion editada' : 'Inspeccion agregada'}
+            />
+          )}
+        </div>
+      }
       {
         <div>
           {modalAddConfirmOpen && (
@@ -867,11 +967,11 @@ const InspeccionRoboRuedasForm = () => {
         <div>
           {modalAddConfirmOpenEvento && (
             <ModalConfirm
-              method={buttonType ? 'Actualizar' : 'Agregar'}
+              method={formTypeEvento ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmEvento()}
-              setModalConfirmOpen={setModalAddConfirmOpen}
+              setModalAddConfirmOpenEvento={setModalAddConfirmOpenEvento}
               message={
-                buttonType
+                formTypeEvento
                   ? '¿Estás seguro de que quieres actualizar este evento?'
                   : '¿Estás seguro de que quieres agregar este evento?'
               }
@@ -879,8 +979,8 @@ const InspeccionRoboRuedasForm = () => {
           )}
           {modalSuccessEvento && (
             <ModalSuccess
-              setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Evento editado' : 'Evento agregado'}
+              setModalSuccessOpen={setModalSuccessOpenEvento}
+              message={formTypeEvento ? 'Se ha modificado un evento.' : 'Se ha agregado un evento.'}
             />
           )}
         </div>
@@ -889,11 +989,11 @@ const InspeccionRoboRuedasForm = () => {
         <div>
           {modalAddConfirmOpenRueda && (
             <ModalConfirm
-              method={buttonType ? 'Actualizar' : 'Agregar'}
+              method={formTypeRueda ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmRueda()}
               setModalConfirmOpen={setModalAddConfirmOpenRueda}
               message={
-                buttonType
+                formTypeRueda
                   ? '¿Estás seguro de que quieres actualizar esta rueda?'
                   : '¿Estás seguro de que quieres agregar esta rueda?'
               }
@@ -1043,9 +1143,9 @@ const InspeccionRoboRuedasForm = () => {
               <Button text="Cancelar" clickAction={cancelForm} />
             </div>
           </div>
-          <div className={styles.rightTables}>
+          <div className={styles.bottomTable}>
             <div className={styles.tableContainer}>
-              <Button clickAction={openFormRuedas} text={'Involucrados'} />
+              <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
               <table className={styles.table}>
                 <thead>
                   <tr className={styles.tableContent}>
@@ -1092,7 +1192,7 @@ const InspeccionRoboRuedasForm = () => {
               </table>
             </div>
             <div className={styles.tableContainer}>
-              <Button clickAction={openFormRuedas} text={'Vehiculos'} />
+              <Button clickAction={() => vehiculoRedirect()} text="Vehiculos" />
               <table className={styles.table}>
                 <thead>
                   <tr className={styles.tableContent}>
@@ -1138,6 +1238,20 @@ const InspeccionRoboRuedasForm = () => {
                 </tbody>
               </table>
             </div>
+            <div className={styles.formEvento}>
+              <div className={styles.btnContainerEvento}>
+                <Button
+                  submition={true}
+                  clickAction={openFormEventos}
+                  text={openFormEvento ? 'Eventos' : 'Eventos'}
+                />
+                <Button
+                  submition={true}
+                  clickAction={openFormRuedas}
+                  text={openFormRueda ? 'Ruedas' : 'Ruedas'}
+                />
+              </div>
+            </div>
           </div>
         </form>
         <div className={styles.formEvento}>
@@ -1147,7 +1261,10 @@ const InspeccionRoboRuedasForm = () => {
           </div>
         </div>
         {openFormEvento && (
-          <div className={styles.formContainer}>
+          <div>
+            <div className={styles.titleContainer}>
+              <p className={styles.title}>FORMULARIO EVENTOS</p>
+            </div>
             <form className={styles.form} onSubmit={handleSubmitEvento(onSubmitEvento)}>
               <div className={styles.formContainer}>
                 <section className={styles.inputGroups}>
@@ -1269,20 +1386,19 @@ const InspeccionRoboRuedasForm = () => {
                 <div className={styles.btnContainer}>
                   <Button
                     clickAction={handleSubmitEvento(onSubmitEvento)}
-                    text={buttonType ? 'Editar' : 'Agregar'}
+                    text={formTypeEvento ? 'Editar' : 'Agregar'}
                   />
                   <Button clickAction={resetFormEvento} text="Reiniciar" />
-                  <Button text="Cancelar" clickAction={cancelForm} />
                 </div>
               </div>
               <div className={styles.tableTop}>
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainerRueda}>
                   <FormTable
                     data={currentEvento}
-                    columnTitleArray={columnTitleArray}
-                    columns={columns}
-                    handleClick={tableClick}
-                    deleteButton={deleteButton}
+                    columnTitleArray={columnTitleArrayEvento}
+                    columns={columnsEvento}
+                    handleClick={tableClickForm}
+                    deleteButton={deleteButtonEvento}
                     type={true}
                   />
                 </div>
@@ -1291,7 +1407,10 @@ const InspeccionRoboRuedasForm = () => {
           </div>
         )}
         {openFormRueda && (
-          <div className={styles.formContainer}>
+          <div>
+            <div className={styles.titleContainer}>
+              <p className={styles.title}>FORMULARIO RUEDAS</p>
+            </div>
             <form className={styles.form} onSubmit={handleSubmitRueda(onSubmitRueda)}>
               <div className={styles.formContainer}>
                 <section className={styles.inputGroups}>
@@ -1466,30 +1585,31 @@ const InspeccionRoboRuedasForm = () => {
                 <div className={styles.btnContainer}>
                   <Button
                     clickAction={handleSubmitRueda(onSubmitRueda)}
-                    text={buttonType ? 'Editar' : 'Agregar'}
+                    text={formTypeRueda ? 'Editar' : 'Agregar'}
                   />
                   <Button clickAction={resetFormRueda} text="Reiniciar" />
-                  <Button text="Cancelar" clickAction={cancelForm} />
                 </div>
               </div>
               <div className={styles.tableTop}>
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainerRueda}>
                   <FormTable
                     data={currentRueda}
                     columnTitleArray={columnTitleRueda}
                     columns={columnsRueda}
-                    handleClick={tableClick}
-                    deleteButton={deleteButton}
+                    handleClick={tableClickForm}
+                    deleteButton={deleteButtonRueda}
                     type={true}
                   />
                 </div>
                 <div className={styles.rightTables}>
-                  <div className={styles.tableContainer}>
-                    <Button clickAction={openFormRuedas} text={'Involucrados'} />
+                  <div className={styles.tableContainerBottom}>
+                    <div className={styles.titleContainer}>
+                      <p className={styles.title}>INVOLUCRADOS</p>
+                    </div>
                     <table className={styles.table}>
                       <thead>
                         <tr className={styles.tableContent}>
-                          {columnTitleInvolucrado.map((column, index) => (
+                          {columnTitleRueda.map((column, index) => (
                             <th key={index}>{column}</th>
                           ))}
                         </tr>
@@ -1501,7 +1621,7 @@ const InspeccionRoboRuedasForm = () => {
 
                           return (
                             <tr className={rowClass} key={index}>
-                              {columnInvolucrado.map((column, columnIndex) => (
+                              {columnsRueda.map((column, columnIndex) => (
                                 <td key={columnIndex}>
                                   {column === 'selected' ? (
                                     <input
@@ -1531,8 +1651,10 @@ const InspeccionRoboRuedasForm = () => {
                       </tbody>
                     </table>
                   </div>
-                  <div className={styles.tableContainer}>
-                    <Button clickAction={openFormRuedas} text={'Vehiculos'} />
+                  <div className={styles.tableContainerBottom}>
+                    <div className={styles.titleContainer}>
+                      <p className={styles.title}>VEHICULOS</p>
+                    </div>
                     <table className={styles.table}>
                       <thead>
                         <tr className={styles.tableContent}>

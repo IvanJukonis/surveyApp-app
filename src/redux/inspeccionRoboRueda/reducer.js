@@ -14,7 +14,8 @@ import {
 } from './constants';
 
 const INITIAL_STATE = {
-  list: []
+  list: [],
+  createdInspeccion: []
 };
 
 const inspeccionRoboRuedaReducer = (state = INITIAL_STATE, action) => {
@@ -29,7 +30,8 @@ const inspeccionRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     case GET_INSPECCIONROBORUEDA_SUCCESS: {
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        createdInspeccion: action.payload
       };
     }
 
@@ -50,7 +52,8 @@ const inspeccionRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     case POST_INSPECCIONROBORUEDA_SUCCESS: {
       return {
         ...state,
-        list: [...state.list, action.payload]
+        list: [...state.list, action.payload],
+        createdInspeccion: action.payload
       };
     }
 
@@ -69,7 +72,6 @@ const inspeccionRoboRuedaReducer = (state = INITIAL_STATE, action) => {
     }
 
     case UPDATE_INSPECCIONROBORUEDA_SUCCESS: {
-      // const inspeccionRoboRuedaUpdated = action.payload;
       const updatedInspeccionRoboRueda = state.list.map((inspeccionRoboRueda) => {
         return inspeccionRoboRueda._id === action.payload._id
           ? { ...inspeccionRoboRueda, ...action.payload }

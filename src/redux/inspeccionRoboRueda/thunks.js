@@ -73,14 +73,21 @@ export const postInspeccionRoboRueda = async (
   siniestroId
 ) => {
   try {
+    console.log('antes de romperme');
+    console.log(inspeccionSiniestroData), 'inspeccionSiniestroData';
+    console.log(selectedInvolucrados), 'selectedInvolucrados';
+    console.log(selectedVehiculos, 'selectedVehiculos');
+    console.log(ruedas, 'ruedas');
+    console.log(siniestroId, 'siniestroId');
     const requestBody = {
       ...inspeccionSiniestroData,
       involucrado: selectedInvolucrados,
       vehiculo: selectedVehiculos,
       ruedas: ruedas,
-      siniestro: [siniestroId.id]
+      siniestro: siniestroId || siniestroId.id
     };
     dispatch(postInspeccionRoboRuedaPending(true));
+    console.log(requestBody);
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionRoboRueda`, {
       method: 'POST',
       headers: {
