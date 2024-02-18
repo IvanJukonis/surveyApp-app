@@ -52,6 +52,7 @@ const InspeccionRoboRuedaForm = React.lazy(() =>
   import('../Entities/InspeccionRoboRueda/FormInspeccionRoboRueda/InspeccionRoboRuedaForm')
 );
 const RuedaForm = React.lazy(() => import('../Entities/Rueda/FormRueda/RuedaForm'));
+const EventoForm = React.lazy(() => import('../Entities/Evento/FormEvento/EventoForm'));
 
 function Layout() {
   return (
@@ -123,6 +124,7 @@ function Layout() {
                   component={LugarRoboRuedaController}
                 />
                 <Route path="/controlador/siniestros/rueda/:id?" component={RuedaForm} />
+                <Route path="/controlador/siniestros/evento/:id?" component={EventoForm} />
                 <Route
                   path="/relevador/siniestros/lugarSiniestro/form/:id?"
                   component={LugarSiniestroForm}

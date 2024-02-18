@@ -1,43 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import styles from './form.module.css';
-import {
-  ModalConfirm,
-  ModalSuccess,
-  ToastError,
-  Inputs,
-  Button,
-  OptionInput
-} from 'Components/Shared';
+import { ToastError, Button, OptionInput } from 'Components/Shared';
 import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { updateEvento, postEvento, getAllEvento, deleteEvento } from 'redux/evento/thunks';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import Joi from 'joi';
+import { getEventoSiniestro } from 'redux/evento/thunks';
 
 const EventosForm = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const eventos = useSelector((state) => state.evento.list);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [evento, setEvento] = useState({});
-  const [buttonType, setButtonType] = useState(false);
   const data = useParams();
-  const location = useLocation();
-  const { params } = location.state || {};
-  const { createdEntity } = params || {};
+
+  const [toastError, setToastErroOpen] = useState(false);
+  const currentEvento = useSelector((state) => state.evento.list);
+
+  const arrayTipo = ['Acontesimiento', 'Sospecha'];
+  const arrayComprobar = ['A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado'];
+  const arrayComprobable = [
+    'Totalmente comprobable',
+    'Comprobable',
+    'Parcialmente comprobable',
+    'No comprobable'
+  ];
+  const arrayPredisposicion = ['Buena', 'Media', 'Mala', 'Negacion'];
+  const columnTitleArrayEvento = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
+  const columnsEvento = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
 
   const schema = Joi.object({
     visibilidadEntrevista: Joi.boolean()
       .messages({
         'boolean.base': 'El campo "Visibilidad Entrevista" es un campo booleano',
-        'boolean.empty': 'El campo "Visibilidad Entrevista" debe tener un valor determinado'
+        'boolean.empty': 'El campo "Prioridad" debe tener un valor determinado'
       })
       .required(),
     visibilidadInforme: Joi.boolean()
@@ -46,9 +44,12 @@ const EventosForm = () => {
         'boolean.empty': 'El campo "Visibilidad Informe" debe tener un valor determinado'
       })
       .required(),
-    tipo: Joi.string().valid('Acontesimiento', 'Sospecha').messages({
-      'any.only': 'Seleccione una opción valida'
-    }),
+    tipo: Joi.string()
+      .valid('Acontesimiento', 'Sospecha')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
     fecha: Joi.date()
       .empty('')
       .messages({
@@ -59,201 +60,139 @@ const EventosForm = () => {
     hora: Joi.date()
       .empty('')
       .messages({
-        'date.base': 'El campo "Fecha" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
+        'date.base': 'El campo "Hora" debe ser una fecha valida.',
+        'date.empty': 'El campo "Hora" no puede permanecer vacio.'
       })
       .required(),
     descripcion: Joi.string()
       .min(3)
-      .max(500)
-      .regex(/^[a-zA-Z ]+$/)
+      .max(200)
       .messages({
-        'string.base': 'El campo "Descripcion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Descripcion" es un campo requerido',
-        'string.min': 'El campo "Descripcion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Descripcion" debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El campo "Descripcion" debe contener solo letras'
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 50 caracteres'
       })
       .required(),
     comprobar: Joi.string()
       .valid('A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado')
       .messages({
-        'any.only': 'Seleccione una opción valida'
-      }),
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
     comprobado: Joi.boolean()
       .messages({
         'boolean.base': 'El campo "Comprobado" es un campo booleano',
         'boolean.empty': 'El campo "Comprobado" debe tener un valor determinado'
       })
       .required(),
-    comprobable: Joi.boolean()
+    comprobable: Joi.string()
+      .valid('Totalmente comprobable', 'Comprobable', 'Parcialmente comprobable', 'No comprobable')
       .messages({
-        'boolean.base': 'El campo "Comprobable" es un campo booleano',
-        'boolean.empty': 'El campo "Comprobable" debe tener un valor determinado'
+        'any.only': 'Ingrese un valor permitido'
+      })
+      .required(),
+    predisposicion: Joi.string()
+      .valid('Buena', 'Media', 'Mala', 'Negacion')
+      .messages({
+        'any.only': 'Ingrese un valor permitido'
       })
       .required(),
     resolucion: Joi.string()
       .min(3)
-      .max(500)
-      .regex(/^[a-zA-Z ]+$/)
+      .max(200)
       .messages({
-        'string.base': 'El campo "Resolucion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Resolucion" es un campo requerido',
-        'string.min': 'El campo "Resolucion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Resolucion" debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El campo "Resolucion" debe contener solo letras'
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 50 caracteres'
       })
       .required(),
-
+    siniestro: Joi.any(),
+    evento: Joi.any(),
     __v: Joi.any(),
     _id: Joi.any()
   });
 
-  const formatDate = (dateString) => {
-    const dateObject = new Date(dateString);
-    const year = dateObject.getFullYear();
-    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObject.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors }
+    register: registerEvento,
+    handleSubmit: handleSubmitEvento,
+    reset: resetEvento,
+    formState: { errors: errorsEvento }
   } = useForm({
     mode: 'onBlur',
-    resolver: joiResolver(schema),
-    defaultValues: { ...evento }
+    resolver: joiResolver(schema)
   });
 
-  const onConfirmFunction = async () => {
-    if (!buttonType) {
-      const eventoConSiniestro = { ...evento, siniestro: data.id };
-      const addEventoResponse = await postEvento(dispatch, eventoConSiniestro);
-      if (addEventoResponse.type === 'POST_EVENTO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {}, 1000);
-      }
-      return setToastErroOpen(true);
-    } else {
-      const editEventoResponse = await updateEvento(dispatch, evento._id, evento);
-      if (editEventoResponse.type === 'UPDATE_EVENTO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {}, 1000);
-      }
-      return setToastErroOpen(true);
-    }
-  };
-
-  const onSubmit = async (data) => {
-    if (buttonType) {
-      const formattedData = {
-        ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
-      };
-      setEvento(formattedData);
-      setModalAddConfirmOpen(true);
-    } else {
-      const formattedData = {
-        ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
-      };
-      setEvento(formattedData);
-      setModalAddConfirmOpen(true);
-    }
-  };
-
-  const arrayComprobar = ['A comprobar', 'Sin necesidad', 'Comprobado', 'No comprobado'];
-  const arrayTipo = ['Acontesimiento', 'Sospecha'];
-
-  const columnTitleArray = ['Nombre', 'Apellido', 'Telefono', 'Rol', 'Prioridad'];
-  const columns = ['nombre', 'apellido', 'telefono', 'rol', 'prioridad'];
-
-  const resetForm = () => {
-    setButtonType(false);
+  const resetFormEvento = () => {
     const emptyData = {
       visibilidadEntrevista: false,
       visibilidadInforme: false,
-      tipo: 'Pick tipo',
-      fecha: '',
-      hora: '',
+      tipo: '',
+      fecha: 'dd / mm / aaaa',
+      hora: 'dd / mm / aaaa',
       descripcion: '',
-      comprobar: 'Pick comprobar',
+      comprobar: '',
       comprobado: false,
-      comprobable: false,
+      comprobable: '',
+      predisposicion: '',
       resolucion: ''
     };
-    reset({ ...emptyData });
+    resetEvento({ ...emptyData });
   };
-
-  const deleteButton = deleteEvento;
 
   const tableClick = (index) => {
-    const formattedData = {
-      ...eventos[index],
-      fechaNacimiento: formatDate(eventos[index].fechaNacimiento),
-      licenciaVencimiento: formatDate(eventos[index].licenciaVencimiento)
+    const resetDataEvento = {
+      ...currentEvento[index]
     };
-    reset({ ...formattedData });
-    setButtonType(true);
-  };
-
-  const cancelForm = () => {
-    if (createdEntity) {
-      history.push({
-        pathname: `/controlador/siniestros/entrevista/entrevistaroboevento/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
-        state: {
-          params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
-        }
-      });
-    } else {
-      history.goBack();
-    }
+    resetEvento({ ...resetDataEvento });
   };
 
   useEffect(() => {
-    getAllEvento(dispatch, data.id);
+    getEventoSiniestro(dispatch, data.id);
   }, []);
 
   return (
     <div className={styles.container}>
-      {
-        <div>
-          {modalAddConfirmOpen && (
-            <ModalConfirm
-              method={buttonType ? 'Update' : 'Add'}
-              onConfirm={() => onConfirmFunction()}
-              setModalConfirmOpen={setModalAddConfirmOpen}
-              message={
-                buttonType
-                  ? '¿Estás seguro de que quieres actualizar este evento?'
-                  : '¿Estás seguro de que quieres agregar este evento?'
-              }
-            />
-          )}
-          {modalSuccess && (
-            <ModalSuccess
-              setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Evento editado' : 'Evento agregado'}
-            />
-          )}
-        </div>
-      }
       <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{data.id ? 'Evento' : 'Evento'}</h3>
+        <p className={styles.title}>FORMULARIO EVENTOS</p>
       </div>
-      <div className={styles.innerContainer}>
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+      <form className={styles.form} onSubmit={handleSubmitEvento()}>
+        <div className={styles.formContainer}>
           <section className={styles.inputGroups}>
             <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
+                <DateInput
+                  error={errorsEvento.fecha?.message}
+                  register={registerEvento}
+                  nameTitle="Fecha"
+                  type="date"
+                  nameInput="fecha"
+                  required
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <OptionInput
+                  data={arrayComprobar}
+                  dataLabel="Comprobar"
+                  name="comprobar"
+                  register={registerEvento}
+                  error={errorsEvento.comprobar?.message}
+                />
+              </div>
+              <div className={styles.inputContainerPredisposicion}>
+                <OptionInput
+                  data={arrayPredisposicion}
+                  dataLabel="Predisposicion"
+                  name="predisposicion"
+                  register={registerEvento}
+                  error={errorsEvento.predisposicion?.message}
+                />
+              </div>
+              <div className={styles.inputContainerCheck}>
                 <Checkbox
-                  error={errors.visibilidadEntrevista?.message}
-                  register={register}
+                  error={errorsEvento.visibilidadEntrevista?.message}
+                  register={registerEvento}
                   nameTitle="Visibilidad Entrevista"
                   type="checkbox"
                   nameInput="visibilidadEntrevista"
@@ -262,39 +201,20 @@ const EventosForm = () => {
               </div>
               <div className={styles.inputContainer}>
                 <Checkbox
-                  error={errors.visibilidadInforme?.message}
-                  register={register}
+                  error={errorsEvento.visibilidadInforme?.message}
+                  register={registerEvento}
                   nameTitle="Visibilidad Informe"
                   type="checkbox"
                   nameInput="visibilidadInforme"
                   required
                 />
               </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayTipo}
-                  dataLabel="Tipo"
-                  name="tipo"
-                  register={register}
-                  error={errors.tipo?.message}
-                />
-              </div>
             </div>
             <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
                 <DateInput
-                  error={errors.fecha?.message}
-                  register={register}
-                  nameTitle="Fecha"
-                  type="date"
-                  nameInput="fecha"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.hora?.message}
-                  register={register}
+                  error={errorsEvento.hora?.message}
+                  register={registerEvento}
                   nameTitle="Hora"
                   type="date"
                   nameInput="hora"
@@ -302,29 +222,40 @@ const EventosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descripcion?.message}
-                  register={register}
+                <OptionInput
+                  data={arrayComprobable}
+                  dataLabel="Comprobable"
+                  name="comprobable"
+                  register={registerEvento}
+                  error={errorsEvento.comprobable?.message}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <TextArea
+                  error={errorsEvento.descripcion?.message}
+                  register={registerEvento}
                   nameTitle="Descripcion"
                   type="text"
                   nameInput="descripcion"
+                  styleInput="small"
+                  required
                 />
               </div>
             </div>
             <div className={styles.inputColumn}>
               <div className={styles.inputContainer}>
                 <OptionInput
-                  data={arrayComprobar}
-                  dataLabel="Comprobar"
-                  name="comprobar"
-                  register={register}
-                  error={errors.comprobar?.message}
+                  data={arrayTipo}
+                  dataLabel="Tipo"
+                  name="tipo"
+                  register={registerEvento}
+                  error={errorsEvento.tipo?.message}
                 />
               </div>
               <div className={styles.inputContainer}>
                 <Checkbox
-                  error={errors.comprobado?.message}
-                  register={register}
+                  error={errorsEvento.comprobado?.message}
+                  register={registerEvento}
                   nameTitle="Comprobado"
                   type="checkbox"
                   nameInput="comprobado"
@@ -332,44 +263,34 @@ const EventosForm = () => {
                 />
               </div>
               <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.comprobable?.message}
-                  register={register}
-                  nameTitle="Comprobable"
-                  type="checkbox"
-                  nameInput="comprobable"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.resolucion?.message}
-                  register={register}
+                <TextArea
+                  error={errorsEvento.resolucion?.message}
+                  register={registerEvento}
                   nameTitle="Resolucion"
                   type="text"
                   nameInput="resolucion"
+                  styleInput="small"
+                  required
                 />
               </div>
             </div>
           </section>
           <div className={styles.btnContainer}>
-            <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={cancelForm} />
+            <Button clickAction={resetFormEvento} text="Reiniciar" />
           </div>
-        </form>
-        <div className={styles.rightTable}>
-          <FormTable
-            data={eventos}
-            columnTitleArray={columnTitleArray}
-            columns={columns}
-            handleClick={tableClick}
-            deleteButton={deleteButton}
-          />
         </div>
-      </div>
+        <div className={styles.tableTop}>
+          <div className={styles.tableContainerRueda}>
+            <FormTable
+              data={currentEvento}
+              columnTitleArray={columnTitleArrayEvento}
+              columns={columnsEvento}
+              handleClick={tableClick}
+              type={true}
+            />
+          </div>
+        </div>
+      </form>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
       )}

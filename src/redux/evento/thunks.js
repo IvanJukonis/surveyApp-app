@@ -14,6 +14,7 @@ import {
 } from './actions';
 
 export const getEventoSiniestro = async (dispatch, siniestroId) => {
+  console.log(siniestroId);
   try {
     dispatch(getEventoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/evento`);
@@ -22,6 +23,7 @@ export const getEventoSiniestro = async (dispatch, siniestroId) => {
     const eventosSiniestroList = eventosList.filter(
       (evento) => evento.siniestro[0] === siniestroId
     );
+    console.log(eventosSiniestroList);
     dispatch(getEventoPending(false));
     dispatch(getEventoSuccess(eventosSiniestroList));
   } catch (error) {
