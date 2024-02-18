@@ -48,8 +48,8 @@ const EntrevistaSiniestrosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [evento, setEvento] = useState({});
   const [entrevistaSiniestro, setEntrevistaSiniestro] = useState();
-  const [buttonType, setButtonType] = useState(false);
   const [openFormEvento, setOpenFormEvento] = useState(false);
+  const [formTypeEvento, setFormTypeEvento] = useState(false);
   const [redirectEntity, setRedirectEntity] = useState('');
   const [idEntrevista, setIdEntrevista] = useState('');
   const [modalAddConfirmOpenEvento, setModalAddConfirmOpenEvento] = useState(false);
@@ -71,6 +71,8 @@ const EntrevistaSiniestrosForm = () => {
     'No comprobable'
   ];
   const arrayPredisposicion = ['Buena', 'Media', 'Mala', 'Negacion'];
+  const columnTitleArrayEvento = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
+  const columnsEvento = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
 
   //Array Entrevistas
   const rol = ['CVA', 'CVT', 'PVA', 'PVT', 'TTG', 'TER', 'TVT', 'TVA', 'SOC', 'ABG'];
@@ -596,7 +598,7 @@ const EntrevistaSiniestrosForm = () => {
   };
 
   const onConfirmEvento = async () => {
-    if (!buttonType) {
+    if (!formTypeEvento) {
       const eventoSiniestro = { ...evento, siniestro: data.id };
       const postEventoFetch = await postEvento(dispatch, eventoSiniestro);
       if (postEventoFetch.type === 'POST_EVENTO_SUCCESS') {
@@ -604,7 +606,7 @@ const EntrevistaSiniestrosForm = () => {
         setModalSuccessOpenEvento(true);
         return setTimeout(() => {}, 1000);
       }
-      setFormType(true);
+      setFormTypeEvento(true);
       return setToastErroOpen(true);
     } else {
       const editInspeccionRoboRuedaResponse = await updateEvento(dispatch);
@@ -637,7 +639,7 @@ const EntrevistaSiniestrosForm = () => {
   };
 
   const resetFormEvento = () => {
-    setButtonType(false);
+    setFormTypeEvento(false);
     const emptyData = {
       visibilidadEntrevista: false,
       visibilidadInforme: false,
@@ -655,7 +657,7 @@ const EntrevistaSiniestrosForm = () => {
   };
 
   const onSubmitEvento = async (data) => {
-    if (buttonType) {
+    if (formTypeEvento) {
       const formattedData = {
         ...data,
         fecha: formatDate(data.fecha),
@@ -677,7 +679,7 @@ const EntrevistaSiniestrosForm = () => {
   const tableClick = (index) => {
     const formattedData = {};
     reset({ ...formattedData, index });
-    setButtonType(true);
+    setFormTypeEvento(true);
   };
 
   const deleteButton = deleteEvento;
@@ -769,9 +771,7 @@ const EntrevistaSiniestrosForm = () => {
   }, [currentEntrevista?.involucrado?.length]);
 
   useEffect(() => {
-    console.log(currentEntrevista);
     if (currentEntrevista?.entrevistado) {
-      console.log(currentEntrevista.entrevistado, 'entrevistado');
       setSelectedEntrevistado(currentEntrevista.entrevistado);
     }
   }, [currentEntrevista?.entrevistado?.length]);
@@ -810,7 +810,7 @@ const EntrevistaSiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Entrevista actualizada' : 'Entrevista agregada'}
+              message={formType ? 'Entrevista actualizada' : 'Entrevista agregada'}
               redirect={redirect}
               redirectEntity={redirectEntity}
               createdEntity={entrevista}
@@ -823,11 +823,11 @@ const EntrevistaSiniestrosForm = () => {
         <div>
           {modalAddConfirmOpenEvento && (
             <ModalConfirm
-              method={buttonType ? 'Actualizar' : 'Agregar'}
+              method={formType ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmEvento()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                buttonType
+                formType
                   ? '¿Estás seguro de que quieres actualizar este evento?'
                   : '¿Estás seguro de que quieres agregar este evento?'
               }
@@ -836,7 +836,7 @@ const EntrevistaSiniestrosForm = () => {
           {modalSuccessEvento && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Evento editado' : 'Evento agregado'}
+              message={formType ? 'Evento editado' : 'Evento agregado'}
             />
           )}
         </div>
@@ -1293,15 +1293,22 @@ const EntrevistaSiniestrosForm = () => {
                 </tbody>
               </table>
             </div>
+            <div className={styles.formEvento}>
+              <div className={styles.btnContainerEvento}>
+                <Button
+                  submition={true}
+                  clickAction={openFormEventos}
+                  text={openFormEvento ? 'Eventos' : 'Eventos'}
+                />
+              </div>
+            </div>
           </div>
         </form>
-        <div className={styles.formEvento}>
-          <div className={styles.btnContainerEvento}>
-            <Button clickAction={openFormEventos} text={openFormEvento ? 'Eventos' : 'Eventos'} />
-          </div>
-        </div>
         {openFormEvento && (
-          <div className={styles.formContainer}>
+          <div>
+            <div className={styles.titleContainer}>
+              <p className={styles.title}>FORMULARIO EVENTOS</p>
+            </div>
             <form className={styles.form} onSubmit={handleSubmitEvento(onSubmitEvento)}>
               <div className={styles.formContainer}>
                 <section className={styles.inputGroups}>
@@ -1423,18 +1430,17 @@ const EntrevistaSiniestrosForm = () => {
                 <div className={styles.btnContainer}>
                   <Button
                     clickAction={handleSubmitEvento(onSubmitEvento)}
-                    text={buttonType ? 'Editar' : 'Agregar'}
+                    text={formTypeEvento ? 'Editar' : 'Agregar'}
                   />
                   <Button clickAction={resetFormEvento} text="Reiniciar" />
-                  <Button text="Cancelar" clickAction={cancelForm} />
                 </div>
               </div>
               <div className={styles.tableTop}>
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainerRueda}>
                   <FormTable
                     data={currentEvento}
-                    columnTitleArray={columnTitleArray}
-                    columns={columns}
+                    columnTitleArray={columnTitleArrayEvento}
+                    columns={columnsEvento}
                     handleClick={tableClick}
                     deleteButton={deleteButton}
                     type={true}
@@ -1442,14 +1448,6 @@ const EntrevistaSiniestrosForm = () => {
                 </div>
               </div>
             </form>
-            <div className={styles.formEvento}>
-              <div className={styles.btnContainerEvento}>
-                <Button
-                  clickAction={openFormEventos}
-                  text={openFormEvento ? 'Eventos' : 'Eventos'}
-                />
-              </div>
-            </div>
           </div>
         )}
       </div>
