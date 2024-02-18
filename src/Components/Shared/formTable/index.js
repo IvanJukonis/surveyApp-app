@@ -12,7 +12,8 @@ const FormTable = ({
   columns,
   valueField,
   classes,
-  type
+  type,
+  deleted
 }) => {
   const fieldValue = valueField;
   const [successModal, setModalSuccess] = useState(false);
@@ -101,6 +102,8 @@ const FormTable = ({
   const checkStateComprobado = (index) => checkState(index, 'comprobado');
   const checkStateInspeccion = (index) => checkState(index, 'inspeccion');
   const checkStateSustraida = (index) => checkState(index, 'sustraida');
+  const checkStateRuedaEntrevista = (index) => checkState(index, 'ruedaEntrevista');
+  const checkStateRuedaInspeccion = (index) => checkState(index, 'ruedaInspeccion');
 
   return (
     <section className={type ? `${styles.containerForm}` : `${styles.container}`}>
@@ -182,6 +185,20 @@ const FormTable = ({
                           readOnly
                           checked={checkStateSustraida(index)}
                         />
+                      ) : column.startsWith('ruedaEntrevista') ? (
+                        <input
+                          className={styles.checkboxInputSustraida}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateRuedaEntrevista(index)}
+                        />
+                      ) : column.startsWith('ruedaInspeccion') ? (
+                        <input
+                          className={styles.checkboxInputSustraida}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStateRuedaInspeccion(index)}
+                        />
                       ) : (
                         <>
                           {ifArray(row[column])}
@@ -192,12 +209,14 @@ const FormTable = ({
                       )}
                     </td>
                   ))}
-                  <td>
-                    <ButtonForm
-                      nameImg="trash-delete.svg"
-                      onAction={() => onConfirmOpen(row._id)}
-                    />
-                  </td>
+                  {deleted == undefined && (
+                    <td>
+                      <ButtonForm
+                        nameImg="trash-delete.svg"
+                        onAction={() => onConfirmOpen(row._id)}
+                      />
+                    </td>
+                  )}
                 </tr>
               );
             })}

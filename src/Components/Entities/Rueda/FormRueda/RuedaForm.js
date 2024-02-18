@@ -7,25 +7,13 @@ import FormTable from 'Components/Shared/formTable';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import {
-  updateRueda,
-  postRueda,
-  getRuedaSiniestro,
-  getRueda,
-  deleteRueda
-} from 'redux/rueda/thunks';
+import { getRuedaSiniestro, getRueda } from 'redux/rueda/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import {
-  ModalConfirm,
-  ModalSuccess,
-  ToastError,
-  Inputs,
-  Button,
-  OptionInput
-} from 'Components/Shared';
+import { ToastError, Inputs, Button, OptionInput } from 'Components/Shared';
+import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 
 const RuedasForm = () => {
   const dispatch = useDispatch();
@@ -36,12 +24,9 @@ const RuedasForm = () => {
   const { createdEntity } = params || {};
 
   const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [rueda, setRueda] = useState({});
-  const [buttonType, setButtonType] = useState(false);
-  const [selectedInvolucrados, setSelectedInvolucrados] = useState([]);
-  const [selectedVehiculos, setSelectedVehiculos] = useState([]);
+  const [fraudRueda, setFraudRueda] = useState([]);
+  const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
+  const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
 
   const currentRueda = useSelector((state) => state.rueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
@@ -59,211 +44,6 @@ const RuedasForm = () => {
   const columnInvolucrado = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
   const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
   const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
-
-  const schema = Joi.object({
-    descripcion: Joi.string()
-      .min(3)
-      .max(50)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'La descripcion debe ser una cadena de texto',
-        'string.empty': 'La descripcion es un campo requerido',
-        'string.min': 'La descripcion debe tener al menos 3 caracteres',
-        'string.max': 'La descripcion debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'La descripcion debe contener solo letras'
-      })
-      .required(),
-    marca: Joi.string()
-      .min(3)
-      .max(50)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'La marca debe ser una cadena de texto',
-        'string.empty': 'La marca es un campo requerido',
-        'string.min': 'La marca debe tener al menos 3 caracteres',
-        'string.max': 'La marca debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'La marca debe contener solo letras'
-      })
-      .required(),
-    numDot: Joi.string()
-      .min(3)
-      .max(50)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'El DOT debe ser una cadena de texto',
-        'string.empty': 'El DOT es un campo requerido',
-        'string.min': 'El DOT debe tener al menos 3 caracteres',
-        'string.max': 'El DOT debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El DOT debe contener solo letras'
-      })
-      .required(),
-    numLlanta: Joi.string()
-      .min(3)
-      .max(50)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'El numero de llanta debe ser una cadena de texto',
-        'string.empty': 'El numero de llanta es un campo requerido',
-        'string.min': 'El numero de llanta debe tener al menos 3 caracteres',
-        'string.max': 'El numero de llanta debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'El numero de llanta debe contener solo letras'
-      })
-      .required(),
-    tipo: Joi.string()
-      .valid('Original', 'Suplente', 'Prestada')
-      .messages({
-        'any.only': 'Selecciona un tipo permitido'
-      })
-      .required(),
-    tipoLlanta: Joi.string()
-      .valid('Aleacion', 'Chapa', 'Otro')
-      .messages({
-        'any.only': 'Selecciona un tipo de llanta permitido'
-      })
-      .required(),
-    posicionActual: Joi.string()
-      .valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N')
-      .messages({
-        'any.only': 'Selecciona un tipo de posicion permitida'
-      })
-      .required(),
-    fechaColocacion: Joi.date()
-      .messages({
-        'date.base': 'Ingrese una fecha válida',
-        'date.empty': 'La fecha de colocacion es un campo requerido'
-      })
-      .required(),
-    posicionPrevia: Joi.string()
-      .valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N')
-      .messages({
-        'any.only': 'Selecciona un tipo de posicion permitida'
-      })
-      .required(),
-    posicionTransitoria: Joi.string()
-      .valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N')
-      .messages({
-        'any.only': 'Selecciona un tipo de posicion permitida'
-      })
-      .required(),
-    sustraida: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Sustraida" es un campo booleano',
-        'boolean.empty': 'El campo "Sustraida" debe tener un valor determinado'
-      })
-      .required(),
-    estado: Joi.string()
-      .valid('Nuevo', 'Medio desgastado', 'Desgastado')
-      .messages({
-        'any.only': 'Selecciona un tipo de estado permitido'
-      })
-      .required(),
-    aporteFoto: Joi.string()
-      .valid('Se aportan fotos previas', 'No se aportan fotos previas')
-      .messages({
-        'any.only': 'Selecciona un tipo de aporte de fotos permitido'
-      })
-      .required(),
-    metadatosFoto: Joi.string()
-      .valid('Metadatos presentes', 'Sin metadatos presentes')
-      .messages({
-        'any.only': 'Selecciona un tipo de metadato permitido'
-      })
-      .required(),
-    factura: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Factura" es un campo booleano',
-        'boolean.empty': 'El campo "Factura" debe tener un valor determinado'
-      })
-      .required(),
-    aporteFactura: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Aporte de factura" es un campo booleano',
-        'boolean.empty': 'El campo "Aporte de factura" debe tener un valor determinado'
-      })
-      .required(),
-    anotaciones: Joi.string()
-      .min(3)
-      .max(50)
-      .regex(/^[a-zA-Z ]+$/)
-      .messages({
-        'string.base': 'Las anotaciones debe ser una cadena de texto',
-        'string.empty': 'Las anotaciones es un campo requerido',
-        'string.min': 'Las anotaciones debe tener al menos 3 caracteres',
-        'string.max': 'Las anotaciones debe tener como máximo 15 caracteres',
-        'string.pattern.base': 'Las anotaciones debe contener solo letras'
-      })
-      .required(),
-
-    siniestro: Joi.any(),
-
-    __v: Joi.any(),
-    _id: Joi.any()
-  });
-
-  const formatDate = (dateString) => {
-    const dateObject = new Date(dateString);
-    const year = dateObject.getFullYear();
-    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObject.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors }
-  } = useForm({
-    mode: 'onBlur',
-    resolver: joiResolver(schema),
-    defaultValues: { ...rueda }
-  });
-
-  const onConfirmFunction = async () => {
-    const formType = 'create';
-    if (formType == 'create') {
-      const addRuedaResponse = await postRueda(
-        dispatch,
-        rueda,
-        selectedInvolucrados,
-        selectedVehiculos,
-        data.id
-      );
-      if (addRuedaResponse.type === 'POST_RUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {}, 1000);
-      }
-      return setToastErroOpen(true);
-    } else {
-      const editRuedaResponse = await updateRueda(dispatch, rueda._id, rueda);
-      if (editRuedaResponse.type === 'UPDATE_RUEDA_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {}, 1000);
-      }
-      return setToastErroOpen(true);
-    }
-  };
-
-  const onSubmit = async (data) => {
-    if (buttonType) {
-      const formattedData = {
-        ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
-      };
-      setRueda(formattedData);
-      setModalAddConfirmOpen(true);
-    } else {
-      const formattedData = {
-        ...data,
-        fechaNacimiento: formatDate(data.fechaNacimiento)
-      };
-      setRueda(formattedData);
-      setModalAddConfirmOpen(true);
-    }
-  };
-
   const arrayTipo = ['Original', 'Suplente', 'Prestada'];
   const arrayTipoLlanta = ['Aleacion', 'Chapa', 'Otro'];
   const arrayPosicionActual = ['DI', 'DD', 'TI', 'TD', 'AUX', 'N/N'];
@@ -273,39 +53,150 @@ const RuedasForm = () => {
   const arrayAporteFoto = ['Se aportan fotos previas', 'No se aportan fotos previas'];
   const arrayMetadatosFoto = ['Metadatos presentes', 'Sin metadatos presentes'];
 
-  const columnTitleArray = ['Marca', 'Dot', 'Estado'];
-  const columns = ['marca', 'dot', 'estado'];
+  const columnTitleArray = [
+    'Marca',
+    'Dot',
+    'Llanta',
+    'Estado',
+    'Inspeccion',
+    'Entrevista',
+    'Sustraida'
+  ];
+  const columns = [
+    'marca',
+    'numDot',
+    'numLlanta',
+    'estado',
+    'ruedaInspeccion',
+    'ruedaEntrevista',
+    'sustraida'
+  ];
 
-  const resetForm = () => {
-    setButtonType(false);
-    const emptyData = {
-      descripcion: '',
-      marca: '',
-      numDot: '',
-      numLlanta: '',
-      tipo: 'Pick tipo',
-      tipoLlanta: 'Pick llanta',
-      posicionActual: 'Pick actual',
-      posicionPrevia: 'Pick previa',
-      fechaColocacion: 'dd / mm / aaaa',
-      posicionTransitoria: 'Pick transitoria',
-      sustraida: false,
-      factura: false,
-      aporteFactura: false,
-      aporteFoto: 'Pick foto',
-      metadatosFoto: 'Pick metadatos',
-      anotaciones: '',
-      estado: 'Pick estado'
+  const schema = Joi.object({
+    descripcion: Joi.string()
+      .min(3)
+      .max(100)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 100 caracteres'
+      })
+      .required(),
+    marca: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    numDot: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    numLlanta: Joi.string()
+      .min(3)
+      .max(20)
+      .messages({
+        'string.base': 'El campo debe ser una cadena de texto',
+        'string.empty': 'Campo requerido',
+        'string.min': 'El campo debe tener al menos 3 caracteres',
+        'string.max': 'El campo debe tener como máximo 20 caracteres'
+      })
+      .required(),
+    tipo: Joi.string().valid('Original', 'Suplente', 'Prestada').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    tipoLlanta: Joi.string().valid('Aleacion', 'Chapa', 'Otro').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    posicionActual: Joi.string().valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    fechaColocacion: Joi.date()
+      .empty('')
+      .messages({
+        'date.base': 'El campo "Fecha" debe ser una fecha valida.',
+        'date.empty': 'El campo "Fecha" no puede permanecer vacio.'
+      })
+      .required(),
+    posicionPrevia: Joi.string().valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    posicionTransitoria: Joi.string().valid('DI', 'DD', 'TI', 'TD', 'AUX', 'N/N').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    sustraida: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Sustraida" es un campo booleano',
+        'boolean.empty': 'El campo "Sustraida" debe tener un valor determinado'
+      })
+      .required(),
+    estado: Joi.string().valid('Nuevo', 'Medio desgastado', 'Desgastado').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    aporteFoto: Joi.string()
+      .valid('Se aportan fotos previas', 'No se aportan fotos previas')
+      .messages({
+        'any.only': 'Seleccione una opción valida'
+      }),
+    metadatosFoto: Joi.string().valid('Metadatos presentes', 'Sin metadatos presentes').messages({
+      'any.only': 'Seleccione una opción valida'
+    }),
+    factura: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Factura" es un campo booleano',
+        'boolean.empty': 'El campo "Factura" debe tener un valor determinado'
+      })
+      .required(),
+    aporteFactura: Joi.boolean()
+      .messages({
+        'boolean.base': 'El campo "Aporte Factura" es un campo booleano',
+        'boolean.empty': 'El campo "Aporte Factura" debe tener un valor determinado'
+      })
+      .required(),
+    anotaciones: Joi.string()
+      .min(3)
+      .max(200)
+      .messages({
+        'string.base': 'El campo "Anotaciones" debe ser una cadena de texto',
+        'string.empty': 'El campo "Anotaciones" es un campo requerido',
+        'string.min': 'El campo "Anotaciones" debe tener al menos 3 caracteres'
+      })
+      .required(),
+    siniestro: Joi.any(),
+    __v: Joi.any(),
+    _id: Joi.any(),
+    vehiculo: Joi.any(),
+    involucrado: Joi.any()
+  });
+
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    mode: 'onBlur',
+    resolver: joiResolver(schema)
+  });
+
+  const tableClick = (index) => {
+    const resetDataRueda = {
+      ...currentRueda[index]
     };
-    reset({ ...emptyData });
-  };
-
-  const deleteButton = deleteRueda;
-
-  const tableClick = () => {
-    const formattedData = {};
-    reset({ ...formattedData });
-    setButtonType(true);
+    reset({ ...resetDataRueda });
+    setSelectedInvolucradosRueda(resetDataRueda.involucrado);
+    setSelectedVehiculosRueda(resetDataRueda.vehiculo);
   };
 
   const cancelForm = () => {
@@ -321,60 +212,63 @@ const RuedasForm = () => {
     }
   };
 
-  const checkStateSelectedVehiculo = (column, index) => {
+  const checkStateSelectedVehiculoRueda = (column, index) => {
     if (column === 'selected' && currentRueda && currentRueda.vehiculo) {
-      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+      if (selectedVehiculosRueda.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
         return true;
       }
     }
     if (currentRueda) {
-      if (selectedVehiculos.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
+      if (selectedVehiculosRueda.find((vehiculo) => vehiculo === vehiculos[index]._id)) {
         return true;
       }
     }
     return false;
   };
 
-  const handleCheckboxSelectedVehiculo = (index) => {
-    const isSelectedVehiculo = selectedVehiculos.find(
+  const handleCheckboxSelectedVehiculoRueda = (index) => {
+    const isSelectedVehiculoRueda = selectedVehiculosRueda.find(
       (vehiculo) => vehiculos[index]._id === vehiculo
     );
-    if (isSelectedVehiculo) {
-      const newListSelectedVehiculos = selectedVehiculos.filter(
+    if (isSelectedVehiculoRueda) {
+      const newListSelectedVehiculosRueda = selectedVehiculosRueda.filter(
         (vehiculo) => vehiculos[index]._id !== vehiculo
       );
-      setSelectedVehiculos(newListSelectedVehiculos);
+      setSelectedVehiculosRueda(newListSelectedVehiculosRueda);
     } else {
-      setSelectedVehiculos((prevState) => [...prevState, vehiculos[index]._id]);
+      setSelectedVehiculosRueda([vehiculos[index]._id]);
     }
   };
 
-  const checkStateSelected = (column, index) => {
+  const checkStateSelectedRueda = (column, index) => {
     if (column === 'selected' && currentRueda) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+      if (
+        selectedInvolucradosRueda.find((involucrado) => involucrado === involucrados[index]._id)
+      ) {
         return true;
       }
     }
     if (!currentRueda) {
-      if (selectedInvolucrados.find((involucrado) => involucrado === involucrados[index]._id)) {
+      if (
+        selectedInvolucradosRueda.find((involucrado) => involucrado === involucrados[index]._id)
+      ) {
         return true;
       }
     }
     return false;
   };
 
-  const handleCheckboxSelected = (index) => {
-    const isSelectedInvolucrado = selectedInvolucrados.find(
+  const handleCheckboxSelectedRueda = (index) => {
+    const isSelectedInvolucradoRueda = selectedInvolucradosRueda.find(
       (involucrado) => involucrados[index]._id === involucrado
     );
-    if (isSelectedInvolucrado) {
-      const newListSelectedInvolucrados = selectedInvolucrados.filter(
+    if (isSelectedInvolucradoRueda) {
+      const newListSelectedInvolucradosRueda = selectedInvolucradosRueda.filter(
         (involucrado) => involucrados[index]._id !== involucrado
       );
-      setSelectedInvolucrados(newListSelectedInvolucrados);
+      setSelectedInvolucradosRueda(newListSelectedInvolucradosRueda);
     } else {
-      setSelectedInvolucrados((prevState) => [...prevState, involucrados[index]._id]);
-      console.log(selectedInvolucrados);
+      setSelectedInvolucradosRueda((prevState) => [...prevState, involucrados[index]._id]);
     }
   };
 
@@ -417,325 +311,391 @@ const RuedasForm = () => {
     }
   };
 
+  const checkFraud = () => {
+    console.log('hola');
+    const ruedasNoSustraidaList = currentRueda.filter((rueda) => !rueda.sustraida);
+    const ruedasSustraidaList = currentRueda.filter((rueda) => rueda.sustraida);
+    const coincidenciasList = [];
+
+    for (const sustraida of ruedasSustraidaList) {
+      for (const noSustraida of ruedasNoSustraidaList) {
+        if (
+          sustraida.marca === noSustraida.marca ||
+          sustraida.numDot === noSustraida.numDot ||
+          sustraida.numLlanta === noSustraida.numLlanta
+        ) {
+          coincidenciasList.push({ sustraida, noSustraida });
+          setFraudRueda(coincidenciasList);
+          console.log(fraudRueda);
+        }
+      }
+    }
+  };
+
+  const handleInvolucrado = () => {
+    history.push(`/controlador/siniestros/involucrado/form/${data.id}`, {
+      params: { mode: 'create' }
+    });
+  };
+
+  const handleVehiculo = () => {
+    history.push(`/controlador/siniestros/vehiculo/form/${data.id}`, {
+      params: { mode: 'create' }
+    });
+  };
+
   useEffect(() => {
     getRuedaSiniestro(dispatch, data.id);
     getRueda(dispatch);
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);
+    checkFraud();
   }, []);
-
-  useEffect(() => {
-    if (currentRueda?.involucrado) {
-      setSelectedInvolucrados(currentRueda.involucrado);
-    }
-  }, [currentRueda?.involucrado?.length]);
-
-  useEffect(() => {
-    if (currentRueda?.vehiculo) {
-      setSelectedVehiculos(currentRueda.vehiculo);
-    }
-  }, [currentRueda?.vehiculo?.length]);
 
   return (
     <div className={styles.container}>
-      {
-        <div>
-          {modalAddConfirmOpen && (
-            <ModalConfirm
-              method={buttonType ? 'Update' : 'Add'}
-              onConfirm={() => onConfirmFunction()}
-              setModalConfirmOpen={setModalAddConfirmOpen}
-              message={
-                buttonType
-                  ? '¿Estás seguro de que quieres actualizar este rueda?'
-                  : '¿Estás seguro de que quieres agregar este rueda?'
-              }
-            />
-          )}
-          {modalSuccess && (
-            <ModalSuccess
-              setModalSuccessOpen={setModalSuccessOpen}
-              message={buttonType ? 'Rueda editado' : 'Rueda agregado'}
-            />
-          )}
-        </div>
-      }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{data.id ? 'Rueda' : 'Rueda'}</h3>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>RUEDAS</p>
       </div>
       <div className={styles.innerContainer}>
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-          <section className={styles.inputGroups}>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.descripcion?.message}
-                  register={register}
-                  nameTitle="Descripcion"
-                  type="text"
-                  nameInput="descripcion"
-                />
+        <form className={styles.form} onSubmit={handleSubmit()}>
+          <div className={styles.formContainer}>
+            <section className={styles.inputGroups}>
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainerRueda}>
+                  <TextArea
+                    error={errors.descripcion?.message}
+                    register={register}
+                    nameTitle="Descripción"
+                    type="text"
+                    nameInput="descripcion"
+                    styleInput="small"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayPosicionActual}
+                    dataLabel="Posicion Actual"
+                    name="posicionActual"
+                    register={register}
+                    error={errors.posicionActual?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.numLlanta?.message}
+                    register={register}
+                    nameTitle="Numero Llanta"
+                    type="text"
+                    nameInput="numLlanta"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errors.anotaciones?.message}
+                    register={register}
+                    nameTitle="Anotaciones"
+                    type="text"
+                    nameInput="anotaciones"
+                    styleInput="threeInputs"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.marca?.message}
-                  register={register}
-                  nameTitle="Marca"
-                  type="text"
-                  nameInput="marca"
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.marca?.message}
+                    register={register}
+                    nameTitle="Marca"
+                    type="text"
+                    nameInput="marca"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayTipo}
+                    dataLabel="Tipo"
+                    name="tipo"
+                    register={register}
+                    error={errors.tipo?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayPosicionPrevia}
+                    dataLabel="Posición Previa"
+                    name="posicionPrevia"
+                    register={register}
+                    error={errors.posicionPrevia?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errors.fechaColocacion?.message}
+                    register={register}
+                    nameTitle="Fecha Colocación"
+                    type="date"
+                    nameInput="fechaColocacion"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayMetadatosFoto}
+                    dataLabel="Metadatos Fotos"
+                    name="metadatosFoto"
+                    register={register}
+                    error={errors.metadatosFoto?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.aporteFactura?.message}
+                    register={register}
+                    nameTitle="Aporte Factura"
+                    type="checkbox"
+                    nameInput="aporteFactura"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.sustraida?.message}
+                    register={register}
+                    nameTitle="Sustraida"
+                    type="checkbox"
+                    nameInput="sustraida"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.numDot?.message}
-                  register={register}
-                  nameTitle="DOT"
-                  type="text"
-                  nameInput="numDot"
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <Inputs
+                    error={errors.numDot?.message}
+                    register={register}
+                    nameTitle="Dot"
+                    type="text"
+                    nameInput="numDot"
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayTipoLlanta}
+                    dataLabel="Tipo Llanta"
+                    name="tipoLlanta"
+                    register={register}
+                    error={errors.tipoLlanta?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayPosicionTransitoria}
+                    dataLabel="Posición Transitoria"
+                    name="posicionTransitoria"
+                    register={register}
+                    error={errors.posicionTransitoria?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayAporteFoto}
+                    dataLabel="Aporte Fotos"
+                    name="aporteFoto"
+                    register={register}
+                    error={errors.aporteFoto?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayEstado}
+                    dataLabel="Estado"
+                    name="estado"
+                    register={register}
+                    error={errors.estado?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errors.factura?.message}
+                    register={register}
+                    nameTitle="Factura"
+                    type="checkbox"
+                    nameInput="factura"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.numLlanta?.message}
-                  register={register}
-                  nameTitle="Numero Llanta"
-                  type="text"
-                  nameInput="numLlanta"
-                />
-              </div>
+            </section>
+            <div className={styles.btnContainer}>
+              <Button text="Cancelar" clickAction={cancelForm} />
             </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayTipo}
-                  dataLabel="Tipo"
-                  name="tipo"
-                  register={register}
-                  error={errors.tipo?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayTipoLlanta}
-                  dataLabel="Tipo Llanta"
-                  name="tipoLlanta"
-                  register={register}
-                  error={errors.tipoLlanta?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayPosicionActual}
-                  dataLabel="Posicion Actual"
-                  name="posicionActual"
-                  register={register}
-                  error={errors.posicionActual?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errors.fechaColocacion?.message}
-                  register={register}
-                  nameTitle="Fecha Colocacion"
-                  type="date"
-                  nameInput="fechaColocacion"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayPosicionPrevia}
-                  dataLabel="Posicion Previa"
-                  name="posicionPrevia"
-                  register={register}
-                  error={errors.posicionPrevia?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayPosicionTransitoria}
-                  dataLabel="Posicion Transitoria"
-                  name="posicionTransitoria"
-                  register={register}
-                  error={errors.posicionTransitoria?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.sustraida?.message}
-                  register={register}
-                  nameTitle="Sustraida"
-                  type="checkbox"
-                  nameInput="sustraida"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayEstado}
-                  dataLabel="Estado"
-                  name="estado"
-                  register={register}
-                  error={errors.estado?.message}
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayAporteFoto}
-                  dataLabel="Aporte Foto"
-                  name="aporteFoto"
-                  register={register}
-                  error={errors.aporteFoto?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayMetadatosFoto}
-                  dataLabel="Metadatos Foto"
-                  name="metadatosFoto"
-                  register={register}
-                  error={errors.metadatosFoto?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.factura?.message}
-                  register={register}
-                  nameTitle="Factura"
-                  type="checkbox"
-                  nameInput="factura"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errors.aporteFactura?.message}
-                  register={register}
-                  nameTitle="Aporte Factura"
-                  type="checkbox"
-                  nameInput="aporteFactura"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <Inputs
-                  error={errors.anotaciones?.message}
-                  register={register}
-                  nameTitle="Anotaciones"
-                  type="text"
-                  nameInput="anotaciones"
-                />
-              </div>
-            </div>
-          </section>
-          <div className={styles.bottomTable}>
-            <table className={styles.table}>
-              <thead>
-                <tr className={styles.tableContent}>
-                  {columnTitleInvolucrado.map((column, index) => (
-                    <th key={index}>{column}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {involucrados.map((row, index) => {
-                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                  return (
-                    <tr className={rowClass} key={index}>
-                      {columnInvolucrado.map((column, columnIndex) => (
-                        <td key={columnIndex}>
-                          {column === 'selected' ? (
-                            <input
-                              type="checkbox"
-                              className={styles.checkboxInput}
-                              onChange={() => handleCheckboxSelected(index)}
-                              checked={checkStateSelected(column, index)}
-                            />
-                          ) : column.startsWith('prioridad') ? (
-                            <input
-                              className={styles.checkboxInput}
-                              type="checkbox"
-                              readOnly
-                              checked={checkState(index, 'inv')}
-                            />
-                          ) : (
-                            <>
-                              {ifNotArrayNotObject(row, column)}
-                              {ifNotExist(row[column])}
-                            </>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <table className={styles.table}>
-              <thead>
-                <tr className={styles.tableContent}>
-                  {columnTitleVehiculo.map((column, index) => (
-                    <th key={index}>{column}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {vehiculos.map((row, index) => {
-                  const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
-
-                  return (
-                    <tr className={rowClass} key={index}>
-                      {columnVehiculo.map((column, columnIndex) => (
-                        <td key={columnIndex}>
-                          {column === 'selected' ? (
-                            <input
-                              type="checkbox"
-                              className={styles.checkboxInput}
-                              onChange={() => handleCheckboxSelectedVehiculo(index)}
-                              checked={checkStateSelectedVehiculo(column, index)}
-                            />
-                          ) : column.startsWith('prioridad') ? (
-                            <input
-                              className={styles.checkboxInput}
-                              type="checkbox"
-                              readOnly
-                              checked={checkState(index, 'veh')}
-                            />
-                          ) : (
-                            <>
-                              {ifNotArrayNotObject(row, column)}
-                              {ifNotExist(row[column])}
-                            </>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
           </div>
-          <div className={styles.btnContainer}>
-            <Button clickAction={handleSubmit(onSubmit)} text={buttonType ? 'Editar' : 'Agregar'} />
-            <Button clickAction={resetForm} text="Reiniciar" />
-            <Button text="Cancelar" clickAction={cancelForm} />
+          <div className={styles.bottomTable}>
+            <div className={styles.tableContainer}>
+              <Button submition={true} clickAction={handleInvolucrado} text="Involucrados" />
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleInvolucrado.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {involucrados.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnInvolucrado.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelectedRueda(index)}
+                                checked={checkStateSelectedRueda(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'inv')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className={styles.tableContainer}>
+              <Button submition={true} clickAction={handleVehiculo} text="Vehiculos" />
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tableContent}>
+                    {columnTitleVehiculo.map((column, index) => (
+                      <th key={index}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {vehiculos.map((row, index) => {
+                    const rowClass =
+                      index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+
+                    return (
+                      <tr className={rowClass} key={index}>
+                        {columnVehiculo.map((column, columnIndex) => (
+                          <td key={columnIndex}>
+                            {column === 'selected' ? (
+                              <input
+                                type="checkbox"
+                                className={styles.checkboxInput}
+                                onChange={() => handleCheckboxSelectedVehiculoRueda(index)}
+                                checked={checkStateSelectedVehiculoRueda(column, index)}
+                              />
+                            ) : column.startsWith('prioridad') ? (
+                              <input
+                                className={styles.checkboxInput}
+                                type="checkbox"
+                                readOnly
+                                checked={checkState(index, 'veh')}
+                              />
+                            ) : (
+                              <>
+                                {ifNotArrayNotObject(row, column)}
+                                {ifNotExist(row[column])}
+                              </>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </form>
-        <div className={styles.rightTable}>
-          <FormTable
-            data={ruedas}
-            columnTitleArray={columnTitleArray}
-            columns={columns}
-            handleClick={tableClick}
-            deleteButton={deleteButton}
-          />
+        <div className={styles.tableTop}>
+          <div className={styles.tableContainerRueda}>
+            <FormTable
+              data={ruedas}
+              columnTitleArray={columnTitleArray}
+              columns={columns}
+              handleClick={tableClick}
+              deleted={true}
+            />
+          </div>
+          <div className={styles.btnContainerAnalisis}>
+            <Button text="COMPARAR" clickAction={() => checkFraud()} />
+          </div>
+          {
+            <div>
+              {fraudRueda.length > 0 && (
+                <div className={styles.warningContainer}>
+                  <div className={styles.warningContainerTitle}>
+                    <p>Atención.</p>
+                    <img
+                      className={styles.icon}
+                      src={`${process.env.PUBLIC_URL}/assets/images/exclamacion.jpg`}
+                      alt="Exclamation Icon"
+                    />
+                  </div>
+                  <div className={styles.warningContainerText}>
+                    <p>
+                      Coincidencia encontrada entre ruedas. Posible acción fraudulenta detectada.
+                    </p>
+                    {fraudRueda.map((coincidencia, index) => (
+                      <div key={index}>
+                        <p>
+                          Rueda Sustraída: Dotacion ({coincidencia.sustraida.numDot}) / Llanta (
+                          {coincidencia.sustraida.numLlanta}) / Marca (
+                          {coincidencia.sustraida.marca})
+                        </p>
+                        <p>
+                          Rueda No sustraída: Dotacion ({coincidencia.noSustraida.numDot}) / Llanta
+                          ({coincidencia.noSustraida.numLlanta}) / Marca (
+                          {coincidencia.noSustraida.marca})
+                        </p>
+                        <p>____________________________________</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          }
+          {
+            <div>
+              {fraudRueda.length == 0 && (
+                <div className={styles.successContainer}>
+                  <div className={styles.successContainerTitle}>
+                    <p>Atención.</p>
+                  </div>
+                  <div className={styles.successContainerText}>
+                    <p>
+                      No se encuentran similitudes significativas entre las ruedas sustraidas y las
+                      no sustraidas.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          }
         </div>
       </div>
       {toastError && (

@@ -122,7 +122,7 @@ function Layout() {
                   path="/controlador/siniestros/lugarRoboRueda/form/:id?"
                   component={LugarRoboRuedaController}
                 />
-                <Route path="/controlador/siniestros/rueda/form/:id?" component={RuedaForm} />
+                <Route path="/controlador/siniestros/rueda/:id?" component={RuedaForm} />
                 <Route
                   path="/relevador/siniestros/lugarSiniestro/form/:id?"
                   component={LugarSiniestroForm}

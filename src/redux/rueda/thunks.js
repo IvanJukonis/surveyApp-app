@@ -23,15 +23,12 @@ export const getRuedaSiniestro = async (dispatch, siniestroId, idEntidad) => {
     const data = await response.json();
     const ruedasList = data.data;
     const ruedasSiniestroList = ruedasList.filter((rueda) => rueda.siniestro[0] === siniestroId);
-    console.log(idEntidad);
     const ruedaEntidadInspeccion = ruedasSiniestroList.filter(
       (rueda) => rueda.inspeccionRoboRueda && rueda.inspeccionRoboRueda[0] === idEntidad
     );
     const ruedaEntidadEntrevista = ruedasSiniestroList.filter(
       (rueda) => rueda.entrevistaRoboRueda && rueda.entrevistaRoboRueda[0] === idEntidad
     );
-    console.log(ruedasSiniestroList, 'getruedaAll');
-    console.log(ruedaEntidadInspeccion, 'getrueda');
     dispatch(getRuedaPending(false));
     dispatch(getRuedaSuccess([...ruedaEntidadEntrevista, ...ruedaEntidadInspeccion]));
   } catch (error) {
