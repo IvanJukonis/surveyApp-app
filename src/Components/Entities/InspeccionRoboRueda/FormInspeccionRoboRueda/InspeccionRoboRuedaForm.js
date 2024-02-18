@@ -102,8 +102,24 @@ const InspeccionRoboRuedasForm = () => {
   const columnsRueda = ['numDot', 'numLlanta', 'tipo', 'marca', 'posicionActual', 'sustraida'];
 
   //Array Inspecciones
-  const columnTitleInspeccion = ['Fecha', 'Hora', 'Direccion', 'Permiso', 'Presencia'];
-  const columnsInspeccion = ['fecha', 'hora', 'direccion', 'permiso', 'presencia'];
+  const columnTitleInspeccion = [
+    'Fecha',
+    'Hora',
+    'Direccion',
+    'Ciudad',
+    'Permiso',
+    'Programada',
+    'Presencia'
+  ];
+  const columnsInspeccion = [
+    'fecha',
+    'hora',
+    'direccion',
+    'ciudad',
+    'permiso',
+    'programada',
+    'presencia'
+  ];
   const columnTitleInvolucrado = [
     'Seleccionar',
     'Nombre',
@@ -394,7 +410,11 @@ const InspeccionRoboRuedasForm = () => {
     __v: Joi.any(),
     _id: Joi.any(),
     vehiculo: Joi.any(),
-    involucrado: Joi.any()
+    involucrado: Joi.any(),
+    entrevistaRoboRueda: Joi.any(),
+    ruedaInspeccion: Joi.any(),
+    ruedaEntrevista: Joi.any(),
+    inspeccionRoboRueda: Joi.any()
   });
 
   const {
@@ -449,7 +469,7 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const resetFormEvento = () => {
-    setButtonType(false);
+    setFormTypeEvento(false);
     const emptyData = {
       visibilidadEntrevista: false,
       visibilidadInforme: false,
@@ -467,7 +487,7 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const resetFormRueda = () => {
-    setButtonType(false);
+    setFormTypeRueda(false);
     const emptyData = {
       descripcion: '',
       marca: '',
@@ -833,8 +853,8 @@ const InspeccionRoboRuedasForm = () => {
   const tableClick = (index) => {
     const formattedData = {
       ...currentInspeccionRoboRueda[index],
-      fechaNacimiento: formatDate(currentInspeccionRoboRueda[index].fechaNacimiento),
-      licenciaVencimiento: formatDate(currentInspeccionRoboRueda[index].licenciaVencimiento)
+      fecha: formatDate(currentInspeccionRoboRueda[index].fecha),
+      hora: formatDate(currentInspeccionRoboRueda[index].hora)
     };
     setIdInspeccion(currentInspeccionRoboRueda[index]._id);
     reset({ ...formattedData });
@@ -1154,7 +1174,7 @@ const InspeccionRoboRuedasForm = () => {
             </div>
           </div>
           <div className={styles.bottomTable}>
-            <div className={styles.tableContainer}>
+            <div className={styles.tableContainerEntities}>
               <Button clickAction={() => involucradoRedirect()} text="Involucrados" />
               <table className={styles.table}>
                 <thead>
@@ -1201,7 +1221,7 @@ const InspeccionRoboRuedasForm = () => {
                 </tbody>
               </table>
             </div>
-            <div className={styles.tableContainer}>
+            <div className={styles.tableContainerEntities}>
               <Button clickAction={() => vehiculoRedirect()} text="Vehiculos" />
               <table className={styles.table}>
                 <thead>
@@ -1613,7 +1633,7 @@ const InspeccionRoboRuedasForm = () => {
                     <table className={styles.table}>
                       <thead>
                         <tr className={styles.tableContent}>
-                          {columnTitleRueda.map((column, index) => (
+                          {columnTitleInvolucrado.map((column, index) => (
                             <th key={index}>{column}</th>
                           ))}
                         </tr>
@@ -1625,7 +1645,7 @@ const InspeccionRoboRuedasForm = () => {
 
                           return (
                             <tr className={rowClass} key={index}>
-                              {columnsRueda.map((column, columnIndex) => (
+                              {columnInvolucrado.map((column, columnIndex) => (
                                 <td key={columnIndex}>
                                   {column === 'selected' ? (
                                     <input
@@ -1710,7 +1730,9 @@ const InspeccionRoboRuedasForm = () => {
           </div>
         )}
       </div>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message={'Error'} />}
+      {toastError && (
+        <ToastError setToastErroOpen={setToastErroOpen} message={'Seleccione una inspeccion'} />
+      )}
     </div>
   );
 };

@@ -125,6 +125,18 @@
   margin: 10px;
 }
 
+.tableContainerEntities {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  margin-top: 10px;
+  margin-left: 10px;
+  padding: 10px;
+}
+
 .tableContainerRueda {
   display: flex;
   flex-direction: column;
@@ -239,9 +251,9 @@
 }
 
 .title {
-  padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 0px;
+  padding: 6px;
+  margin-top: 6px;
+  margin-bottom: 4px;
   font: 150% sans-serif;
   color: #252440;
   background-color: #FAFAFA;
@@ -260,6 +272,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   background-color: #FAFAFA;
   border: 3px solid #ECECEC;
   margin: 10px;

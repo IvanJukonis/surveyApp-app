@@ -102,6 +102,7 @@ const FormTable = ({
   const checkStateComprobado = (index) => checkState(index, 'comprobado');
   const checkStateInspeccion = (index) => checkState(index, 'inspeccion');
   const checkStateSustraida = (index) => checkState(index, 'sustraida');
+  const checkStatePresencia = (index) => checkState(index, 'presencia');
   const checkStateRuedaEntrevista = (index) => checkState(index, 'ruedaEntrevista');
   const checkStateRuedaInspeccion = (index) => checkState(index, 'ruedaInspeccion');
 
@@ -198,6 +199,13 @@ const FormTable = ({
                           type="checkbox"
                           readOnly
                           checked={checkStateRuedaInspeccion(index)}
+                        />
+                      ) : column.startsWith('presencia') ? (
+                        <input
+                          className={styles.checkboxInputPresencia}
+                          type="checkbox"
+                          readOnly
+                          checked={checkStatePresencia(index)}
                         />
                       ) : (
                         <>

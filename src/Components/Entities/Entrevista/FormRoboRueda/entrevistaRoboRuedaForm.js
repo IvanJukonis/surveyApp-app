@@ -502,7 +502,11 @@ const EntrevistaRoboRuedasForm = () => {
     __v: Joi.any(),
     _id: Joi.any(),
     vehiculo: Joi.any(),
-    involucrado: Joi.any()
+    involucrado: Joi.any(),
+    entrevistaRoboRueda: Joi.any(),
+    ruedaInspeccion: Joi.any(),
+    ruedaEntrevista: Joi.any(),
+    inspeccionRoboRueda: Joi.any()
   });
 
   const formatDate = (dateString) => {

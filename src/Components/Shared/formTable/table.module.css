@@ -104,6 +104,12 @@
   margin-left: 18px;
 }
 
+.checkboxInputPresencia {
+  width: 15px;
+  height: 15px;
+  margin-left: 25px;
+}
+
 .trash_edit {
   width: 10px;
   height: 10px;

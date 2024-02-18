@@ -22,6 +22,7 @@ function Entrevista() {
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
   const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const [selectedEntrevista, setSelectedEntrevista] = useState([]);
 
   let entrevistas = [];
 
@@ -117,6 +118,9 @@ function Entrevista() {
                 columns={columns}
                 handleClick={handleEditClick}
                 deleteButton={deleteEntrevistaRoboRueda}
+                exportExcel={true}
+                selectedEntrevista={selectedEntrevista}
+                setSelectedEntrevista={setSelectedEntrevista}
               />
             )}
           </div>
