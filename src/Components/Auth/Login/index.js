@@ -12,11 +12,13 @@ const schema = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .messages({
-      'string.base': 'The email must be a text string',
-      'string.empty': 'The email is a required field',
-      'string.email': 'The email must be a valid email address',
-      'string.minDomainSegments': 'The email must have at least 2 domain segments',
-      'string.tlds.allow': 'The email must have a valid top-level domain (.com or .net)'
+      'string.base': 'El correo electrónico debe ser una cadena de texto',
+      'string.empty': 'El correo electrónico es un campo obligatorio',
+      'string.email': 'El correo electrónico debe ser una dirección de correo electrónico válida',
+      'string.minDomainSegments':
+        'El correo electrónico debe tener al menos 2 segmentos de dominio',
+      'string.tlds.allow':
+        'El correo electrónico debe tener un dominio de nivel superior válido (.com o .net)'
     }),
   password: Joi.string()
     .min(8)
@@ -24,9 +26,9 @@ const schema = Joi.object({
     .required()
     .messages({
       'string.pattern.base':
-        'The password must contain at least one lowercase letter, one uppercase letter, and one digit',
-      'string.min': 'The password must be at least 8 characters long',
-      'string.empty': 'The password field is required'
+        'La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un dígito',
+      'string.min': 'La contraseña debe tener al menos 8 caracteres de longitud',
+      'string.empty': 'El campo de contraseña es obligatorio'
     })
 });
 
@@ -76,11 +78,8 @@ function LoginForm() {
         case 'ADMIN':
           history.push('/admin');
           break;
-        case 'MEMBER':
-          history.push('/member');
-          break;
-        case 'TRAINER':
-          history.push('/trainer');
+        case 'CONTROLADOR':
+          history.push('/controlador');
           break;
         default: {
           setErrorPop(true);
@@ -106,84 +105,93 @@ function LoginForm() {
       {loading ? (
         <Loader />
       ) : (
-        <form className={styles.formSuperAdmin} onSubmit={handleSubmit(onSubmit)}>
-          <div className={styles.wholeContainer}>
-            <h1 className={styles.titleLogin}>Login</h1>
-            <div className={styles.containerForm}>
-              <Inputs
-                type="email"
-                nameInput={'email'}
-                nameTitle={'Email'}
-                register={register}
-                error={errors.email?.message}
-                testId="login-input-email"
-                className={styles.inputs}
-              />
-              <div className={styles.containerPasswordEye}>
-                <Inputs
-                  type={view ? 'text' : 'password'}
-                  nameInput={'password'}
-                  nameTitle={'Password'}
-                  register={register}
-                  error={errors.password?.message}
-                  testId="login-input-password"
-                  className={styles.inputs}
-                />
-                <img onClick={() => setView(!view)} src={view ? eye : noEye} />
-              </div>
-            </div>
-            {errorPop ? (
-              <div
-                className={`${styles.boxError} ${styles.shakeAnimation}`}
-                data-testid="login-error-pop"
-              >
-                <div className={styles.lineError}>
-                  <div className={styles.errorLogo}>!</div>
-                  LogIn Denied
-                  <div
-                    onClick={() => {
-                      setErrorPop(false);
-                    }}
-                    className={styles.close_icon}
-                  ></div>
-                </div>
-                <p className={styles.MsgError}>The username or password is incorrect</p>
-              </div>
-            ) : (
-              <div className={styles.emptyBox} data-testid="login-error-pop"></div>
-            )}
-
-            <div className={styles.newContainer}>
-              <div className={styles.sub_buttons}>
-                <Button
-                  className={styles.buttonLogin}
-                  clickAction={() => {}}
-                  text="Enter"
-                  testId="enter-login-btn"
-                />
-              </div>
-              <div data-testid="password-forgot-btn">
-                <button
-                  className={styles.forgotPass}
-                  onClick={() => {
-                    history.push('/auth/recover-password');
-                  }}
-                >
-                  Forgot Password?
-                </button>
-              </div>
-              <div
-                className={styles.notAccountContainer}
-                onClick={() => {
-                  history.push('/auth/sign-up');
-                }}
-              >
-                <p> Dont have an account?</p>
-                <button className={styles.signUpThing}>Sign Up</button>
-              </div>
-            </div>
+        <div className={styles.container}>
+          <div className={styles.imgTop}>
+            <p className={styles.imgText}>INICIO DE SESION</p>
           </div>
-        </form>
+          <div className={styles.innerContainer}>
+            <form className={styles.formSuperAdmin} onSubmit={handleSubmit(onSubmit)}>
+              <div className={styles.wholeContainer}>
+                <h1 className={styles.titleLogin}>Ingrese</h1>
+                <div className={styles.containerForm}>
+                  <div className={styles.containerUsername}>
+                    <Inputs
+                      type="email"
+                      nameInput={'email'}
+                      nameTitle={'Correo Electronico'}
+                      register={register}
+                      error={errors.email?.message}
+                      testId="login-input-email"
+                      className={styles.inputs}
+                    />
+                  </div>
+                  <div className={styles.containerPasswordEye}>
+                    <Inputs
+                      type={view ? 'text' : 'password'}
+                      nameInput={'password'}
+                      nameTitle={'Contraseña'}
+                      register={register}
+                      error={errors.password?.message}
+                      testId="login-input-password"
+                      className={styles.inputs}
+                    />
+                    <img onClick={() => setView(!view)} src={view ? eye : noEye} />
+                  </div>
+                </div>
+                {errorPop ? (
+                  <div
+                    className={`${styles.boxError} ${styles.shakeAnimation}`}
+                    data-testid="login-error-pop"
+                  >
+                    <div className={styles.lineError}>
+                      <div className={styles.errorLogo}>!</div>
+                      LogIn Denied
+                      <div
+                        onClick={() => {
+                          setErrorPop(false);
+                        }}
+                        className={styles.close_icon}
+                      ></div>
+                    </div>
+                    <p className={styles.MsgError}>The username or password is incorrect</p>
+                  </div>
+                ) : (
+                  <div className={styles.emptyBox} data-testid="login-error-pop"></div>
+                )}
+
+                <div className={styles.newContainer}>
+                  <div className={styles.sub_buttons}>
+                    <Button
+                      className={styles.buttonLogin}
+                      clickAction={() => {}}
+                      text="Entrar"
+                      testId="enter-login-btn"
+                    />
+                  </div>
+                  <div data-testid="password-forgot-btn">
+                    <button
+                      className={styles.forgotPass}
+                      onClick={() => {
+                        history.push('/auth/recover-password');
+                      }}
+                    >
+                      Olvidaste tu contraseña?
+                    </button>
+                  </div>
+                  <div
+                    className={styles.notAccountContainer}
+                    onClick={() => {
+                      history.push('/auth/sign-up');
+                    }}
+                  >
+                    <p> No tiene una cuenta?</p>
+                    <button className={styles.signUpThing}>Registrarse</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </>
   );

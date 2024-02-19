@@ -22,11 +22,6 @@ const Navbar = (props) => {
               activeClassName={styles.active}
               data-testid="home-btn"
             >
-              <img
-                src={`${process.env.PUBLIC_URL}/assets/images/${route.icon}`}
-                alt={`icon ${route.name} `}
-                className={styles.navIcon}
-              />
               <span>{route.name}</span>
             </NavLink>
           </li>

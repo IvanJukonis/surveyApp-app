@@ -1,9 +1,670 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
 .container {
-  flex: 1;
   display: flex;
-  width: 50%;
-  margin: 0 auto;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  margin-left: 50px;
+  gap: 20px;
+}
+.containerBody {
+  display: flex;
+  flex-direction: column;
+}
+.title {
+  color: var(--secondary);
+  font-size: 40px;
+  text-transform: uppercase;
+  position: absolute;
+}
+.Text {
+  position: absolute;
+  z-index: 2;
+  color: white;
+  font-size: 24px;
+  text-align: center;
+}
+.sectionTitleWhite {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-color: var(--secondary-dark);
+  color: var(--white);
+  text-transform: uppercase;
+  font-size: 65px;
+}
+
+.sectionTitleBlue {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-color: var(--secondary-dark);
+  color: var(--primary);
+  text-transform: uppercase;
+  font-size: 65px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rocketLogo {
+  width: 200px;
+  height: 200px;
+}
+
+.containerSectionHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  width: 100%;
+}
+
+.bannerVideo {
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  width: 80%;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: -20px;
+}
+.bannerVideo,
+.containerSectionHead,
+.content{
+  min-height: 470px;
+  height: 93vh;
+}
+.spanSectionHead {
+  width: 100%;
+  text-align: center;
+}
+.sectionHead span img {
+  width: 90%;
+}
+.sectionAbout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sectionAboutFlexContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  width: 90%;
+  gap: 20px;
+}
+.sectionAboutImg {
+  display: flex;
+  order: 1;
+}
+.sectionAboutContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.sectionAboutContainerTwo {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.sectionAboutTextDesktop {
+  width: 95%;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primary);
+}
+.sectionAboutImage {
+  width: 45%;
+  border: solid 5px var(--secondary-dark);
+  border-radius: 5px;
+}
+.sectionFeatures {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary);
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 30px 20px;
+  height: 90vh;
+}
+.activities{
+  height: auto;
+  margin-bottom: 50px;
+}
+.sectionFeaturesTitles {
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+.featuresIcons {
+  width: 50px;
+}
+.Text {
+  width: 95%;
+  font-size: 14px;
+  color: var(--white);
+  font-size: 18px;
+}
+.sectionFeaturesContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 80%;
+  margin-left: 2rem;
+}
+.sectionFeaturesArticles {
+  width: 50%;
+}
+.sectionActivities {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+.sectionActivitiesList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: var(--secondary);
+  margin: 0;
+  padding: 20px;
+  border-radius: 5px;
+}
+.activityItem {
+  list-style: none;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: bold;
+  color: var(--primary);
+  letter-spacing: 1px;
+}
+.sectionActivities img {
+  max-width: 70%;
+  height: auto;
+}
+.getInTouch {
+  background-color: var(--white);
+  padding-bottom: 50px;
+}
+.sectionTouchForm {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 40px;
+  gap: 20px;
+}
+.sectionTouchForm div {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+.formButtonDesktop {
+  align-self: flex-end;
+  width: 76px;
+  height: 33px;
+  margin-top: 30px;
+  border-width: 0px;
+  border-radius: 5px;
+  background: var(--secondary);
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 19px;
+  color: var(--primary);
+  cursor: pointer;
+}
+.formButtonTop {
+  display: none;
+}
+.formInput {
+  width: 260px;
+  height: 36px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+}
+.formInput::placeholder {
+  padding-left: 10px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+}
+.sectionTouchForm select {
+  width: 270px;
+  height: 36px;
+  padding-left: 10px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+}
+.sectionTouchForm textarea {
+  width: 265px;
+  height: 210px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+}
+.sectionTouchForm textarea::placeholder {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.sectionTouchForm label {
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  color: var(--primary);
+}
+.memberships {
+  background-color: var(--primary);
+  width: 100%;
+  padding-bottom: 70px;
+}
+.sectionMembership {
+  display: flex;
+  justify-content: space-evenly;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 100%;
+  color: var(--primary);
+  margin-bottom: 30px;
+}
+.cardMembership {
+  display: flex;
+  background-color: var(--white);
+  max-width: 30%;
+  width: 20rem;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  transition: all 0.2s ease-in;
+}
+.cardMembership:hover {
+  transform: scale(1.01);
+}
+.cardTitle {
+  font-size: 40px;
+  color: var(--secondary-dark);
+  line-height: 1;
+}
+.cardBody {
+  display: flex;
+  color: var(--primary);
+  align-items: center;
+  flex-direction: column;
+  height: 220px;
+}
+.cardBody li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  gap: 12px;
+}
+.cardInfo {
+  background-color: var(--secondary-dark);
+  color: var(--white);
+  display: flex;
+  font-size: 20px;
+  height: 60px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0 0 20px 20px;
+  cursor:pointer;
+}
+.cardInfo:hover{
+  filter:brightness(1.04);
+}
+.checkIcon {
+  width: 20px;
+}
+.benefitsList {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 13px;
+  margin: 0;
+  padding: 0 10px;
+}
+.benefitsList img {
+  margin: 0;
+  padding: 0;
+}
+.benefitsList p {
+  margin: 0;
+  padding: 0;
+}
+.sectionMembershipTable {
+  width: 90%;
+  margin: 0px 10px 0px 10px;
+  border-collapse: collapse;
+  text-align: center;
+}
+.tableTh1 {
+  width: 40%;
+}
+.tableTh2 {
+  width: 25%;
+}
+.tableTh3 {
+  width: 17%;
+}
+.sectionMembershipTable tr:nth-child(odd) {
+  background-color: var(--ligth-grey);
+}
+.sectionMembershipTable tr {
+  height: 60px;
+}
+.sectionAboutTextDesktop {
+  display: flex;
+}
+.info {
+  display: none;
+}
+.firstDivider{
+  margin-bottom: -25px;
+}
+.secondDivider{
+  margin-top: -22px;
+}
+
+.thirdDivider{
+  margin-bottom: -25px;
+}
+.fourthDivider{
+  margin-top: -25px;
+}
+
+@media only screen and (max-width: 868px) {
+  .container {
+    margin: 0;
+  }
+  .bannerVideo,
+  .containerSectionHead,
+  .content{
+    height: 93vh;
+  }
+  .content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: -20px;
+  }
+  .sectionActivities {
+    gap: 1rem;
+  }
+  .cardTitle {
+    font-size: 30px;
+    margin: 25px 0;
+  }
+  .formButtonDesktop {
+    display: none;
+  }
+  .getInTouch{
+    height: auto;
+  }
+  .sectionTouchForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .formButtonTop {
+    display: flex;
+    justify-content: center;
+    width: 100px;
+    font-size: 16px;
+    background: var(--secondary);
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    color: var(--primary);
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    margin: 20px 0;
+    padding: 15px 0;
+  }
+  .sectionTouchForm div {
+    display: flex;
+    flex-direction: column;
+  }
+  .sectionTouchForm textarea {
+    width: 265px;
+    height: 100px;
+  }
+  .info {
+    display: flex;
+  }
+  .cardMembership {
+    width: 13rem;
+  }
+  .card {
+    background-color: var(--secondary-dark);
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+  }
+  .findUs {
+    font-size: 25px;
+    margin: 15px;
+  }
+  .infoContainer {
+    width: 80%;
+    text-align: center;
+  }
+  .ubication {
+    font-size: 12px;
+  }
+}
+
+@media only screen and (max-width: 601px) {
+  .title {
+    text-transform: uppercase;
+    font-size: 35px;
+    margin: 20px 0;
+  }
+  .rocketLogo {
+    width: 100px;
+    height: 100px;
+  }
+  .sectionHead {
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 92vh;
+    margin-top: -7px;
+  }
+  .bannerVideo {
+    display: none;
+  }
+  .sectionAboutTextDesktop {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+  }
+  .container {
+    margin: 0;
+  }
+  .sectionTitleWhite, .sectionTitleBlue{
+    font-size: 30px;
+  }
+  .sectionAbout {
+    margin: 0;
+  }
+  .sectionAboutFlexContainer {
+    gap: 50px;
+    padding: 0;
+  }
+  .sectionAboutImage {
+    width: 100%;
+  }
+  .sectionAboutContainer p {
+    margin: 0;
+    padding: 0;
+  }
+  .sectionAboutContainer {
+    flex-direction: column;
+  }
+  .activities{
+    height: 50vh;
+    min-height: 450px;
+  }
+  .sectionAboutContainerTwo {
+    flex-direction: column;
+  }
+  .memberships {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+  .sectionMembership{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+  }
+  .sectionHead {
+    flex-direction: row;
+  }
+  .containerSectionHead {
+    display: flex;
+    flex-direction: column;
+  }
+  .cardMembership{
+    min-width: 200px;
+  }
+  #sectionHeadWelcome {
+    display: flex;
+    font-size: 20px;
+    line-height: 23px;
+    color: var(--secondary-dark);
+  }
+  .spanSectionHead {
+    width: 50%;
+  }
+  .spanSectionHead img {
+    min-height: 190px;
+  }
+  .sectionFeatures {
+    display: flex;
+    height: auto;
+  }
+  .sectionFeaturesContainer {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0;
+    width: 100%;
+    margin-left: 0;
+    align-items: center;
+  }
+  .sectionFeaturesTitles {
+    font-size: 16px;
+  }
+  .featuresIcons {
+    width: 30px;
+  }
+  .Text {
+    margin: 10px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .sectionFeaturesArticles {
+    width: 80%;
+    padding: 0;
+  }
+  .sectionActivities {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .sectionActivities img {
+    width: 90%;
+    margin: 0px;
+    border-radius: 5px;
+    border: solid 5px var(--secondary-dark);
+  }
+  .sectionActivitiesList {
+    gap: 10px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .activityItem {
+    font-size: 15px;
+  }
+  .formButtonDesktop {
+    display: none;
+  }
+}
+.ldsRing {
+  display: inline-block;
+  position: relative;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  margin: auto;
+}
+.ldsRing div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  margin: 8px;
+  border: 3px solid var(--secondary-dark);
+  border-radius: 50%;
+  animation: ldsRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: var(--secondary-dark) transparent transparent transparent;
+}
+.ldsRing div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.ldsRing div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.ldsRing div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes ldsRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
