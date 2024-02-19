@@ -14,6 +14,7 @@ import inspeccionRoboRuedaReducer from './inspeccionRoboRueda/reducer';
 import inspeccionSiniestroReducer from './inspeccionSiniestro/reducer';
 import ruedaReducer from './rueda/reducer';
 import eventoReducer from './evento/reducer';
+import authReducer from './auth/reducer';
 
 const rootReducer = combineReducers({
   involucrado: involucradoReducer,
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   inspeccionSiniestro: inspeccionSiniestroReducer,
   inspeccionRoboRueda: inspeccionRoboRuedaReducer,
   rueda: ruedaReducer,
-  evento: eventoReducer
+  evento: eventoReducer,
+  auth: authReducer
 });
 
 export default rootReducer;

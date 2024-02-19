@@ -13,10 +13,15 @@ import {
   updateControladorError
 } from './actions';
 
+const token = sessionStorage.getItem('token');
+
 export const getControlador = async (dispatch) => {
   try {
     dispatch(getControladorPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/controlador`);
+    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/controlador`, {
+      method: 'GET',
+      headers: { token: token }
+    });
     const data = await reponse.json();
     const controladoresList = data.data;
     dispatch(getControladorPending(false));
@@ -34,7 +39,8 @@ export const deleteControlador = (controladorID) => {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/controlador/${controladorID}`,
         {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: { token: token }
         }
       );
       if (response.ok) {

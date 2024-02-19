@@ -14,7 +14,6 @@ import {
 } from './actions';
 
 export const getEventoSiniestro = async (dispatch, siniestroId) => {
-  console.log(siniestroId);
   try {
     dispatch(getEventoPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/evento`);
