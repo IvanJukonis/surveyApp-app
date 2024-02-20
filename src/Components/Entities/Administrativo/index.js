@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getControlador, deleteControlador } from 'redux/controlador/thunks';
+import { getAllAdministrativos, administrativoDelete } from 'redux/administrativo/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
-import styles from './Controlador.module.css';
+import styles from './Administrativo.module.css';
 
-function Controlador() {
+function Administrativo() {
   const dispatch = useDispatch();
-  const controlador = useSelector((state) => state.controlador.list);
-  const isPending = useSelector((state) => state.controlador.pending);
-  const isError = useSelector((state) => state.controlador.error);
+  const administrativo = useSelector((state) => state.administrativo.list);
+  const isPending = useSelector((state) => state.administrativo.pending);
+  const isError = useSelector((state) => state.administrativo.error);
   const history = useHistory();
   const [toastErroOpen, setToastErroOpen] = useState(isError);
 
@@ -28,42 +28,42 @@ function Controlador() {
     if (relevador) {
       return '/relevador';
     }
-    if (controladorPath) {
-      return '/controlador';
+    if (administrativoPath) {
+      return '/administrativo';
     }
     return '/administrativo';
   };
 
   const handleEditClick = (item) => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/controladores/form/${item._id}`, {
+    history.push(`${pathPrefix}/administrativos/form/${item._id}`, {
       params: { ...item, mode: 'edit' }
     });
   };
 
   const createMode = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/controladores/form/`, { params: { mode: 'create' } });
+    history.push(`${pathPrefix}/administrativos/form/`, { params: { mode: 'create' } });
   };
 
-  const relevador = ['/relevador/controladores'].includes(location.pathname);
-  const controladorPath = ['/controlador/controladores'].includes(location.pathname);
+  const relevador = ['/relevador/administrativos'].includes(location.pathname);
+  const administrativoPath = ['/administrativo/administrativos'].includes(location.pathname);
 
-  const actualUser = ['/relevador/controladores', '/controlador/controladores'].includes(
+  const actualUser = ['/relevador/administrativos', '/administrativo/administrativos'].includes(
     location.pathname
   );
 
-  const deleteButton = actualUser ? undefined : deleteControlador;
+  const deleteButton = actualUser ? undefined : administrativoDelete;
 
   useEffect(() => {
-    getControlador(dispatch);
+    getAllAdministrativos(dispatch);
   }, []);
 
   return (
     <section className={styles.container}>
       {!actualUser && (
         <div className={styles.btnAdd}>
-          <AddButton entity="controlador" createMode={createMode} />
+          <AddButton entity="administrativo" createMode={createMode} />
         </div>
       )}
       {isPending ? (
@@ -71,7 +71,7 @@ function Controlador() {
       ) : (
         <TableComponent
           columnTitleArray={columnTitleArray}
-          data={controlador}
+          data={administrativo}
           columns={columns}
           handleClick={handleEditClick}
           deleteButton={deleteButton}
@@ -83,4 +83,4 @@ function Controlador() {
     </section>
   );
 }
-export default Controlador;
+export default Administrativo;

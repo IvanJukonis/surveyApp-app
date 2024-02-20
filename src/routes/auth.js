@@ -106,6 +106,16 @@ const AuthRoute = () => {
               name: 'Controlador',
               path: '/superadmin/controlador',
               icon: 'member.svg'
+            },
+            {
+              name: 'Administrativo',
+              path: '/superadmin/administrativo',
+              icon: 'member.svg'
+            },
+            {
+              name: 'Relevador',
+              path: '/superadmin/relevador',
+              icon: 'member.svg'
             }
           ]);
           break;

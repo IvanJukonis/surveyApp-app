@@ -3,6 +3,8 @@ import Layout from 'Components/Layout';
 import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
 
 import ControladoresForm from 'Components/Entities/Controlador/index';
+import RelevadoresForm from 'Components/Entities/Relevador/index';
+import AdministrativosForm from 'Components/Entities/Administrativo/index';
 
 import NotAllowed from 'Components/Auth/NotAllowed';
 
@@ -35,6 +37,8 @@ const SuperAdminRoutes = () => {
     <Layout routes={routes}>
       <Switch>
         <Route path={`${url}/controlador`} component={ControladoresForm} />
+        <Route path={`${url}/administrativo`} component={AdministrativosForm} />
+        <Route path={`${url}/relevador`} component={RelevadoresForm} />
         <Route exact path={`${url}/not-allowed`} component={NotAllowed} />
         <Redirect to={`${url}/siniestros`} />
       </Switch>

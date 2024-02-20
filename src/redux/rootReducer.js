@@ -12,6 +12,7 @@ import entrevistaRoboRuedaReducer from './entrevistaRoboRueda/reducer';
 import entrevistaSiniestroReducer from './entrevistaSiniestro/reducer';
 import inspeccionRoboRuedaReducer from './inspeccionRoboRueda/reducer';
 import inspeccionSiniestroReducer from './inspeccionSiniestro/reducer';
+import administrativoReducer from './administrativo/reducer';
 import ruedaReducer from './rueda/reducer';
 import eventoReducer from './evento/reducer';
 import authReducer from './auth/reducer';
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   siniestro: siniestroReducer,
   investigator: investigatorReducer,
   relevador: relevadorReducer,
+  administrativo: administrativoReducer,
   novedad: novedadReducer,
   controlador: controladorReducer,
   entrevistaSiniestro: entrevistaSiniestroReducer,
