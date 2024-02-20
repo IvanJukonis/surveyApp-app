@@ -5,7 +5,10 @@ import { getAuth } from 'redux/auth/thunks';
 import { useDispatch } from 'react-redux';
 import { tokenListener } from '../Config/firebase-config';
 
+const SuperAdminRoutesRoutes = React.lazy(() => import('./super-admin'));
 const ControladorRoutes = React.lazy(() => import('./controlador'));
+const AdministrativoRoutes = React.lazy(() => import('./administrativo'));
+const RelevadorRoutes = React.lazy(() => import('./relevador'));
 const AuthRoute = React.lazy(() => import('./auth'));
 
 const Routes = () => {
@@ -25,7 +28,14 @@ const Routes = () => {
     <BrowserRouter>
       <Suspense fallback={<div />}>
         <Switch>
-          <PrivateRoute path="/controlador" role="CONTROLADOR" component={ControladorRoutes} />
+          <PrivateRoute path="/superadmin" role="SUPER_ADMIN" component={SuperAdminRoutesRoutes} />
+          <PrivateRoute path="/controlador" role="CONTROLADOR" component={AdministrativoRoutes} />
+          <PrivateRoute
+            path="/administrativo"
+            role="ADMINISTRATIVO"
+            component={ControladorRoutes}
+          />
+          <PrivateRoute path="/relevador" role="RELEVADOR" component={RelevadorRoutes} />
           <Route path="/auth" component={AuthRoute} />
           <Redirect to="/auth" component={AuthRoute} />
         </Switch>

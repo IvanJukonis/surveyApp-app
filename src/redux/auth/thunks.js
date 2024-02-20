@@ -61,6 +61,32 @@ export const signUpControlador = (data) => {
   };
 };
 
+export const signUpAdministrativo = (data) => {
+  return async (dispatch) => {
+    dispatch(signUpPending());
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativo/`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const newData = await response.json();
+      if (response.ok) {
+        dispatch(signUpError({ error: false, message: 'No error' }));
+        return dispatch(signUpSuccess(newData));
+      }
+      const errorMessage = newData.message.code || newData.message;
+      return dispatch(signUpError({ error: true, message: errorMessage }));
+    } catch (err) {
+      return dispatch(signUpError({ error: true, message: err }));
+    }
+  };
+};
+
 export const logout = () => {
   return async (dispatch) => {
     dispatch(logOutPending());

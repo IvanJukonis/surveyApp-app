@@ -31,18 +31,18 @@ const routes = [
     icon: 'calendar.svg'
   },
   {
-    name: 'Perfil',
+    name: 'Controladores',
     path: '/controlador/siniestros',
     icon: 'calendar.svg'
   },
   {
-    name: 'Manuales',
+    name: 'Administrativos',
     path: '/controlador/siniestros',
     icon: 'calendar.svg'
   }
 ];
 
-const ControladorRoutes = () => {
+const SuperAdminRoutes = () => {
   const { url } = useRouteMatch();
   return (
     <Layout routes={routes}>
@@ -80,4 +80,4 @@ const ControladorRoutes = () => {
   );
 };
 
-export default ControladorRoutes;
+export default SuperAdminRoutes;

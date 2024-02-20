@@ -6,7 +6,6 @@ import Joi from 'joi';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { useForm } from 'react-hook-form';
 import { recoverPassword } from 'redux/auth/thunks';
-import { getAllAdmins } from 'redux/admins/thunks';
 import { login } from 'redux/auth/thunks';
 import { logout } from 'redux/auth/thunks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -96,7 +95,7 @@ const RecoverPassword = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      dispatch(getAllAdmins);
+      //dispatch(getAllAdmins);
       //dispatch(getAllControlador);
     }, 1000);
   }, []);

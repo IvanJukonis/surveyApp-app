@@ -1,0 +1,159 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #c5c5c5c2;
+  width: 60%;
+  margin: 30px;
+}
+
+.inputGroups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  gap: 10px;
+}
+
+.title {
+  color: #fafafa;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.firstGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.textAreaGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.booleanGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.firstGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.secondGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.thirdGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.fourGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.fiveGroup {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.sixGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.sevenGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.eightGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.nineGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  background-color: #3C3C3C;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+
+.submitButton {
+  display: inline;
+  background-color: var(--Green);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.submitButton:hover {
+  background-color: var(--Blue);
+  color: white;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 5px 0;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 20px;
+}
+
+.nameLabel {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.radioContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioContainer div{
+  margin: 0 10px;
+  font-size: 15px;
+}
+
+.btnGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}

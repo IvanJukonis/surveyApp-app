@@ -101,6 +101,11 @@ const AuthRoute = () => {
               name: 'Admin',
               path: '/superAdmin/admin',
               icon: 'member.svg'
+            },
+            {
+              name: 'Controlador',
+              path: '/superAdmin/controlador',
+              icon: 'member.svg'
             }
           ]);
           break;

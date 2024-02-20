@@ -22,27 +22,32 @@ import NotAllowed from 'Components/Auth/NotAllowed';
 const routes = [
   {
     name: 'Siniestros',
-    path: '/controlador/siniestros',
+    path: '/administrativo/siniestros',
     icon: 'calendar.svg'
   },
   {
     name: 'Relevadores',
-    path: '/controlador/siniestros',
+    path: '/administrativo/siniestros',
+    icon: 'calendar.svg'
+  },
+  {
+    name: 'Controladores',
+    path: '/administrativo/siniestros',
     icon: 'calendar.svg'
   },
   {
     name: 'Perfil',
-    path: '/controlador/siniestros',
+    path: '/administrativo/siniestros',
     icon: 'calendar.svg'
   },
   {
-    name: 'Manuales',
-    path: '/controlador/siniestros',
+    name: 'Manual',
+    path: '/administrativo/siniestros',
     icon: 'calendar.svg'
   }
 ];
 
-const ControladorRoutes = () => {
+const AdministrativoRoutes = () => {
   const { url } = useRouteMatch();
   return (
     <Layout routes={routes}>
@@ -80,4 +85,4 @@ const ControladorRoutes = () => {
   );
 };
 
-export default ControladorRoutes;
+export default AdministrativoRoutes;

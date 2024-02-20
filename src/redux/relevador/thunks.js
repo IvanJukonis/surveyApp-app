@@ -13,10 +13,15 @@ import {
   updateRelevadorError
 } from './actions';
 
+const token = sessionStorage.getItem('token');
+
 export const getRelevador = async (dispatch) => {
   try {
     dispatch(getRelevadorPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/relevador`);
+    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/relevador`, {
+      method: 'GET',
+      headers: { token: token }
+    });
     const data = await reponse.json();
     const relevadoresList = data.data;
     dispatch(getRelevadorPending(false));
@@ -34,7 +39,8 @@ export const deleteRelevador = (relevadorID) => {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/relevador/${relevadorID}`,
         {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: { token: token }
         }
       );
       if (response.ok) {

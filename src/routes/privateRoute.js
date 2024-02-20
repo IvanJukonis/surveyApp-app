@@ -15,8 +15,14 @@ const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
         }
         if ((!role || role !== rest.role || !token) && !error) {
           switch (role) {
+            case (role = 'SUPER_ADMIN'):
+              return <Redirect to={'/superadmin/not-allowed'} />;
             case (role = 'CONTROLADOR'):
               return <Redirect to={'/controlador/not-allowed'} />;
+            case (role = 'ADMINISTRATIVO'):
+              return <Redirect to={'/administrativo/not-allowed'} />;
+            case (role = 'RELEVADOR'):
+              return <Redirect to={'/relevador/not-allowed'} />;
             default:
               <Redirect to={'/auth/login'} />;
               break;
