@@ -99,12 +99,12 @@ const AuthRoute = () => {
           setRoleRoutes([
             {
               name: 'Admin',
-              path: '/superAdmin/admin',
+              path: '/superadmin/admin',
               icon: 'member.svg'
             },
             {
               name: 'Controlador',
-              path: '/superAdmin/controlador',
+              path: '/superadmin/controlador',
               icon: 'member.svg'
             }
           ]);
