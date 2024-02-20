@@ -45,10 +45,10 @@ const SiniestrosForm = () => {
   const siniestros = useSelector((state) => state.siniestro.list);
   const relevador = useSelector((state) => state.relevador.list);
   const controlador = useSelector((state) => state.controlador.list);
-  const siniestroActual = siniestros.find((item) => item._id === id);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
+  const siniestroActual = siniestros.find((item) => item._id === data._id);
 
   const schema = Joi.object({
     numSiniestro: Joi.number()
@@ -392,7 +392,7 @@ const SiniestrosForm = () => {
   });
 
   const onConfirmFunction = async () => {
-    if (!id) {
+    if (!data._id) {
       const addSiniestroResponse = await postSiniestro(dispatch, siniestro);
       if (addSiniestroResponse.type === 'POST_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
@@ -403,7 +403,7 @@ const SiniestrosForm = () => {
       }
       return setToastErroOpen(true);
     } else {
-      const editSiniestroResponse = await updateSiniestro(dispatch, id, siniestro);
+      const editSiniestroResponse = await updateSiniestro(dispatch, data._id, siniestro);
       if (editSiniestroResponse.type === 'UPDATE_SINIESTRO_SUCCESS') {
         setToastErroOpen(false);
         setModalSuccessOpen(true);
@@ -520,11 +520,11 @@ const SiniestrosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={data._id ? 'Update' : 'Add'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
-                id
+                data._id
                   ? 'Esta seguro que quiere actualizar este siniestro?'
                   : 'Esta seguro que quiere añadir este siniestro?'
               }
@@ -533,7 +533,7 @@ const SiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Siniestro edited' : 'Siniestro added'}
+              message={data._id ? 'Siniestro edited' : 'Siniestro added'}
             />
           )}
         </div>
@@ -781,18 +781,18 @@ const SiniestrosForm = () => {
                 </div>
               </div>
               <div className={styles.entitiesButtons}>
-                <Button clickAction={handleInvolucrado} text="Involucrados" />
-                <Button clickAction={handleNovedad} text="Novedades" />
-                <Button clickAction={handleVehiculo} text="Vehiculos" />
-                <Button clickAction={handleLugarO} text="LugarO" />
-                <Button clickAction={handleInspeccionO} text="InspeccionO" />
+                <Button submition={true} clickAction={handleInvolucrado} text="Involucrados" />
+                <Button submition={true} clickAction={handleNovedad} text="Novedades" />
+                <Button submition={true} clickAction={handleVehiculo} text="Vehiculos" />
+                <Button submition={true} clickAction={handleLugarO} text="LugarO" />
+                <Button submition={true} clickAction={handleInspeccionO} text="InspeccionO" />
               </div>
               <div className={styles.entitiesButtons}>
-                <Button clickAction={handleLugarR} text="LugarR" />
-                <Button clickAction={handleInspeccionR} text="InspeccionR" />
-                <Button clickAction={handleRueda} text="Rueda" />
-                <Button clickAction={handleEvento} text="Evento" />
-                <Button clickAction={handleEntrevista} text="Entrevista" />
+                <Button submition={true} clickAction={handleLugarR} text="LugarR" />
+                <Button submition={true} clickAction={handleInspeccionR} text="InspeccionR" />
+                <Button submition={true} clickAction={handleRueda} text="Rueda" />
+                <Button submition={true} clickAction={handleEvento} text="Evento" />
+                <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
               </div>
               <div className={styles.textAreasGroup}>
                 <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>

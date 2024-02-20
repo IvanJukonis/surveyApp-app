@@ -68,27 +68,36 @@ function Siniestro() {
   }, []);
 
   return (
-    <section className={styles.container}>
+    <div className={styles.container}>
       {!actualUser && (
         <div className={styles.btnAdd}>
           <AddButton entity="siniestro" createMode={createMode} />
         </div>
       )}
-      {isPending ? (
-        <Loader />
-      ) : (
-        <TableComponent
-          columnTitleArray={columnTitleArray}
-          data={siniestro}
-          columns={columns}
-          handleClick={handleEditClick}
-          deleteButton={deleteButton}
-        />
-      )}
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>SINIESTRO</p>
+      </div>
+      <div className={styles.innerContainer}>
+        <div className={styles.form}>
+          <div className={styles.formContainer}>
+            {isPending ? (
+              <Loader />
+            ) : (
+              <TableComponent
+                columnTitleArray={columnTitleArray}
+                data={siniestro}
+                columns={columns}
+                handleClick={handleEditClick}
+                deleteButton={deleteButton}
+              />
+            )}
+          </div>
+        </div>
+      </div>
       {toastErroOpen && (
         <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
-    </section>
+    </div>
   );
 }
 export default Siniestro;

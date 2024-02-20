@@ -1,6 +1,6 @@
 import ButtonForm from '../ButtonForm';
 import styles from './table.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModalConfirm, ModalSuccess } from '../index';
 import { useDispatch } from 'react-redux';
 
@@ -18,6 +18,9 @@ const TableComponent = ({
   const [filterValue, setFilterValue] = useState('');
   const [modalConfirm, setModalConfirm] = useState(false);
   const [idDelete, setIdDelete] = useState('');
+  const [filtered, setFiltered] = useState(data);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filtered.length / 6);
 
   const dispatch = useDispatch();
 
@@ -83,6 +86,33 @@ const TableComponent = ({
     const month = String(dateObject.getMonth() + 1).padStart(2, '0');
     const day = String(dateObject.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    setFiltered(data);
+    if (filtered.length === 0) {
+      setFiltered(data);
+    }
+  }, [data]);
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          className={currentPage === i ? styles.activePage : styles.eachNumber}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
   };
 
   return (
@@ -153,6 +183,19 @@ const TableComponent = ({
           </tbody>
         </table>
       )}
+      <div className={styles.containerPaginate}>
+        <button
+          onClick={() => handlePageClick(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={styles.buttonPaginate}
+        >{`←`}</button>
+        {renderPageNumbers()}
+        <button
+          onClick={() => handlePageClick(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={styles.buttonPaginate}
+        >{`→`}</button>
+      </div>
       {modalConfirm && (
         <ModalConfirm
           onConfirm={() => onConfirm()}
