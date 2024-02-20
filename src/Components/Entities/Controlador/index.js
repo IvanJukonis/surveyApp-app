@@ -42,8 +42,7 @@ function Controlador() {
   };
 
   const createMode = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/controladores/form/`, { params: { mode: 'create' } });
+    history.push(`controlador/form/`, { params: { mode: 'create' } });
   };
 
   const relevador = ['/relevador/controladores'].includes(location.pathname);

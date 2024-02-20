@@ -60,27 +60,36 @@ function Relevador() {
   }, []);
 
   return (
-    <section className={styles.container}>
-      {!actualUser && (
-        <div className={styles.btnAdd}>
-          <AddButton entity="relevador" createMode={createMode} />
+    <div className={styles.container}>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>RELEVADORES</p>
+      </div>
+      <div className={styles.innerContainer}>
+        <div className={styles.form}>
+          <div className={styles.formContainer}>
+            {!actualUser && (
+              <div className={styles.btnAdd}>
+                <AddButton entity="relevador" createMode={createMode} />
+              </div>
+            )}
+            {isPending ? (
+              <Loader />
+            ) : (
+              <TableComponent
+                columnTitleArray={columnTitleArray}
+                data={relevador}
+                columns={columns}
+                handleClick={handleEditClick}
+                deleteButton={deleteButton}
+              />
+            )}
+          </div>
         </div>
-      )}
-      {isPending ? (
-        <Loader />
-      ) : (
-        <TableComponent
-          columnTitleArray={columnTitleArray}
-          data={relevador}
-          columns={columns}
-          handleClick={handleEditClick}
-          deleteButton={deleteButton}
-        />
-      )}
+      </div>
       {toastErroOpen && (
         <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
-    </section>
+    </div>
   );
 }
 export default Relevador;

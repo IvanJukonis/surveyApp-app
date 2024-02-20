@@ -60,27 +60,36 @@ function Administrativo() {
   }, []);
 
   return (
-    <section className={styles.container}>
-      {!actualUser && (
-        <div className={styles.btnAdd}>
-          <AddButton entity="administrativo" createMode={createMode} />
+    <div className={styles.container}>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>ADMINISTRATIVOS</p>
+      </div>
+      <div className={styles.innerContainer}>
+        <div className={styles.form}>
+          {!actualUser && (
+            <div className={styles.btnAdd}>
+              <AddButton entity="administrativo" createMode={createMode} />
+            </div>
+          )}
+          <div className={styles.formContainer}>
+            {isPending ? (
+              <Loader />
+            ) : (
+              <TableComponent
+                columnTitleArray={columnTitleArray}
+                data={administrativo}
+                columns={columns}
+                handleClick={handleEditClick}
+                deleteButton={deleteButton}
+              />
+            )}
+          </div>
         </div>
-      )}
-      {isPending ? (
-        <Loader />
-      ) : (
-        <TableComponent
-          columnTitleArray={columnTitleArray}
-          data={administrativo}
-          columns={columns}
-          handleClick={handleEditClick}
-          deleteButton={deleteButton}
-        />
-      )}
+      </div>
       {toastErroOpen && (
         <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
-    </section>
+    </div>
   );
 }
 export default Administrativo;
