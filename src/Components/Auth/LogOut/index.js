@@ -15,12 +15,7 @@ function LogOut({ isHovered }) {
 
   return (
     <div className={styles.logButton} onClick={logoutAction} data-testId="log-out-btn">
-      <img
-        className={styles.logImg}
-        src={`${process.env.PUBLIC_URL}/assets/images/logout.svg`}
-        alt={'log out icon'}
-      />
-      <p className={isHovered ? styles.logText : styles.logTextHidden}>Log Out</p>
+      <p className={isHovered ? styles.logText : styles.logTextHidden}>Cerrar Sesión</p>
     </div>
   );
 }

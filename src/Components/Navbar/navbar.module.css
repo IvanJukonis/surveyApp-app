@@ -1,8 +1,7 @@
 .navbar {
-  position: absolute;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  width: 100%;
   transition: all 0.4s;
   background-color: var(--secondary);
   overflow: hidden;
@@ -11,10 +10,12 @@
 .rutes {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   padding: 0;
   list-style-type: none;
-  gap: 40px;
+  gap: 10px;
 }
 
 .navbarLink {
@@ -48,8 +49,7 @@
 }
 
 .logoutButton {
-  position: absolute;
+  color: greenyellow;;
   margin-left: 10px;
-  bottom: 15%;
 }
 

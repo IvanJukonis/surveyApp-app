@@ -8,26 +8,30 @@
   gap:15px;
   transition: all 0.2s;
 }
+
 .logImg {
   width: 25px;
   height: 25px;
 }
+
 .logText {
   display:flex;
   font-size: 1rem;
-   font-weight: 400;
+  font-weight: 400;
   text-transform: capitalize;
   color: var(--primary);
   transition: all 0.2s;
 }
+
 .logButton:hover {
   transform: scale(1.05);
+  background-color: #FAFAFA;
+  font-weight: bold;
+  color: #252440;
   transition: all 0.2s;
-  border-left: 1px solid var(--primary);
+  border: 3px solid #ECECEC;
 }
-.logTextHidden {
-  display: none;
-}
+
 .logButton:hover .logText {
   color: var(--primary);
 }
