@@ -60,27 +60,36 @@ function Controlador() {
   }, []);
 
   return (
-    <section className={styles.container}>
-      {!actualUser && (
-        <div className={styles.btnAdd}>
-          <AddButton entity="controlador" createMode={createMode} />
+    <div className={styles.container}>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>CONTROLADORES</p>
+      </div>
+      <div className={styles.innerContainer}>
+        <div className={styles.form}>
+          {!actualUser && (
+            <div className={styles.btnAdd}>
+              <AddButton entity="controlador" createMode={createMode} />
+            </div>
+          )}
+          <div className={styles.formContainer}>
+            {isPending ? (
+              <Loader />
+            ) : (
+              <TableComponent
+                columnTitleArray={columnTitleArray}
+                data={controlador}
+                columns={columns}
+                handleClick={handleEditClick}
+                deleteButton={deleteButton}
+              />
+            )}
+          </div>
         </div>
-      )}
-      {isPending ? (
-        <Loader />
-      ) : (
-        <TableComponent
-          columnTitleArray={columnTitleArray}
-          data={controlador}
-          columns={columns}
-          handleClick={handleEditClick}
-          deleteButton={deleteButton}
-        />
-      )}
+      </div>
       {toastErroOpen && (
         <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
-    </section>
+    </div>
   );
 }
 export default Controlador;
