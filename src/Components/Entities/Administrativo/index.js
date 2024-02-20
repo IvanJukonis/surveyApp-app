@@ -42,8 +42,7 @@ function Administrativo() {
   };
 
   const createMode = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/administrativos/form/`, { params: { mode: 'create' } });
+    history.push(`administrativo/form/`, { params: { mode: 'create' } });
   };
 
   const relevador = ['/relevador/administrativos'].includes(location.pathname);

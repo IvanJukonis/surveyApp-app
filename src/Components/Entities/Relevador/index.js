@@ -42,8 +42,7 @@ function Relevador() {
   };
 
   const createMode = () => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/relevadores/form/`, { params: { mode: 'create' } });
+    history.push(`relevador/form/`, { params: { mode: 'create' } });
   };
 
   const relevadorPath = ['/relevador/relevadores'].includes(location.pathname);

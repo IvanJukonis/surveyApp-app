@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styles from './signUp.module.css';
+import styles from './form.module.css';
 import { Inputs, OptionInput, Button, ToastError, Loader } from 'Components/Shared';
-import ModalSignUp from 'Components/Shared/Modals/ModalSignUp';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -16,7 +15,6 @@ const ControladorForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [openModalSuccess, setOpenModalSuccess] = useState(null);
-  const [modalShow, setModalShow] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [messageError, setMessageError] = useState('');
@@ -276,7 +274,7 @@ const ControladorForm = () => {
         if (responseSignUp.type === 'SIGN_UP_ERROR') {
           setToastError(true);
           if (responseSignUp.payload.message.includes('auth')) {
-            setMessageError('Email already exists');
+            setMessageError('Correo electronico existente');
           } else {
             setMessageError(responseSignUp.payload.message);
           }
@@ -286,13 +284,6 @@ const ControladorForm = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const role = sessionStorage.getItem('role');
-    if (role) {
-      setModalShow(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (loading) {
@@ -311,7 +302,7 @@ const ControladorForm = () => {
           {openModalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setOpenModalSuccess}
-              message={'Sign In Successfully!'}
+              message={'El controlador ha sido creado.'}
               testId="member-modal-success"
             />
           )}
@@ -323,7 +314,6 @@ const ControladorForm = () => {
               testId="member-form-toast-error"
             />
           )}
-          {modalShow && <ModalSignUp setModalShow={setModalShow} />}
           {error && (
             <div className={styles.boxError} data-testid="signUp-error-pop">
               <div className={styles.lineError}>
@@ -340,7 +330,7 @@ const ControladorForm = () => {
             </div>
           )}
           <div className={styles.imgTop}>
-            <p className={styles.imgText}>CREAR USUARIO</p>
+            <p className={styles.imgText}>CONTROLADOR</p>
           </div>
           <div className={styles.innerContainer}>
             <form
@@ -611,7 +601,7 @@ const ControladorForm = () => {
                 </div>
 
                 <div className={styles.buttonsGroup}>
-                  <Button clickAction={() => {}} text="Registrarse" testId="signup-btn" />
+                  <Button clickAction={() => {}} text="CREAR" testId="signup-btn" />
                   <Button
                     text="Cancelar"
                     clickAction={() => history.goBack()}

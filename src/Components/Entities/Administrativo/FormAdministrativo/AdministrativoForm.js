@@ -1,36 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import styles from './form.module.css';
-import {
-  ModalConfirm,
-  ModalSuccess,
-  ToastError,
-  Inputs,
-  Button,
-  OptionInput
-} from 'Components/Shared';
-import { useLocation, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import {
-  updateAdministrativo,
-  postAdministrativo,
-  getAdministrativo
-} from 'redux/administrativo/thunks';
+import { Inputs, OptionInput, Button, ToastError, Loader } from 'Components/Shared';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
+import { signUpAdministrativo } from 'redux/auth/thunks';
+import ModalSuccess from 'Components/Shared/Modals/ModalSuccess/index';
 import DateInput from 'Components/Shared/Inputs/DateInput';
+import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 
-const AdministrativosForm = () => {
+const AdministrativoForm = () => {
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const [toastError, setToastErroOpen] = useState(false);
-  const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
-  const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [administrativo, setAdministrativo] = useState({});
-  const location = useLocation();
   const history = useHistory();
-  const data = location.state.params;
+  const [openModalSuccess, setOpenModalSuccess] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [messageError, setMessageError] = useState('');
+  const [toastError, setToastError] = useState(null);
+
+  const tipoArray = ['Relevador', 'Administrativo', 'Administrativo', 'Consultor'];
+  const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
+  const oficinaArray = ['Rosario', 'Vgg', 'San Lorenzo'];
+  const departamentoArray = ['Administracion', 'Produccion', 'Marketing', 'RRHH'];
+  const puestoArray = ['Gerente', 'Empleado'];
+  const civilArray = ['Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a'];
 
   const schema = Joi.object({
     tipo: Joi.string()
@@ -219,418 +214,409 @@ const AdministrativosForm = () => {
       })
       .required(),
 
-    nombreUsuario: Joi.string()
-      .min(3)
-      .max(30)
-      .messages({
-        'string.base': 'El campo "Nombre de Usuario" debe ser una cadena de texto',
-        'string.empty': 'El campo "Nombre de Usuario" es un campo requerido',
-        'string.min': 'El campo "Nombre de Usuario" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Nombre de Usuario" debe tener como máximo 30 caracteres'
-      })
-      .required(),
-
-    contraseña: Joi.string()
-      .min(3)
-      .max(30)
-      .messages({
-        'string.base': 'El campo "Contraseña" debe ser una cadena de texto',
-        'string.empty': 'El campo "Contraseña" es un campo requerido',
-        'string.min': 'El campo "Contraseña" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Contraseña" debe tener como máximo 30 caracteres'
-      })
+    password: Joi.string()
+      .min(8)
+      .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
       .required()
+      .messages({
+        'string.pattern.base':
+          'The password must contain at least one lowercase letter, one uppercase letter, and one digit',
+        'string.min': 'The password must be at least 8 characters long',
+        'string.empty': 'The password field is required'
+      }),
+
+    repeatPassword: Joi.string().valid(Joi.ref('password')).required().messages({
+      'any.only': "Passwords don't match"
+    })
   });
-
-  const formatDate = (dateString) => {
-    const dateObject = new Date(dateString);
-    const year = dateObject.getFullYear();
-    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObject.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  const administrativoUpdate = {
-    tipo: data.tipo,
-    nombre: data.nombre,
-    apellido: data.apellido,
-    email: data.email,
-    dni: data.dni,
-    fechaNacimiento: formatDate(data.fechaNacimiento),
-    fechaContratacion: formatDate(data.fechaContratacion),
-    direccion: data.direccion,
-    localidad: data.localidad,
-    telefono: data.telefono,
-    contrato: data.contrato,
-    hsLaborales: data.hsLaborales,
-    salario: data.salario,
-    fechaActualizacionSalario: formatDate(data.fechaActualizacionSalario),
-    numeroSeguridadSocial: data.numeroSeguridadSocial,
-    oficina: data.oficina,
-    departamento: data.departamento,
-    puesto: data.puesto,
-    cantidadHijos: data.cantidadHijos,
-    estadoCivil: data.estadoCivil,
-    activo: data.activo,
-    cuentaBancaria: data.cuentaBancaria,
-    nombreUsuario: data.nombreUsuario,
-    contraseña: data.contraseña
-  };
 
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors }
   } = useForm({
     mode: 'onBlur',
-    resolver: joiResolver(schema),
-    defaultValues: { ...administrativoUpdate }
+    resolver: joiResolver(schema)
   });
 
-  const onConfirmFunction = async () => {
-    if (!id) {
-      const addAdministrativoResponse = await postAdministrativo(dispatch, administrativo);
-      if (addAdministrativoResponse.type === 'POST_ADMINISTRATIVO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
+  const onSubmit = async (data) => {
+    const administrativoEdit = {
+      tipo: data.tipo,
+      nombre: data.nombre,
+      apellido: data.apellido,
+      email: data.email,
+      dni: data.dni,
+      fechaNacimiento: data.fechaNacimiento,
+      fechaContratacion: data.fechaContratacion,
+      direccion: data.direccion,
+      localidad: data.localidad,
+      telefono: data.telefono,
+      contrato: data.contrato,
+      hsLaborales: data.hsLaborales,
+      salario: data.salario,
+      fechaActualizacionSalario: data.fechaActualizacionSalario,
+      numeroSeguridadSocial: data.numeroSeguridadSocial,
+      oficina: data.oficina,
+      departamento: data.departamento,
+      puesto: data.puesto,
+      cantidadHijos: data.cantidadHijos,
+      estadoCivil: data.estadoCivil,
+      activo: data.activo,
+      cuentaBancaria: data.cuentaBancaria,
+      password: data.password
+    };
+
+    if (Object.values(errors).length === 0) {
+      try {
+        const responseSignUp = await dispatch(signUpAdministrativo(administrativoEdit));
+        if (responseSignUp.type === 'SIGN_UP_SUCCESS') {
+          setOpenModalSuccess(true);
+          setTimeout(() => {}, 2000);
+        }
+        if (responseSignUp.type === 'SIGN_UP_ERROR') {
+          setToastError(true);
+          if (responseSignUp.payload.message.includes('auth')) {
+            setMessageError('Correo electronico existente');
+          } else {
+            setMessageError(responseSignUp.payload.message);
+          }
+        }
+      } catch (error) {
+        setToastError(true);
       }
-      return setToastErroOpen(true);
-    } else {
-      const editAdministrativoResponse = await updateAdministrativo(dispatch, id, administrativo);
-      if (editAdministrativoResponse.type === 'UPDATE_ADMINISTRATIVO_SUCCESS') {
-        setToastErroOpen(false);
-        setModalSuccessOpen(true);
-        return setTimeout(() => {
-          history.goBack();
-        }, 1000);
-      }
-      return setToastErroOpen(true);
     }
   };
 
-  const onSubmit = async (data) => {
-    setAdministrativo(data);
-    setModalAddConfirmOpen(true);
-  };
-
-  const tipoArray = ['Relevador', 'Administrativo', 'Administrativo', 'Consultor'];
-  const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
-  const oficinaArray = ['Rosario', 'Vgg', 'San Lorenzo'];
-  const departamentoArray = ['Administracion', 'Produccion', 'Marketing', 'RRHH'];
-  const puestoArray = ['Gerente', 'Empleado'];
-  const civilArray = ['Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a'];
-
   useEffect(() => {
-    getAdministrativo(dispatch);
+    if (loading) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
   }, []);
 
   return (
-    <div className={styles.container}>
-      {
-        <div>
-          {modalAddConfirmOpen && (
-            <ModalConfirm
-              method={id ? 'Update' : 'Add'}
-              onConfirm={() => onConfirmFunction()}
-              setModalConfirmOpen={setModalAddConfirmOpen}
-              message={
-                id
-                  ? 'Esta seguro que quiere actualizar este administrativo?'
-                  : 'Esta seguro que quiere añadir este administrativo?'
-              }
-            />
-          )}
-          {modalSuccess && (
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className={styles.wholeContainer}>
+          {openModalSuccess && (
             <ModalSuccess
-              setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Administrativo edited' : 'Administrativo added'}
+              setModalSuccessOpen={setOpenModalSuccess}
+              message={'El administrativo ha sido creado.'}
+              testId="member-modal-success"
             />
           )}
+
+          {toastError && (
+            <ToastError
+              setToastErroOpen={setToastError}
+              message={messageError}
+              testId="member-form-toast-error"
+            />
+          )}
+          {error && (
+            <div className={styles.boxError} data-testid="signUp-error-pop">
+              <div className={styles.lineError}>
+                <div className={styles.errorLogo}>!</div>
+                Sign In error
+                <div
+                  onClick={() => {
+                    setError(false);
+                  }}
+                  className={styles.close_icon}
+                ></div>
+              </div>
+              <p className={styles.MsgError}>Email is already user</p>
+            </div>
+          )}
+          <div className={styles.imgTop}>
+            <p className={styles.imgText}>ADMINISTRATIVO</p>
+          </div>
+          <div className={styles.innerContainer}>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className={styles.formContainer}
+              encType="multipart/form-data"
+            >
+              <div className={styles.form}>
+                <div className={styles.formContainer}>
+                  <div className={styles.groupContainer}>
+                    <div className={styles.inputColumn}>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={tipoArray}
+                          dataLabel="Tipo"
+                          name="tipo"
+                          register={register}
+                          error={errors.tipo?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.nombre?.message}
+                          register={register}
+                          nameTitle="Nombre"
+                          type="text"
+                          nameInput="nombre"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.apellido?.message}
+                          register={register}
+                          nameTitle="Apellido"
+                          type="text"
+                          nameInput="apellido"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.email?.message}
+                          register={register}
+                          nameTitle="Email"
+                          type="text"
+                          nameInput="email"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.numeroSeguridadSocial?.message}
+                          register={register}
+                          nameTitle="N° Seguridad Social"
+                          type="number"
+                          nameInput="numeroSeguridadSocial"
+                          styleInput="numberInput"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.inputColumn}>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.dni?.message}
+                          register={register}
+                          nameTitle="Dni"
+                          type="text"
+                          nameInput="dni"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaNacimiento?.message}
+                          register={register}
+                          nameTitle="Fecha Nacimiento"
+                          type="date"
+                          nameInput="fechaNacimiento"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaContratacion?.message}
+                          register={register}
+                          nameTitle="Fecha Contratacion"
+                          type="date"
+                          nameInput="fechaContratacion"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.direccion?.message}
+                          register={register}
+                          nameTitle="Direccion"
+                          type="text"
+                          nameInput="direccion"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.localidad?.message}
+                          register={register}
+                          nameTitle="Localidad"
+                          type="text"
+                          nameInput="localidad"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.inputColumn}>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.telefono?.message}
+                          register={register}
+                          nameTitle="Telefono"
+                          type="text"
+                          nameInput="telefono"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={contratoArray}
+                          dataLabel="Conrato"
+                          name="contrato"
+                          register={register}
+                          error={errors.contrato?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.hsLaborales?.message}
+                          register={register}
+                          nameTitle="HsLaborales"
+                          type="number"
+                          nameInput="hsLaborales"
+                          styleInput="numberInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.salario?.message}
+                          register={register}
+                          nameTitle="Salario"
+                          type="number"
+                          nameInput="salario"
+                          styleInput="numberInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaActualizacionSalario?.message}
+                          register={register}
+                          nameTitle="Fecha Actualizacion Salario"
+                          type="date"
+                          nameInput="fechaActualizacionSalario"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.inputColumn}>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={oficinaArray}
+                          dataLabel="Oficina"
+                          name="oficina"
+                          register={register}
+                          error={errors.oficina?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={departamentoArray}
+                          dataLabel="Departamento"
+                          name="departamento"
+                          register={register}
+                          error={errors.departamento?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={puestoArray}
+                          dataLabel="Puesto"
+                          name="puesto"
+                          register={register}
+                          error={errors.puesto?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.cantidadHijos?.message}
+                          register={register}
+                          nameTitle="Cantidad Hijos"
+                          type="number"
+                          nameInput="cantidadHijos"
+                          styleInput="numberInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={civilArray}
+                          dataLabel="Estado Civil"
+                          name="estadoCivil"
+                          register={register}
+                          error={errors.estadoCivil?.message}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.inputColumn}>
+                      <div className={styles.inputContainer}>
+                        <Checkbox
+                          error={errors.activo?.message}
+                          register={register}
+                          nameTitle="Activo"
+                          type="checkbox"
+                          nameInput="activo"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.cuentaBancaria?.message}
+                          register={register}
+                          nameTitle="Cuenta Bancaria"
+                          type="number"
+                          nameInput="cuentaBancaria"
+                          styleInput="numberInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          nameTitle="Contraseña"
+                          nameInput="password"
+                          register={register}
+                          type="password"
+                          error={errors.password?.message}
+                          testId="signup-password-input"
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          nameTitle="Repetir Contraseña"
+                          nameInput="repeatPassword"
+                          register={register}
+                          type="password"
+                          error={errors.repeatPassword?.message}
+                          testId="signup-repeatpassword-input"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.buttonsGroup}>
+                  <Button clickAction={() => {}} text="CREAR" testId="signup-btn" />
+                  <Button
+                    text="Cancelar"
+                    clickAction={() => history.goBack()}
+                    testId="signup-cancel-btn"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-      }
-      <div className={styles.titleContainer}>
-        <h3 className={styles.title}>{id ? 'Editar Administrativo' : 'Agregar Administrativo'}</h3>
-      </div>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <section className={styles.inputGroups}>
-          <div className={styles.firstGroup}>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={tipoArray}
-                dataLabel="Tipo"
-                name="tipo"
-                register={register}
-                error={errors.tipo?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.nombre?.message}
-                register={register}
-                nameTitle="Nombre"
-                type="text"
-                nameInput="nombre"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.apellido?.message}
-                register={register}
-                nameTitle="Apellido"
-                type="text"
-                nameInput="apellido"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.email?.message}
-                register={register}
-                nameTitle="Email"
-                type="text"
-                nameInput="email"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.secondGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.dni?.message}
-                register={register}
-                nameTitle="Dni"
-                type="text"
-                nameInput="dni"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaNacimiento?.message}
-                register={register}
-                nameTitle="Fecha Nacimiento"
-                type="date"
-                nameInput="fechaNacimiento"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaContratacion?.message}
-                register={register}
-                nameTitle="Fecha Contratacion"
-                type="date"
-                nameInput="fechaContratacion"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.direccion?.message}
-                register={register}
-                nameTitle="Direccion"
-                type="text"
-                nameInput="direccion"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.dateGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.localidad?.message}
-                register={register}
-                nameTitle="Localidad"
-                type="text"
-                nameInput="localidad"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.telefono?.message}
-                register={register}
-                nameTitle="Telefono"
-                type="text"
-                nameInput="telefono"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={contratoArray}
-                dataLabel="Conrato"
-                name="contrato"
-                register={register}
-                error={errors.contrato?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.hsLaborales?.message}
-                register={register}
-                nameTitle="HsLaborales"
-                type="number"
-                nameInput="hsLaborales"
-                styleInput="numberInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.salario?.message}
-                register={register}
-                nameTitle="Salario"
-                type="number"
-                nameInput="salario"
-                styleInput="numberInput"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.thirdGroup}>
-            <div className={styles.inputContainer}>
-              <DateInput
-                error={errors.fechaActualizacionSalario?.message}
-                register={register}
-                nameTitle="Fecha Actualizacion Salario"
-                type="date"
-                nameInput="fechaActualizacionSalario"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.numeroSeguridadSocial?.message}
-                register={register}
-                nameTitle="N° Seguridad Social"
-                type="number"
-                nameInput="numeroSeguridadSocial"
-                styleInput="numberInput"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.fourGroup}>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={oficinaArray}
-                dataLabel="Oficina"
-                name="oficina"
-                register={register}
-                error={errors.oficina?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={departamentoArray}
-                dataLabel="Departamento"
-                name="departamento"
-                register={register}
-                error={errors.departamento?.message}
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={puestoArray}
-                dataLabel="Puesto"
-                name="puesto"
-                register={register}
-                error={errors.puesto?.message}
-              />
-            </div>
-          </div>
-          <div className={styles.sixGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.cantidadHijos?.message}
-                register={register}
-                nameTitle="Cantidad Hijos"
-                type="number"
-                nameInput="cantidadHijos"
-                styleInput="numberInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <OptionInput
-                data={civilArray}
-                dataLabel="Estado Civil"
-                name="estadoCivil"
-                register={register}
-                error={errors.estadoCivil?.message}
-              />
-            </div>
-          </div>
-          <div className={styles.sevenGroup}>
-            <div className={styles.inputContainer}>
-              <Checkbox
-                error={errors.activo?.message}
-                register={register}
-                nameTitle="Activo"
-                type="checkbox"
-                nameInput="activo"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.cuentaBancaria?.message}
-                register={register}
-                nameTitle="Cuenta Bancaria"
-                type="number"
-                nameInput="cuentaBancaria"
-                styleInput="numberInput"
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.eightGroup}>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.nombreUsuario?.message}
-                register={register}
-                nameTitle="Nombre Usuario"
-                type="text"
-                nameInput="nombreUsuario"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-            <div className={styles.inputContainer}>
-              <Inputs
-                error={errors.contraseña?.message}
-                register={register}
-                nameTitle="Contraseña"
-                type="text"
-                nameInput="contraseña"
-                styleInput="normalInput"
-                required
-              />
-            </div>
-          </div>
-        </section>
-        <div className={styles.btnGroup}>
-          <Button clickAction={() => {}} text={id ? 'Update' : 'Add'} />
-          <Button clickAction={() => reset()} text="Reset" />
-          <Button text="Cancel" clickAction={() => history.goBack()} />
-        </div>
-      </form>
-      {toastError && <ToastError setToastErroOpen={setToastErroOpen} message="{isError.message}" />}
-    </div>
+      )}
+    </>
   );
 };
 
-export default AdministrativosForm;
+export default AdministrativoForm;
