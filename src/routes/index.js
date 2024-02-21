@@ -29,11 +29,11 @@ const Routes = () => {
       <Suspense fallback={<div />}>
         <Switch>
           <PrivateRoute path="/superadmin" role="SUPER_ADMIN" component={SuperAdminRoutesRoutes} />
-          <PrivateRoute path="/controlador" role="CONTROLADOR" component={AdministrativoRoutes} />
+          <PrivateRoute path="/controlador" role="CONTROLADOR" component={ControladorRoutes} />
           <PrivateRoute
             path="/administrativo"
             role="ADMINISTRATIVO"
-            component={ControladorRoutes}
+            component={AdministrativoRoutes}
           />
           <PrivateRoute path="/relevador" role="RELEVADOR" component={RelevadorRoutes} />
           <Route path="/auth" component={AuthRoute} />

@@ -51,7 +51,7 @@ function Siniestro() {
 
   const createMode = () => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/siniestros/form/`, { params: { mode: 'create' } });
+    history.push(`${pathPrefix}/siniestros/form`, { params: { mode: 'create' } });
   };
 
   const relevador = ['/relevador/siniestros'].includes(location.pathname);
@@ -69,16 +69,16 @@ function Siniestro() {
 
   return (
     <div className={styles.container}>
-      {!actualUser && (
-        <div className={styles.btnAdd}>
-          <AddButton entity="siniestro" createMode={createMode} />
-        </div>
-      )}
       <div className={styles.imgTop}>
-        <p className={styles.imgText}>SINIESTRO</p>
+        <p className={styles.imgText}>LISTADO DE SINIESTRO</p>
       </div>
       <div className={styles.innerContainer}>
         <div className={styles.form}>
+          {!actualUser && (
+            <div className={styles.btnAdd}>
+              <AddButton entity="siniestro" createMode={createMode} />
+            </div>
+          )}
           <div className={styles.formContainer}>
             {isPending ? (
               <Loader />

@@ -48,13 +48,14 @@
 .btnAdd {
   display: flex;
   align-self: baseline;
+  width: 100%;
 }
 
 .form {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   background-color: #FAFAFA;
   border: 3px solid #ECECEC;
-  align-items: flex-start
+  align-items: flex-start;
 }

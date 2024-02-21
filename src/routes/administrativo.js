@@ -3,6 +3,7 @@ import Layout from 'Components/Layout';
 import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
 
 import SiniestrosList from '../Components/Users/Relevador/Siniestros';
+import SiniestroFormCreate from '../Components/Entities/Siniestro/FormAdministrativo/SiniestroForm';
 import SiniestrosForm from '../Components/Entities/Siniestro/FormRelevador/SiniestroForm';
 import InvolucradosForm from '../Components/Entities/Involucrado/FormInvolucrado/InvolucradoForm';
 import EntrevistaController from '../Components/Entities/Entrevista/index';
@@ -52,6 +53,7 @@ const AdministrativoRoutes = () => {
   return (
     <Layout routes={routes}>
       <Switch>
+        <Route exact path={`${url}/siniestros/form`} component={SiniestroFormCreate} />
         <Route path={`${url}/siniestros/involucrado/form/:id?`} component={InvolucradosForm} />
         <Route path={`${url}/siniestros/vehiculo/form/:id?`} component={VehiculoForm} />
         <Route path={`${url}/siniestros/novedad/form/:id?`} component={NovedadForm} />
@@ -76,8 +78,10 @@ const AdministrativoRoutes = () => {
         />
         <Route path={`${url}/siniestros/lugarRoboRueda/form/:id?`} component={LugarRoboRuedaForm} />
         <Route exact path={`${url}/siniestros/entrevista/:id?`} component={EntrevistaController} />
+
         <Route exact path={`${url}/siniestros/`} component={SiniestrosList} />
-        <Route path={`${url}/siniestros/:id?`} component={SiniestrosForm} />
+        <Route path={`${url}/siniestros/form/:id?`} component={SiniestrosForm} />
+
         <Route exact path={`${url}/not-allowed`} component={NotAllowed} />
         <Redirect to={`${url}/siniestros`} />
       </Switch>
