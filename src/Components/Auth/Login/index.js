@@ -50,16 +50,16 @@ function LoginForm() {
     const role = sessionStorage.getItem('role');
     switch (role) {
       case 'SUPER_ADMIN':
-        history.push('/superAdmin/admin');
+        history.push('/superadmin');
         break;
-      case 'ADMIN':
-        history.push('/admin');
+      case 'ADMINISTRATIVO':
+        history.push('/administrativo');
         break;
-      case 'MEMBER':
-        history.push('/member');
+      case 'CONTROLADOR':
+        history.push('/controlador');
         break;
-      case 'TRAINER':
-        history.push('/trainer');
+      case 'RELEVADOR':
+        history.push('/relevador');
         break;
       default: {
         break;
@@ -73,13 +73,16 @@ function LoginForm() {
       const role = responseLogin.payload.role;
       switch (role) {
         case 'SUPER_ADMIN':
-          history.push('/superAdmin/admin');
+          history.push('/superadmin');
           break;
-        case 'ADMIN':
-          history.push('/admin');
+        case 'ADMINISTRATIVO':
+          history.push('/administrativo');
           break;
         case 'CONTROLADOR':
           history.push('/controlador');
+          break;
+        case 'RELEVADOR':
+          history.push('/relevador');
           break;
         default: {
           setErrorPop(true);

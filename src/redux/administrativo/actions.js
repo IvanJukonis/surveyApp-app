@@ -1,35 +1,35 @@
 import {
-  GET_ADMINISTRATIVOISTRATIVOS_PENDING,
-  GET_ADMINISTRATIVOISTRATIVOS_SUCCESS,
-  GET_ADMINISTRATIVOISTRATIVOS_ERROR,
+  GET_ADMINISTRATIVO_PENDING,
+  GET_ADMINISTRATIVO_SUCCESS,
+  GET_ADMINISTRATIVO_ERROR,
   DELETE_ADMINISTRATIVO_PENDING,
   DELETE_ADMINISTRATIVO_SUCCESS,
   DELETE_ADMINISTRATIVO_ERROR,
-  ADD_ADMINISTRATIVO_PENDING,
-  ADD_ADMINISTRATIVO_SUCCESS,
-  ADD_ADMINISTRATIVO_ERROR,
-  EDIT_ADMINISTRATIVO_PENDING,
-  EDIT_ADMINISTRATIVO_SUCCESS,
-  EDIT_ADMINISTRATIVO_ERROR
+  POST_ADMINISTRATIVO_PENDING,
+  POST_ADMINISTRATIVO_SUCCESS,
+  POST_ADMINISTRATIVO_ERROR,
+  UPDATE_ADMINISTRATIVO_PENDING,
+  UPDATE_ADMINISTRATIVO_SUCCESS,
+  UPDATE_ADMINISTRATIVO_ERROR
 } from './constants';
 
-export const getAdministrativosPending = (pending) => {
+export const getAdministrativoPending = (pending) => {
   return {
-    type: GET_ADMINISTRATIVOISTRATIVOS_PENDING,
+    type: GET_ADMINISTRATIVO_PENDING,
     payload: pending
   };
 };
 
-export const getAdministrativosSuccess = (list) => {
+export const getAdministrativoSuccess = (list) => {
   return {
-    type: GET_ADMINISTRATIVOISTRATIVOS_SUCCESS,
+    type: GET_ADMINISTRATIVO_SUCCESS,
     payload: list
   };
 };
 
-export const getAdministrativosError = (error) => {
+export const getAdministrativoError = (error) => {
   return {
-    type: GET_ADMINISTRATIVOISTRATIVOS_ERROR,
+    type: GET_ADMINISTRATIVO_ERROR,
     payload: error
   };
 };
@@ -55,44 +55,44 @@ export const deleteAdministrativoError = (error) => {
   };
 };
 
-export const addAdministrativoPending = (pending) => {
+export const postAdministrativoPending = (pending) => {
   return {
-    type: ADD_ADMINISTRATIVO_PENDING,
+    type: POST_ADMINISTRATIVO_PENDING,
     payload: pending
   };
 };
 
-export const addAdministrativoSuccess = (administrativo) => {
+export const postAdministrativoSuccess = (administrativo) => {
   return {
-    type: ADD_ADMINISTRATIVO_SUCCESS,
+    type: POST_ADMINISTRATIVO_SUCCESS,
     payload: administrativo
   };
 };
 
-export const addAdministrativoError = (error) => {
+export const postAdministrativoError = (error) => {
   return {
-    type: ADD_ADMINISTRATIVO_ERROR,
+    type: POST_ADMINISTRATIVO_ERROR,
     payload: error
   };
 };
 
-export const editAdministrativoPending = (pending) => {
+export const updateAdministrativoPending = (pending) => {
   return {
-    type: EDIT_ADMINISTRATIVO_PENDING,
+    type: UPDATE_ADMINISTRATIVO_PENDING,
     payload: pending
   };
 };
 
-export const editAdministrativoSuccess = (administrativo) => {
+export const updateAdministrativoSuccess = (administrativo) => {
   return {
-    type: EDIT_ADMINISTRATIVO_SUCCESS,
+    type: UPDATE_ADMINISTRATIVO_SUCCESS,
     payload: administrativo
   };
 };
 
-export const editAdministrativoError = (error) => {
+export const updateAdministrativoError = (error) => {
   return {
-    type: EDIT_ADMINISTRATIVO_ERROR,
+    type: UPDATE_ADMINISTRATIVO_ERROR,
     payload: error
   };
 };

@@ -91,7 +91,7 @@ export const signUpRelevador = (data) => {
   return async (dispatch) => {
     dispatch(signUpPending());
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativo/`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relevador/`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllAdministrativos, administrativoDelete } from 'redux/administrativo/thunks';
+import { getAdministrativo, deleteAdministrativo } from 'redux/administrativo/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 import styles from './Administrativo.module.css';
@@ -52,10 +52,10 @@ function Administrativo() {
     location.pathname
   );
 
-  const deleteButton = actualUser ? undefined : administrativoDelete;
+  const deleteButton = actualUser ? undefined : deleteAdministrativo;
 
   useEffect(() => {
-    getAllAdministrativos(dispatch);
+    getAdministrativo(dispatch);
   }, []);
 
   return (

@@ -30,37 +30,12 @@ const AuthRoute = () => {
   useEffect(() => {
     if (role) {
       switch (role) {
-        case 'ADMIN': {
+        case 'ADMINISTRATIVO': {
           setRoleRoutes([
             {
-              name: 'Classes',
-              path: '/admin/classes',
+              name: 'Siniestros',
+              path: '/controlador/siniestros',
               icon: 'calendar.svg'
-            },
-            {
-              name: 'Members',
-              path: '/admin/members',
-              icon: 'member.svg'
-            },
-            {
-              name: 'Trainers',
-              path: '/admin/trainers',
-              icon: 'trainers.png'
-            },
-            {
-              name: 'Activities',
-              path: '/admin/activities',
-              icon: 'activities.svg'
-            },
-            {
-              name: 'Subscription',
-              path: '/admin/subscription',
-              icon: 'journal-bookmark.svg'
-            },
-            {
-              name: 'Profile',
-              path: '/admin/profile',
-              icon: 'profile.svg'
             }
           ]);
           break;
@@ -90,6 +65,16 @@ const AuthRoute = () => {
             {
               name: 'Siniestros',
               path: '/controlador/siniestros',
+              icon: 'calendar.svg'
+            }
+          ]);
+          break;
+        }
+        case 'RELEVADOR': {
+          setRoleRoutes([
+            {
+              name: 'Siniestros',
+              path: '/relevador/siniestros',
               icon: 'calendar.svg'
             }
           ]);

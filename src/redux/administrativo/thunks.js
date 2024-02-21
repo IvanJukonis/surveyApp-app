@@ -1,43 +1,43 @@
 import {
-  getAdministrativosPending,
-  getAdministrativosSuccess,
-  getAdministrativosError,
+  getAdministrativoPending,
+  getAdministrativoSuccess,
+  getAdministrativoError,
   deleteAdministrativoPending,
   deleteAdministrativoSuccess,
   deleteAdministrativoError,
-  addAdministrativoPending,
-  addAdministrativoSuccess,
-  addAdministrativoError,
-  editAdministrativoPending,
-  editAdministrativoSuccess,
-  editAdministrativoError
+  postAdministrativoPending,
+  postAdministrativoSuccess,
+  postAdministrativoError,
+  updateAdministrativoPending,
+  updateAdministrativoSuccess,
+  updateAdministrativoError
 } from './actions';
 
-export const getAllAdministrativos = async (dispatch) => {
-  const token = sessionStorage.getItem('token');
+const token = sessionStorage.getItem('token');
+
+export const getAdministrativo = async (dispatch) => {
   try {
-    dispatch(getAdministrativosPending(true));
-    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativos`, {
+    dispatch(getAdministrativoPending(true));
+    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativo`, {
       method: 'GET',
       headers: { token: token }
     });
     const data = await reponse.json();
     const administrativosList = data.data;
-    dispatch(getAdministrativosPending(false));
-    return dispatch(getAdministrativosSuccess(administrativosList));
+    dispatch(getAdministrativoPending(false));
+    dispatch(getAdministrativoSuccess(administrativosList));
   } catch (error) {
-    dispatch(getAdministrativosPending(false));
-    dispatch(getAdministrativosError(true));
+    dispatch(getAdministrativoPending(false));
+    dispatch(getAdministrativoError(true));
   }
 };
 
-export const administrativoDelete = (administrativoID) => {
-  const token = sessionStorage.getItem('token');
+export const deleteAdministrativo = (administrativoID) => {
   return async (dispatch) => {
     try {
       dispatch(deleteAdministrativoPending(true));
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/administrativos/${administrativoID}`,
+        `${process.env.REACT_APP_API_URL}/api/administrativo/${administrativoID}`,
         {
           method: 'DELETE',
           headers: { token: token }
@@ -53,51 +53,53 @@ export const administrativoDelete = (administrativoID) => {
   };
 };
 
-export const createAdministrativo = async (dispatch, administrativoData) => {
+export const postAdministrativo = async (dispatch, newAdministrativo) => {
   try {
-    const token = sessionStorage.getItem('token');
-    dispatch(addAdministrativoPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativos`, {
+    dispatch(postAdministrativoPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativo`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        token: token
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(administrativoData)
+      body: JSON.stringify(newAdministrativo)
     });
-    const data = await response.json();
-    if (!response.ok) {
-      dispatch(addAdministrativoPending(false));
-      throw new Error(data.message);
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
+      dispatch(postAdministrativoPending(false));
+      return dispatch(postAdministrativoSuccess(newData.data));
+    } else {
+      dispatch(postAdministrativoPending(false));
+      return dispatch(postAdministrativoError(true));
     }
-    dispatch(addAdministrativoSuccess(data.data));
   } catch (error) {
-    dispatch(addAdministrativoPending(false));
-    dispatch(addAdministrativoError(error.message));
+    dispatch(postAdministrativoPending(false));
+    return dispatch(postAdministrativoError(true));
   }
 };
 
 export const updateAdministrativo = async (dispatch, id, administrativoData) => {
-  const token = sessionStorage.getItem('token');
   try {
-    dispatch(editAdministrativoPending(true));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativos/${id}`, {
+    dispatch(updateAdministrativoPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/administrativo/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-        token: token
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(administrativoData)
     });
-    const data = await response.json();
-    if (!response.ok) {
-      dispatch(editAdministrativoPending(false));
-      throw new Error(data.message);
-    }
 
-    dispatch(editAdministrativoSuccess(data));
+    if (response.ok) {
+      const data = await response.json();
+      const newData = data;
+      dispatch(updateAdministrativoPending(false));
+      return dispatch(updateAdministrativoSuccess(newData.data));
+    } else {
+      dispatch(updateAdministrativoPending(false));
+      return dispatch(updateAdministrativoError(true));
+    }
   } catch (error) {
-    dispatch(editAdministrativoPending(false));
-    dispatch(editAdministrativoError(error.message));
+    dispatch(updateAdministrativoPending(false));
+    return dispatch(updateAdministrativoError(error.message));
   }
 };
