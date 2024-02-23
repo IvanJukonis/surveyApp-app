@@ -28,6 +28,32 @@ export const getSiniestro = async (dispatch) => {
   }
 };
 
+export const getSiniestroStats = async (dispatch, usuarioId, usuario) => {
+  try {
+    dispatch(getSiniestroPending(true));
+    const reponse = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro`);
+    const data = await reponse.json();
+    const siniestrosList = data.data;
+    let siniestrosFiltrados;
+    if (usuario == 'controlador') {
+      siniestrosFiltrados = siniestrosList.filter((siniestro) =>
+        siniestro.controlador.some((controlador) => usuarioId.includes(controlador))
+      );
+    } else {
+      siniestrosFiltrados = siniestrosList.filter((siniestro) =>
+        siniestro.relevador.some((relevador) => usuarioId.includes(relevador))
+      );
+    }
+
+    dispatch(getSiniestroPending(false));
+    dispatch(getSiniestroSuccess(siniestrosFiltrados));
+    dispatch(getSiniestroError(false));
+  } catch (error) {
+    dispatch(getSiniestroPending(false));
+    dispatch(getSiniestroError(true));
+  }
+};
+
 export const getByIdSiniestro = async (dispatch, id) => {
   try {
     dispatch(getSiniestroPending(true));

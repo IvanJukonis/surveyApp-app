@@ -31,7 +31,7 @@ const requeridoArray = [
   'Relevamiento y comprobacion',
   'Relevamiento y comprobacion, sin cierre'
 ];
-const statsArray = ['Muy alto', 'Alto', 'Moderado', 'Bajo ', 'Nulo'];
+const statsArray = ['Muy alto', 'Alto', 'Moderado', 'Bajo', 'Nulo'];
 const demorasArray = ['Si', 'No', 'Moderado'];
 
 const SiniestrosForm = () => {
@@ -280,7 +280,7 @@ const SiniestrosForm = () => {
     }),
 
     statsSolicitudCorreccion: Joi.string()
-      .valid('Muy alto', 'Alto', 'Moderado', 'Bajo ', 'Nulo')
+      .valid('Muy alto', 'Alto', 'Moderado', 'Bajo', 'Nulo')
       .messages({
         'any.only': 'Seleccione una opción valida'
       }),

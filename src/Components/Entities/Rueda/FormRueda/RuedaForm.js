@@ -312,24 +312,40 @@ const RuedasForm = () => {
   };
 
   const checkFraud = () => {
-    console.log('hola');
     const ruedasNoSustraidaList = currentRueda.filter((rueda) => !rueda.sustraida);
     const ruedasSustraidaList = currentRueda.filter((rueda) => rueda.sustraida);
+
+    const estrategias = {
+      marca: {
+        comparar: (rueda1, rueda2) => rueda1.marca === rueda2.marca
+      },
+      numDot: {
+        comparar: (rueda1, rueda2) => rueda1.numDot === rueda2.numDot
+      },
+      numLlanta: {
+        comparar: (rueda1, rueda2) => rueda1.numLlanta === rueda2.numLlanta
+      }
+    };
+
+    const compararRuedas = (estrategia, sustraida, noSustraida) => {
+      const comparador = estrategias[estrategia].comparar;
+      return comparador(sustraida, noSustraida);
+    };
+
     const coincidenciasList = [];
 
     for (const sustraida of ruedasSustraidaList) {
       for (const noSustraida of ruedasNoSustraidaList) {
-        if (
-          sustraida.marca === noSustraida.marca ||
-          sustraida.numDot === noSustraida.numDot ||
-          sustraida.numLlanta === noSustraida.numLlanta
-        ) {
-          coincidenciasList.push({ sustraida, noSustraida });
-          setFraudRueda(coincidenciasList);
-          console.log(fraudRueda);
+        for (const estrategia in estrategias) {
+          if (compararRuedas(estrategia, sustraida, noSustraida)) {
+            coincidenciasList.push({ sustraida, noSustraida });
+            break;
+          }
         }
       }
     }
+
+    setFraudRueda(coincidenciasList);
   };
 
   const handleInvolucrado = () => {

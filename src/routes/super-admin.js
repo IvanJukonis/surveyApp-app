@@ -14,11 +14,6 @@ import NotAllowed from 'Components/Auth/NotAllowed';
 
 const routes = [
   {
-    name: 'Siniestros',
-    path: '/superadmin/siniestros',
-    icon: 'calendar.svg'
-  },
-  {
     name: 'Relevadores',
     path: '/superadmin/relevador',
     icon: 'calendar.svg'
