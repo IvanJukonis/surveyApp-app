@@ -19,7 +19,7 @@ import LugarRoboRuedaForm from '../Components/Entities/LugarRoboRueda/Form/Lugar
 import EventoForm from '../Components/Entities/Evento/FormEvento/EventoForm';
 import RelevadoresList from '../Components/Entities/Relevador/ListRelevador/index';
 import ControladoresList from '../Components/Entities/Controlador/ListControlador/index';
-
+import PerfilForm from '../Components/Entities/Administrativo/Profile/index';
 import NotAllowed from 'Components/Auth/NotAllowed';
 
 const routes = [
@@ -40,7 +40,7 @@ const routes = [
   },
   {
     name: 'Perfil',
-    path: '/administrativo/siniestros',
+    path: '/administrativo/perfil',
     icon: 'calendar.svg'
   },
   {
@@ -82,6 +82,7 @@ const AdministrativoRoutes = () => {
         <Route exact path={`${url}/siniestros/entrevista/:id?`} component={EntrevistaController} />
         <Route exact path={`${url}/controlador/`} component={ControladoresList} />
         <Route exact path={`${url}/relevador/`} component={RelevadoresList} />
+        <Route exact path={`${url}/perfil/`} component={PerfilForm} />
         <Route exact path={`${url}/siniestros/`} component={SiniestrosList} />
         <Route path={`${url}/siniestros/form/:id?`} component={SiniestrosForm} />
 

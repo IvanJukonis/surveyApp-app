@@ -13,7 +13,6 @@ import { updateRelevador } from 'redux/relevador/thunks';
 import { Inputs, OptionInput, Button } from 'Components/Shared';
 import ModalSuccess from 'Components/Shared/Modals/ModalSuccess/index';
 import DateInput from 'Components/Shared/Inputs/DateInput';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import ModalConfirm from 'Components/Shared/Modals/ModalConfirm/index';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -45,10 +44,6 @@ function Relevador() {
   const [statsTotal, setTotal] = useState();
 
   const tipoArray = ['Relevador', 'Relevador', 'Administrativo', 'Consultor'];
-  const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
-  const oficinaArray = ['Rosario', 'Vgg', 'San Lorenzo'];
-  const departamentoArray = ['Administracion', 'Produccion', 'Marketing', 'RRHH'];
-  const puestoArray = ['Gerente', 'Empleado'];
   const civilArray = ['Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a'];
 
   const schema = Joi.object({
@@ -405,6 +400,8 @@ function Relevador() {
     return setToastErroOpen(true);
   };
 
+  console.log(errors);
+
   const onSubmit = async (data) => {
     const formattedData = {
       ...data,
@@ -577,29 +574,6 @@ function Relevador() {
                       required
                     />
                   </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.email?.message}
-                      register={register}
-                      isDisabled={true}
-                      nameTitle="Email"
-                      type="text"
-                      nameInput="email"
-                      styleInput="normalInput"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.numeroSeguridadSocial?.message}
-                      register={register}
-                      nameTitle="N° Seguridad Social"
-                      type="number"
-                      nameInput="numeroSeguridadSocial"
-                      styleInput="numberInput"
-                      required
-                    />
-                  </div>
                 </div>
                 <div className={styles.inputColumn}>
                   <div className={styles.inputContainer}>
@@ -610,26 +584,6 @@ function Relevador() {
                       type="text"
                       nameInput="dni"
                       styleInput="normalInput"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaNacimiento?.message}
-                      register={register}
-                      nameTitle="Fecha Nacimiento"
-                      type="date"
-                      nameInput="fechaNacimiento"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaContratacion?.message}
-                      register={register}
-                      nameTitle="Fecha Contratacion"
-                      type="date"
-                      nameInput="fechaContratacion"
                       required
                     />
                   </div>
@@ -646,11 +600,12 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <Inputs
-                      error={errors.localidad?.message}
+                      error={errors.email?.message}
                       register={register}
-                      nameTitle="Localidad"
+                      isDisabled={true}
+                      nameTitle="Email"
                       type="text"
-                      nameInput="localidad"
+                      nameInput="email"
                       styleInput="normalInput"
                       required
                     />
@@ -669,99 +624,17 @@ function Relevador() {
                     />
                   </div>
                   <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={contratoArray}
-                      dataLabel="Conrato"
-                      name="contrato"
+                    <DateInput
+                      error={errors.fechaNacimiento?.message}
                       register={register}
-                      error={errors.contrato?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.hsLaborales?.message}
-                      register={register}
-                      nameTitle="HsLaborales"
-                      type="number"
-                      nameInput="hsLaborales"
-                      styleInput="numberInput"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.salario?.message}
-                      register={register}
-                      nameTitle="Salario"
-                      type="number"
-                      nameInput="salario"
-                      styleInput="numberInput"
+                      nameTitle="Fecha Nacimiento"
+                      type="date"
+                      nameInput="fechaNacimiento"
                       required
                     />
                   </div>
                 </div>
                 <div className={styles.inputColumn}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={oficinaArray}
-                      dataLabel="Oficina"
-                      name="oficina"
-                      register={register}
-                      error={errors.oficina?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={departamentoArray}
-                      dataLabel="Departamento"
-                      name="departamento"
-                      register={register}
-                      error={errors.departamento?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={puestoArray}
-                      dataLabel="Puesto"
-                      name="puesto"
-                      register={register}
-                      error={errors.puesto?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.cantidadHijos?.message}
-                      register={register}
-                      nameTitle="Cantidad Hijos"
-                      type="number"
-                      nameInput="cantidadHijos"
-                      styleInput="numberInput"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.inputColumn}>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      error={errors.activo?.message}
-                      register={register}
-                      nameTitle="Activo"
-                      type="checkbox"
-                      nameInput="activo"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.cuentaBancaria?.message}
-                      register={register}
-                      nameTitle="Cuenta Bancaria"
-                      type="number"
-                      nameInput="cuentaBancaria"
-                      styleInput="numberInput"
-                      required
-                    />
-                  </div>
                   <div className={styles.inputContainer}>
                     <OptionInput
                       data={civilArray}
@@ -772,12 +645,13 @@ function Relevador() {
                     />
                   </div>
                   <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaActualizacionSalario?.message}
+                    <Inputs
+                      error={errors.localidad?.message}
                       register={register}
-                      nameTitle="Fecha Actualizacion Salario"
-                      type="date"
-                      nameInput="fechaActualizacionSalario"
+                      nameTitle="Localidad"
+                      type="text"
+                      nameInput="localidad"
+                      styleInput="normalInput"
                       required
                     />
                   </div>

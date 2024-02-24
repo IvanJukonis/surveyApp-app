@@ -9,9 +9,8 @@ function Controlador() {
   const dispatch = useDispatch();
   const controlador = useSelector((state) => state.controlador.list);
   const isPending = useSelector((state) => state.controlador.pending);
-  const isError = useSelector((state) => state.controlador.error);
   const history = useHistory();
-  const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const [toastErroOpen, setToastErroOpen] = useState(false);
 
   const columnTitleArray = [
     'Nombre',
@@ -86,7 +85,7 @@ function Controlador() {
         </div>
       </div>
       {toastErroOpen && (
-        <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
+        <ToastError setToastErroOpen={setToastErroOpen} message="Error in database" />
       )}
     </div>
   );

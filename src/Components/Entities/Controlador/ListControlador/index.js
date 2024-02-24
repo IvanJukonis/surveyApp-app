@@ -28,10 +28,9 @@ function Controlador() {
 
   const controladores = useSelector((state) => state.controlador.list);
   const isPending = useSelector((state) => state.controlador.pending);
-  const isError = useSelector((state) => state.controlador.error);
   const siniestros = useSelector((state) => state.siniestro.list);
 
-  const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const [toastErroOpen, setToastErroOpen] = useState(false);
   const [idControlador, setIdControlador] = useState('');
   const [selectedControlador, setSelectedControlador] = useState('');
   const [siniestrosEvaluados, setSiniestrosEvaluados] = useState('');
@@ -76,6 +75,18 @@ function Controlador() {
         'string.empty': 'El campo "Apellido" es un campo requerido',
         'string.min': 'El campo "Apellido" debe tener al menos 3 caracteres',
         'string.max': 'El campo "Apellido" debe tener como máximo 30 caracteres'
+      })
+      .required(),
+
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+      .messages({
+        'string.base': 'El campo "Email" debe ser una cadena de texto',
+        'string.empty': 'El campo "Email" es un campo requerido',
+        'string.email': 'El campo "Email" debe ser una dirección de correo válida',
+        'string.minDomainSegments': 'El campo "Email" debe tener al menos 2 segmentos de dominio',
+        'string.tlds.allow':
+          'El campo "Email" debe tener un dominio de nivel superior válido (com o net)'
       })
       .required(),
 
@@ -223,7 +234,10 @@ function Controlador() {
         'string.min': 'El campo "Cuenta Bancaria" debe tener al menos 4 caracteres',
         'string.max': 'El campo "Cuenta Bancaria" debe tener como máximo 12 caracteres'
       })
-      .required()
+      .required(),
+    _id: Joi.any(),
+    firebaseUid: Joi.any(),
+    __v: Joi.any()
   });
 
   const columnTitleArray = [
@@ -261,7 +275,6 @@ function Controlador() {
       siniestros.length === 0 ||
       (siniestros.length === 1 && siniestros[0].statsGramaticaProlijidad == undefined)
     ) {
-      getSiniestroStats(dispatch, idControlador, 'controlador');
       setSiniestrosEvaluados(0);
       setCorreccion(0);
       setProlijidad(0);
@@ -384,7 +397,7 @@ function Controlador() {
 
   const onConfirmFunction = async () => {
     const editControladorResponse = await updateControlador(dispatch, controlador._id, controlador);
-    if (editControladorResponse.type === 'UPDATE_NOVEDAD_SUCCESS') {
+    if (editControladorResponse.type === 'UPDATE_CONTROLADOR_SUCCESS') {
       setToastErroOpen(false);
       setModalSuccessOpen(true);
       return setTimeout(() => {}, 1000);
@@ -401,7 +414,7 @@ function Controlador() {
     setControlador(formattedData);
     setModalAddConfirmOpen(true);
   };
-
+  console.log(errors);
   useEffect(() => {
     getControlador(dispatch);
     getSiniestroStats(dispatch, idControlador, 'controlador');
@@ -431,7 +444,7 @@ function Controlador() {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={'Novedad actualizada.'}
+              message={'Controlador actualizado.'}
             />
           )}
         </div>

@@ -1,58 +1,50 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getRelevador } from 'redux/relevador/thunks';
-import { ToastError, Loader } from 'Components/Shared';
-import TableList from '../../../Shared/listTable/index';
-import InputsStats from 'Components/Shared/Inputs/statsInput';
-import styles from './Relevador.module.css';
+import { ToastError } from 'Components/Shared';
+import styles from './Perfil.module.css';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import { getSiniestroStats } from 'redux/siniestro/thunks';
-import { updateRelevador } from 'redux/relevador/thunks';
 import { Inputs, OptionInput, Button } from 'Components/Shared';
 import ModalSuccess from 'Components/Shared/Modals/ModalSuccess/index';
 import DateInput from 'Components/Shared/Inputs/DateInput';
 import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 import ModalConfirm from 'Components/Shared/Modals/ModalConfirm/index';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { getFirebaseUidFromToken } from '../../../../Config/firebase-config';
+import 'firebase/compat/auth';
+import { getControlador, updateControlador } from 'redux/controlador/thunks';
 
-function Relevador() {
+function Perfil() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [showStats, setShowStats] = useState(false);
-  const [relevador, setRelevador] = useState({});
+  const [userCurrent, setUserCurrent] = useState('');
+  const [controlador, setControlador] = useState({});
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
-  const [showButton, setShowButton] = useState(false);
-
-  const relevadores = useSelector((state) => state.relevador.list);
-  const isPending = useSelector((state) => state.relevador.pending);
-  const siniestros = useSelector((state) => state.siniestro.list);
-
   const [toastErroOpen, setToastErroOpen] = useState(false);
-  const [idRelevador, setIdRelevador] = useState('');
-  const [selectedRelevador, setSelectedRelevador] = useState('');
-  const [siniestrosEvaluados, setSiniestrosEvaluados] = useState('');
-  const [statsSolicitudCorreccion, setStatsSolicitudCorreccion] = useState([]);
-  const [statsGramaticaProlijidad, setStatsGramaticaProlijidad] = useState([]);
-  const [statsDesarrolloSiniestro, setStatsDesarrolloSiniestro] = useState([]);
-  const [statsJustificacionDemoras, setStatsJustificacionDemoras] = useState([]);
-  const [statsCorrecciones, setCorreccion] = useState();
-  const [statsProlijidad, setProlijidad] = useState();
-  const [statsSiniestro, setDesarrollo] = useState();
-  const [statsDemoras, setJustificacion] = useState();
-  const [statsTotal, setTotal] = useState();
 
-  const tipoArray = ['Relevador', 'Relevador', 'Administrativo', 'Consultor'];
+  const controladors = useSelector((state) => state.controlador.list);
+  const userControlador = controladors.find((user) => user.email === userCurrent);
+
+  const tipoArray = ['Relevador', 'Controlador', 'Controlador', 'Consultor'];
   const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
   const oficinaArray = ['Rosario', 'Vgg', 'San Lorenzo'];
   const departamentoArray = ['Administracion', 'Produccion', 'Marketing', 'RRHH'];
   const puestoArray = ['Gerente', 'Empleado'];
   const civilArray = ['Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a'];
 
+  const currentUser = async () => {
+    try {
+      const emailCurrentUser = await getFirebaseUidFromToken();
+      setUserCurrent(emailCurrentUser);
+    } catch (error) {
+      return error;
+    }
+  };
+
   const schema = Joi.object({
-    tipo: Joi.string().valid('Relevador', 'Relevador', 'Administrativo', 'Consultor').messages({
+    tipo: Joi.string().valid('Relevador', 'Controlador', 'Controlador', 'Consultor').messages({
       'any.only': 'El campo "Tipo" debe contener una tipo valido'
     }),
 
@@ -77,15 +69,6 @@ function Relevador() {
         'string.max': 'El campo "Apellido" debe tener como máximo 30 caracteres'
       })
       .required(),
-
-    dni: Joi.number().min(10000000).max(99999999).integer().messages({
-      'number.base': 'El DNI debe ser un número',
-      'number.empty': 'El DNI es un campo requerido',
-      'number.min': 'El DNI debe ser al menos 10,000,000',
-      'number.max': 'El DNI debe ser como máximo 99,999,999',
-      'number.integer': 'El DNI debe ser un número entero'
-    }),
-
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
       .messages({
@@ -97,6 +80,14 @@ function Relevador() {
           'El campo "Email" debe tener un dominio de nivel superior válido (com o net)'
       })
       .required(),
+
+    dni: Joi.number().min(10000000).max(99999999).integer().messages({
+      'number.base': 'El DNI debe ser un número',
+      'number.empty': 'El DNI es un campo requerido',
+      'number.min': 'El DNI debe ser al menos 10,000,000',
+      'number.max': 'El DNI debe ser como máximo 99,999,999',
+      'number.integer': 'El DNI debe ser un número entero'
+    }),
 
     fechaNacimiento: Joi.date()
       .messages({
@@ -237,19 +228,9 @@ function Relevador() {
       .required(),
     _id: Joi.any(),
     firebaseUid: Joi.any(),
+    any: Joi.any(),
     __v: Joi.any()
   });
-
-  const columnTitleArray = [
-    'Nombre',
-    'Apellido',
-    'Tipo',
-    'DNI',
-    'Departamento',
-    'Oficina',
-    'Puesto'
-  ];
-  const columns = ['nombre', 'apellido', 'tipo', 'dni', 'departamento', 'oficina', 'puesto'];
 
   const formatDate = (dateString) => {
     const dateObject = new Date(dateString);
@@ -261,143 +242,55 @@ function Relevador() {
 
   const {
     register,
-    reset,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm({
     mode: 'onBlur',
     resolver: joiResolver(schema),
-    defaultValues: { ...relevadores }
+    defaultValues: { ...userControlador }
   });
 
-  const calculateStats = (siniestros) => {
-    if (
-      siniestros.length === 0 ||
-      (siniestros.length === 1 && siniestros[0].statsGramaticaProlijidad == undefined)
-    ) {
-      setSiniestrosEvaluados(0);
-      setCorreccion(0);
-      setProlijidad(0);
-      setDesarrollo(0);
-      setJustificacion(0);
-      setTotal(0);
-    } else {
-      const nuevoArray = siniestros.map((siniestro) => {
-        const {
-          statsSolicitudCorreccion,
-          statsGramaticaProlijidad,
-          statsDesarrolloSiniestro,
-          statsJustificacionDemoras
-        } = siniestro;
-        return {
-          statsSolicitudCorreccion,
-          statsGramaticaProlijidad,
-          statsDesarrolloSiniestro,
-          statsJustificacionDemoras
-        };
-      });
-      setSiniestrosEvaluados(nuevoArray.length);
-      const arrayStatsSolicitudCorreccion = [];
-      const arrayStatsGramaticaProlijidad = [];
-      const arrayStatsDesarrolloSiniestro = [];
-      const arrayStatsJustificacionDemoras = [];
-      nuevoArray.forEach((objeto) => {
-        arrayStatsSolicitudCorreccion.push(objeto.statsSolicitudCorreccion);
-        arrayStatsGramaticaProlijidad.push(objeto.statsGramaticaProlijidad);
-        arrayStatsDesarrolloSiniestro.push(objeto.statsDesarrolloSiniestro);
-        arrayStatsJustificacionDemoras.push(objeto.statsJustificacionDemoras);
-      });
-      const transformArrays = () => {
-        const transformarArray = (array, mapeo) => {
-          return array
-            .filter((valor) => valor !== undefined)
-            .map((valor) => (mapeo[valor] !== undefined ? mapeo[valor] : valor));
-        };
-        const mapeoGramaticaSolicitud = {
-          'Muy alto': 1,
-          Alto: 2,
-          Moderado: 3,
-          Bajo: 4,
-          Nulo: 5
-        };
-        const mapeoDesarrolloSiniestro = {
-          'Muy alto': 5,
-          Alto: 4,
-          Moderado: 3,
-          Bajo: 2,
-          Nulo: 1
-        };
-        const mapeoJustificacionDemoras = {
-          No: 2,
-          Si: 1,
-          Moderado: 1.5
-        };
-        setStatsSolicitudCorreccion(
-          transformarArray(arrayStatsSolicitudCorreccion, mapeoGramaticaSolicitud)
-        );
-        setStatsGramaticaProlijidad(
-          transformarArray(arrayStatsGramaticaProlijidad, mapeoGramaticaSolicitud)
-        );
-        setStatsDesarrolloSiniestro(
-          transformarArray(arrayStatsDesarrolloSiniestro, mapeoDesarrolloSiniestro)
-        );
-        setStatsJustificacionDemoras(
-          transformarArray(arrayStatsJustificacionDemoras, mapeoJustificacionDemoras)
-        );
-      };
-      transformArrays();
-      const calculate = (array) => {
-        if (array.length === 0) {
-          return 0;
-        }
-        const suma = array.reduce((acc, valor) => acc + valor, 0);
-        const resultado = suma / array.length;
-        return resultado;
-      };
+  console.log(errors);
 
-      const calculateJustificacion = (array) => {
-        if (array.length === 0) {
-          return 0;
-        }
-        const cantidadDeNo = array.filter((valor) => valor === 2).length;
-        const cantidadDeModerados = array.filter((valor) => valor === 1.5).length;
-        const nuevaCantidadDeModerados = cantidadDeModerados / 2;
-        const porcentajeDeDos = ((cantidadDeNo + nuevaCantidadDeModerados) / array.length) * 100;
-        return porcentajeDeDos;
+  const resetForm = () => {
+    if (userControlador?.tipo) {
+      const admData = {
+        tipo: userControlador.tipo,
+        nombre: userControlador.nombre,
+        apellido: userControlador.apellido,
+        dni: userControlador.dni,
+        fechaNacimiento: userControlador.fechaNacimiento,
+        fechaContratacion: userControlador.fechaContratacion,
+        direccion: userControlador.direccion,
+        localidad: userControlador.localidad,
+        telefono: userControlador.telefono,
+        contrato: userControlador.contrato,
+        hsLaborales: userControlador.hsLaborales,
+        salario: userControlador.salario,
+        email: userControlador.email,
+        fechaActualizacionSalario: userControlador.fechaActualizacionSalario,
+        numeroSeguridadSocial: userControlador.numeroSeguridadSocial,
+        oficina: userControlador.oficina,
+        any: userControlador.any,
+        departamento: userControlador.departamento,
+        puesto: userControlador.puesto,
+        cantidadHijos: userControlador.cantidadHijos,
+        estadoCivil: userControlador.estadoCivil,
+        activo: userControlador.activo,
+        cuentaBancaria: userControlador.cuentaBancaria
       };
-      setJustificacion(calculateJustificacion(statsJustificacionDemoras));
-      setCorreccion(calculate(statsSolicitudCorreccion));
-      setProlijidad(calculate(statsGramaticaProlijidad));
-      setDesarrollo(calculate(statsDesarrolloSiniestro));
-      const calculateTotal = (valor1, valor2, valor3, justificacion) => {
-        const justificacionRedondeada = Math.round(justificacion);
-        if (justificacionRedondeada >= 0 && justificacionRedondeada <= 10) {
-          return (valor1 + valor2 + valor3) / 1;
-        } else if (justificacionRedondeada === 100) {
-          return (valor1 + valor2 + valor3) / 100;
-        } else {
-          return (valor1 + valor2 + valor3) / justificacionRedondeada;
-        }
-      };
-      setTotal(calculateTotal(statsCorrecciones, statsProlijidad, statsSiniestro, statsDemoras));
+      reset({ ...admData });
     }
   };
 
-  const tableClick = (index) => {
-    const formattedData = {
-      ...relevadores[index]
-    };
-    setShowButton(true);
-    setSelectedRelevador(`${formattedData.nombre} ${formattedData.apellido}`);
-    setIdRelevador(formattedData._id);
-    reset({ ...formattedData });
-    setShowStats(true);
-    calculateStats(siniestros);
-  };
-
   const onConfirmFunction = async () => {
-    const editRelevadorResponse = await updateRelevador(dispatch, relevador._id, relevador);
-    if (editRelevadorResponse.type === 'UPDATE_RELEVADOR_SUCCESS') {
+    const editControladorResponse = await updateControlador(
+      dispatch,
+      userControlador._id,
+      controlador
+    );
+    if (editControladorResponse.type === 'UPDATE_CONTROLADOR_SUCCESS') {
       setToastErroOpen(false);
       setModalSuccessOpen(true);
       return setTimeout(() => {}, 1000);
@@ -411,23 +304,18 @@ function Relevador() {
       fechaNacimiento: formatDate(data.fechaNacimiento),
       fechaActualizacionSalario: formatDate(data.fechaActualizacionSalario)
     };
-    setRelevador(formattedData);
+    setControlador(formattedData);
     setModalAddConfirmOpen(true);
   };
 
   useEffect(() => {
-    getRelevador(dispatch);
-    getSiniestroStats(dispatch, idRelevador, 'relevador');
+    getControlador(dispatch);
+    currentUser();
   }, []);
 
   useEffect(() => {
-    getSiniestroStats(dispatch, idRelevador, 'relevador');
-    calculateStats(siniestros);
-  }, [idRelevador]);
-
-  useEffect(() => {
-    calculateStats(siniestros);
-  }, [siniestros]);
+    resetForm();
+  }, [userControlador]);
 
   return (
     <div className={styles.container}>
@@ -438,105 +326,21 @@ function Relevador() {
               method={'Editar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
-              message={'Esta seguro que quiere editar este relevador?'}
+              message={'Esta seguro que quiere editar tu perfil?'}
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={'Relevador actualizado.'}
+              message={'Perfil actualizado.'}
             />
           )}
         </div>
       }
       <div className={styles.imgTop}>
-        <p className={styles.imgText}>LISTADO DE RELEVADORES</p>
+        <p className={styles.imgText}>PERFIL DE USUARIO</p>
       </div>
       <div className={styles.innerContainer}>
-        <div className={styles.topTable}>
-          <div className={styles.form}>
-            <div className={styles.formContainer}>
-              {isPending ? (
-                <Loader />
-              ) : (
-                <TableList
-                  handleClick={tableClick}
-                  columnTitleArray={columnTitleArray}
-                  data={relevadores}
-                  columns={columns}
-                />
-              )}
-            </div>
-          </div>
-          {showStats ? (
-            <div className={styles.formStats}>
-              <div className={styles.titleContainer}>
-                <p className={styles.title}>DESEMPEÑO DE RELEVADOR</p>
-              </div>
-              <div className={styles.subTitleContainer}>
-                <p className={styles.subTitle}>{selectedRelevador}</p>
-              </div>
-              <div className={styles.inputContainer}>
-                <InputsStats
-                  data={siniestrosEvaluados}
-                  nameTitle="Siniestros Evaluados"
-                  type="number"
-                  nameInput="numSiniestro"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <InputsStats
-                  data={statsCorrecciones}
-                  nameTitle="Puntaje de Correcciones"
-                  type="number"
-                  nameInput="numSiniestro"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <InputsStats
-                  data={statsProlijidad}
-                  nameTitle="Puntaje de Prolijidad"
-                  type="number"
-                  nameInput="numSiniestro"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <InputsStats
-                  data={statsSiniestro}
-                  nameTitle="Puntaje de Desarrollo"
-                  type="number"
-                  nameInput="numSiniestro"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <InputsStats
-                  data={statsDemoras}
-                  nameTitle="Porcentaje de Demoras"
-                  type="number"
-                  nameInput="numSiniestro"
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <InputsStats
-                  data={statsTotal}
-                  nameTitle="Puntaje Total"
-                  type="number"
-                  nameInput="numSiniestro"
-                />
-              </div>
-              <div className={styles.subTextContainer}>
-                <p className={styles.subText}>
-                  *Los valores -Puntaje- varian entre 0 - 5 en relacion al desempeño. El valor
-                  -Porcentaje- indica una estadistica de demoras presentadas. Puntaje final
-                  relaciona los valores aportados anteriormente estableciendo un indice de desempeño
-                  final.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div></div>
-          )}
-        </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles.formContainer}
@@ -548,6 +352,7 @@ function Relevador() {
                 <div className={styles.inputColumn}>
                   <div className={styles.inputContainer}>
                     <OptionInput
+                      isDisabled={true}
                       data={tipoArray}
                       dataLabel="Tipo"
                       name="tipo"
@@ -557,6 +362,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <Inputs
+                      isDisabled={true}
                       error={errors.nombre?.message}
                       register={register}
                       nameTitle="Nombre"
@@ -568,6 +374,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <Inputs
+                      isDisabled={true}
                       error={errors.apellido?.message}
                       register={register}
                       nameTitle="Apellido"
@@ -579,9 +386,9 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <Inputs
+                      isDisabled={true}
                       error={errors.email?.message}
                       register={register}
-                      isDisabled={true}
                       nameTitle="Email"
                       type="text"
                       nameInput="email"
@@ -604,6 +411,7 @@ function Relevador() {
                 <div className={styles.inputColumn}>
                   <div className={styles.inputContainer}>
                     <Inputs
+                      isDisabled={true}
                       error={errors.dni?.message}
                       register={register}
                       nameTitle="Dni"
@@ -615,6 +423,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <DateInput
+                      isDisabled={true}
                       error={errors.fechaNacimiento?.message}
                       register={register}
                       nameTitle="Fecha Nacimiento"
@@ -625,6 +434,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <DateInput
+                      isDisabled={true}
                       error={errors.fechaContratacion?.message}
                       register={register}
                       nameTitle="Fecha Contratacion"
@@ -670,6 +480,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <OptionInput
+                      isDisabled={true}
                       data={contratoArray}
                       dataLabel="Conrato"
                       name="contrato"
@@ -679,6 +490,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <Inputs
+                      isDisabled={true}
                       error={errors.hsLaborales?.message}
                       register={register}
                       nameTitle="HsLaborales"
@@ -690,6 +502,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <Inputs
+                      isDisabled={true}
                       error={errors.salario?.message}
                       register={register}
                       nameTitle="Salario"
@@ -703,6 +516,7 @@ function Relevador() {
                 <div className={styles.inputColumn}>
                   <div className={styles.inputContainer}>
                     <OptionInput
+                      isDisabled={true}
                       data={oficinaArray}
                       dataLabel="Oficina"
                       name="oficina"
@@ -712,6 +526,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <OptionInput
+                      isDisabled={true}
                       data={departamentoArray}
                       dataLabel="Departamento"
                       name="departamento"
@@ -721,6 +536,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <OptionInput
+                      isDisabled={true}
                       data={puestoArray}
                       dataLabel="Puesto"
                       name="puesto"
@@ -743,6 +559,7 @@ function Relevador() {
                 <div className={styles.inputColumn}>
                   <div className={styles.inputContainer}>
                     <Checkbox
+                      isDisabled={true}
                       error={errors.activo?.message}
                       register={register}
                       nameTitle="Activo"
@@ -773,6 +590,7 @@ function Relevador() {
                   </div>
                   <div className={styles.inputContainer}>
                     <DateInput
+                      isDisabled={true}
                       error={errors.fechaActualizacionSalario?.message}
                       register={register}
                       nameTitle="Fecha Actualizacion Salario"
@@ -785,9 +603,7 @@ function Relevador() {
               </div>
             </div>
             <div className={styles.buttonsGroup}>
-              {showButton && (
-                <Button clickAction={() => {}} text="ACTUALIZAR" testId="signup-btn" />
-              )}
+              <Button clickAction={() => {}} text="ACTUALIZAR" testId="signup-btn" />
               <Button
                 text="Cancelar"
                 clickAction={() => history.goBack()}
@@ -798,9 +614,9 @@ function Relevador() {
         </form>
       </div>
       {toastErroOpen && (
-        <ToastError setToastErroOpen={setToastErroOpen} message="Error in database" />
+        <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
       )}
     </div>
   );
 }
-export default Relevador;
+export default Perfil;

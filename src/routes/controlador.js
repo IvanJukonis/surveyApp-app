@@ -16,6 +16,8 @@ import InspeccionRoboRuedaForm from '../Components/Entities/InspeccionRoboRueda/
 import RuedaForm from '../Components/Entities/Rueda/FormRueda/RuedaForm';
 import LugarRoboRuedaForm from '../Components/Entities/LugarRoboRueda/Form/LugarRoboRuedaForm';
 import EventoForm from '../Components/Entities/Evento/FormEvento/EventoForm';
+import PerfilForm from '../Components/Entities/Controlador/Profile/index';
+import ListRelevador from '../Components/Entities/Controlador/ListRelevador/index';
 
 import NotAllowed from 'Components/Auth/NotAllowed';
 
@@ -27,12 +29,12 @@ const routes = [
   },
   {
     name: 'Relevadores',
-    path: '/controlador/siniestros',
+    path: '/controlador/relevador',
     icon: 'calendar.svg'
   },
   {
     name: 'Perfil',
-    path: '/controlador/siniestros',
+    path: '/controlador/perfil',
     icon: 'calendar.svg'
   },
   {
@@ -72,6 +74,8 @@ const ControladorRoutes = () => {
         <Route path={`${url}/siniestros/lugarRoboRueda/form/:id?`} component={LugarRoboRuedaForm} />
         <Route exact path={`${url}/siniestros/entrevista/:id?`} component={EntrevistaController} />
         <Route exact path={`${url}/siniestros/`} component={SiniestrosList} />
+        <Route exact path={`${url}/relevador/`} component={ListRelevador} />
+        <Route exact path={`${url}/perfil/`} component={PerfilForm} />
         <Route path={`${url}/siniestros/:id?`} component={SiniestrosForm} />
         <Route exact path={`${url}/not-allowed`} component={NotAllowed} />
         <Redirect to={`${url}/siniestros`} />
