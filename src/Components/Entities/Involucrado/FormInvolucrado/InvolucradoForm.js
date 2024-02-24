@@ -32,8 +32,6 @@ const InvolucradosForm = () => {
   const location = useLocation();
   const item = location.state.params.item;
 
-  console.log(item);
-
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);

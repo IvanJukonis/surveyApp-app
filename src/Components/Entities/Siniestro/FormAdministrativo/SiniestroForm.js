@@ -143,31 +143,9 @@ const SiniestrosForm = () => {
       })
       .required(),
 
-    relevador: Joi.alternatives()
-      .try(
-        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required(),
-        Joi.string()
-      )
-      .required()
-      .messages({
-        'any.only': 'Please select a relevador',
-        'any.required': 'Please select a relevador',
-        'array.min': 'Please select at least one relevador'
-      }),
+    relevador: Joi.any(),
 
-    controlador: Joi.alternatives()
-      .try(
-        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
-        Joi.string().hex().length(24).required(),
-        Joi.string()
-      )
-      .required()
-      .messages({
-        'any.only': 'Please select a controlador',
-        'any.required': 'Please select a controlador',
-        'array.min': 'Please select at least one controlador'
-      }),
+    controlador: Joi.any(),
 
     requerido: Joi.string()
       .valid(
@@ -272,8 +250,28 @@ const SiniestrosForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
-    setSiniestro(data);
+    if (data.controlador === '' && data.relevador === '') {
+      // eslint-disable-next-line no-unused-vars
+      const { controlador, relevador, ...formattedData } = data;
+      formattedData.estado = 'Sin asignar';
+      setSiniestro(formattedData);
+    } else if (data.controlador === '') {
+      // eslint-disable-next-line no-unused-vars
+      const { controlador, ...formattedData } = data;
+      formattedData.estado = 'Sin asignar';
+      setSiniestro(formattedData);
+    } else if (data.relevador === '') {
+      // eslint-disable-next-line no-unused-vars
+      const { relevador, ...formattedData } = data;
+      formattedData.estado = 'Asignado';
+      setSiniestro(formattedData);
+    } else {
+      const formattedData = {
+        ...data,
+        estado: 'Inactivo'
+      };
+      setSiniestro(formattedData);
+    }
     setModalAddConfirmOpen(true);
   };
 
@@ -299,7 +297,7 @@ const SiniestrosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={id ? 'Update' : 'Add'}
+              method={id ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
@@ -312,7 +310,7 @@ const SiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={id ? 'Siniestro edited' : 'Siniestro added'}
+              message={id ? 'Siniestro modificado.' : 'Siniestro agregado.'}
             />
           )}
         </div>

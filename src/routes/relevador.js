@@ -16,6 +16,7 @@ import InspeccionRoboRuedaForm from '../Components/Entities/InspeccionRoboRueda/
 import RuedaForm from '../Components/Entities/Rueda/FormRueda/RuedaForm';
 import LugarRoboRuedaForm from '../Components/Entities/LugarRoboRueda/Form/LugarRoboRuedaForm';
 import EventoForm from '../Components/Entities/Evento/FormEvento/EventoForm';
+import FormPerfil from '../Components/Entities/Relevador/Profile/index';
 
 import NotAllowed from 'Components/Auth/NotAllowed';
 
@@ -32,7 +33,7 @@ const routes = [
   },
   {
     name: 'Perfil',
-    path: '/relevador/siniestros',
+    path: '/relevador/perfil',
     icon: 'calendar.svg'
   }
 ];
@@ -67,6 +68,7 @@ const RelevadorRoutes = () => {
         <Route path={`${url}/siniestros/lugarRoboRueda/form/:id?`} component={LugarRoboRuedaForm} />
         <Route exact path={`${url}/siniestros/entrevista/:id?`} component={EntrevistaController} />
         <Route exact path={`${url}/siniestros/`} component={SiniestrosList} />
+        <Route exact path={`${url}/perfil`} component={FormPerfil} />
         <Route path={`${url}/siniestros/:id?`} component={SiniestrosForm} />
         <Route exact path={`${url}/not-allowed`} component={NotAllowed} />
         <Redirect to={`${url}/siniestros`} />

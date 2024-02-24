@@ -23,7 +23,15 @@ import ModalInfo from 'Components/Shared/Modals/ModalInfo';
 
 const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
 const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
-const estadoArray = ['Sin asignar', 'Asignado', 'Activo', 'Finalizado', 'Controlado', 'Completado'];
+const estadoArray = [
+  'Sin asignar',
+  'Asignado',
+  'Inactivo',
+  'Activo',
+  'Finalizado',
+  'Controlado',
+  'Completado'
+];
 const requeridoArray = [
   'Relevamiento completo',
   'Relevamiento sin cierre',
@@ -41,6 +49,8 @@ const SiniestrosForm = () => {
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [modalInfo, setModalInfo] = useState(false);
+  const [fraudType, setFraudType] = useState(false);
+  const [siniestroType, setSiniestroType] = useState(false);
   const [siniestro, setSiniestro] = useState();
   const siniestros = useSelector((state) => state.siniestro.list);
   const relevador = useSelector((state) => state.relevador.list);
@@ -252,7 +262,15 @@ const SiniestrosForm = () => {
     }),
 
     estado: Joi.string()
-      .valid('Sin asignar', 'Asignado', 'Activo', 'Finalizado', 'Controlado', 'Completado')
+      .valid(
+        'Sin asignar',
+        'Asignado',
+        'Inactivo',
+        'Activo',
+        'Finalizado',
+        'Controlado',
+        'Completado'
+      )
       .messages({
         'any.only': 'El campo "Estado" debe contener un estado valido'
       }),
@@ -343,6 +361,8 @@ const SiniestrosForm = () => {
       return 'yellow';
     } else return 'green';
   };
+
+  console.log(data);
 
   const siniestroUpdate = {
     numSiniestro: data.numSiniestro,
@@ -511,6 +531,13 @@ const SiniestrosForm = () => {
     getControlador(dispatch);
     getRelevador(dispatch);
     getSiniestro(dispatch);
+    if (data.tipo == 'Siniestro') {
+      setFraudType(false);
+      setSiniestroType(true);
+    } else if (data.tipo == 'Fraude') {
+      setFraudType(true);
+      setSiniestroType(false);
+    }
   }, []);
 
   return (
@@ -520,7 +547,7 @@ const SiniestrosForm = () => {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={data._id ? 'Update' : 'Add'}
+              method={data._id ? 'Actualizar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
               message={
@@ -533,7 +560,7 @@ const SiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={data._id ? 'Siniestro edited' : 'Siniestro added'}
+              message={data._id ? 'Siniestro editado.' : 'Siniestro agregado.'}
             />
           )}
         </div>
@@ -784,15 +811,23 @@ const SiniestrosForm = () => {
                 <Button submition={true} clickAction={handleInvolucrado} text="Involucrados" />
                 <Button submition={true} clickAction={handleNovedad} text="Novedades" />
                 <Button submition={true} clickAction={handleVehiculo} text="Vehiculos" />
-                <Button submition={true} clickAction={handleLugarO} text="LugarO" />
-                <Button submition={true} clickAction={handleInspeccionO} text="InspeccionO" />
+                {siniestroType && (
+                  <Button submition={true} clickAction={handleLugarO} text="Lugar" />
+                )}
+                {siniestroType && (
+                  <Button submition={true} clickAction={handleInspeccionO} text="Inspeccion" />
+                )}
               </div>
               <div className={styles.entitiesButtons}>
-                <Button submition={true} clickAction={handleLugarR} text="LugarR" />
-                <Button submition={true} clickAction={handleInspeccionR} text="InspeccionR" />
-                <Button submition={true} clickAction={handleRueda} text="Rueda" />
+                {fraudType && <Button submition={true} clickAction={handleLugarR} text="Lugar" />}
+                {fraudType && (
+                  <Button submition={true} clickAction={handleInspeccionR} text="Inspeccion" />
+                )}
+                {fraudType && <Button submition={true} clickAction={handleRueda} text="Rueda" />}
                 <Button submition={true} clickAction={handleEvento} text="Evento" />
-                <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
+                {siniestroType && (
+                  <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
+                )}
               </div>
               <div className={styles.textAreasGroup}>
                 <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>

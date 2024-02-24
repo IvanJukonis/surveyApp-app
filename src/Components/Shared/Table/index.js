@@ -138,8 +138,8 @@ const TableComponent = ({
               {columnTitleArray.map((column, index) => (
                 <th key={index}>{column}</th>
               ))}
-              <th>Edit</th>
-              <th>Delete</th>
+              <th>Editar</th>
+              <th>Eliminar</th>
             </tr>
           </thead>
           <tbody>

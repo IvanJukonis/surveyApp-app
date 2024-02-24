@@ -27,7 +27,7 @@ function Siniestro() {
     'Fecha',
     'Vencimiento',
     'Asignacion',
-    'CIA',
+    'Estado',
     'Tipo'
   ];
   const columns = [
@@ -36,7 +36,7 @@ function Siniestro() {
     'fechaSiniestro',
     'fechaVencimiento',
     'fechaAsignacion',
-    'cia',
+    'estado',
     'tipo'
   ];
 
