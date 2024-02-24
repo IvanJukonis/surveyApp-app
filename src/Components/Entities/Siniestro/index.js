@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSiniestro, deleteSiniestro } from 'redux/siniestro/thunks';
+import { getSiniestroStats, deleteSiniestro } from 'redux/siniestro/thunks';
 import { ToastError, TableComponent, Loader, AddButton } from 'Components/Shared';
 import { useHistory } from 'react-router-dom';
 import styles from './Siniestro.module.css';
+import { getFirebaseUidFromToken } from '../../../Config/firebase-config';
+import 'firebase/compat/auth';
 
 function Siniestro() {
   const dispatch = useDispatch();
@@ -11,7 +13,13 @@ function Siniestro() {
   const isPending = useSelector((state) => state.siniestro.pending);
   const isError = useSelector((state) => state.siniestro.error);
   const history = useHistory();
+
   const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const [userCurrent, setUserCurrent] = useState('');
+
+  const controladores = useSelector((state) => state.controlador.list);
+  const relevadores = useSelector((state) => state.relevador.list);
+  const administrativos = useSelector((state) => state.administrativo.list);
 
   const columnTitleArray = [
     'N°Siniestro',
@@ -31,6 +39,23 @@ function Siniestro() {
     'cia',
     'tipo'
   ];
+
+  const controladorEmail = controladores.find(
+    (oneControlador) => oneControlador.email === userCurrent
+  );
+  const relevadorEmail = relevadores.find((oneRelevador) => oneRelevador.email === userCurrent);
+  const administrativoEmail = administrativos.find(
+    (oneAdministrativo) => oneAdministrativo.email === userCurrent
+  );
+
+  const currentUser = async () => {
+    try {
+      const emailCurrentUser = await getFirebaseUidFromToken();
+      setUserCurrent(emailCurrentUser);
+    } catch (error) {
+      return error;
+    }
+  };
 
   const getPathPrefix = () => {
     if (relevador) {
@@ -64,8 +89,20 @@ function Siniestro() {
   const deleteButton = actualUser ? undefined : deleteSiniestro;
 
   useEffect(() => {
-    getSiniestro(dispatch);
+    currentUser();
   }, []);
+
+  useEffect(() => {
+    if (controladorEmail?._id) {
+      getSiniestroStats(dispatch, controladorEmail._id, 'controlador');
+    }
+    if (relevadorEmail?._id) {
+      getSiniestroStats(dispatch, relevadorEmail._id, 'relevador');
+    }
+    if (administrativoEmail?._id) {
+      getSiniestroStats(dispatch, administrativoEmail._id, 'administrativo');
+    }
+  }, [userCurrent]);
 
   return (
     <div className={styles.container}>

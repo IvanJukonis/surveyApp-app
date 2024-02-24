@@ -39,10 +39,12 @@ export const getSiniestroStats = async (dispatch, usuarioId, usuario) => {
       siniestrosFiltrados = siniestrosList.filter((siniestro) =>
         siniestro.controlador.some((controlador) => usuarioId.includes(controlador))
       );
-    } else {
+    } else if (usuario == 'relevador') {
       siniestrosFiltrados = siniestrosList.filter((siniestro) =>
         siniestro.relevador.some((relevador) => usuarioId.includes(relevador))
       );
+    } else {
+      siniestrosFiltrados = siniestrosList;
     }
 
     dispatch(getSiniestroPending(false));
