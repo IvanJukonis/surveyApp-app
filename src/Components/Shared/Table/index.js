@@ -127,7 +127,7 @@ const TableComponent = ({
           onChange={(e) => setFilterValue(e.target.value)}
         />
       </div>
-      {data?.length === 0 ? (
+      {filtered?.length === 0 ? (
         <div className={styles.noneTrainer}>
           <h3>The list is empty</h3>
         </div>
@@ -143,7 +143,7 @@ const TableComponent = ({
             </tr>
           </thead>
           <tbody>
-            {data
+            {filtered
               .filter((row) =>
                 columns.some((column) =>
                   String(row[column]).toLowerCase().includes(filterValue.toLowerCase())
@@ -179,7 +179,8 @@ const TableComponent = ({
                     </td>
                   </tr>
                 );
-              })}
+              })
+              .slice((currentPage - 1) * 6, currentPage * 6)}
           </tbody>
         </table>
       )}

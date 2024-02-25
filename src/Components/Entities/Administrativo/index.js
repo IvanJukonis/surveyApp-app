@@ -9,9 +9,8 @@ function Administrativo() {
   const dispatch = useDispatch();
   const administrativo = useSelector((state) => state.administrativo.list);
   const isPending = useSelector((state) => state.administrativo.pending);
-  const isError = useSelector((state) => state.administrativo.error);
   const history = useHistory();
-  const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const [toastErroOpen, setToastErroOpen] = useState(false);
 
   const columnTitleArray = [
     'Nombre',
@@ -86,7 +85,7 @@ function Administrativo() {
         </div>
       </div>
       {toastErroOpen && (
-        <ToastError setToastErroOpen={setToastErroOpen} message="Error in databaseee" />
+        <ToastError setToastErroOpen={setToastErroOpen} message="Error in database" />
       )}
     </div>
   );

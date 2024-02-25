@@ -148,7 +148,7 @@ function LoginForm() {
                   >
                     <div className={styles.lineError}>
                       <div className={styles.errorLogo}>!</div>
-                      LogIn Denied
+                      Inicio de Sesion denegado
                       <div
                         onClick={() => {
                           setErrorPop(false);
@@ -156,7 +156,7 @@ function LoginForm() {
                         className={styles.close_icon}
                       ></div>
                     </div>
-                    <p className={styles.MsgError}>The username or password is incorrect</p>
+                    <p className={styles.MsgError}>El usuario o la contraseña es incorrecta.</p>
                   </div>
                 ) : (
                   <div className={styles.emptyBox} data-testid="login-error-pop"></div>

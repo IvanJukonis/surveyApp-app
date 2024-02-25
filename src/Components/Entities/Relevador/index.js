@@ -9,9 +9,8 @@ function Relevador() {
   const dispatch = useDispatch();
   const relevador = useSelector((state) => state.relevador.list);
   const isPending = useSelector((state) => state.relevador.pending);
-  const isError = useSelector((state) => state.relevador.error);
   const history = useHistory();
-  const [toastErroOpen, setToastErroOpen] = useState(isError);
+  const [toastErroOpen, setToastErroOpen] = useState(false);
 
   const columnTitleArray = [
     'Nombre',
