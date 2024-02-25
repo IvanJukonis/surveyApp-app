@@ -20,6 +20,8 @@ import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import { getControlador } from 'redux/controlador/thunks';
 import { getRelevador } from 'redux/relevador/thunks';
 import ModalInfo from 'Components/Shared/Modals/ModalInfo';
+import arrowDown from '../../../../public/arrowDown1.png';
+import arrowTop from '../../../../public/arrowTop1.png';
 
 const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
 const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
@@ -50,6 +52,10 @@ const SiniestrosForm = () => {
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [modalInfo, setModalInfo] = useState(false);
   const [fraudType, setFraudType] = useState(false);
+  const [arrowCaratula, setArrowCaratula] = useState(true);
+  const [arrowDesarrollo, setArrowDesarrollo] = useState(true);
+  const [arrowConclusion, setArrowConclusion] = useState(false);
+  const [arrowEstadistica, setArrowEstadistica] = useState(false);
   const [siniestroType, setSiniestroType] = useState(false);
   const [siniestro, setSiniestro] = useState();
   const siniestros = useSelector((state) => state.siniestro.list);
@@ -59,6 +65,9 @@ const SiniestrosForm = () => {
   const history = useHistory();
   const data = location.state.params;
   const siniestroActual = siniestros.find((item) => item._id === data._id);
+  const role = sessionStorage.getItem('role');
+
+  const [roleRelevador, setRoleRelevador] = useState(false);
 
   const schema = Joi.object({
     numSiniestro: Joi.number()
@@ -526,6 +535,10 @@ const SiniestrosForm = () => {
   };
 
   useEffect(() => {
+    if (role == 'RELEVADOR') {
+      setRoleRelevador(true);
+    }
+
     getControlador(dispatch);
     getRelevador(dispatch);
     getSiniestro(dispatch);
@@ -609,413 +622,524 @@ const SiniestrosForm = () => {
               required
             />
           </div>
+          <div className={styles.entitiesButtons}>
+            <Button submition={true} clickAction={handleNovedad} text="Novedades" />
+          </div>
         </div>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.formContainer}>
             <section className={styles.inputGroups}>
-              <div className={styles.firstGroup}>
-                <div className={styles.firstGroupColumn}>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.numSiniestro?.message}
-                      register={register}
-                      nameTitle="N° Siniestro"
-                      type="number"
-                      nameInput="numSiniestro"
-                      styleInput="normalInput"
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={ciaArray}
-                      dataLabel="CIA"
-                      name="cia"
-                      register={register}
-                      error={errors.cia?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaSiniestro?.message}
-                      register={register}
-                      nameTitle="Fecha Siniestro"
-                      type="date"
-                      nameInput="fechaSiniestro"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.hrSiniestro?.message}
-                      register={register}
-                      nameTitle="Hora Siniestro"
-                      type="date"
-                      nameInput="hrSiniestro"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.firstGroupColumn}>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.numPoliza?.message}
-                      register={register}
-                      nameTitle="N° Poliza"
-                      type="number"
-                      nameInput="numPoliza"
-                      styleInput="normalInput"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={controlador}
-                      dataLabel="Controlador"
-                      name="controlador"
-                      register={register}
-                      error={errors.controlador?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaDenuncia?.message}
-                      register={register}
-                      nameTitle="Fecha Denuncia"
-                      type="date"
-                      nameInput="fechaDenuncia"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={requeridoArray}
-                      dataLabel="Requerido"
-                      name="requerido"
-                      register={register}
-                      error={errors.requerido?.message}
-                    />
-                  </div>
-                </div>
-                <div className={styles.firstGroupColumn}>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.numInforme?.message}
-                      register={register}
-                      nameTitle="N° Informe"
-                      type="number"
-                      nameInput="numInforme"
-                      styleInput="normalInput"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={relevador}
-                      dataLabel="Relevador"
-                      name="relevador"
-                      register={register}
-                      error={errors.relevador?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaVencimiento?.message}
-                      register={register}
-                      nameTitle="Fecha Vencimiento"
-                      type="date"
-                      nameInput="fechaVencimiento"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.comisaria?.message}
-                      register={register}
-                      nameTitle="Comisaria"
-                      type="text"
-                      nameInput="comisaria"
-                      styleInput="normalInput"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.firstGroupColumn}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={tipoArray}
-                      dataLabel="Tipo"
-                      name="tipo"
-                      register={register}
-                      error={errors.tipo?.message}
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <DateInput
-                      error={errors.fechaAsignacion?.message}
-                      register={register}
-                      nameTitle="Fecha Asignacion"
-                      type="date"
-                      nameInput="fechaAsignacion"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Inputs
-                      error={errors.lugar?.message}
-                      register={register}
-                      nameTitle="Lugar"
-                      type="text"
-                      nameInput="lugar"
-                      styleInput="normalInput"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <Checkbox
-                      register={register}
-                      nameTitle="Presencial"
-                      type="checkbox"
-                      nameInput="presencial"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className={styles.thirdGroup}>
-                <div className={`${styles.inputContainer} ${styles.textAreaSpace}`}>
-                  <TextArea
-                    error={errors.instrucciones?.message}
-                    register={register}
-                    nameTitle="Instrucciones"
-                    type="text"
-                    nameInput="instrucciones"
-                    styleInput="big"
-                    required
+              <div className={styles.titleContainer}>
+                <p className={styles.title}>CARATULA</p>
+                {!arrowCaratula && (
+                  <img
+                    className={styles.imgArrow}
+                    src={arrowTop}
+                    alt="arrowTop"
+                    onClick={() => {
+                      setArrowCaratula(true);
+                    }}
                   />
-                </div>
-                <div className={styles.inputContainer}>
-                  <TextArea
-                    error={errors.denuncia?.message}
-                    register={register}
-                    nameTitle="Denuncia"
-                    type="text"
-                    nameInput="denuncia"
-                    styleInput="big"
-                    required
-                  />
-                </div>
-              </div>
-              <div className={styles.entitiesButtons}>
-                <Button submition={true} clickAction={handleInvolucrado} text="Involucrados" />
-                <Button submition={true} clickAction={handleNovedad} text="Novedades" />
-                <Button submition={true} clickAction={handleVehiculo} text="Vehiculos" />
-                {siniestroType && (
-                  <Button submition={true} clickAction={handleLugarO} text="Lugar" />
                 )}
-                {siniestroType && (
-                  <Button submition={true} clickAction={handleInspeccionO} text="Inspeccion" />
+                {arrowCaratula && (
+                  <img
+                    className={styles.imgArrow}
+                    src={arrowDown}
+                    alt="arrowDown"
+                    onClick={() => {
+                      setArrowCaratula(false);
+                    }}
+                  />
                 )}
               </div>
-              <div className={styles.entitiesButtons}>
-                {fraudType && <Button submition={true} clickAction={handleLugarR} text="Lugar" />}
-                {fraudType && (
-                  <Button submition={true} clickAction={handleInspeccionR} text="Inspeccion" />
+              {arrowCaratula && (
+                <div className={styles.containerGroups}>
+                  <div className={styles.caratulaGroup}>
+                    <div className={styles.firstGroupColumn}>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.numSiniestro?.message}
+                          register={register}
+                          nameTitle="N° Siniestro"
+                          type="number"
+                          nameInput="numSiniestro"
+                          styleInput="normalInput"
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={ciaArray}
+                          dataLabel="CIA"
+                          name="cia"
+                          register={register}
+                          error={errors.cia?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaSiniestro?.message}
+                          register={register}
+                          nameTitle="Fecha Siniestro"
+                          type="date"
+                          nameInput="fechaSiniestro"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.hrSiniestro?.message}
+                          register={register}
+                          nameTitle="Hora Siniestro"
+                          type="date"
+                          nameInput="hrSiniestro"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Checkbox
+                          register={register}
+                          nameTitle="Presencial"
+                          type="checkbox"
+                          nameInput="presencial"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.lugar?.message}
+                          register={register}
+                          nameTitle="Lugar"
+                          type="text"
+                          nameInput="lugar"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.firstGroupColumn}>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.numPoliza?.message}
+                          register={register}
+                          nameTitle="N° Poliza"
+                          type="number"
+                          nameInput="numPoliza"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={controlador}
+                          dataLabel="Controlador"
+                          name="controlador"
+                          register={register}
+                          error={errors.controlador?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaDenuncia?.message}
+                          register={register}
+                          nameTitle="Fecha Denuncia"
+                          type="date"
+                          nameInput="fechaDenuncia"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaAsignacion?.message}
+                          register={register}
+                          nameTitle="Fecha Asignacion"
+                          type="date"
+                          nameInput="fechaAsignacion"
+                          required
+                        />
+                      </div>
+
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={requeridoArray}
+                          dataLabel="Requerido"
+                          name="requerido"
+                          register={register}
+                          error={errors.requerido?.message}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.firstGroupColumn}>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.numInforme?.message}
+                          register={register}
+                          nameTitle="N° Informe"
+                          type="number"
+                          nameInput="numInforme"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={relevador}
+                          dataLabel="Relevador"
+                          name="relevador"
+                          register={register}
+                          error={errors.relevador?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <DateInput
+                          error={errors.fechaVencimiento?.message}
+                          register={register}
+                          nameTitle="Fecha Vencimiento"
+                          type="date"
+                          nameInput="fechaVencimiento"
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={tipoArray}
+                          dataLabel="Tipo"
+                          name="tipo"
+                          register={register}
+                          error={errors.tipo?.message}
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.comisaria?.message}
+                          register={register}
+                          nameTitle="Comisaria"
+                          type="text"
+                          nameInput="comisaria"
+                          styleInput="normalInput"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.descripcionGroup}>
+                    <div className={`${styles.inputContainerDescripcion} ${styles.textAreaSpace}`}>
+                      <TextArea
+                        error={errors.instrucciones?.message}
+                        register={register}
+                        nameTitle="Instrucciones"
+                        type="text"
+                        nameInput="instrucciones"
+                        styleInput="big"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainerDescripcion}>
+                      <TextArea
+                        error={errors.denuncia?.message}
+                        register={register}
+                        nameTitle="Denuncia"
+                        type="text"
+                        nameInput="denuncia"
+                        styleInput="big"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className={styles.titleContainer}>
+                <p className={styles.title}>DESARROLLO</p>
+                {!arrowDesarrollo && (
+                  <img
+                    className={styles.imgArrow}
+                    src={arrowTop}
+                    alt="arrowTop"
+                    onClick={() => {
+                      setArrowDesarrollo(true);
+                    }}
+                  />
                 )}
-                {fraudType && <Button submition={true} clickAction={handleRueda} text="Rueda" />}
-                <Button submition={true} clickAction={handleEvento} text="Evento" />
-                {siniestroType && (
-                  <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
+                {arrowDesarrollo && (
+                  <img
+                    className={styles.imgArrow}
+                    src={arrowDown}
+                    alt="arrowDown"
+                    onClick={() => {
+                      setArrowDesarrollo(false);
+                    }}
+                  />
                 )}
               </div>
-              <div className={styles.textAreasGroup}>
-                <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionDescripcion?.message}
-                      register={register}
-                      nameTitle="Conclusion Descripcion"
-                      type="text"
-                      styleInput="big"
-                      nameInput="conclusionDescripcion"
-                      required
-                    />
+              {arrowDesarrollo && (
+                <div className={styles.desarrolloGroup}>
+                  <div className={styles.desarrolloGroupRow}>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errors.fechaContactoAsegurado?.message}
+                        register={register}
+                        nameTitle="Fecha Contacto Asegurado"
+                        type="date"
+                        nameInput="fechaContactoAsegurado"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainerFecha}>
+                      <DateInput
+                        error={errors.fechaContactoTercero?.message}
+                        register={register}
+                        nameTitle="Fecha Contacto Tercero"
+                        type="date"
+                        nameInput="fechaContactoTercero"
+                        required
+                      />
+                    </div>
+                    <Button submition={true} clickAction={handleInvolucrado} text="Involucrados" />
+                    <Button submition={true} clickAction={handleVehiculo} text="Vehiculos" />
+                    {siniestroType && (
+                      <Button submition={true} clickAction={handleLugarO} text="Lugar" />
+                    )}
+                    {fraudType && (
+                      <Button submition={true} clickAction={handleLugarR} text="Lugar" />
+                    )}
                   </div>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionCredibilidad?.message}
-                      register={register}
-                      nameTitle="Conclusion Credibilidad"
-                      type="text"
-                      styleInput="big"
-                      nameInput="conclusionCredibilidad"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.textAreaColumn}>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionResponsabilidad?.message}
-                      register={register}
-                      nameTitle="Conclusion Responsabilidad"
-                      type="text"
-                      styleInput="small"
-                      nameInput="conclusionResponsabilidad"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionRecomendacion?.message}
-                      register={register}
-                      nameTitle="Conclusion Recomendacion"
-                      type="text"
-                      styleInput="small"
-                      nameInput="conclusionRecomendacion"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.autorizacion?.message}
-                      register={register}
-                      nameTitle="Autorizacion"
-                      type="text"
-                      styleInput="small"
-                      nameInput="autorizacion"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.textAreaColumn}>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionLesiones?.message}
-                      register={register}
-                      nameTitle="Conclusion Lesiones"
-                      type="text"
-                      styleInput="small"
-                      nameInput="conclusionLesiones"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionDaños?.message}
-                      register={register}
-                      nameTitle="Conclusion Daños"
-                      type="text"
-                      styleInput="small"
-                      nameInput="conclusionDaños"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputContainerEstado}>
-                    <OptionInput
-                      data={estadoArray}
-                      dataLabel="Estado"
-                      name="estado"
-                      register={register}
-                      error={errors.estado?.message}
-                    />
+                  <div className={styles.desarrolloGroupRowBot}>
+                    <div className={styles.inputContainer}>
+                      <DateInput
+                        error={errors.fechaFinalizacion?.message}
+                        register={register}
+                        nameTitle="Fecha Finalizacion"
+                        type="date"
+                        nameInput="fechaFinalizacion"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <OptionInput
+                        data={estadoArray}
+                        dataLabel="Estado"
+                        name="estado"
+                        register={register}
+                        error={errors.estado?.message}
+                      />
+                    </div>
+                    {siniestroType && (
+                      <Button submition={true} clickAction={handleInspeccionO} text="Inspeccion" />
+                    )}
+                    {fraudType && (
+                      <Button submition={true} clickAction={handleInspeccionR} text="Inspeccion" />
+                    )}
+                    {fraudType && (
+                      <Button submition={true} clickAction={handleRueda} text="Ruedas" />
+                    )}
+                    <Button submition={true} clickAction={handleEvento} text="Eventos" />
+                    {siniestroType && (
+                      <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className={styles.eightGroup}></div>
-              <div className={styles.nineGroup}>
-                <div className={styles.inputContainer}>
-                  <DateInput
-                    error={errors.fechaFinalizacion?.message}
-                    register={register}
-                    nameTitle="Fecha Finalizacion"
-                    type="date"
-                    nameInput="fechaFinalizacion"
-                    required
+              )}
+              <div className={styles.titleContainer}>
+                <p className={styles.title}>CONCLUSIONES</p>
+                {!arrowConclusion && (
+                  <img
+                    className={styles.imgArrow}
+                    src={arrowTop}
+                    alt="arrowTop"
+                    onClick={() => {
+                      setArrowConclusion(true);
+                    }}
                   />
-                </div>
-                <div className={styles.inputContainer}>
-                  <DateInput
-                    error={errors.fechaContactoAsegurado?.message}
-                    register={register}
-                    nameTitle="Fecha Contacto Asegurado"
-                    type="date"
-                    nameInput="fechaContactoAsegurado"
-                    required
+                )}
+                {arrowConclusion && (
+                  <img
+                    className={styles.imgArrow}
+                    src={arrowDown}
+                    alt="arrowDown"
+                    onClick={() => {
+                      setArrowConclusion(false);
+                    }}
                   />
-                </div>
-                <div className={styles.inputContainer}>
-                  <DateInput
-                    error={errors.fechaContactoTercero?.message}
-                    register={register}
-                    nameTitle="Fecha Contacto Tercero"
-                    type="date"
-                    nameInput="fechaContactoTercero"
-                    required
-                  />
-                </div>
+                )}
               </div>
-              <div className={styles.entitiesStats}>
-                <div className={styles.inputColumnStats}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={statsArray}
-                      dataLabel="Correcciones"
-                      name="statsSolicitudCorreccion"
-                      register={register}
-                      error={errors.statsSolicitudCorreccion?.message}
-                    />
+              {arrowConclusion && (
+                <div className={styles.textAreasGroup}>
+                  <div className={`${styles.textAreaColumn} ${styles.textAreaSpace}`}>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errors.conclusionDescripcion?.message}
+                        register={register}
+                        nameTitle="Conclusion Descripcion"
+                        type="text"
+                        styleInput="big"
+                        nameInput="conclusionDescripcion"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errors.conclusionCredibilidad?.message}
+                        register={register}
+                        nameTitle="Conclusion Credibilidad"
+                        type="text"
+                        styleInput="big"
+                        nameInput="conclusionCredibilidad"
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={statsArray}
-                      dataLabel="Gramatica y Prolijidad"
-                      name="statsGramaticaProlijidad"
-                      register={register}
-                      error={errors.statsGramaticaProlijidad?.message}
-                    />
+                  <div className={styles.textAreaColumn}>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errors.conclusionResponsabilidad?.message}
+                        register={register}
+                        nameTitle="Conclusion Responsabilidad"
+                        type="text"
+                        styleInput="small"
+                        nameInput="conclusionResponsabilidad"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errors.conclusionRecomendacion?.message}
+                        register={register}
+                        nameTitle="Conclusion Recomendacion"
+                        type="text"
+                        styleInput="small"
+                        nameInput="conclusionRecomendacion"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainer}>
+                      <TextArea
+                        error={errors.autorizacion?.message}
+                        register={register}
+                        nameTitle="Autorizacion"
+                        type="text"
+                        styleInput="small"
+                        nameInput="autorizacion"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.textAreaColumn}>
+                    <div className={styles.inputContainerArea}>
+                      <TextArea
+                        error={errors.conclusionLesiones?.message}
+                        register={register}
+                        nameTitle="Conclusion Lesiones"
+                        type="text"
+                        styleInput="small"
+                        nameInput="conclusionLesiones"
+                        required
+                      />
+                    </div>
+                    <div className={styles.inputContainerAreaD}>
+                      <TextArea
+                        error={errors.conclusionDaños?.message}
+                        register={register}
+                        nameTitle="Conclusion Daños"
+                        type="text"
+                        styleInput="small"
+                        nameInput="conclusionDaños"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className={styles.inputColumnStats}>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={statsArray}
-                      dataLabel="Desarrollo"
-                      name="statsDesarrolloSiniestro"
-                      register={register}
-                      error={errors.statsDesarrolloSiniestro?.message}
-                    />
+              )}
+
+              {!roleRelevador && (
+                <div>
+                  <div className={styles.titleContainer}>
+                    <p className={styles.title}>ESTADISTICAS</p>
+                    {!arrowEstadistica && (
+                      <img
+                        className={styles.imgArrow}
+                        src={arrowTop}
+                        alt="arrowTop"
+                        onClick={() => {
+                          setArrowEstadistica(true);
+                        }}
+                      />
+                    )}
+                    {arrowEstadistica && (
+                      <img
+                        className={styles.imgArrow}
+                        src={arrowDown}
+                        alt="arrowDown"
+                        onClick={() => {
+                          setArrowEstadistica(false);
+                        }}
+                      />
+                    )}
                   </div>
-                  <div className={styles.inputContainer}>
-                    <OptionInput
-                      data={demorasArray}
-                      dataLabel="Demoras"
-                      name="statsJustificacionDemoras"
-                      register={register}
-                      error={errors.statsJustificacionDemoras?.message}
-                    />
-                  </div>
+                  {arrowEstadistica && (
+                    <div className={styles.statsGroup}>
+                      <div className={styles.inputColumnStats}>
+                        <div className={styles.inputContainer}>
+                          <OptionInput
+                            data={statsArray}
+                            dataLabel="Correcciones"
+                            name="statsSolicitudCorreccion"
+                            register={register}
+                            error={errors.statsSolicitudCorreccion?.message}
+                          />
+                        </div>
+                        <div className={styles.inputContainer}>
+                          <OptionInput
+                            data={statsArray}
+                            dataLabel="Gramatica y Prolijidad"
+                            name="statsGramaticaProlijidad"
+                            register={register}
+                            error={errors.statsGramaticaProlijidad?.message}
+                          />
+                        </div>
+                      </div>
+                      <div className={styles.inputColumnStats}>
+                        <div className={styles.inputContainer}>
+                          <OptionInput
+                            data={statsArray}
+                            dataLabel="Desarrollo"
+                            name="statsDesarrolloSiniestro"
+                            register={register}
+                            error={errors.statsDesarrolloSiniestro?.message}
+                          />
+                        </div>
+                        <div className={styles.inputContainer}>
+                          <OptionInput
+                            data={demorasArray}
+                            dataLabel="Demoras"
+                            name="statsJustificacionDemoras"
+                            register={register}
+                            error={errors.statsJustificacionDemoras?.message}
+                          />
+                        </div>
+                      </div>
+                      <div className={styles.inputColumnStatsRight}>
+                        <div className={styles.inputContainer}>
+                          <TextArea
+                            error={errors.conclusionSiniestro?.message}
+                            register={register}
+                            nameTitle="Conclusion Siniestro"
+                            type="text"
+                            styleInput="small"
+                            nameInput="conclusionSiniestro"
+                            required
+                          />
+                        </div>
+                        <div className={styles.inputColumn}>
+                          <img
+                            className={styles.icon}
+                            onClick={infoButton}
+                            src={`${process.env.PUBLIC_URL}/assets/images/imgInfo.jpg`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className={styles.inputColumnStatsRight}>
-                  <div className={styles.inputContainer}>
-                    <TextArea
-                      error={errors.conclusionSiniestro?.message}
-                      register={register}
-                      nameTitle="Conclusion Siniestro"
-                      type="text"
-                      styleInput="small"
-                      nameInput="conclusionSiniestro"
-                      required
-                    />
-                  </div>
-                  <div className={styles.inputColumn}>
-                    <img
-                      className={styles.icon}
-                      onClick={infoButton}
-                      src={`${process.env.PUBLIC_URL}/assets/images/imgInfo.jpg`}
-                    />
-                  </div>
-                </div>
-              </div>
+              )}
             </section>
             <div className={styles.btnGroup}>
               <Button clickAction={() => {}} text={id ? 'Actualizar' : 'Agregar'} />

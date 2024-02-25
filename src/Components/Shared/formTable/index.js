@@ -1,7 +1,7 @@
 import ButtonForm from '../ButtonForm';
 import styles from './table.module.css';
 import { useState } from 'react';
-import { ModalConfirm, ModalSuccess } from '../index';
+import { ModalConfirm, ModalSuccess, ToastError } from '../index';
 import { useDispatch } from 'react-redux';
 
 const FormTable = ({
@@ -13,9 +13,11 @@ const FormTable = ({
   valueField,
   classes,
   type,
+  userCondition,
   deleted
 }) => {
   const fieldValue = valueField;
+  const [toastError, setToastErroOpen] = useState(false);
   const [successModal, setModalSuccess] = useState(false);
   const [modalConfirm, setModalConfirm] = useState(false);
   const [idDelete, setIdDelete] = useState('');
@@ -28,10 +30,14 @@ const FormTable = ({
       setIdDelete(id);
     }
   };
-
+  console.log(userCondition);
   const onConfirm = () => {
-    dispatch(deleteButton(idDelete));
-    setModalSuccess(true);
+    if (userCondition == undefined || userCondition == true) {
+      dispatch(deleteButton(idDelete));
+      setModalSuccess(true);
+    } else {
+      setToastErroOpen(true);
+    }
   };
 
   const ifObject = (item) => {
@@ -243,6 +249,12 @@ const FormTable = ({
         <ModalSuccess
           setModalSuccessOpen={setModalSuccess}
           message="El elemento ha sido eliminado correctamente."
+        />
+      )}
+      {toastError && (
+        <ToastError
+          setToastErroOpen={setToastErroOpen}
+          message={'No posee permiso sobre la novedad seleccionada.'}
         />
       )}
     </section>

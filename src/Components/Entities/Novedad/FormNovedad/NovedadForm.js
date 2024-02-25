@@ -23,12 +23,18 @@ const NovedadesForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const role = sessionStorage.getItem('role');
+
+  const [novedadUser, setNovedadUser] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userCondition, setUserCondition] = useState(false);
 
   const [toastError, setToastErroOpen] = useState(false);
   const [buttonType, setButtonType] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [novedad, setNovedad] = useState({});
+  const [novedadCopy, setNovedadCopy] = useState({});
   const [methodType, setMethodType] = useState(false);
 
   const novedades = useSelector((state) => state.novedad.list);
@@ -36,15 +42,26 @@ const NovedadesForm = () => {
   const arrayTipos = ['Consulta', 'Notificacion', 'Aviso', 'Respuesta'];
   const arrayRelaciones = ['CVA', 'LUGAR', 'CVT', 'PVT', 'PVA', 'TVT', 'TVA', 'VA', 'VT'];
   const columnTitleArray = [
-    'Fecha',
     'Relacion',
+    'Fecha',
+    'Hora',
+    'Responsable',
     'Tipo',
     'Titulo',
     'Visibilidad',
-    'Informe',
+
     'Respuesta'
   ];
-  const columns = ['fecha', 'relacion', 'tipo', 'titulo', 'visibilidad', 'informe', 'respuesta'];
+  const columns = [
+    'relacion',
+    'fecha',
+    'hora',
+    'responsable',
+    'tipo',
+    'titulo',
+    'visibilidad',
+    'respuesta'
+  ];
 
   const schema = Joi.object({
     fecha: Joi.date()
@@ -120,7 +137,8 @@ const NovedadesForm = () => {
 
     siniestro: Joi.any(),
     __v: Joi.any(),
-    _id: Joi.any()
+    _id: Joi.any(),
+    responsable: Joi.any()
   });
 
   const formatDate = (dateString) => {
@@ -167,16 +185,23 @@ const NovedadesForm = () => {
 
   const onSubmit = async (data) => {
     if (buttonType) {
-      const formattedData = {
-        ...data,
-        fecha: formatDate(data.fecha),
-        hora: formatDate(data.hora)
-      };
-      setNovedad(formattedData);
-      setModalAddConfirmOpen(true);
+      setNovedadUser(data.responsable);
+      if (novedadUser == userRole) {
+        const formattedData = {
+          ...data,
+          fecha: formatDate(data.fecha),
+          hora: formatDate(data.hora),
+          responsable: userRole
+        };
+        setNovedad(formattedData);
+        setModalAddConfirmOpen(true);
+      } else {
+        setToastErroOpen(true);
+      }
     } else {
       const formattedData = {
         ...data,
+        responsable: userRole,
         fecha: formatDate(data.fecha),
         hora: formatDate(data.hora)
       };
@@ -204,22 +229,31 @@ const NovedadesForm = () => {
   };
 
   const tableClick = (index) => {
+    setNovedadUser(novedades[index].responsable);
     const formattedData = {
       ...novedades[index],
       fecha: formatDate(novedades[index].fecha),
       hora: formatDate(novedades[index].hora)
     };
-    reset({ ...formattedData });
-    setButtonType(true);
+    setNovedadCopy(formattedData);
   };
 
   useEffect(() => {
+    setUserCondition(false);
     getAllNovedad(dispatch, id);
+    setUserRole(role);
   }, []);
 
   useEffect(() => {
     resetForm();
+    setUserCondition(false);
   }, [novedades]);
+
+  useEffect(() => {
+    setUserCondition(novedadUser === userRole);
+    reset({ ...novedadCopy });
+    setButtonType(true);
+  }, [novedadCopy]);
 
   return (
     <div className={styles.container}>
@@ -366,13 +400,17 @@ const NovedadesForm = () => {
               columns={columns}
               handleClick={tableClick}
               deleteButton={deleteButton}
+              userCondition={userCondition}
             />
           </div>
         </div>
       </div>
 
       {toastError && (
-        <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
+        <ToastError
+          setToastErroOpen={setToastErroOpen}
+          message={'No posee permisos sobre la novedad seleccionada.'}
+        />
       )}
     </div>
   );

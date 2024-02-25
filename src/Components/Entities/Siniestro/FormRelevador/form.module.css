@@ -23,8 +23,39 @@
   font-weight: bold;
 }
 
-.tableTop {
-  width: 70%;
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  padding: 10px;
+  padding-top: 2px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  font: 150% sans-serif;
+  color: #252440;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.entitiesButtons {
+  padding-top: 5px;
+  margin-right: 15px;
+}
+
+.imgArrow {
+  margin-top: 10px;
+  margin-right: 5px;
 }
 
 .formTop {
@@ -62,10 +93,43 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #FAFAFA;
-  border: 3px solid #ECECEC;
   align-items: flex-start
 }
+
+.containerGroups {
+  display: flex;
+}
+
+.inputContainerDescripcion {
+  display: flex;
+  align-content: center;
+}
+
+.descripcionGroup {
+  display: flex;
+  flex-direction: column;
+  background-color: #FAFAFA;
+  width: 470px;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 10px;
+  margin-left: 10px;
+  padding-left: 20px;
+  border: 3px solid #ECECEC;
+}
+
+.caratulaGroup {
+  display: flex;
+  flex-direction: row;
+  background-color: #FAFAFA;
+  width: 700px;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 10px;
+  padding-left: 25px;
+  border: 3px solid #ECECEC;
+}
+
 
 .innerContainer {
   color: rgba(0, 0, 0, 0.87);
@@ -105,19 +169,14 @@
   margin: 5px 0;
 }
 
-.firstGroup {
-  display: flex;
-  flex-direction: row;
+.inputContainerArea {
+  margin-left: 20px;
+  margin-top: 4px;
 }
 
-.textAreaGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.booleanGroup {
-  display: flex;
-  flex-direction: column;
+.inputContainerAreaD {
+  margin-top: 10px;
+  margin-left: 20px;
 }
 
 .entitiesButtons {
@@ -127,44 +186,66 @@
   margin-bottom: 10px;
 }
 
-.secondGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.dateGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.thirdGroup {
-  display: flex;
-  flex-direction: row;
-}
-
 .textAreaSpace {
   margin-right: 20px;
-}
-
-.fourGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.eightGroup {
-  display: flex;
-  flex-direction: row;
-}
-
-.nineGroup {
-  display: flex;
-  flex-direction: row;
 }
 
 .textAreasGroup {
   display: flex;
   flex-direction: row;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  width: 1100px;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 10px;
 }
+
+
+.desarrolloGroup {
+  display: flex;
+  flex-direction: column;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  width: 1100px;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 10px;
+}
+
+.desarrolloGroupRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.desarrolloGroupRowBot {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.imgArrow {
+  width: 25px;
+  height: 25px;
+}
+
+.imgArrow {
+  transition: transform 0.2s ease;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+  }
+}
+
+.inputContainerFecha {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 5px 0;
+  margin-right: 8px;
+}
+
 
 .textAreaColumn {
   display: flex;
@@ -172,56 +253,17 @@
   align-items: center;
 }
 
-.inputContainerEstado {
-  padding-left: 20px;
-  padding-top: 8px;
-}
-
-.entitiesStats {
+.statsGroup {
   display: flex;
+  width: 1100px;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 10px;
+  background-color: #FAFAFA;
   border: 3px solid #ECECEC;
   padding-left: 25px;
   margin-bottom: 15px;
   margin-top: 5px;
-}
-
-.submitButton {
-  display: inline;
-  background-color: var(--Green);
-  border: none;
-  border-radius: 5px;
-  padding: 10px 0;
-  cursor: pointer;
-  text-transform: uppercase;
-}
-
-.submitButton:hover {
-  background-color: var(--Blue);
-  color: white;
-}
-
-.buttonContainer {
-  display: flex;
-  gap: 20px;
-}
-
-.nameLabel {
-  display: flex;
-  flex-direction: column;
-  font-size: 20px;
-  margin-right: 20px;
-  margin-bottom: 10px;
-}
-
-.radioContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.radioContainer div{
-  margin: 0 10px;
-  font-size: 15px;
 }
 
 .btnGroup {
@@ -229,6 +271,12 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  background-color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 450px;
 }
 
 .inputColumnStatsRight {

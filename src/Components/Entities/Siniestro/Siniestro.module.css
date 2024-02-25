@@ -57,5 +57,7 @@
   align-items: center;
   background-color: #FAFAFA;
   border: 3px solid #ECECEC;
+  padding: 50px;
+  margin: 50px;
   align-items: flex-start;
 }
