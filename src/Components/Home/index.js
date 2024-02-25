@@ -1,24 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import styles from './home.module.css';
 import LoadHome from 'Components/Shared/LoadHome';
-import FormLand from 'Components/Shared/FormLand';
 import { Loader } from 'Components/Shared';
-
+import homeImg1 from '../../public/homeImg1.jpg';
+import homeImg3 from '../../public/homeImg3.jpg';
+import funcionalidadImg1 from '../../public/icon-list.png';
 function Home() {
-  const gymCalendarIconTime = `${process.env.PUBLIC_URL}/assets/images/reservation.svg`;
-  const gymCalendarIcon = `${process.env.PUBLIC_URL}/assets/images/calendarHome.svg`;
-  const gymIconList = `${process.env.PUBLIC_URL}/assets/images/membership.svg`;
-  const gymIconMessage = `${process.env.PUBLIC_URL}/assets/images/contact.svg`;
-  const runMachine = `${process.env.PUBLIC_URL}/assets/images/run-machine.jpg`;
-  const gymImageGymOne = `${process.env.PUBLIC_URL}/assets/images/gym-sports.jpg`;
-  const gymImageGymTwo = `${process.env.PUBLIC_URL}/assets/images/youngers-training.jpg`;
-  const checkIcon = `${process.env.PUBLIC_URL}/assets/images/check.svg`;
-  const history = useHistory();
   const [loading, setLoading] = useState(true);
-  const [loadW, setLoadW] = useState(true);
-  const [loadScale, setLoadScale] = useState(true);
-  const [loadSquats, setLoadSquats] = useState(true);
 
   const load = () => {
     setLoading(false);
@@ -64,11 +52,9 @@ function Home() {
               <div className={styles.containerSectionHead}>
                 <div className={styles.content}>
                   <h1 className={styles.title}>Bienvenido a SurveyApp</h1>
-                  <p className={styles.Text}>
-                    SurveyApp ofrece un sistema integral para el análisis de siniestros viales.
-                    Simplificamos la gestión mensual, permitiendo a usuarios y profesionales
-                    inscribirse dinámicamente y acceder a herramientas especializadas.
-                  </p>
+                  <h2 className={styles.subTitle}>
+                    Sistema Integral de Administracion de Siniestros
+                  </h2>
                 </div>
                 <video className={styles.bannerVideo} autoPlay loop muted>
                   <source src="/assets/video/video2.mp4" type="video/mp4" />
@@ -78,237 +64,157 @@ function Home() {
             )}
           </section>
           <section className={styles.sectionAbout}>
-            <h2 className={styles.sectionTitleBlue}>About Mega Rocket</h2>
-            <div className={styles.sectionAboutFlexContainer}>
-              <article
-                className={styles.sectionAboutContainer}
-                id={styles.sectionAboutContainerTop}
-              >
-                {loadW && <LoadHome />}
-                <img
-                  src={runMachine}
-                  className={!loadW && styles.sectionAboutImage}
-                  alt="The inside of a gym"
-                  onLoad={() => setLoadW(false)}
-                />
-                <p className={styles.sectionAboutTextDesktop}>
-                  We are Mega Rocket web, one of the oldest but most modern gyms in the region, with
-                  a unique monthly management system for members and trainers in the country, so
-                  they can access our gym dynamically. The best version of you awaits, join our Mega
-                  Rocket today.
-                </p>
-              </article>
-              <article
-                className={styles.sectionAboutContainerTwo}
-                id={styles.sectionAboutContainerBot}
-              >
-                {loadScale && <LoadHome />}
-                <img
-                  className={!loadScale && styles.sectionAboutImage}
-                  src={gymImageGymOne}
-                  alt="A man running in a treadmill"
-                  onLoad={() => setLoadScale(false)}
-                />
-                <p className={styles.sectionAboutTextDesktop}>
-                  On this website you will have at your disposal the possibility of taking our
-                  classes, directed by our best personal trainers and accessing many privileges
-                  through our different memberships. We are here to help you achieve your best
-                  quality of life in a fun daily activity at our facilities.
-                </p>
-              </article>
+            <h2 className={styles.sectionTitleBlue}>Acerca de SurveyApp</h2>
+            <div className={styles.subTitleContainer}>
+              {' '}
+              SURVEYAPP es una herramienta tecnológica especializada en la rápida y eficaz
+              resolución de siniestros. Aprovechando las capacidades de nuestros sistemas, brindamos
+              un servicio de gestión de siniestros incomparable.{' '}
             </div>
-          </section>
-          <section className={styles.sectionFeatures}>
-            <h2 className={styles.sectionTitleWhite}>Features</h2>
-            {loading ? (
-              <LoadHome />
-            ) : (
-              <div className={styles.sectionFeaturesContainer}>
-                <article className={styles.sectionFeaturesArticles}>
-                  <span className={styles.sectionFeaturesTitles}>
-                    {loading ? (
-                      <LoadHome />
-                    ) : (
-                      <img
-                        src={gymCalendarIconTime}
-                        alt="Calendar icon with clock"
-                        className={styles.featuresIcons}
-                        onLoad={load}
-                      />
-                    )}
-                    Shift reservations
-                  </span>
-                  <p className={styles.Text}>
-                    As an associate of our facilities you will be able to make reservations to our
-                    classes with our trainers available, during a large part of the week, in a wide
-                    availability of hours per day.
-                  </p>
-                </article>
-                <article className={styles.sectionFeaturesArticles}>
-                  <span className={styles.sectionFeaturesTitles}>
-                    {loading ? (
-                      <LoadHome />
-                    ) : (
-                      <img
-                        src={gymCalendarIcon}
-                        alt="Calendar icon"
-                        className={styles.featuresIcons}
-                        onLoad={load}
-                      />
-                    )}
-                    Scheduling & opening hours
-                  </span>
-                  <p className={styles.Text}>
-                    As an associate you will be able to access our best gym classes from Monday to
-                    Saturday, from 8 am to 5 pm with the best personal trainers.
-                  </p>
-                </article>
-                <article className={styles.sectionFeaturesArticles}>
-                  <span className={styles.sectionFeaturesTitles}>
-                    {loading ? (
-                      <LoadHome />
-                    ) : (
-                      <img
-                        src={gymIconList}
-                        alt="List icon"
-                        className={styles.featuresIcons}
-                        onLoad={load}
-                      />
-                    )}
-                    Membership management
-                  </span>
-                  <p className={styles.Text}>
-                    You will have three types of memberships available in our facilities to access a
-                    wide variety of benefits for your personal well-being and daily activity.
-                  </p>
-                </article>
-                <article className={styles.sectionFeaturesArticles}>
-                  <span className={styles.sectionFeaturesTitles}>
-                    {loading ? (
-                      <LoadHome />
-                    ) : (
-                      <img
-                        src={gymIconMessage}
-                        alt="Message icon"
-                        className={styles.featuresIcons}
-                        onLoad={load}
-                      />
-                    )}
-                    Contact form & suggestions
-                  </span>
-                  <p className={styles.Text}>
-                    If you happen to have a question that we can answer, or if you have any
-                    suggestions for us, please contact us via email.
-                  </p>
-                </article>
-              </div>
-            )}
-          </section>
-          <section className={styles.activities}>
-            <h2 className={styles.sectionTitleBlue}>Gym activities</h2>
-            <article className={styles.sectionActivities}>
-              <ul className={styles.sectionActivitiesList}>
-                <li className={styles.activityItem}>Crossfit</li>
-                <li className={styles.activityItem}>Spinning</li>
-                <li className={styles.activityItem}>Functional</li>
-                <li className={styles.activityItem}>Fitness</li>
-                <li className={styles.activityItem}>Boxing</li>
-              </ul>
-              {loadSquats && <LoadHome />}
-              <img
-                className={styles.sectionActivitiesImg}
-                src={gymImageGymTwo}
-                alt="The inside of a gym"
-                onLoad={() => setLoadSquats(false)}
-              />
-            </article>
-          </section>
-          <section className={styles.memberships}>
-            <h2 className={styles.sectionTitleWhite}>Memberships</h2>
-            <article className={styles.sectionMembership}>
-              <div className={styles.cardMembership}>
-                <h5 className={styles.cardTitle}>Only Classes</h5>
-                <div className={styles.cardBody}>
-                  <ul className={styles.benefitsList}>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Free access to classes prior enrollment</p>
-                    </li>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Scheduling visualization</p>
-                    </li>
-                  </ul>
-                </div>
-                <div onClick={() => history.push('/auth/sign-up')} className={styles.cardInfo}>
-                  More info
-                </div>
-              </div>
-              <div className={styles.cardMembership}>
-                <h5 className={styles.cardTitle}>Classic</h5>
-                <div className={styles.cardBody}>
-                  <ul className={styles.benefitsList}>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Free access to the fitness room</p>
-                    </li>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Personalized followUp by a trainer</p>
-                    </li>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Scheduling visualization</p>
-                    </li>
-                  </ul>
-                </div>
-                <div onClick={() => history.push('/auth/sign-up')} className={styles.cardInfo}>
-                  More info
-                </div>
-              </div>
-              <div className={styles.cardMembership}>
-                <h5 className={styles.cardTitle}>Black</h5>
-                <div className={styles.cardBody}>
-                  <ul className={styles.benefitsList}>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Free access to classes prior enrollment</p>
-                    </li>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Free access to the fitness room</p>
-                    </li>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Personalized followUp by a trainer</p>
-                    </li>
-                    <li>
-                      <img src={checkIcon} className={styles.checkIcon} onLoad={load} />
-                      <p>Scheduling visualization</p>
-                    </li>
-                  </ul>
-                </div>
-                <div onClick={() => history.push('/auth/sign-up')} className={styles.cardInfo}>
-                  More info
-                </div>
-              </div>
-            </article>
-          </section>
-          <section className={styles.getInTouch}>
-            <h2 className={styles.sectionTitleBlue}>Get in Touch</h2>
-            <article>
-              <FormLand />
-            </article>
-          </section>
-          <section className={styles.info}>
-            <div className={styles.card}>
-              <h4 className={styles.findUs}>Contact & Where to find us</h4>
-              <div className={styles.infoContainer}>
-                <p className={styles.ubication}>Rosario: Direccion 1234 - +54 341-4569878</p>
-                <p className={styles.ubication}>Montevideo: Direccion 1234 - +598 11-3489838</p>
-                <p className={styles.ubication}>radiumrocket@gmail.com</p>
+            <div className={styles.infoContainer}>
+              <img className={styles.imgMenu} src={homeImg1} alt="Dos autos en colision" />
+              <div className={styles.infoText}>
+                <p>
+                  Nos especializamos en la gestión integral de siniestros, brindando un servicio
+                  dedicado a resolver eficazmente situaciones adversas y determinar las
+                  responsabilidades correspondientes. Nuestra misión es proporcionar a nuestros
+                  clientes la tranquilidad necesaria en momentos difíciles, cerrando cada incidente
+                  de manera justa y satisfactoria para todos los afectados.
+                </p>
               </div>
             </div>
+            <div className={styles.infoContainer}>
+              <div className={styles.infoText}>
+                <p>
+                  Ofrecemos un servicio especializado en la detección de acciones fraudulentas, con
+                  un enfoque particular en autorrobos de ruedas. Nuestro equipo cuenta con las
+                  herramientas más avanzadas y eficientes para llevar a cabo un exhaustivo análisis
+                  y determinar con precisión la autenticidad de cada incidente.
+                </p>
+              </div>
+              <img className={styles.imgMenu} src={homeImg3} alt="Rueda" />
+            </div>
+          </section>
+          <section className={styles.sectionFunciones}>
+            <h2 className={styles.funcionesTitle}>Funcionalidades</h2>
+            <div className={styles.sectionFuncionesContainer}>
+              <div className={styles.sectionFuncionesInner}>
+                <div className={styles.sectionFuncionesTop}>
+                  <div>
+                    <img className={styles.imgFuncionalidad} src={funcionalidadImg1} alt="Icono" />
+                  </div>
+                  <p className={styles.titleFuncionalidad}>Registro de Datos</p>
+                </div>
+                <div className={styles.sectionFuncionesBot}>
+                  <p className={styles.textFuncionalidad}>
+                    Disponemos de una amplia red de almacenes de datos diseñada para capturar y
+                    procesar de manera eficiente toda la información relevante relacionada con los
+                    eventos ocurridos, así como los vehículos e individuos involucrados. Esta
+                    infraestructura robusta nos permite gestionar grandes cantidades de datos de
+                    manera sistemática y precisa.
+                  </p>
+                </div>
+              </div>
+              <div className={styles.sectionFuncionesInner}>
+                <div className={styles.sectionFuncionesTop}>
+                  <div>
+                    <img className={styles.imgFuncionalidad} src={funcionalidadImg1} alt="Icono" />
+                  </div>
+                  <p className={styles.titleFuncionalidad}>Control de Usuarios</p>
+                </div>
+                <div className={styles.sectionFuncionesBot}>
+                  <p className={styles.textFuncionalidad}>
+                    Disponemos de un sólido sistema de control de usuarios que actúa como un pilar
+                    fundamental en nuestra estrategia para garantizar la seguridad de la información
+                    y la asignación precisa de relevadores y controladores de siniestros. Este
+                    sistema está diseñado con los más altos estándares de seguridad para
+                    salvaguardar los datos críticos y asegurar que cada usuario tenga acceso
+                    únicamente a la información pertinente a sus responsabilidades.
+                  </p>
+                </div>
+              </div>
+              <div className={styles.sectionFuncionesInner}>
+                <div className={styles.sectionFuncionesTop}>
+                  <div>
+                    <img className={styles.imgFuncionalidad} src={funcionalidadImg1} alt="Icono" />
+                  </div>
+                  <p className={styles.titleFuncionalidad}>Exportación de Registros</p>
+                </div>
+                <div className={styles.sectionFuncionesBot}>
+                  <p className={styles.textFuncionalidad}>
+                    Facilitamos la eficiencia y la transparencia en nuestros procesos al ofrecer
+                    exportación directa tanto de informes siniestrales como de entrevistas,
+                    proporcionando todos los datos necesarios de manera accesible y oportuna.
+                    Nuestro sistema está diseñado para brindar una experiencia sin inconvenientes,
+                    permitiendo a nuestros clientes acceder y compartir fácilmente información
+                    crucial.
+                  </p>
+                </div>
+              </div>
+              <div className={styles.sectionFuncionesInner}>
+                <div className={styles.sectionFuncionesTop}>
+                  <div>
+                    <img className={styles.imgFuncionalidad} src={funcionalidadImg1} alt="Icono" />
+                  </div>
+                  <p className={styles.titleFuncionalidad}>Evaluaciones de Desempeño</p>
+                </div>
+                <div className={styles.sectionFuncionesBot}>
+                  <p className={styles.textFuncionalidad}>
+                    Realizamos evaluaciones continuas de la resolución de siniestros y del desempeño
+                    en todas las actividades llevadas a cabo, con el objetivo de perfeccionar
+                    constantemente nuestra atención. Estas evaluaciones son parte integral de
+                    nuestro compromiso con la mejora continua y la excelencia en el servicio.
+                  </p>
+                </div>
+              </div>
+              <div className={styles.sectionFuncionesInner}>
+                <div className={styles.sectionFuncionesTop}>
+                  <div>
+                    <img className={styles.imgFuncionalidad} src={funcionalidadImg1} alt="Icono" />
+                  </div>
+                  <p className={styles.titleFuncionalidad}>Fraudulencia</p>
+                </div>
+                <div className={styles.sectionFuncionesBot}>
+                  <p className={styles.textFuncionalidad}>
+                    Disponemos de herramientas especializadas que simplifican el análisis de
+                    siniestros, permitiéndonos determinar de manera eficiente la autenticidad de
+                    cada incidente y detectar posibles fraudes. Estas herramientas, respaldadas por
+                    tecnología avanzada, nos proporcionan la capacidad de realizar evaluaciones
+                    exhaustivas y precisas.
+                  </p>
+                </div>
+              </div>
+              <div className={styles.sectionFuncionesInner}>
+                <div className={styles.sectionFuncionesTop}>
+                  <div>
+                    <img className={styles.imgFuncionalidad} src={funcionalidadImg1} alt="Icono" />
+                  </div>
+                  <p className={styles.titleFuncionalidad}>Novedades</p>
+                </div>
+                <div className={styles.sectionFuncionesBot}>
+                  <p className={styles.textFuncionalidad}>
+                    Implementamos un sistema de comunicación de novedades que asegura una
+                    comunicación continua entre los diversos participantes en un siniestro, con el
+                    objetivo de lograr una resolución rápida y eficaz. Este sistema, diseñado para
+                    facilitar la colaboración y la coordinación, es una pieza fundamental en nuestro
+                    compromiso con la eficiencia y la atención efectiva.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section className={styles.sectionAbout}>
+            <h2 className={styles.sectionTitleBlue}>Conoce nuestro impacto</h2>
+            <iframe
+              className={styles.youtubeVideo}
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/DHj9oyblaPw?si=e02w9qXkFJFSzmqz"
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
           </section>
         </section>
       )}
