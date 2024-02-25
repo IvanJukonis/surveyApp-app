@@ -48,6 +48,27 @@
   margin: 10px 20px 20px 20px;
 }
 
+.buttonPaginate {
+  background: #252440;
+  color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  cursor:pointer;
+}
+
+.activePage {
+  background: #252440;
+  color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  cursor:pointer;
+}
+
+.eachNumber {
+  background: #FAFAFA;
+  color: #252440;
+  border: 3px solid #ECECEC;
+  cursor:pointer;
+}
+
 .table tr td,
 .table tr th {
   padding: 15px 10px 15px 20px;

@@ -400,8 +400,6 @@ function Relevador() {
     return setToastErroOpen(true);
   };
 
-  console.log(errors);
-
   const onSubmit = async (data) => {
     const formattedData = {
       ...data,
@@ -425,6 +423,10 @@ function Relevador() {
   useEffect(() => {
     calculateStats(siniestros);
   }, [siniestros]);
+
+  useEffect(() => {
+    calculateStats(siniestros);
+  }, [statsCorrecciones, statsDemoras, statsDesarrolloSiniestro, statsGramaticaProlijidad]);
 
   return (
     <div className={styles.container}>

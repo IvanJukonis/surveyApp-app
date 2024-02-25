@@ -429,6 +429,10 @@ function Controlador() {
     calculateStats(siniestros);
   }, [siniestros]);
 
+  useEffect(() => {
+    calculateStats(siniestros);
+  }, [statsCorrecciones, statsDemoras, statsDesarrolloSiniestro, statsGramaticaProlijidad]);
+
   return (
     <div className={styles.container}>
       {

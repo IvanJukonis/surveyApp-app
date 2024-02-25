@@ -5,6 +5,8 @@ const TableList = ({ columnTitleArray, data, handleClick, columns, valueField, c
   const fieldValue = valueField;
   const [filterValue, setFilterValue] = useState('');
   const [filtered, setFiltered] = useState(data);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filtered.length / 6);
 
   const ifObject = (item) => {
     if (item) {
@@ -76,6 +78,26 @@ const TableList = ({ columnTitleArray, data, handleClick, columns, valueField, c
     }
   }, [data]);
 
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          className={currentPage === i ? styles.activePage : styles.eachNumber}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+
   return (
     <section className={type ? `${styles.containerForm}` : `${styles.container}`}>
       <div className={styles.filterContainer}>
@@ -88,7 +110,7 @@ const TableList = ({ columnTitleArray, data, handleClick, columns, valueField, c
           onChange={(e) => setFilterValue(e.target.value)}
         />
       </div>
-      {data?.length === 0 ? (
+      {filtered?.length === 0 ? (
         <div className={styles.noneTrainer}>
           <h3>The list is empty</h3>
         </div>
@@ -102,44 +124,64 @@ const TableList = ({ columnTitleArray, data, handleClick, columns, valueField, c
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => {
-              const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
+            {filtered
+              .filter((row) =>
+                columns.some((column) =>
+                  String(row[column]).toLowerCase().includes(filterValue.toLowerCase())
+                )
+              )
+              .map((row, index) => {
+                const rowClass = index % 2 === 0 ? styles.rowBackground1 : styles.rowBackground2;
 
-              return (
-                <tr
-                  onClick={() => {
-                    handleClick(index);
-                  }}
-                  className={rowClass}
-                  key={index}
-                >
-                  {columns.map((column, columnIndex) => (
-                    <td key={columnIndex}>
-                      {column.startsWith('activo') ? (
-                        <input
-                          className={styles.checkboxInput}
-                          type="checkbox"
-                          readOnly
-                          checked={checkStatePrioridad(index)}
-                        />
-                      ) : column.startsWith('fecha') || column.startsWith('hora') ? (
-                        formatDate(row[column])
-                      ) : (
-                        <>
-                          {ifArray(row[column])}
-                          {ifObject(row[column])}
-                          {ifNotArrayNotObject(row, column)}
-                          {ifNotExist(row[column])}
-                        </>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
+                return (
+                  <tr
+                    onClick={() => {
+                      handleClick(index);
+                    }}
+                    className={rowClass}
+                    key={index}
+                  >
+                    {columns.map((column, columnIndex) => (
+                      <td key={columnIndex}>
+                        {column.startsWith('activo') ? (
+                          <input
+                            className={styles.checkboxInput}
+                            type="checkbox"
+                            readOnly
+                            checked={checkStatePrioridad(index)}
+                          />
+                        ) : column.startsWith('fecha') || column.startsWith('hora') ? (
+                          formatDate(row[column])
+                        ) : (
+                          <>
+                            {ifArray(row[column])}
+                            {ifObject(row[column])}
+                            {ifNotArrayNotObject(row, column)}
+                            {ifNotExist(row[column])}
+                          </>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
+              .slice((currentPage - 1) * 6, currentPage * 6)}
           </tbody>
         </table>
       )}
+      <div className={styles.containerPaginate}>
+        <button
+          onClick={() => handlePageClick(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={styles.buttonPaginate}
+        >{`←`}</button>
+        {renderPageNumbers()}
+        <button
+          onClick={() => handlePageClick(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={styles.buttonPaginate}
+        >{`→`}</button>
+      </div>
     </section>
   );
 };
