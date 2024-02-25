@@ -10,16 +10,21 @@ import { login } from 'redux/auth/thunks';
 import { logout } from 'redux/auth/thunks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { getAdministrativo } from 'redux/administrativo/thunks';
+import { getRelevador } from 'redux/relevador/thunks';
+import { getControlador } from 'redux/controlador/thunks';
 
 const schema = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .messages({
-      'string.base': 'The email must be a text string',
-      'string.empty': 'The email is a required field',
-      'string.email': 'The email must be a valid email address',
-      'string.minDomainSegments': 'The email must have at least 2 domain segments',
-      'string.tlds.allow': 'The email must have a valid top-level domain (.com or .net)'
+      'string.base': 'El correo electrónico debe ser una cadena de texto',
+      'string.empty': 'El correo electrónico es un campo obligatorio',
+      'string.email': 'El correo electrónico debe ser una dirección de correo electrónico válida',
+      'string.minDomainSegments':
+        'El correo electrónico debe tener al menos 2 segmentos de dominio',
+      'string.tlds.allow':
+        'El correo electrónico debe tener un dominio de nivel superior válido (.com o .net)'
     })
 });
 
@@ -30,13 +35,13 @@ const RecoverPassword = () => {
   const [headerMessage, setHeaderMessage] = useState('');
   const dispatch = useDispatch();
   const history = useHistory();
-  const admins = useSelector((state) => state.admins.list);
-  const trainers = useSelector((state) => state.trainers.list);
-  const members = useSelector((state) => state.members.list);
+  const administrativos = useSelector((state) => state.administrativo.list);
+  const controladores = useSelector((state) => state.controlador.list);
+  const relevadores = useSelector((state) => state.relevador.list);
   const token = sessionStorage.getItem('token');
   const data = {
-    email: 'admin@admin.com',
-    password: 'Eladmin1'
+    email: 'superadmin@hotmail.com',
+    password: 'Ivanjuko123'
   };
 
   const {
@@ -57,13 +62,13 @@ const RecoverPassword = () => {
   };
 
   const emailExistsInDB = (data) => {
-    if (admins?.some((admin) => admin.email === data.email)) {
+    if (administrativos?.some((administrativo) => administrativo.email === data.email)) {
       return true;
     }
-    if (trainers?.some((trainer) => trainer.email === data.email)) {
+    if (controladores?.some((controlador) => controlador.email === data.email)) {
       return true;
     }
-    if (members?.some((member) => member.email === data.email)) {
+    if (relevadores?.some((relevador) => relevador.email === data.email)) {
       return true;
     }
   };
@@ -78,8 +83,8 @@ const RecoverPassword = () => {
       }, 2000);
       logOut();
     } else {
-      setHeaderMessage('Oops!');
-      setMessage('No account registered with this email');
+      setHeaderMessage('Error');
+      setMessage('No existe un usuario registrado con este correo');
       setModalError(true);
       logOut();
     }
@@ -95,8 +100,9 @@ const RecoverPassword = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      //dispatch(getAllAdmins);
-      //dispatch(getAllControlador);
+      getAdministrativo(dispatch);
+      getRelevador(dispatch);
+      getControlador(dispatch);
     }, 1000);
   }, []);
 
@@ -107,36 +113,50 @@ const RecoverPassword = () => {
   }, [token]);
 
   return (
-    <form className={styles.formRecoverPassword} onSubmit={handleSubmit(onSubmit)}>
-      <div className={styles.wholeRecoverContainer}>
-        <h1 className={styles.titleRecover}>Recover Password</h1>
-        <div className={styles.boxInfo}>
-          <p className={styles.textInfo}>We will send you a recovery code to your inbox</p>
-        </div>
-        <div className={styles.containerRecoverForm}>
-          <Inputs
-            type="email"
-            nameInput={'email'}
-            nameTitle={'Email'}
-            register={register}
-            error={errors.email?.message}
-          />
-        </div>
-        <div className={styles.sub_buttons}>
-          <Button className={styles.buttonLogin} clickAction={() => {}} text="Confirm" />
-          <Button text="Cancel" clickAction={() => history.goBack()} />
-        </div>
+    <div className={styles.container}>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>RECUPERAR CONTRASEÑA</p>
       </div>
+      <div className={styles.innerContainer}>
+        <form className={styles.formSuperAdmin} onSubmit={handleSubmit(onSubmit)}>
+          <div className={styles.wholeContainer}>
+            <h1 className={styles.titleLogin}>Recuperar Contraseña</h1>
+            <div className={styles.containerForm}>
+              <p className={styles.textInfo}>
+                Un codigo de recuperación sera enviado a su correo electronico.
+              </p>
+            </div>
+            <div className={styles.containerUsername}>
+              <Inputs
+                type="email"
+                nameInput={'email'}
+                nameTitle={'Email'}
+                register={register}
+                error={errors.email?.message}
+              />
+            </div>
+            <div className={styles.sub_buttons}>
+              <Button className={styles.buttonLogin} clickAction={() => {}} text="Confirmar" />
+              <Button text="Cancelar" clickAction={() => history.goBack()} />
+            </div>
+          </div>
 
-      {modalSuccess && <ModalSuccess message={'We send you a verification code to your email!'} />}
-      {modalError && (
-        <ModalError
-          setModalErrorOpen={setModalError}
-          message={message}
-          headerMessage={headerMessage}
-        />
-      )}
-    </form>
+          {modalSuccess && (
+            <ModalSuccess
+              message={'El codigo de verificación ha sido enviado a su correo.'}
+              setModalSuccessOpen={setModalSuccess}
+            />
+          )}
+          {modalError && (
+            <ModalError
+              setModalErrorOpen={setModalError}
+              message={message}
+              headerMessage={headerMessage}
+            />
+          )}
+        </form>
+      </div>
+    </div>
   );
 };
 export default RecoverPassword;
