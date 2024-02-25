@@ -30,12 +30,15 @@ function Relevador() {
     if (controladorPath) {
       return '/controlador';
     }
-    return '/administrativo';
+    if (administrativoPath) {
+      return '/administrativo';
+    }
+    return '/superadmin';
   };
 
   const handleEditClick = (item) => {
     const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/relevadores/form/${item._id}`, {
+    history.push(`${pathPrefix}/relevador/form/${item._id}`, {
       params: { ...item, mode: 'edit' }
     });
   };
@@ -44,8 +47,9 @@ function Relevador() {
     history.push(`relevador/form/`, { params: { mode: 'create' } });
   };
 
-  const relevadorPath = ['/relevador/relevadores'].includes(location.pathname);
-  const controladorPath = ['/controlador/controladores'].includes(location.pathname);
+  const relevadorPath = ['/relevador/relevador'].includes(location.pathname);
+  const controladorPath = ['/controlador/relevador'].includes(location.pathname);
+  const administrativoPath = ['/administrativo/relevador'].includes(location.pathname);
 
   const actualUser = ['/relevador/controladores', '/controlador/controladores'].includes(
     location.pathname

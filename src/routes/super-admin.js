@@ -38,11 +38,14 @@ const SuperAdminRoutes = () => {
         <Route path={`${url}/controlador/form`} component={ControladoresCreate} />
         <Route path={`${url}/administrativo/form`} component={AdministrativosCreate} />
         <Route path={`${url}/relevador/form`} component={RelevadoresCreate} />
+        <Route path={`${url}/controlador/form/:id?`} component={ControladoresCreate} />
+        <Route path={`${url}/administrativo/form/:id?`} component={AdministrativosCreate} />
+        <Route path={`${url}/relevador/form/:id?`} component={RelevadoresCreate} />
         <Route path={`${url}/controlador`} component={ControladoresList} />
         <Route path={`${url}/administrativo`} component={AdministrativosList} />
         <Route path={`${url}/relevador`} component={RelevadoresList} />
         <Route exact path={`${url}/not-allowed`} component={NotAllowed} />
-        <Redirect to={`${url}/siniestros`} />
+        <Redirect to={`${url}/administrativo`} />
       </Switch>
     </Layout>
   );

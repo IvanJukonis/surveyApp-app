@@ -23,19 +23,8 @@ function Administrativo() {
   ];
   const columns = ['nombre', 'apellido', 'tipo', 'dni', 'departamento', 'oficina', 'puesto'];
 
-  const getPathPrefix = () => {
-    if (relevador) {
-      return '/relevador';
-    }
-    if (administrativoPath) {
-      return '/administrativo';
-    }
-    return '/administrativo';
-  };
-
   const handleEditClick = (item) => {
-    const pathPrefix = getPathPrefix();
-    history.push(`${pathPrefix}/administrativos/form/${item._id}`, {
+    history.push(`/superadmin/administrativo/form/${item._id}`, {
       params: { ...item, mode: 'edit' }
     });
   };
@@ -43,9 +32,6 @@ function Administrativo() {
   const createMode = () => {
     history.push(`administrativo/form/`, { params: { mode: 'create' } });
   };
-
-  const relevador = ['/relevador/administrativos'].includes(location.pathname);
-  const administrativoPath = ['/administrativo/administrativos'].includes(location.pathname);
 
   const actualUser = ['/relevador/administrativos', '/administrativo/administrativos'].includes(
     location.pathname

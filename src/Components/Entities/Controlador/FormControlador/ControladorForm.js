@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './form.module.css';
 import { Inputs, OptionInput, Button, ToastError, Loader } from 'Components/Shared';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -13,12 +13,17 @@ import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 
 const ControladorForm = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const location = useLocation();
   const [openModalSuccess, setOpenModalSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [messageError, setMessageError] = useState('');
   const [toastError, setToastError] = useState(null);
+  const data = location.state.params;
+  const history = useHistory();
+  const type = location.state.params.mode;
+
+  const [formType, setFormType] = useState(false);
 
   const tipoArray = ['Relevador', 'Controlador', 'Administrativo', 'Consultor'];
   const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
@@ -228,13 +233,40 @@ const ControladorForm = () => {
     })
   });
 
+  const controladorUpdate = {
+    tipo: data.tipo,
+    nombre: data.nombre,
+    apellido: data.apellido,
+    email: data.email,
+    dni: data.dni,
+    fechaNacimiento: data.fechaNacimiento,
+    fechaContratacion: data.fechaContratacion,
+    direccion: data.direccion,
+    localidad: data.localidad,
+    telefono: data.telefono,
+    contrato: data.contrato,
+    hsLaborales: data.hsLaborales,
+    salario: data.salario,
+    fechaActualizacionSalario: data.fechaActualizacionSalario,
+    numeroSeguridadSocial: data.numeroSeguridadSocial,
+    oficina: data.oficina,
+    departamento: data.departamento,
+    puesto: data.puesto,
+    cantidadHijos: data.cantidadHijos,
+    estadoCivil: data.estadoCivil,
+    activo: data.activo,
+    cuentaBancaria: data.cuentaBancaria,
+    password: data.password
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm({
     mode: 'onBlur',
-    resolver: joiResolver(schema)
+    resolver: joiResolver(schema),
+    defaultValues: { ...controladorUpdate }
   });
 
   const onSubmit = async (data) => {
@@ -290,6 +322,9 @@ const ControladorForm = () => {
       setTimeout(() => {
         setLoading(false);
       }, 2000);
+    }
+    if (type == 'edit') {
+      setFormType(true);
     }
   }, []);
 
@@ -373,17 +408,32 @@ const ControladorForm = () => {
                           required
                         />
                       </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.email?.message}
-                          register={register}
-                          nameTitle="Email"
-                          type="text"
-                          nameInput="email"
-                          styleInput="normalInput"
-                          required
-                        />
-                      </div>
+                      {!formType ? (
+                        <div className={styles.inputContainer}>
+                          <Inputs
+                            error={errors.email?.message}
+                            register={register}
+                            nameTitle="Email"
+                            type="text"
+                            nameInput="email"
+                            styleInput="normalInput"
+                            required
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.inputContainer}>
+                          <Inputs
+                            error={errors.email?.message}
+                            register={register}
+                            nameTitle="Email"
+                            type="text"
+                            nameInput="email"
+                            styleInput="normalInput"
+                            isDisabled={true}
+                            required
+                          />
+                        </div>
+                      )}
                       <div className={styles.inputContainer}>
                         <Inputs
                           error={errors.numeroSeguridadSocial?.message}
@@ -576,32 +626,40 @@ const ControladorForm = () => {
                           required
                         />
                       </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          nameTitle="Contraseña"
-                          nameInput="password"
-                          register={register}
-                          type="password"
-                          error={errors.password?.message}
-                          testId="signup-password-input"
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          nameTitle="Repetir Contraseña"
-                          nameInput="repeatPassword"
-                          register={register}
-                          type="password"
-                          error={errors.repeatPassword?.message}
-                          testId="signup-repeatpassword-input"
-                        />
-                      </div>
+                      {!formType && (
+                        <div className={styles.inputContainer}>
+                          <Inputs
+                            nameTitle="Contraseña"
+                            nameInput="password"
+                            register={register}
+                            type="password"
+                            error={errors.password?.message}
+                            testId="signup-password-input"
+                          />
+                        </div>
+                      )}
+                      {!formType && (
+                        <div className={styles.inputContainer}>
+                          <Inputs
+                            nameTitle="Repetir Contraseña"
+                            nameInput="repeatPassword"
+                            register={register}
+                            type="password"
+                            error={errors.repeatPassword?.message}
+                            testId="signup-repeatpassword-input"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 <div className={styles.buttonsGroup}>
-                  <Button clickAction={() => {}} text="CREAR" testId="signup-btn" />
+                  <Button
+                    clickAction={() => {}}
+                    text={formType ? 'Actualizar' : 'Agregar'}
+                    testId="signup-btn"
+                  />
                   <Button
                     text="Cancelar"
                     clickAction={() => history.goBack()}

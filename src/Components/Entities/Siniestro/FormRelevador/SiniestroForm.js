@@ -362,8 +362,6 @@ const SiniestrosForm = () => {
     } else return 'green';
   };
 
-  console.log(data);
-
   const siniestroUpdate = {
     numSiniestro: data.numSiniestro,
     numPoliza: data.numPoliza,
