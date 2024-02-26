@@ -502,7 +502,7 @@ const SiniestrosForm = () => {
   const handleInspeccionR = () => {
     const pathPrefix = getPathPrefix();
     history.push(`${pathPrefix}/siniestros/inspeccionRoboRueda/form/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
+      params: { ...siniestroActual, mode: 'create', siniestro: siniestro }
     });
   };
 
@@ -538,7 +538,6 @@ const SiniestrosForm = () => {
     if (role == 'RELEVADOR') {
       setRoleRelevador(true);
     }
-
     getControlador(dispatch);
     getRelevador(dispatch);
     getSiniestro(dispatch);
@@ -932,9 +931,7 @@ const SiniestrosForm = () => {
                       <Button submition={true} clickAction={handleRueda} text="Ruedas" />
                     )}
                     <Button submition={true} clickAction={handleEvento} text="Eventos" />
-                    {siniestroType && (
-                      <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
-                    )}
+                    <Button submition={true} clickAction={handleEntrevista} text="Entrevista" />
                   </div>
                 </div>
               )}

@@ -37,6 +37,21 @@ export const getRuedaSiniestro = async (dispatch, siniestroId, idEntidad) => {
   }
 };
 
+export const getRuedasSiniestro = async (dispatch, siniestroId) => {
+  try {
+    dispatch(getRuedaPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/rueda`);
+    const data = await response.json();
+    const ruedasList = data.data;
+    const ruedasSiniestroList = ruedasList.filter((rueda) => rueda.siniestro[0] === siniestroId);
+    dispatch(getRuedaPending(false));
+    dispatch(getRuedaSuccess(ruedasSiniestroList));
+  } catch (error) {
+    dispatch(getRuedaPending(false));
+    dispatch(getRuedaError(true));
+  }
+};
+
 export const getRueda = async (dispatch) => {
   try {
     dispatch(getRuedasPending(true));

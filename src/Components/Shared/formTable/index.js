@@ -30,7 +30,7 @@ const FormTable = ({
       setIdDelete(id);
     }
   };
-  console.log(userCondition);
+
   const onConfirm = () => {
     if (userCondition == undefined || userCondition == true) {
       dispatch(deleteButton(idDelete));

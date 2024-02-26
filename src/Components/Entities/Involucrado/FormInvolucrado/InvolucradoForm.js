@@ -31,6 +31,7 @@ const InvolucradosForm = () => {
   const data = useParams();
   const location = useLocation();
   const item = location.state.params.item;
+  const role = sessionStorage.getItem('role');
 
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
@@ -383,22 +384,92 @@ const InvolucradosForm = () => {
   };
 
   const cancelForm = () => {
-    if (item) {
-      console.log(item);
-      if (item.alarmaActiva == undefined) {
-        history.push(
-          `/controlador/siniestros/entrevista/entrevistasiniestro/${item.rol}/${item.siniestro[0]}`,
-          {
+    if (item.programada == undefined) {
+      if (role == 'CONTROLADOR') {
+        if (item.alarmaActiva == undefined) {
+          history.push(
+            `/controlador/siniestros/entrevista/entrevistasiniestro/${item.rol}/${item.siniestro[0]}`,
+            {
+              params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+            }
+          );
+        } else {
+          history.push(
+            `/controlador/siniestros/entrevista/entrevistaroborueda/${item.rol}/${item.siniestro[0]}`,
+            {
+              params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+            }
+          );
+        }
+      }
+      if (role == 'RELEVADOR') {
+        if (item.alarmaActiva == undefined) {
+          history.push(
+            `/relevador/siniestros/entrevista/entrevistasiniestro/${item.rol}/${item.siniestro[0]}`,
+            {
+              params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+            }
+          );
+        } else {
+          history.push(
+            `/relevador/siniestros/entrevista/entrevistaroborueda/${item.rol}/${item.siniestro[0]}`,
+            {
+              params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+            }
+          );
+        }
+      }
+      if (role == 'ADMINISTRATIVO') {
+        if (item.alarmaActiva == undefined) {
+          history.push(
+            `/administrativo/siniestros/entrevista/entrevistasiniestro/${item.rol}/${item.siniestro[0]}`,
+            {
+              params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+            }
+          );
+        } else {
+          history.push(
+            `/administrativo/siniestros/entrevista/entrevistaroborueda/${item.rol}/${item.siniestro[0]}`,
+            {
+              params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+            }
+          );
+        }
+      }
+    }
+    if (item.programada) {
+      if (role == 'CONTROLADOR') {
+        if (item.disposicion == undefined) {
+          history.push(`/controlador/siniestros/inspeccionSiniestro/form/${item.siniestro[0]}`, {
             params: { ...item, mode: true, siniestroId: item.siniestro[0] }
-          }
-        );
-      } else {
-        history.push(
-          `/controlador/siniestros/entrevista/entrevistaroborueda/${item.rol}/${item.siniestro[0]}`,
-          {
+          });
+        } else {
+          history.push(`/controlador/siniestros/inspeccionRoboRueda/form/${item.siniestro[0]}`, {
             params: { ...item, mode: true, siniestroId: item.siniestro[0] }
-          }
-        );
+          });
+        }
+      }
+      if (role == 'RELEVADOR') {
+        if (item.disposicion == undefined) {
+          history.push(`/relevador/siniestros/inspeccionSiniestro/form/${item.siniestro[0]}`, {
+            params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+          });
+        } else {
+          history.push(`/relevador/siniestros/inspeccionRoboRueda/form/${item.siniestro[0]}`, {
+            params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+          });
+        }
+      }
+      if (role == 'ADMINISTRATIVO') {
+        if (item.disposicion == undefined) {
+          history.push(`/administrativo/siniestros/inspeccionSiniestro/form/${item.siniestro[0]}`, {
+            params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+          });
+        } else {
+          history.push(`/administrativo/siniestros/inspeccionRoboRueda/form/${item.siniestro[0]}`, {
+            params: { ...item, mode: true, siniestroId: item.siniestro[0] }
+          });
+        }
       }
     } else {
       history.goBack();

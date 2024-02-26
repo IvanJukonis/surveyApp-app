@@ -73,12 +73,6 @@ export const postInspeccionRoboRueda = async (
   siniestroId
 ) => {
   try {
-    console.log('antes de romperme');
-    console.log(inspeccionSiniestroData), 'inspeccionSiniestroData';
-    console.log(selectedInvolucrados), 'selectedInvolucrados';
-    console.log(selectedVehiculos, 'selectedVehiculos');
-    console.log(ruedas, 'ruedas');
-    console.log(siniestroId, 'siniestroId');
     const requestBody = {
       ...inspeccionSiniestroData,
       involucrado: selectedInvolucrados,
@@ -87,7 +81,6 @@ export const postInspeccionRoboRueda = async (
       siniestro: siniestroId || siniestroId.id
     };
     dispatch(postInspeccionRoboRuedaPending(true));
-    console.log(requestBody);
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionRoboRueda`, {
       method: 'POST',
       headers: {
@@ -110,15 +103,30 @@ export const postInspeccionRoboRueda = async (
   }
 };
 
-export const updateInspeccionRoboRueda = async (dispatch, id, inspeccionRoboRuedaData) => {
+export const updateInspeccionRoboRueda = async (
+  dispatch,
+  id,
+  inspeccionRoboRuedaData,
+  selectedInvolucrados,
+  selectedVehiculos,
+  ruedas,
+  siniestroId
+) => {
   try {
     dispatch(updateInspeccionRoboRuedaPending(true));
+    const requestBody = {
+      ...inspeccionRoboRuedaData,
+      involucrado: selectedInvolucrados,
+      vehiculo: selectedVehiculos,
+      ruedas: ruedas,
+      siniestro: siniestroId || siniestroId.id
+    };
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/inspeccionRoboRueda/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(inspeccionRoboRuedaData)
+      body: JSON.stringify(requestBody)
     });
     if (response.ok) {
       const data = await response.json();

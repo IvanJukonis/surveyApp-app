@@ -810,11 +810,11 @@ const EntrevistaSiniestrosForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={formType ? 'Entrevista actualizada' : 'Entrevista agregada'}
               redirect={redirect}
               redirectEntity={redirectEntity}
               createdEntity={entrevista}
               sinId={siniestroId}
+              message={formType ? 'Entrevista actualizada' : 'Entrevista agregada'}
             />
           )}
         </div>

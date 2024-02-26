@@ -63,7 +63,7 @@ export const getByIdSiniestro = async (dispatch, id) => {
     const data = await response.json();
     const siniestroById = data.data;
     dispatch(getSiniestroPending(false));
-    dispatch(getSiniestroSuccess(siniestroById));
+    dispatch(getSiniestroSuccess([siniestroById]));
   } catch (error) {
     console.error(error);
     dispatch(getSiniestroPending(false));

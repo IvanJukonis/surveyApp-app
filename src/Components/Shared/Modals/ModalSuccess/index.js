@@ -11,27 +11,66 @@ const ModalSuccess = ({
   createdEntity
 }) => {
   const history = useHistory();
+  const role = sessionStorage.getItem('role');
 
   const handleClose = () => {
     setModalSuccessOpen(false);
   };
 
   const handleRedirect = () => {
-    if (redirectEntity === 'involucrado') {
-      history.push({
-        pathname: `/controlador/siniestros/involucrado/form/${sinId}`,
-        state: { params: { mode: 'create', item: createdEntity } }
-      });
-    } else if (redirectEntity === 'vehiculo') {
-      history.push({
-        pathname: `/controlador/siniestros/vehiculo/form/${sinId}`,
-        state: { params: { mode: 'create', item: createdEntity } }
-      });
-    } else if (redirectEntity === 'rueda') {
-      history.push({
-        pathname: `/controlador/siniestros/rueda/form/${sinId}`,
-        state: { params: { mode: 'create', item: createdEntity, siniestroId: sinId } }
-      });
+    if (role == 'CONTROLADOR') {
+      if (redirectEntity === 'involucrado') {
+        history.push({
+          pathname: `/controlador/siniestros/involucrado/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity } }
+        });
+      } else if (redirectEntity === 'vehiculo') {
+        history.push({
+          pathname: `/controlador/siniestros/vehiculo/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity } }
+        });
+      } else if (redirectEntity === 'rueda') {
+        history.push({
+          pathname: `/controlador/siniestros/rueda/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity, siniestroId: sinId } }
+        });
+      }
+    }
+    if (role == 'RELEVADOR') {
+      if (redirectEntity === 'involucrado') {
+        history.push({
+          pathname: `/relevador/siniestros/involucrado/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity } }
+        });
+      } else if (redirectEntity === 'vehiculo') {
+        history.push({
+          pathname: `/relevador/siniestros/vehiculo/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity } }
+        });
+      } else if (redirectEntity === 'rueda') {
+        history.push({
+          pathname: `/relevador/siniestros/rueda/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity, siniestroId: sinId } }
+        });
+      }
+    }
+    if (role == 'ADMINISTRATIVO') {
+      if (redirectEntity === 'involucrado') {
+        history.push({
+          pathname: `/administrativo/siniestros/involucrado/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity } }
+        });
+      } else if (redirectEntity === 'vehiculo') {
+        history.push({
+          pathname: `/administrativo/siniestros/vehiculo/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity } }
+        });
+      } else if (redirectEntity === 'rueda') {
+        history.push({
+          pathname: `/administrativo/siniestros/rueda/form/${sinId}`,
+          state: { params: { mode: 'create', item: createdEntity, siniestroId: sinId } }
+        });
+      }
     }
   };
 
@@ -55,8 +94,8 @@ const ModalSuccess = ({
               if (!redirect) {
                 handleClose();
               } else {
-                handleClose();
                 handleRedirect();
+                handleClose();
               }
             }}
           >

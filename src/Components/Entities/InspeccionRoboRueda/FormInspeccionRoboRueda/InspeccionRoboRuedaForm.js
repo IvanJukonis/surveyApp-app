@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import React, { useEffect, useState } from 'react';
 import styles from './form.module.css';
 import {
   ModalConfirm,
@@ -28,15 +27,14 @@ import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import { getVehiculoSiniestro } from 'redux/vehiculo/thunks';
 import { getInvolucradoSiniestro } from 'redux/involucrado/thunks';
+import { getByIdSiniestro } from 'redux/siniestro/thunks';
 
 const InspeccionRoboRuedasForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const data = useParams();
-  const location = useLocation();
   const siniestroId = data.id;
-  const { params } = location.state || {};
-  const { createdEntity } = params || {};
+  const role = sessionStorage.getItem('role');
 
   const [toastError, setToastErroOpen] = useState(false);
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
@@ -64,10 +62,10 @@ const InspeccionRoboRuedasForm = () => {
 
   const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
-  const createdInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
   const currentInspeccionRoboRueda = useSelector((state) => state.inspeccionRoboRueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
+  const item = useSelector((state) => state.siniestro.list);
 
   //Array Eventos
   const arrayTipo = ['Acontesimiento', 'Sospecha'];
@@ -302,7 +300,14 @@ const InspeccionRoboRuedasForm = () => {
     siniestro: Joi.any(),
 
     __v: Joi.any(),
-    _id: Joi.any()
+    _id: Joi.any(),
+    vehiculo: Joi.any(),
+    involucrado: Joi.any(),
+    entrevistaRoboRueda: Joi.any(),
+    ruedaInspeccion: Joi.any(),
+    ruedaEntrevista: Joi.any(),
+    inspeccionRoboRueda: Joi.any(),
+    rueda: Joi.any()
   });
 
   const schemaFormRueda = Joi.object({
@@ -559,7 +564,11 @@ const InspeccionRoboRuedasForm = () => {
       const editInspeccionRoboRuedaResponse = await updateInspeccionRoboRueda(
         dispatch,
         inspeccionRoboRueda._id,
-        inspeccionRoboRueda
+        inspeccionRoboRueda,
+        selectedInvolucrados,
+        selectedVehiculos,
+        currentRueda,
+        data.id
       );
       if (editInspeccionRoboRuedaResponse.type === 'UPDATE_INSPECCIONROBORUEDA_SUCCESS') {
         setToastErroOpen(false);
@@ -632,7 +641,8 @@ const InspeccionRoboRuedasForm = () => {
       const formattedData = {
         ...data,
         fecha: formatDate(data.fecha),
-        hora: formatDate(data.hora)
+        hora: formatDate(data.hora),
+        siniestro: [siniestroId]
       };
       setInspeccionRoboRueda(formattedData);
       setModalAddConfirmOpen(true);
@@ -640,7 +650,8 @@ const InspeccionRoboRuedasForm = () => {
       const formattedData = {
         ...data,
         fecha: formatDate(data.fecha),
-        hora: formatDate(data.hora)
+        hora: formatDate(data.hora),
+        siniestro: [siniestroId]
       };
       setInspeccionRoboRueda(formattedData);
       setModalAddConfirmOpen(true);
@@ -857,6 +868,7 @@ const InspeccionRoboRuedasForm = () => {
       hora: formatDate(currentInspeccionRoboRueda[index].hora)
     };
     setIdInspeccion(currentInspeccionRoboRueda[index]._id);
+    setInspeccionRoboRueda(formattedData);
     reset({ ...formattedData });
     setButtonType(true);
   };
@@ -893,21 +905,27 @@ const InspeccionRoboRuedasForm = () => {
   const deleteButtonRueda = deleteRueda;
 
   const cancelForm = () => {
-    if (createdEntity) {
-      history.push({
-        pathname: `/controlador/siniestros/entrevista/entrevistaroboinspeccionRoboRueda/${createdEntity.rol}/${createdEntity.siniestro[0]}`,
-        state: {
-          params: { ...createdEntity, mode: 'edit', siniestroId: createdEntity.siniestro[0] }
-        }
+    if (role == 'CONTROLADOR') {
+      history.push(`/controlador/siniestros/form/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
       });
-    } else {
-      history.goBack();
+    }
+    if (role == 'RELEVADOR') {
+      history.push(`/relevador/siniestros/form/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
+    if (role == 'ADMINISTRATIVO') {
+      history.push(`/administrativo/siniestros/form/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
     }
   };
 
   useEffect(() => {
     resetFormRueda();
     resetFormEvento();
+    getByIdSiniestro(dispatch, data.id);
   }, [currentRueda, currentEvento]);
 
   useEffect(() => {
@@ -923,6 +941,15 @@ const InspeccionRoboRuedasForm = () => {
   }, [currentInspeccionRoboRueda?.involucrado?.length]);
 
   useEffect(() => {
+    if (inspeccionRoboRueda?.involucrado) {
+      setSelectedInvolucrados(inspeccionRoboRueda.involucrado);
+    }
+    if (inspeccionRoboRueda?.vehiculo) {
+      setSelectedVehiculos(inspeccionRoboRueda.vehiculo);
+    }
+  }, [idInspeccion]);
+
+  useEffect(() => {
     getEventoSiniestro(dispatch, siniestroId);
     getRuedaSiniestro(dispatch, siniestroId, idInspeccion);
   }, [openFormEvento, openFormRueda, idInspeccion]);
@@ -934,14 +961,6 @@ const InspeccionRoboRuedasForm = () => {
     getEventoSiniestro(dispatch, data.id, idInspeccion);
     getRuedaSiniestro(dispatch, data.id);
   }, []);
-
-  useEffect(() => {
-    createdInspeccionIdRef.current = createdInspeccionRoboRueda;
-    setInspeccion(createdInspeccionIdRef.current);
-  }, [createdInspeccionRoboRueda]);
-
-  const createdInspeccionIdRef = useRef(createdInspeccionRoboRueda);
-  const [inspeccion, setInspeccion] = useState([]);
 
   return (
     <div className={styles.container}>
@@ -964,7 +983,7 @@ const InspeccionRoboRuedasForm = () => {
               setModalSuccessOpen={setModalSuccessOpen}
               redirect={redirect}
               redirectEntity={redirectEntity}
-              createdEntity={inspeccion}
+              createdEntity={inspeccionRoboRueda}
               sinId={siniestroId}
               message={buttonType ? 'Inspeccion editada' : 'Inspeccion agregada'}
             />
@@ -988,6 +1007,10 @@ const InspeccionRoboRuedasForm = () => {
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
+              redirect={redirect}
+              redirectEntity={redirectEntity}
+              createdEntity={inspeccionRoboRueda}
+              sinId={siniestroId}
               message={buttonType ? 'Inspeccion editada' : 'Inspeccion agregada'}
             />
           )}
@@ -1170,7 +1193,7 @@ const InspeccionRoboRuedasForm = () => {
                 text={buttonType ? 'Editar' : 'Agregar'}
               />
               <Button clickAction={resetFormInspeccion} text="Reiniciar" />
-              <Button text="Cancelar" clickAction={cancelForm} />
+              <Button submition={true} text="Cancelar" clickAction={cancelForm} />
             </div>
           </div>
           <div className={styles.bottomTable}>
