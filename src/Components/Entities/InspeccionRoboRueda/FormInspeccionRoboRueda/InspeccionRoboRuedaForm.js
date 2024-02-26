@@ -55,6 +55,7 @@ const InspeccionRoboRuedasForm = () => {
 
   const [rueda, setRueda] = useState({});
   const [modalAddConfirmOpenRueda, setModalAddConfirmOpenRueda] = useState(false);
+  const [modalSuccessRueda, setModalSuccessOpenRueda] = useState(false);
   const [formTypeRueda, setFormTypeRueda] = useState(false);
   const [selectedInvolucradosRueda, setSelectedInvolucradosRueda] = useState([]);
   const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
@@ -457,6 +458,7 @@ const InspeccionRoboRuedasForm = () => {
 
   const resetFormInspeccion = () => {
     setButtonType(false);
+    setOpenFormRueda(false);
     const emptyData = {
       presencia: false,
       direccion: '',
@@ -615,6 +617,7 @@ const InspeccionRoboRuedasForm = () => {
         );
         if (postRuedaFetch.type === 'POST_RUEDA_SUCCESS') {
           setToastErroOpen(false);
+          setModalSuccessOpenEvento(true);
           return setTimeout(() => {}, 1000);
         }
         return setToastErroOpen(true);
@@ -628,6 +631,7 @@ const InspeccionRoboRuedasForm = () => {
         );
         if (editRuedaFetch.type === 'UPDATE_RUEDA_SUCCESS') {
           setToastErroOpen(false);
+          setModalSuccessOpenEvento(true);
           return setTimeout(() => {}, 1000);
         }
         return setToastErroOpen(true);
@@ -711,12 +715,16 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const openFormRuedas = () => {
-    if (openFormRueda) {
-      setOpenFormRueda(false);
-      setOpenFormEvento(true);
+    if (buttonType) {
+      if (openFormRueda) {
+        setOpenFormRueda(false);
+        setOpenFormEvento(true);
+      } else {
+        setOpenFormEvento(false);
+        setOpenFormRueda(true);
+      }
     } else {
-      setOpenFormEvento(false);
-      setOpenFormRueda(true);
+      setToastErroOpen(true);
     }
   };
 
@@ -862,6 +870,9 @@ const InspeccionRoboRuedasForm = () => {
   };
 
   const tableClick = (index) => {
+    setOpenFormRueda(false);
+    setSelectedVehiculosRueda([]);
+    setSelectedInvolucradosRueda([]);
     const formattedData = {
       ...currentInspeccionRoboRueda[index],
       fecha: formatDate(currentInspeccionRoboRueda[index].fecha),
@@ -992,32 +1003,6 @@ const InspeccionRoboRuedasForm = () => {
       }
       {
         <div>
-          {modalAddConfirmOpen && (
-            <ModalConfirm
-              method={buttonType ? 'Actualizar' : 'Agregar'}
-              onConfirm={() => onConfirmInspeccion()}
-              setModalConfirmOpen={setModalAddConfirmOpen}
-              message={
-                buttonType
-                  ? '¿Estás seguro de que quieres actualizar esta inspeccion?'
-                  : '¿Estás seguro de que quieres agregar esta inspeccion?'
-              }
-            />
-          )}
-          {modalSuccess && (
-            <ModalSuccess
-              setModalSuccessOpen={setModalSuccessOpen}
-              redirect={redirect}
-              redirectEntity={redirectEntity}
-              createdEntity={inspeccionRoboRueda}
-              sinId={siniestroId}
-              message={buttonType ? 'Inspeccion editada' : 'Inspeccion agregada'}
-            />
-          )}
-        </div>
-      }
-      {
-        <div>
           {modalAddConfirmOpenEvento && (
             <ModalConfirm
               method={formTypeEvento ? 'Actualizar' : 'Agregar'}
@@ -1050,6 +1035,12 @@ const InspeccionRoboRuedasForm = () => {
                   ? '¿Estás seguro de que quieres actualizar esta rueda?'
                   : '¿Estás seguro de que quieres agregar esta rueda?'
               }
+            />
+          )}
+          {modalSuccessRueda && (
+            <ModalSuccess
+              setModalSuccessOpen={setModalSuccessOpenRueda}
+              message={formTypeRueda ? 'Se ha modificado una rueda.' : 'Se ha agregado una rueda.'}
             />
           )}
         </div>

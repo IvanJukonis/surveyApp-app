@@ -10,9 +10,14 @@ const ModalConfirm = ({
   setModalAddConfirmOpenRueda
 }) => {
   const onConfirmFunction = () => {
-    if (setModalConfirmOpen) {
+    console.log(setModalConfirmOpen, 'setModalConfOpen');
+    console.log(setModalAddConfirmOpenEvento, 'evvvv');
+    console.log(setModalAddConfirmOpenRueda, 'rueddd');
+    if (setModalConfirmOpen != undefined) {
       onConfirm(), setTimeout(() => setModalConfirmOpen(false), 800);
-    } else if (setModalAddConfirmOpenEvento) {
+      console.log('no por aca');
+    } else if (setModalAddConfirmOpenEvento != undefined) {
+      console.log('sale por aca');
       onConfirm(), setTimeout(() => setModalAddConfirmOpenEvento(false), 800);
     } else {
       onConfirm(), setTimeout(() => setModalAddConfirmOpenRueda(false), 800);

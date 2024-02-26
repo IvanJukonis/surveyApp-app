@@ -22,7 +22,6 @@ export const getEventoSiniestro = async (dispatch, siniestroId) => {
     const eventosSiniestroList = eventosList.filter(
       (evento) => evento.siniestro[0] === siniestroId
     );
-    console.log(eventosSiniestroList);
     dispatch(getEventoPending(false));
     dispatch(getEventoSuccess(eventosSiniestroList));
   } catch (error) {
