@@ -34,4 +34,5 @@
 
 .logButton:hover .logText {
   color: var(--primary);
+  font-weight: bold;
 }

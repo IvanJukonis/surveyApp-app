@@ -11,10 +11,12 @@ import { joiResolver } from '@hookform/resolvers/joi';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import Joi from 'joi';
 import { getEventoSiniestro } from 'redux/evento/thunks';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const EventosForm = () => {
   const dispatch = useDispatch();
   const data = useParams();
+  const history = useHistory();
 
   const [toastError, setToastErroOpen] = useState(false);
   const currentEvento = useSelector((state) => state.evento.list);
@@ -114,6 +116,14 @@ const EventosForm = () => {
     _id: Joi.any()
   });
 
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const {
     register: registerEvento,
     handleSubmit: handleSubmitEvento,
@@ -143,7 +153,9 @@ const EventosForm = () => {
 
   const tableClick = (index) => {
     const resetDataEvento = {
-      ...currentEvento[index]
+      ...currentEvento[index],
+      fecha: formatDate(currentEvento[index].fecha),
+      hora: formatDate(currentEvento[index].fecha)
     };
     resetEvento({ ...resetDataEvento });
   };
@@ -154,143 +166,146 @@ const EventosForm = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.titleContainer}>
-        <p className={styles.title}>FORMULARIO EVENTOS</p>
+      <div className={styles.imgTop}>
+        <p className={styles.imgText}>EVENTOS</p>
       </div>
-      <form className={styles.form} onSubmit={handleSubmitEvento()}>
-        <div className={styles.formContainer}>
-          <section className={styles.inputGroups}>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errorsEvento.fecha?.message}
-                  register={registerEvento}
-                  nameTitle="Fecha"
-                  type="date"
-                  nameInput="fecha"
-                  required
-                />
+      <div className={styles.innerContainer}>
+        <form className={styles.form} onSubmit={handleSubmitEvento()}>
+          <div className={styles.formContainer}>
+            <section className={styles.inputGroups}>
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errorsEvento.fecha?.message}
+                    register={registerEvento}
+                    nameTitle="Fecha"
+                    type="date"
+                    nameInput="fecha"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayComprobar}
+                    dataLabel="Comprobar"
+                    name="comprobar"
+                    register={registerEvento}
+                    error={errorsEvento.comprobar?.message}
+                  />
+                </div>
+                <div className={styles.inputContainerPredisposicion}>
+                  <OptionInput
+                    data={arrayPredisposicion}
+                    dataLabel="Predisposicion"
+                    name="predisposicion"
+                    register={registerEvento}
+                    error={errorsEvento.predisposicion?.message}
+                  />
+                </div>
+                <div className={styles.inputContainerCheck}>
+                  <Checkbox
+                    error={errorsEvento.visibilidadEntrevista?.message}
+                    register={registerEvento}
+                    nameTitle="Visibilidad Entrevista"
+                    type="checkbox"
+                    nameInput="visibilidadEntrevista"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errorsEvento.visibilidadInforme?.message}
+                    register={registerEvento}
+                    nameTitle="Visibilidad Informe"
+                    type="checkbox"
+                    nameInput="visibilidadInforme"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayComprobar}
-                  dataLabel="Comprobar"
-                  name="comprobar"
-                  register={registerEvento}
-                  error={errorsEvento.comprobar?.message}
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <DateInput
+                    error={errorsEvento.hora?.message}
+                    register={registerEvento}
+                    nameTitle="Hora"
+                    type="date"
+                    nameInput="hora"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayComprobable}
+                    dataLabel="Comprobable"
+                    name="comprobable"
+                    register={registerEvento}
+                    error={errorsEvento.comprobable?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errorsEvento.descripcion?.message}
+                    register={registerEvento}
+                    nameTitle="Descripcion"
+                    type="text"
+                    nameInput="descripcion"
+                    styleInput="small"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainerPredisposicion}>
-                <OptionInput
-                  data={arrayPredisposicion}
-                  dataLabel="Predisposicion"
-                  name="predisposicion"
-                  register={registerEvento}
-                  error={errorsEvento.predisposicion?.message}
-                />
+              <div className={styles.inputColumn}>
+                <div className={styles.inputContainer}>
+                  <OptionInput
+                    data={arrayTipo}
+                    dataLabel="Tipo"
+                    name="tipo"
+                    register={registerEvento}
+                    error={errorsEvento.tipo?.message}
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <Checkbox
+                    error={errorsEvento.comprobado?.message}
+                    register={registerEvento}
+                    nameTitle="Comprobado"
+                    type="checkbox"
+                    nameInput="comprobado"
+                    required
+                  />
+                </div>
+                <div className={styles.inputContainer}>
+                  <TextArea
+                    error={errorsEvento.resolucion?.message}
+                    register={registerEvento}
+                    nameTitle="Resolucion"
+                    type="text"
+                    nameInput="resolucion"
+                    styleInput="small"
+                    required
+                  />
+                </div>
               </div>
-              <div className={styles.inputContainerCheck}>
-                <Checkbox
-                  error={errorsEvento.visibilidadEntrevista?.message}
-                  register={registerEvento}
-                  nameTitle="Visibilidad Entrevista"
-                  type="checkbox"
-                  nameInput="visibilidadEntrevista"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errorsEvento.visibilidadInforme?.message}
-                  register={registerEvento}
-                  nameTitle="Visibilidad Informe"
-                  type="checkbox"
-                  nameInput="visibilidadInforme"
-                  required
-                />
-              </div>
+            </section>
+            <div className={styles.btnContainer}>
+              <Button clickAction={resetFormEvento} text="Reiniciar" />
+              <Button text="Cancelar" clickAction={() => history.goBack()} />
             </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <DateInput
-                  error={errorsEvento.hora?.message}
-                  register={registerEvento}
-                  nameTitle="Hora"
-                  type="date"
-                  nameInput="hora"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayComprobable}
-                  dataLabel="Comprobable"
-                  name="comprobable"
-                  register={registerEvento}
-                  error={errorsEvento.comprobable?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <TextArea
-                  error={errorsEvento.descripcion?.message}
-                  register={registerEvento}
-                  nameTitle="Descripcion"
-                  type="text"
-                  nameInput="descripcion"
-                  styleInput="small"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.inputColumn}>
-              <div className={styles.inputContainer}>
-                <OptionInput
-                  data={arrayTipo}
-                  dataLabel="Tipo"
-                  name="tipo"
-                  register={registerEvento}
-                  error={errorsEvento.tipo?.message}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <Checkbox
-                  error={errorsEvento.comprobado?.message}
-                  register={registerEvento}
-                  nameTitle="Comprobado"
-                  type="checkbox"
-                  nameInput="comprobado"
-                  required
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <TextArea
-                  error={errorsEvento.resolucion?.message}
-                  register={registerEvento}
-                  nameTitle="Resolucion"
-                  type="text"
-                  nameInput="resolucion"
-                  styleInput="small"
-                  required
-                />
-              </div>
-            </div>
-          </section>
-          <div className={styles.btnContainer}>
-            <Button clickAction={resetFormEvento} text="Reiniciar" />
           </div>
-        </div>
-        <div className={styles.tableTop}>
-          <div className={styles.tableContainerRueda}>
-            <FormTable
-              data={currentEvento}
-              columnTitleArray={columnTitleArrayEvento}
-              columns={columnsEvento}
-              handleClick={tableClick}
-              type={true}
-            />
+          <div className={styles.tableTop}>
+            <div className={styles.tableContainerRueda}>
+              <FormTable
+                data={currentEvento}
+                columnTitleArray={columnTitleArrayEvento}
+                columns={columnsEvento}
+                handleClick={tableClick}
+                type={true}
+              />
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
       {toastError && (
         <ToastError setToastErroOpen={setToastErroOpen} message={'Error in database'} />
       )}

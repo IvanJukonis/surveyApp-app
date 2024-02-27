@@ -29,7 +29,6 @@ export const getSiniestro = async (dispatch) => {
 };
 
 export const getSiniestroConsultor = async (dispatch, consultorId) => {
-  console.log(consultorId);
   try {
     dispatch(getSiniestroPending(true));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/siniestro`);
@@ -38,7 +37,6 @@ export const getSiniestroConsultor = async (dispatch, consultorId) => {
     const siniestrosList = siniestrosListAll.filter((siniestro) =>
       siniestro.consultor.includes(consultorId)
     );
-    console.log(siniestrosList, 'lista que corresponde');
     dispatch(getSiniestroPending(false));
     dispatch(getSiniestroSuccess(siniestrosList));
     dispatch(getSiniestroError(false));

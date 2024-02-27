@@ -20,7 +20,7 @@ const SignForm = () => {
   const [messageError, setMessageError] = useState('');
   const [toastError, setToastError] = useState(null);
 
-  const tipoArray = ['Relevador', 'Controlador', 'Administrativo', 'Consultor'];
+  const tipoArray = ['Consultor'];
 
   const schema = Joi.object({
     tipo: Joi.string().valid('Relevador', 'Controlador', 'Administrativo', 'Consultor').messages({
@@ -195,7 +195,7 @@ const SignForm = () => {
             </div>
           )}
           <div className={styles.imgTop}>
-            <p className={styles.imgText}>CREAR USUARIO</p>
+            <p className={styles.imgText}>CREAR CONSULTOR</p>
           </div>
           <div className={styles.innerContainer}>
             <form
@@ -206,7 +206,7 @@ const SignForm = () => {
               <div className={styles.form}>
                 <div className={styles.formContainer}>
                   <div className={styles.groupContainer}>
-                    <div className={styles.inputColumn}>
+                    <div className={styles.inputColumnLeft}>
                       <div className={styles.inputContainer}>
                         <OptionInput
                           data={tipoArray}

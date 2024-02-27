@@ -1,5 +1,6 @@
 .navbar {
   display: flex;
+  justify-content: center;
   flex-direction: row;
   width: 100%;
   transition: all 0.4s;
@@ -10,12 +11,11 @@
 .rutes {
   display: flex;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
-  width: 100%;
   padding: 0;
   list-style-type: none;
   gap: 10px;
+  margin-left: 170px;
 }
 
 .navbarLink {
@@ -40,7 +40,13 @@
 }
 
 .navbarLink.active {
-  color: greenyellow;
+  background-color: #F2F2F2;
+  color: #252440;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  font-weight: bold;
   filter: brightness(0) invert() drop-shadow(2px 2px 4px var(--primary));
 }
 
@@ -49,7 +55,7 @@
 }
 
 .logoutButton {
-  color: greenyellow;;
-  margin-left: 10px;
+  color: #FFFFFF;
+  margin-left: 100px;
 }
 

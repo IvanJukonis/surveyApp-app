@@ -59,7 +59,8 @@ export const postControlador = async (dispatch, newControlador) => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/controlador`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        token: token
       },
       body: JSON.stringify(newControlador)
     });

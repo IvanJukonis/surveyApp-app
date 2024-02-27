@@ -48,11 +48,6 @@ const routes = [
     name: 'Perfil',
     path: '/administrativo/perfil',
     icon: 'calendar.svg'
-  },
-  {
-    name: 'Manual',
-    path: '/administrativo/siniestros',
-    icon: 'calendar.svg'
   }
 ];
 

@@ -72,6 +72,14 @@ const RuedasForm = () => {
     'sustraida'
   ];
 
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const schema = Joi.object({
     descripcion: Joi.string()
       .min(3)
@@ -192,7 +200,8 @@ const RuedasForm = () => {
 
   const tableClick = (index) => {
     const resetDataRueda = {
-      ...currentRueda[index]
+      ...currentRueda[index],
+      fechaColocacion: formatDate(currentRueda[index].fechaColocacion)
     };
     reset({ ...resetDataRueda });
     setSelectedInvolucradosRueda(resetDataRueda.involucrado);

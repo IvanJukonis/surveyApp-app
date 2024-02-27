@@ -27,11 +27,6 @@ const routes = [
     icon: 'calendar.svg'
   },
   {
-    name: 'Manuales',
-    path: '/relevador/siniestros',
-    icon: 'calendar.svg'
-  },
-  {
     name: 'Perfil',
     path: '/relevador/perfil',
     icon: 'calendar.svg'

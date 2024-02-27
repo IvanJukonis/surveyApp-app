@@ -529,6 +529,8 @@ const SiniestrosForm = () => {
     });
   };
 
+  console.log(errors);
+
   const handleRueda = () => {
     const pathPrefix = getPathPrefix();
     history.push(`${pathPrefix}/siniestros/rueda/${siniestroActual._id}`, {

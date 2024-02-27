@@ -6,7 +6,8 @@ import styles from './Controlador.module.css';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import { updateControlador } from 'redux/controlador/thunks';
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { postNovedad, updateNovedad } from 'redux/novedad/thunks';
 import { Inputs, OptionInput, Button } from 'Components/Shared';
 import ModalSuccess from 'Components/Shared/Modals/ModalSuccess/index';
 import DateInput from 'Components/Shared/Inputs/DateInput';
@@ -16,7 +17,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import FormTable from 'Components/Shared/formTable';
 import { deleteNovedad } from 'redux/novedad/thunks';
-import { getAllNovedad } from 'redux/novedad/thunks';
+import { getVisibleNovedades } from 'redux/novedad/thunks';
 import { getConsultor } from 'redux/consultor/thunks';
 import { getFirebaseUidFromToken } from '../../../../Config/firebase-config';
 import { getSiniestroConsultor } from 'redux/siniestro/thunks';
@@ -24,13 +25,21 @@ import { getSiniestroConsultor } from 'redux/siniestro/thunks';
 function Controlador() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [controlador, setControlador] = useState({});
+  const { id } = useParams();
   const [modalAddConfirmOpen, setModalAddConfirmOpen] = useState(false);
   const [modalSuccess, setModalSuccessOpen] = useState(false);
   const [siniestro, setSiniestro] = useState({});
   const [buttonType, setButtonType] = useState(false);
   const [userCurrent, setUserCurrent] = useState('');
   const [consultorId, setConsultorId] = useState('');
+
+  const role = sessionStorage.getItem('role');
+  const [novedadCopy, setNovedadCopy] = useState({});
+  const [novedad, setNovedad] = useState({});
+  const [novedadUser, setNovedadUser] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userCondition, setUserCondition] = useState(false);
+  const [methodType, setMethodType] = useState(false);
 
   const novedades = useSelector((state) => state.novedad.list);
   const consultores = useSelector((state) => state.consultor.list);
@@ -200,7 +209,6 @@ function Controlador() {
 
   const resetForm = () => {
     setButtonType(false);
-    setSiniestro({});
     const emptyData = {
       hora: 'dd / mm / aaaa',
       fecha: 'dd / mm / aaaa',
@@ -216,23 +224,63 @@ function Controlador() {
   };
 
   const onConfirmFunction = async () => {
-    const editControladorResponse = await updateControlador(dispatch, controlador._id, controlador);
-    if (editControladorResponse.type === 'UPDATE_CONTROLADOR_SUCCESS') {
-      setToastErroOpen(false);
-      setModalSuccessOpen(true);
-      return setTimeout(() => {}, 1000);
+    setMethodType(false);
+    if (!buttonType) {
+      const novedadConSiniestro = { ...novedad, siniestro: id };
+      const addNovedadResponse = await postNovedad(dispatch, novedadConSiniestro);
+      if (addNovedadResponse.type === 'POST_NOVEDAD_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpen(true);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
+    } else {
+      setMethodType(true);
+      const editNovedadResponse = await updateNovedad(dispatch, novedad._id, novedad);
+      if (editNovedadResponse.type === 'UPDATE_NOVEDAD_SUCCESS') {
+        setToastErroOpen(false);
+        setModalSuccessOpen(true);
+        return setTimeout(() => {}, 1000);
+      }
+      return setToastErroOpen(true);
     }
-    return setToastErroOpen(true);
   };
 
   const onSubmit = async (data) => {
+    if (buttonType) {
+      setNovedadUser(data.responsable);
+      if (novedadUser == userRole) {
+        const formattedData = {
+          ...data,
+          fecha: formatDate(data.fecha),
+          hora: formatDate(data.hora),
+          responsable: userRole
+        };
+        setNovedad(formattedData);
+        setModalAddConfirmOpen(true);
+      } else {
+        setToastErroOpen(true);
+      }
+    } else {
+      const formattedData = {
+        ...data,
+        responsable: userRole,
+        fecha: formatDate(data.fecha),
+        hora: formatDate(data.hora)
+      };
+      setNovedad(formattedData);
+      setModalAddConfirmOpen(true);
+    }
+  };
+
+  const tableClickNovedad = (index) => {
+    setNovedadUser(novedades[index].responsable);
     const formattedData = {
-      ...data,
-      fechaNacimiento: formatDate(data.fechaNacimiento),
-      fechaActualizacionSalario: formatDate(data.fechaActualizacionSalario)
+      ...novedades[index],
+      fecha: formatDate(novedades[index].fecha),
+      hora: formatDate(novedades[index].hora)
     };
-    setControlador(formattedData);
-    setModalAddConfirmOpen(true);
+    setNovedadCopy(formattedData);
   };
 
   useEffect(() => {
@@ -249,8 +297,20 @@ function Controlador() {
   }, []);
 
   useEffect(() => {
-    getAllNovedad(dispatch, siniestro._id);
+    getVisibleNovedades(dispatch, siniestro._id);
+    setUserCondition(false);
+    setUserRole(role);
   }, [siniestro]);
+
+  useEffect(() => {
+    setUserCondition(false);
+  }, [novedades]);
+
+  useEffect(() => {
+    setUserCondition(novedadUser === userRole);
+    reset({ ...novedadCopy });
+    setButtonType(true);
+  }, [novedadCopy]);
 
   return (
     <div className={styles.container}>
@@ -258,16 +318,20 @@ function Controlador() {
         <div>
           {modalAddConfirmOpen && (
             <ModalConfirm
-              method={'Editar'}
+              method={buttonType ? 'Editar' : 'Agregar'}
               onConfirm={() => onConfirmFunction()}
               setModalConfirmOpen={setModalAddConfirmOpen}
-              message={'Esta seguro que quiere editar este controlador?'}
+              message={
+                id
+                  ? 'Esta seguro que quiere editar esta novedad?'
+                  : 'Esta seguro que quiere agregar esta novedad?'
+              }
             />
           )}
           {modalSuccess && (
             <ModalSuccess
               setModalSuccessOpen={setModalSuccessOpen}
-              message={'Controlador actualizado.'}
+              message={methodType ? 'Novedad actualizada.' : 'Novedad agregada.'}
             />
           )}
         </div>
@@ -408,15 +472,19 @@ function Controlador() {
                 data={novedades}
                 columnTitleArray={columnTitleArrayNovedad}
                 columns={columnsNovedad}
-                handleClick={tableClick}
+                handleClick={tableClickNovedad}
                 deleteButton={deleteButton}
+                userCondition={userCondition}
               />
             </div>
           </div>
         </div>
       </div>
       {toastErroOpen && (
-        <ToastError setToastErroOpen={setToastErroOpen} message="Error in database" />
+        <ToastError
+          setToastErroOpen={setToastErroOpen}
+          message="No posee permisos sobre la novedad seleccionada."
+        />
       )}
     </div>
   );

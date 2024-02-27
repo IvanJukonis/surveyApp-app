@@ -12,11 +12,6 @@ const routes = [
     name: 'Siniestros',
     path: '/controlador/siniestros',
     icon: 'calendar.svg'
-  },
-  {
-    name: 'Perfil',
-    path: '/controlador/perfil',
-    icon: 'calendar.svg'
   }
 ];
 
