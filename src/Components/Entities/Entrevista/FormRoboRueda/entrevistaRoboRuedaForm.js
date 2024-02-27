@@ -63,7 +63,9 @@ const EntrevistaRoboRuedasForm = () => {
   const [selectedVehiculosRueda, setSelectedVehiculosRueda] = useState([]);
   const [openFormRueda, setOpenFormRueda] = useState(false);
 
-  const siniestro = useSelector((state) => state.siniestro.list);
+  const role = sessionStorage.getItem('role');
+
+  const item = useSelector((state) => state.siniestro.list);
   const currentRueda = useSelector((state) => state.rueda.list);
   const currentEvento = useSelector((state) => state.evento.list);
   const involucrados = useSelector((state) => state.involucrado.list);
@@ -106,8 +108,24 @@ const EntrevistaRoboRuedasForm = () => {
   const usoVh = ['Particular', 'Profesional', 'Servicio', 'Otro'];
   const columnTitleArrayEvento = ['Fecha', 'Hora', 'Tipo', 'Comprobar', 'Comprobado'];
   const columnsEvento = ['fecha', 'hora', 'tipo', 'comprobar', 'comprobado'];
-  const columnTitleArray = ['Seleccionar', 'Nombre', 'Apellido', 'Rol', 'Telefono', 'Prioridad'];
-  const columns = ['selected', 'nombre', 'apellido', 'rol', 'telefono', 'prioridad'];
+  const columnTitleArray = [
+    'Entrevistado',
+    'Seleccionar',
+    'Nombre',
+    'Apellido',
+    'Rol',
+    'Telefono',
+    'Prioridad'
+  ];
+  const columns = [
+    'entrevistado',
+    'selected',
+    'nombre',
+    'apellido',
+    'rol',
+    'telefono',
+    'prioridad'
+  ];
   const columnTitleVehiculo = ['Seleccionar', 'Modelo', 'Marca', 'Dominio', 'Prioridad'];
   const columnVehiculo = ['selected', 'modelo', 'marca', 'dominio', 'prioridad'];
 
@@ -1025,9 +1043,21 @@ const EntrevistaRoboRuedasForm = () => {
   const deleteButtonRueda = deleteRueda;
 
   const cancelForm = () => {
-    history.push(`/controlador/siniestros/entrevista/${siniestro._id}`, {
-      params: { ...siniestro, mode: 'create' }
-    });
+    if (role == 'CONTROLADOR') {
+      history.push(`/controlador/siniestros/entrevista/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
+    if (role == 'RELEVADOR') {
+      history.push(`/relevador/siniestros/entrevista/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
+    if (role == 'ADMINISTRATIVO') {
+      history.push(`/administrativo/siniestros/entrevista/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
   };
 
   useEffect(() => {

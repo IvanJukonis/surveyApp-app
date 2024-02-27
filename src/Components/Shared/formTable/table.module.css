@@ -14,6 +14,51 @@
   padding: 10px 12px 10px 12px;
 }
 
+.filter {
+  width: 25%;
+  height: 20px;
+  background: #FAFAFA;
+  font-weight: bold;
+  border: 3px solid #ECECEC;
+  color: #3C3C3C;
+  margin-bottom: 10px;
+}
+
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  margin-left: 22px;
+  gap: 5px;
+}
+
+.filterText {
+  color: #BFBFBF;
+  outline: none;
+  font-size: 16px
+}
+
+.buttonPaginate {
+  background: #252440;
+  color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  cursor:pointer;
+  margin-top: 10px;
+}
+
+.activePage {
+  background: #252440;
+  color: #FAFAFA;
+  border: 3px solid #ECECEC;
+  cursor:pointer;
+}
+
+.eachNumber {
+  background: #FAFAFA;
+  color: #252440;
+  border: 3px solid #ECECEC;
+  cursor:pointer;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -110,6 +155,17 @@
   margin-left: 25px;
 }
 
+.checkboxInputActivo {
+  width: 15px;
+  height: 15px;
+  margin-left: 15px;
+}
+
+.checkboxInputAtendido {
+  width: 15px;
+  height: 15px;
+  margin-left: 20px;
+}
 .trash_edit {
   width: 10px;
   height: 10px;

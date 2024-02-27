@@ -35,7 +35,9 @@ const EntrevistaSiniestrosForm = () => {
   const siniestroId = location.state.params.siniestroId;
   const type = data.mode;
 
-  const siniestro = useSelector((state) => state.siniestro.list);
+  const role = sessionStorage.getItem('role');
+
+  const item = useSelector((state) => state.siniestro.list);
   const [formType, setFormType] = useState(type);
   const [errorMessage, setErrorMessage] = useState('Error');
   const [redirect, setRedirect] = useState(false);
@@ -709,9 +711,21 @@ const EntrevistaSiniestrosForm = () => {
   };
 
   const cancelForm = () => {
-    history.push(`/controlador/siniestros/entrevista/${siniestro._id}`, {
-      params: { ...siniestro, mode: 'create' }
-    });
+    if (role == 'CONTROLADOR') {
+      history.push(`/controlador/siniestros/entrevista/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
+    if (role == 'RELEVADOR') {
+      history.push(`/relevador/siniestros/entrevista/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
+    if (role == 'ADMINISTRATIVO') {
+      history.push(`/administrativo/siniestros/entrevista/${item[0]._id}`, {
+        params: { ...item[0], mode: 'edit' }
+      });
+    }
   };
 
   const ifNotArrayNotObject = (item, itemContent) => {

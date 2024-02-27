@@ -19,6 +19,7 @@ import DateInput from 'Components/Shared/Inputs/DateInput';
 import TextArea from 'Components/Shared/Inputs/TextAreaInput';
 import { getControlador } from 'redux/controlador/thunks';
 import { getRelevador } from 'redux/relevador/thunks';
+import { getConsultor } from 'redux/consultor/thunks';
 
 const SiniestrosForm = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const SiniestrosForm = () => {
   const [siniestro, setSiniestro] = useState({});
   const relevador = useSelector((state) => state.relevador.list);
   const controlador = useSelector((state) => state.controlador.list);
+  const consultor = useSelector((state) => state.consultor.list);
   const location = useLocation();
   const history = useHistory();
   let data;
@@ -147,6 +149,8 @@ const SiniestrosForm = () => {
 
     controlador: Joi.any(),
 
+    consultor: Joi.any(),
+
     requerido: Joi.string()
       .valid(
         'Relevamiento completo',
@@ -209,6 +213,7 @@ const SiniestrosForm = () => {
     denuncia: data.denuncia,
     relevador: data.relevador,
     controlador: data.controlador,
+    consultor: data.consultor,
     requerido: data.requerido,
     comisaria: data.comisaria,
     lugar: data.lugar
@@ -289,6 +294,7 @@ const SiniestrosForm = () => {
     getControlador(dispatch);
     getRelevador(dispatch);
     getSiniestro(dispatch);
+    getConsultor(dispatch);
   }, []);
 
   return (
@@ -361,6 +367,15 @@ const SiniestrosForm = () => {
                       type="date"
                       nameInput="hrSiniestro"
                       required
+                    />
+                  </div>
+                  <div className={styles.inputContainer}>
+                    <OptionInput
+                      data={consultor}
+                      dataLabel="Consultor"
+                      name="consultor"
+                      register={register}
+                      error={errors.consultor?.message}
                     />
                   </div>
                 </div>

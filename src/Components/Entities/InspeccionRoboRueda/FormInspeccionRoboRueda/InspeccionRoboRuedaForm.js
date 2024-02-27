@@ -970,7 +970,7 @@ const InspeccionRoboRuedasForm = () => {
     getVehiculoSiniestro(dispatch, data.id);
     getInvolucradoSiniestro(dispatch, data.id);
     getEventoSiniestro(dispatch, data.id, idInspeccion);
-    getRuedaSiniestro(dispatch, data.id);
+    getRuedaSiniestro(dispatch, siniestroId, idInspeccion);
   }, []);
 
   return (

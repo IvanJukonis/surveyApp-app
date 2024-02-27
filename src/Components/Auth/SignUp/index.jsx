@@ -7,10 +7,8 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import { signUpControlador } from 'redux/auth/thunks';
+import { signUpConsultor } from 'redux/auth/thunks';
 import ModalSuccess from 'Components/Shared/Modals/ModalSuccess/index';
-import DateInput from 'Components/Shared/Inputs/DateInput';
-import Checkbox from 'Components/Shared/Inputs/CheckboxInput';
 
 const SignForm = () => {
   const dispatch = useDispatch();
@@ -23,11 +21,6 @@ const SignForm = () => {
   const [toastError, setToastError] = useState(null);
 
   const tipoArray = ['Relevador', 'Controlador', 'Administrativo', 'Consultor'];
-  const contratoArray = ['Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor'];
-  const oficinaArray = ['Rosario', 'Vgg', 'San Lorenzo'];
-  const departamentoArray = ['Administracion', 'Produccion', 'Marketing', 'RRHH'];
-  const puestoArray = ['Gerente', 'Empleado'];
-  const civilArray = ['Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a'];
 
   const schema = Joi.object({
     tipo: Joi.string().valid('Relevador', 'Controlador', 'Administrativo', 'Consultor').messages({
@@ -76,141 +69,14 @@ const SignForm = () => {
       'number.integer': 'El DNI debe ser un número entero'
     }),
 
-    fechaNacimiento: Joi.date()
-      .messages({
-        'date.base': 'El campo "Fecha de Nacimiento" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Nacimiento" no puede permanecer vacio.'
-      })
-      .required(),
-
-    fechaContratacion: Joi.date()
-      .messages({
-        'date.base': 'El campo "Fecha de Contratacion" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Contratacion" no puede permanecer vacio.'
-      })
-      .required(),
-
-    direccion: Joi.string()
-      .min(2)
-      .max(15)
-      .messages({
-        'string.base': 'El campo "Direccion" debe ser una cadena de texto',
-        'string.empty': 'El campo "Direccion" es un campo requerido',
-        'string.min': 'El campo "Direccion" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Direccion" debe tener como máximo 15 caracteres'
-      })
-      .required(),
-
-    localidad: Joi.string()
-      .min(2)
-      .max(15)
-      .messages({
-        'string.base': 'El campo "Localidad" debe ser una cadena de texto',
-        'string.empty': 'El campo "Localidad" es un campo requerido',
-        'string.min': 'El campo "Localidad" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Localidad" debe tener como máximo 15 caracteres'
-      })
-      .required(),
-
-    telefono: Joi.number()
-      .min(99999999)
-      .max(999999999999)
-      .messages({
-        'string.base': 'El campo "Telefono" debe ser una cadena numerica',
-        'string.empty': 'El campo "Telefono" es un campo requerido',
-        'string.min': 'El campo "Telefono" debe tener al menos 9 caracteres',
-        'string.max': 'El campo "Telefono" debe tener como máximo 12 caracteres'
-      })
-      .required(),
-
-    contrato: Joi.string()
-      .valid('Termino Fijo', 'Termino Indefinido', 'Termino Temporal', 'Labor')
-      .messages({
-        'any.only': 'El campo "Contrato" debe contener un contrato valida'
-      }),
-
-    hsLaborales: Joi.number()
+    aseguradora: Joi.string()
       .min(3)
-      .max(8)
+      .max(30)
       .messages({
-        'string.base': 'El campo "Horas Laborales" debe ser una cadena numerica',
-        'string.empty': 'El campo "Horas Laborales" es un campo requerido',
-        'string.min': 'El campo "Horas Laborales" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Horas Laborales" debe tener como máximo 8 caracteres'
-      })
-      .required(),
-
-    salario: Joi.number()
-      .min(9999)
-      .max(999999999)
-      .messages({
-        'string.base': 'El campo "Salario" debe ser una cadena numerica',
-        'string.empty': 'El campo "Salario" es un campo requerido',
-        'string.min': 'El campo "Salario" debe tener al menos 4 caracteres',
-        'string.max': 'El campo "Salario" debe tener como máximo 9 caracteres'
-      })
-      .required(),
-
-    fechaActualizacionSalario: Joi.date()
-      .messages({
-        'date.base': 'El campo "Fecha de Actualizacion de Salario" debe ser una fecha valida.',
-        'date.empty': 'El campo "Fecha de Actualizacion de Salario" no puede permanecer vacio.'
-      })
-      .required(),
-
-    numeroSeguridadSocial: Joi.number()
-      .min(999)
-      .max(999999999999)
-      .messages({
-        'string.base': 'El campo "Numero de Seguridad Social" debe ser una cadena numerica',
-        'string.empty': 'El campo "Numero de Seguridad Social" es un campo requerido',
-        'string.min': 'El campo "Numero de Seguridad Social" debe tener al menos 3 caracteres',
-        'string.max': 'El campo "Numero de Seguridad Social" debe tener como máximo 12 caracteres'
-      })
-      .required(),
-
-    oficina: Joi.string().valid('Rosario', 'Vgg', 'San Lorenzo').messages({
-      'any.only': 'El campo "Oficina" debe contener una oficina valida'
-    }),
-
-    departamento: Joi.string().valid('Administracion', 'Produccion', 'Marketing', 'RRHH').messages({
-      'any.only': 'El campo "Departamento" debe contener un departamento valido'
-    }),
-
-    puesto: Joi.string().valid('Gerente', 'Empleado').messages({
-      'any.only': 'El campo "Puesto" debe contener un puesto valido'
-    }),
-
-    cantidadHijos: Joi.number()
-      .min(0)
-      .max(20)
-      .messages({
-        'string.base': 'El campo "Cantidad Hijos" debe ser una cadena numerica',
-        'string.empty': 'El campo "Cantidad Hijos" es un campo requerido',
-        'string.min': 'El campo "Cantidad Hijos" debe tener al menos 0 caracteres',
-        'string.max': 'El campo "Cantidad Hijos" debe tener como máximo 2 caracteres'
-      })
-      .required(),
-
-    estadoCivil: Joi.string().valid('Casado/a', 'Soltero/a', 'Viudo/a', 'Divorciado/a').messages({
-      'any.only': 'El campo "Compañia Aseguradora" debe contener una CIA valida'
-    }),
-
-    activo: Joi.boolean()
-      .messages({
-        'boolean.base': 'El campo "Activo" es un campo booleano',
-        'boolean.empty': 'El campo "Activo" debe tener un valor determinado'
-      })
-      .required(),
-
-    cuentaBancaria: Joi.number()
-      .min(9999)
-      .max(999999999999)
-      .messages({
-        'string.base': 'El campo "Cuenta Bancaria" debe ser una cadena numerica',
-        'string.empty': 'El campo "Cuenta Bancaria" es un campo requerido',
-        'string.min': 'El campo "Cuenta Bancaria" debe tener al menos 4 caracteres',
-        'string.max': 'El campo "Cuenta Bancaria" debe tener como máximo 12 caracteres'
+        'string.base': 'El campo "Aseguradora" debe ser una cadena de texto',
+        'string.empty': 'El campo "Aseguradora" es un campo requerido',
+        'string.min': 'El campo "Aseguradora" debe tener al menos 3 caracteres',
+        'string.max': 'El campo "Aseguradora" debe tener como máximo 30 caracteres'
       })
       .required(),
 
@@ -240,35 +106,21 @@ const SignForm = () => {
   });
 
   const onSubmit = async (data) => {
-    const controladorEdit = {
+    const consultorEdit = {
       tipo: data.tipo,
       nombre: data.nombre,
       apellido: data.apellido,
       email: data.email,
       dni: data.dni,
-      fechaNacimiento: data.fechaNacimiento,
-      fechaContratacion: data.fechaContratacion,
-      direccion: data.direccion,
-      localidad: data.localidad,
-      telefono: data.telefono,
-      contrato: data.contrato,
-      hsLaborales: data.hsLaborales,
-      salario: data.salario,
-      fechaActualizacionSalario: data.fechaActualizacionSalario,
-      numeroSeguridadSocial: data.numeroSeguridadSocial,
-      oficina: data.oficina,
-      departamento: data.departamento,
-      puesto: data.puesto,
-      cantidadHijos: data.cantidadHijos,
-      estadoCivil: data.estadoCivil,
-      activo: data.activo,
-      cuentaBancaria: data.cuentaBancaria,
+      aseguradora: data.aseguradora,
+      atendido: false,
+      activo: false,
       password: data.password
     };
 
     if (Object.values(errors).length === 0) {
       try {
-        const responseSignUp = await dispatch(signUpControlador(controladorEdit));
+        const responseSignUp = await dispatch(signUpConsultor(consultorEdit));
         if (responseSignUp.type === 'SIGN_UP_SUCCESS') {
           setOpenModalSuccess(true);
           setTimeout(() => {
@@ -397,17 +249,6 @@ const SignForm = () => {
                           required
                         />
                       </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.numeroSeguridadSocial?.message}
-                          register={register}
-                          nameTitle="N° Seguridad Social"
-                          type="number"
-                          nameInput="numeroSeguridadSocial"
-                          styleInput="numberInput"
-                          required
-                        />
-                      </div>
                     </div>
                     <div className={styles.inputColumn}>
                       <div className={styles.inputContainer}>
@@ -418,174 +259,6 @@ const SignForm = () => {
                           type="text"
                           nameInput="dni"
                           styleInput="normalInput"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <DateInput
-                          error={errors.fechaNacimiento?.message}
-                          register={register}
-                          nameTitle="Fecha Nacimiento"
-                          type="date"
-                          nameInput="fechaNacimiento"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <DateInput
-                          error={errors.fechaContratacion?.message}
-                          register={register}
-                          nameTitle="Fecha Contratacion"
-                          type="date"
-                          nameInput="fechaContratacion"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.direccion?.message}
-                          register={register}
-                          nameTitle="Direccion"
-                          type="text"
-                          nameInput="direccion"
-                          styleInput="normalInput"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.localidad?.message}
-                          register={register}
-                          nameTitle="Localidad"
-                          type="text"
-                          nameInput="localidad"
-                          styleInput="normalInput"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.inputColumn}>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.telefono?.message}
-                          register={register}
-                          nameTitle="Telefono"
-                          type="text"
-                          nameInput="telefono"
-                          styleInput="normalInput"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <OptionInput
-                          data={contratoArray}
-                          dataLabel="Conrato"
-                          name="contrato"
-                          register={register}
-                          error={errors.contrato?.message}
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.hsLaborales?.message}
-                          register={register}
-                          nameTitle="HsLaborales"
-                          type="number"
-                          nameInput="hsLaborales"
-                          styleInput="numberInput"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.salario?.message}
-                          register={register}
-                          nameTitle="Salario"
-                          type="number"
-                          nameInput="salario"
-                          styleInput="numberInput"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <DateInput
-                          error={errors.fechaActualizacionSalario?.message}
-                          register={register}
-                          nameTitle="Fecha Actualizacion Salario"
-                          type="date"
-                          nameInput="fechaActualizacionSalario"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.inputColumn}>
-                      <div className={styles.inputContainer}>
-                        <OptionInput
-                          data={oficinaArray}
-                          dataLabel="Oficina"
-                          name="oficina"
-                          register={register}
-                          error={errors.oficina?.message}
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <OptionInput
-                          data={departamentoArray}
-                          dataLabel="Departamento"
-                          name="departamento"
-                          register={register}
-                          error={errors.departamento?.message}
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <OptionInput
-                          data={puestoArray}
-                          dataLabel="Puesto"
-                          name="puesto"
-                          register={register}
-                          error={errors.puesto?.message}
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.cantidadHijos?.message}
-                          register={register}
-                          nameTitle="Cantidad Hijos"
-                          type="number"
-                          nameInput="cantidadHijos"
-                          styleInput="numberInput"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <OptionInput
-                          data={civilArray}
-                          dataLabel="Estado Civil"
-                          name="estadoCivil"
-                          register={register}
-                          error={errors.estadoCivil?.message}
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.inputColumn}>
-                      <div className={styles.inputContainer}>
-                        <Checkbox
-                          error={errors.activo?.message}
-                          register={register}
-                          nameTitle="Activo"
-                          type="checkbox"
-                          nameInput="activo"
-                          required
-                        />
-                      </div>
-                      <div className={styles.inputContainer}>
-                        <Inputs
-                          error={errors.cuentaBancaria?.message}
-                          register={register}
-                          nameTitle="Cuenta Bancaria"
-                          type="number"
-                          nameInput="cuentaBancaria"
-                          styleInput="numberInput"
                           required
                         />
                       </div>
@@ -607,6 +280,17 @@ const SignForm = () => {
                           type="password"
                           error={errors.repeatPassword?.message}
                           testId="signup-repeatpassword-input"
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <Inputs
+                          error={errors.aseguradora?.message}
+                          register={register}
+                          nameTitle="Aseguradora"
+                          type="text"
+                          nameInput="aseguradora"
+                          styleInput="normalInput"
+                          required
                         />
                       </div>
                     </div>

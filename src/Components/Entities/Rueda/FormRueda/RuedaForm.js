@@ -31,7 +31,7 @@ const RuedasForm = () => {
   const currentRueda = useSelector((state) => state.rueda.list);
   const involucrados = useSelector((state) => state.involucrado.list);
   const vehiculos = useSelector((state) => state.vehiculo.list);
-  const ruedas = useSelector((state) => state.rueda.completeList);
+  const ruedas = useSelector((state) => state.rueda.list);
 
   const columnTitleInvolucrado = [
     'Seleccionar',

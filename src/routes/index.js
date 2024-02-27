@@ -9,6 +9,7 @@ const SuperAdminRoutesRoutes = React.lazy(() => import('./super-admin'));
 const ControladorRoutes = React.lazy(() => import('./controlador'));
 const AdministrativoRoutes = React.lazy(() => import('./administrativo'));
 const RelevadorRoutes = React.lazy(() => import('./relevador'));
+const ConsultorRoutes = React.lazy(() => import('./consultor'));
 const AuthRoute = React.lazy(() => import('./auth'));
 
 const Routes = () => {
@@ -30,6 +31,7 @@ const Routes = () => {
         <Switch>
           <PrivateRoute path="/superadmin" role="SUPER_ADMIN" component={SuperAdminRoutesRoutes} />
           <PrivateRoute path="/controlador" role="CONTROLADOR" component={ControladorRoutes} />
+          <PrivateRoute path="/consultor" role="CONSULTOR" component={ConsultorRoutes} />
           <PrivateRoute
             path="/administrativo"
             role="ADMINISTRATIVO"

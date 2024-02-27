@@ -22,6 +22,7 @@ import { getRelevador } from 'redux/relevador/thunks';
 import ModalInfo from 'Components/Shared/Modals/ModalInfo';
 import arrowDown from '../../../../public/arrowDown1.png';
 import arrowTop from '../../../../public/arrowTop1.png';
+import { getConsultor } from 'redux/consultor/thunks';
 
 const tipoArray = ['Siniestro', 'Fraude', 'Completo'];
 const ciaArray = ['San Cristobal', 'Rio Uruguay', 'Sancor', 'La Segunda', 'Rivadavia'];
@@ -61,6 +62,7 @@ const SiniestrosForm = () => {
   const siniestros = useSelector((state) => state.siniestro.list);
   const relevador = useSelector((state) => state.relevador.list);
   const controlador = useSelector((state) => state.controlador.list);
+  const consultor = useSelector((state) => state.consultor.list);
   const location = useLocation();
   const history = useHistory();
   const data = location.state.params;
@@ -190,6 +192,19 @@ const SiniestrosForm = () => {
       }),
 
     controlador: Joi.alternatives()
+      .try(
+        Joi.array().items(Joi.string().hex().length(24).required()).min(1),
+        Joi.string().hex().length(24).required(),
+        Joi.string()
+      )
+      .required()
+      .messages({
+        'any.only': 'Please select a controlador',
+        'any.required': 'Please select a controlador',
+        'array.min': 'Please select at least one controlador'
+      }),
+
+    consultor: Joi.alternatives()
       .try(
         Joi.array().items(Joi.string().hex().length(24).required()).min(1),
         Joi.string().hex().length(24).required(),
@@ -387,6 +402,7 @@ const SiniestrosForm = () => {
     denuncia: data.denuncia,
     relevador: data.relevador,
     controlador: data.controlador,
+    consultor: data.consultor,
     requerido: data.requerido,
     comisaria: data.comisaria,
     lugar: data.lugar,
@@ -509,7 +525,7 @@ const SiniestrosForm = () => {
   const handleEntrevista = () => {
     const pathPrefix = getPathPrefix();
     history.push(`${pathPrefix}/siniestros/entrevista/${siniestroActual._id}`, {
-      params: { ...siniestroActual, mode: 'create' }
+      params: { ...siniestroActual, mode: 'create', siniestro: siniestro }
     });
   };
 
@@ -540,6 +556,7 @@ const SiniestrosForm = () => {
     }
     getControlador(dispatch);
     getRelevador(dispatch);
+    getConsultor(dispatch);
     getSiniestro(dispatch);
     if (data.tipo == 'Siniestro') {
       setFraudType(false);
@@ -712,6 +729,15 @@ const SiniestrosForm = () => {
                           nameInput="lugar"
                           styleInput="normalInput"
                           required
+                        />
+                      </div>
+                      <div className={styles.inputContainer}>
+                        <OptionInput
+                          data={consultor}
+                          dataLabel="Consultor"
+                          name="consultor"
+                          register={register}
+                          error={errors.consultor?.message}
                         />
                       </div>
                     </div>

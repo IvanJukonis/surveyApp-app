@@ -23,6 +23,8 @@ const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
               return <Redirect to={'/administrativo/not-allowed'} />;
             case (role = 'RELEVADOR'):
               return <Redirect to={'/relevador/not-allowed'} />;
+            case (role = 'CONSULTOR'):
+              return <Redirect to={'/consultor/not-allowed'} />;
             default:
               <Redirect to={'/auth/login'} />;
               break;

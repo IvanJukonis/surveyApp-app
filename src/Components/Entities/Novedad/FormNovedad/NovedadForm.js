@@ -49,7 +49,6 @@ const NovedadesForm = () => {
     'Tipo',
     'Titulo',
     'Visibilidad',
-
     'Respuesta'
   ];
   const columns = [

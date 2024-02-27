@@ -9,6 +9,7 @@ import AdministrativosList from 'Components/Entities/Administrativo/index';
 import ControladoresCreate from 'Components/Entities/Controlador/FormControlador/ControladorForm';
 import AdministrativosCreate from 'Components/Entities/Administrativo/FormAdministrativo/AdministrativoForm';
 import RelevadoresCreate from 'Components/Entities/Relevador/FormRelevador/RelevadorForm';
+import ConsultorList from 'Components/Entities/Consultor/ListControlador/index';
 
 import NotAllowed from 'Components/Auth/NotAllowed';
 
@@ -21,6 +22,11 @@ const routes = [
   {
     name: 'Controladores',
     path: '/superadmin/controlador',
+    icon: 'calendar.svg'
+  },
+  {
+    name: 'Consultores',
+    path: '/superadmin/consultor',
     icon: 'calendar.svg'
   },
   {
@@ -43,6 +49,7 @@ const SuperAdminRoutes = () => {
         <Route path={`${url}/relevador/form/:id?`} component={RelevadoresCreate} />
         <Route path={`${url}/controlador`} component={ControladoresList} />
         <Route path={`${url}/administrativo`} component={AdministrativosList} />
+        <Route path={`${url}/consultor`} component={ConsultorList} />
         <Route path={`${url}/relevador`} component={RelevadoresList} />
         <Route exact path={`${url}/not-allowed`} component={NotAllowed} />
         <Redirect to={`${url}/administrativo`} />

@@ -30,6 +30,25 @@ export const getAllNovedad = async (dispatch, siniestroId) => {
   }
 };
 
+export const getVisibleNovedades = async (dispatch, siniestroId) => {
+  try {
+    dispatch(getNovedadPending(true));
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/novedad`);
+    const data = await response.json();
+    const novedadesListAll = data.data;
+    const novedadesList = novedadesListAll.filter((novedad) =>
+      novedad.siniestro.includes(siniestroId)
+    );
+    const visibleNovedadesList = novedadesList.filter((novedad) => novedad.visibilidad === true);
+
+    dispatch(getNovedadPending(false));
+    dispatch(getNovedadSuccess(visibleNovedadesList));
+  } catch (error) {
+    dispatch(getNovedadPending(false));
+    dispatch(getNovedadError(true));
+  }
+};
+
 export const deleteNovedad = (novedadID) => {
   return async (dispatch) => {
     try {

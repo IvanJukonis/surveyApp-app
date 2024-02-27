@@ -61,6 +61,9 @@ function LoginForm() {
       case 'RELEVADOR':
         history.push('/relevador');
         break;
+      case 'CONSULTOR':
+        history.push('/consultor');
+        break;
       default: {
         break;
       }
@@ -83,6 +86,9 @@ function LoginForm() {
           break;
         case 'RELEVADOR':
           history.push('/relevador');
+          break;
+        case 'CONSULTOR':
+          history.push('/consultor');
           break;
         default: {
           setErrorPop(true);

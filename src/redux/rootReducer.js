@@ -15,6 +15,7 @@ import inspeccionSiniestroReducer from './inspeccionSiniestro/reducer';
 import administrativoReducer from './administrativo/reducer';
 import ruedaReducer from './rueda/reducer';
 import eventoReducer from './evento/reducer';
+import consultorReducer from './consultor/reducer';
 import authReducer from './auth/reducer';
 
 const rootReducer = combineReducers({
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   administrativo: administrativoReducer,
   novedad: novedadReducer,
   controlador: controladorReducer,
+  consultor: consultorReducer,
   entrevistaSiniestro: entrevistaSiniestroReducer,
   entrevistaRoboRueda: entrevistaRoboRuedaReducer,
   inspeccionSiniestro: inspeccionSiniestroReducer,
