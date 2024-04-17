@@ -1,61 +1,46 @@
-# SaPP - SurveyApp
+# SAPP - SurveyApp (FrontEnd)
 
-Description
+El presente proyecto ha sido desarrollado conforme a los requerimientos establecidos en la planificación estratégica elaborada en la cátedra del Proyecto Final de Ingeniería, correspondiente a la carrera de Ingeniería en Sistemas Informáticos de la Universidad Abierta Interamericana.
 
-### TITLE
+## SurveyApp
 
-## TITLE
+SurveyApp es una plataforma web orientada a facilitar la administración de siniestros por parte de Consultoras Analíticas de Seguros Viales.
+
+### Funcionalidades
+
+- Control de usuarios / empleados.
+<br>
+- Evaluaciones de desempeño.
+<br>
+- Administración de siniestros.
+<br>
+- Desarrollo de entrevistas.
+<br>
+- Análisis de fraudes.
+
+## Universidad Abierta Interamericana
+
+### Profesores
+
+- Audoglio Pablo
+<br>
+- Poncio Silvia
+
+### Grado
+
+Aprobado
 
 
-### ESPACIOS
 
-- Improved Code Efficiency
-  <br>
-- Enhanced Code Readability
-  <br>
-- Better Code Maintainability
-
-## Initial Setup
-
-### Install dependencies
-
-    npm install
-
-### Setup environment file
-
-create a file at root called `.env` and add this:
-
-    REACT_APP_API_URL=http://localhost:4000/api
-
-### Run App
-
-    npm start
-
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### Check Lint errors
-
-    npm run lint
-
-### Fix Lint errors
-
-    npm run lint:fix
+## Developer
 
 <br>
 
-## Members
-
-### Develevoper team
 
 |                                          Photo                                           |        Name         |               Mail               |                          Github                          |
 | :--------------------------------------------------------------------------------------: | :-----------------: | :------------------------------: | :------------------------------------------------------: |
-| <img src="https://avatars.githubusercontent.com/u/49520632?v=4" height="50" width="50">  |    Ivan Jukonis     |      jukoivan024@gmail.com       |      [@IvanJukonis](https://github.com/IvanJukonis)      |
+| <img src="https://avatars.githubusercontent.com/u/49520632?v=4" height="50" width="50">  |            Ivan Jukonis     |      jukoivan024@gmail.com       |      [@IvanJukonis](https://github.com/IvanJukonis)      |
 
 
-<br>
 
-### License & Copyright
 
-© UAI
