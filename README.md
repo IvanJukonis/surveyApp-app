@@ -9,13 +9,9 @@ SurveyApp es una plataforma web orientada a facilitar la administración de sini
 ### Funcionalidades
 
 - Control de usuarios / empleados.
-<br>
 - Evaluaciones de desempeño.
-<br>
 - Administración de siniestros.
-<br>
 - Desarrollo de entrevistas.
-<br>
 - Análisis de fraudes.
 
 ## Universidad Abierta Interamericana
@@ -23,7 +19,6 @@ SurveyApp es una plataforma web orientada a facilitar la administración de sini
 ### Profesores
 
 - Audoglio Pablo
-<br>
 - Poncio Silvia
 
 ### Grado
